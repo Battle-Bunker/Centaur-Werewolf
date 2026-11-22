@@ -61,3 +61,66 @@ With V8#1: Centaurs 8 of 11, wolves 2, Pyre 0. Discussions 59-240 s (median abou
   to compose (several looks, chains to reconstruct) hides the liar's delay.
 - **H8-3 (Blood Price ties).** With 8 voters the wolves' best route is a tie, not a mistaken consensus: three
   wolf-team votes plus one confused Centaur make a 4-4 tie.
+
+## 2026-11-22 Fine passes 1-4 (fixed scenarios, 5 replays each, every group one fingerprint; ~$235)
+
+| Scenario | Predicted | Result | Judges ToM / dec / path / noise | Verdict |
+| --- | --- | --- | --- | --- |
+| F1 M1 Sage vs Moonsage duel | C2 W3, live | **C5** | 2.0 / 2.1 / 1.9 / 0.4 | degenerate (prediction wrong) |
+| F2 M1 pack pair, read wolf (control) | C5, dead | **C5** | 1.6 / 1.9 / 1.4 / 0.3 | degenerate (prediction right) |
+| F3 M2 Lure-dressed Phoenix | P2 C2 W1, live | **Pyre 5** | 2.9 / 3.8 / 3.6 / 1.2 | sweep, but judged talk-decided |
+| F4 M2 ember carried the Phoenix | C3 P1 W1 | **C5** | 1.8 / 2.2 / 1.6 / 0.6 | degenerate |
+| H1 = F1 with Hollow Sage | C3 W2, live | **C4 W1** | 2.2 / 2.3 / 2.3 / 0.5 | **talk-live** |
+| H2 = F2 with Hollow Sage | C4 W1 | **C5** | 1.6 / 1.8 / 1.6 / 0.4 | degenerate |
+| H2c = H2 + packCovers | C3 W2 | **C5** | 1.6 / 2.1 / 1.5 / 0.5 | degenerate |
+| S2 = H2 with a Spooker (centre rotation) | C3 W2, live | **C4 W1** | 1.8 / 2.7 / 1.9 / 0.7 | minority 1, path just below 2 |
+| S3 = H1 with a Spooker for the Dun Centaur | C3 W2, live | **C5** | 2.0 / 2.2 / 1.6 / 0.4 | degenerate (prediction wrong) |
+
+Tally of my scenario predictions: winner of the majority right in 7 of 9; the talk-live/dead call right in 4 of 9 (I
+over-predicted liveness 5 times and never under-predicted it). Vote tallies in a fixed scenario were nearly identical
+across replays (F1: [3,0,0,5,...] in 4 of 5; S3 in 5 of 5): the 3 wolf-team votes go one way, the 5 Centaur votes the
+other. Concentration therefore sits at 0.71 (5 of 7) in duel scenarios and 0.86 (6 of 7) when one wolf ally defects.
+
+### Why each sweep happened, and the smallest change that would leave a counter-story
+- **F1 (Moonsage duel).** Unanswerable element: under Blood Price the fake Sage's elimination cannot win, so whatever
+  the table believes about the duel, the accused is the only winning vote. Change: a Sage twin that counts as a
+  Werewolf (Hollow Sage, implemented). Result: 4-1 (H1), the first talk-live 8-seat scenario.
+- **F2/H2 (read wolf in a pack pair).** Unanswerable element: an early specific read on a card NOTHING could move after
+  the Sage turn, so the wolf's counter-claim needs two liars where the Sage needs none ("one liar beats two"), plus
+  the latency tell. Change tried: covers (no effect, R8-2 explains why) and an invisible wolf-side mover (S2: 4-1;
+  the one wolf win was a census-safe "I am the Pickpocket, I swapped with Dov" told by the read wolf herself).
+- **F3 (Lure).** Unanswerable element: the only evidence the Centaurs had pointed at the dressed Phoenix; the truth sat
+  with a lone wolf who could not voice it credibly; "a Phoenix welcomes the vote" was exploited by a Phoenix that
+  fought. Change proposed (R8-4), untested.
+- **F4 (ember).** The Rustler's peek at the Phoenix's dealt seat plus the Sentry reconstructed the carry, and the
+  Phoenix's dealt holder told the truth. Nothing for the Pyre to say. (No change proposed: the Ember-Carrier's move is
+  visible by design; the card is fine as a night mover but does not create day dilemmas when a Sage read a wolf.)
+- **S3 (duel + Spooker).** Removing the Dun Centaur (a wolf that can truthfully claim Centaur) for the Spooker REMOVED
+  the wolves' credible voice; the Spooker's own rotation story self-incriminated. Lesson below.
+
+### Heuristics added
+- **H8-4 (win-condition symmetry).** A credibility duel is only a dilemma if eliminating EITHER duellist can win for
+  the deciding side. Check, for every twin or decoy, "if the table votes the liar here, does anyone win?".
+- **H8-5 (credible voice).** A counter-story needs a teller who can pose as honest. Movement lies work when told by a
+  wolf claiming a Centaur mover or a centre card (census-safe), not by the wolf-side mover itself.
+- **H8-6 (Opus replays converge).** Fresh Opus tables given the same night converge on the same reading 4 or 5 times
+  in 5 unless two stories each need the same number of liars. Talk-liveness at 8 seats needs a scenario where the
+  liar count is EQUAL across the stories (H1: Alder-lies vs Bryn-lies, one liar each).
+- **H8-7 (wolf-team mass).** At 8 seats with 4 centre cards and four wolf-team cards in a 12-card deck, 60% of deals
+  hold 3 or more wolf-team cards; a deal with 4 (N-M1HS#1) lets the bloc force a 4-4 tie whatever is said (judge:
+  "nothing they said would have changed the result"). Keep wolf-team cards at 4 of 12 or fewer, or Blood Price ties
+  become arithmetic.
+
+## 2026-11-22 Fine pass 5 and diagnostics (~$22; budget now spent: $317 games + $17 judging/tagging)
+
+- **H1o** (H1 with opening statements ON): Centaurs 4, wolves 1 (predicted 3-2), path 1.9, noise 0.9. Same result
+  distribution as H1 (opening statements OFF). The tell went (no seat could claim last), but the wolf's blind opening
+  claim had to name a centre slot without hearing the Dun Centaur, and in the one wolf win the guess happened to match
+  it and was sold as "a wolf couldn't guess the exact slot" (judges noise 2 and 3). Lesson (H8-8): simultaneous
+  commitment converts the latency tell into a lucky-collision lottery for liars who must name specifics; it is not the
+  binding constraint at 8 seats in this scenario (claim count and the Sage read are).
+- **Latency** (all 58 games before H1o): first message median 15.4 s (Centaur-dealt) against 25.4 s (wolf-team); the last
+  first-speaker was wolf-team in 49 of 58.
+- **Parity:** 2 parity games, both wolf wins by a 4-4 tie; non-parity wolves 4 of 61.
+- **Corrections:** M3#2 did contain one seal (the real Signet, pre-empting forgery); my earlier "seals never used"
+  checked the wrong field. M3's Hush random vote is the known harness artefact (fixed upstream after my games).
