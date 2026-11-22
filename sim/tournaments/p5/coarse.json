@@ -1,0 +1,267 @@
+{
+ "timers": {
+  "dusk": 60,
+  "turn": 8,
+  "day": 240,
+  "vote": 60
+ },
+ "agents": {
+  "model": "opus",
+  "effort": "medium"
+ },
+ "redeal": "wolfDealt",
+ "tables": [
+  {
+   "label": "Q1#1",
+   "deck": [
+    "werewolf",
+    "moonsage",
+    "spooker",
+    "sage",
+    "rustler",
+    "sentry",
+    "centaur",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ]
+  },
+  {
+   "label": "Q2#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "cutpurse",
+    "pickpocket",
+    "latecomer",
+    "sage",
+    "sentry",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ]
+  },
+  {
+   "label": "Q3#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "sage",
+    "rustler",
+    "sentry",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ]
+  },
+  {
+   "label": "Q4#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "gleaner",
+    "echo",
+    "sage",
+    "rustler",
+    "sentry",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ]
+  },
+  {
+   "label": "Q5#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "sage",
+    "centaur",
+    "centaur",
+    "sentry",
+    "herder"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ]
+  },
+  {
+   "label": "Q1#2",
+   "deck": [
+    "werewolf",
+    "moonsage",
+    "spooker",
+    "sage",
+    "rustler",
+    "sentry",
+    "centaur",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ]
+  },
+  {
+   "label": "Q2#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "cutpurse",
+    "pickpocket",
+    "latecomer",
+    "sage",
+    "sentry",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ]
+  },
+  {
+   "label": "Q3#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "sage",
+    "rustler",
+    "sentry",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ]
+  },
+  {
+   "label": "Q4#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "gleaner",
+    "echo",
+    "sage",
+    "rustler",
+    "sentry",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ]
+  },
+  {
+   "label": "Q5#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "sage",
+    "centaur",
+    "centaur",
+    "sentry",
+    "herder"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ]
+  },
+  {
+   "label": "Q1#3",
+   "deck": [
+    "werewolf",
+    "moonsage",
+    "spooker",
+    "sage",
+    "rustler",
+    "sentry",
+    "centaur",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ]
+  },
+  {
+   "label": "Q3#3",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "sage",
+    "rustler",
+    "sentry",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ]
+  }
+ ]
+}
