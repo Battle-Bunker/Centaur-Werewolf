@@ -96,7 +96,7 @@ export function caveats(deck: RoleId[]): string[] {
   const dups = [...new Set(deck)].filter(r => deck.filter(x => x === r).length > 1);
   if (dups.length) out.push(`Several copies of ${dups.map(r => ROLE[r].name).join(", ")}: two honest players can hold the same role and act in the same turn.`);
   const twins = [...new Set(deck)].filter(r => ROLE[r]?.twinOf);
-  if (twins.length) out.push(`Shadow twins in this deck: ${twins.map(r => `${ROLE[r].name} (acts in the ${ROLE[ROLE[r].twinOf!].name}'s turn, on the Werewolf team${ROLE[r].looksAs ? `, looks like a ${ROLE[ROLE[r].looksAs!].name}` : ""})`).join("; ")}. A true description of a role's night does not prove its team.`);
+  if (twins.length) out.push(`Shadow twins in this deck: ${twins.map(r => `${ROLE[r].name} (acts in the ${ROLE[ROLE[r].twinOf!].name}'s turn, on the ${TEAM_NAME[ROLE[r].team]}${ROLE[r].looksAs ? `, looks like a ${ROLE[ROLE[r].looksAs!].name}` : ""})`).join("; ")}. A true description of a role's night does not prove its team.`);
   if (has(deck, r => ROLE[r]?.steps?.some(s => s.effects.some(e => e.kind === "distort")) ?? false)) out.push("Distortion is in this deck (Glamour, Will-o'-Wisp, Mistweaver, Fogbank): a look may have shown a wrong role, and its viewer is never told. Werewolf-team looks and the Herder's count see the truth.");
   if (any("forger")) out.push("A Forger is in this deck: one proclamation at dawn may be forged, and it looks exactly like the Herald's.");
   if (any("counterfeiter") || any("falsewitness")) out.push("A seal forger (Counterfeiter, False Witness) is in this deck: any sealed message (Signet, Notary) may be forged, identical to a real one until the game ends. Seals name a role, never a player.");
@@ -256,7 +256,13 @@ export const view = internalQuery({
     const dayPower = mine && !game.powerUsed?.[seat] ? ROLE[actingOf(seat)].dayPower : undefined;
     const swapInfo = mine && ROLE[actingOf(seat)].dayPower === "swap" && rules.daySwap ? (game.daySwap?.by === seat ? { a: who(game.daySwap.a), b: who(game.daySwap.b), note: "Made the instant the vote phase ends. Change it with day_queueSwap, cancel with day_clearSwap." } : { none: "You may queue a swap with day_queueSwap { a, b } (two other players' seats)." }) : null;
     if (room.phase === "day") {
+      const op = game.opening && !game.opening.done ? game.opening : null;
       out.day = {
+        opening: op ? {
+          ...timer(op.until),
+          yourStatement: seat >= 0 ? op.statements[seat]?.text ?? null : null,
+          note: seat >= 0 && op.statements[seat] ? "Your opening statement is in. All statements are revealed together, in seat order, once every player has posted or the window ends; then free chat opens. Nobody can see who has posted." : "OPENING STATEMENTS: post exactly ONE message now with chat_send (your claim). It is held unseen and revealed together with everyone's, in seat order, when all are in or the window ends. Free chat, day_ready and sealed messages open after the reveal.",
+        } : null,
         discussionEnds: timer(game.dayEndsAt),
         ready: game.seats.flatMap((_, i) => (game.ready?.[i] ? [who(i)] : [])),
         notReady: game.seats.flatMap((_, i) => (!game.ready?.[i] ? [who(i)] : [])),
@@ -319,7 +325,7 @@ One night, one day of discussion, one vote.
 - Each player is dealt one card face down; extra cards lie face down in the centre. You know only your own card.
 - NIGHT. It begins with Dusk (read your card), then every role in the deck that acts at night gets one turn, in a fixed order, each exactly the same length, whether a player holds that card or it lies in the centre. Everyone sees which turn it is. You act on the turn of the card you were DEALT. A shadow twin acts in its original's turn (one public turn for both). A deck may hold several copies of a card; all their holders act in the same turn.
 - DAWN. Proclamations (and, with a Cuckoo, the egg) are published; a bitten player, or an Heir whose card became a Phoenix, is told privately.
-- DISCUSSION. Everyone talks in chat. Voting is not open yet. It ends when its timer runs out, when the host ends it, or as soon as every seated human is ready (day_ready { "ready": true }); everyone sees who is ready.
+- DISCUSSION. With the "Opening statements" rule, it opens with one held message from each player, all revealed together in seat order; then free chat. Everyone talks in chat. Voting is not open yet. It ends when its timer runs out, when the host ends it, or as soon as every seated human is ready (day_ready { "ready": true }); everyone sees who is ready.
 - VOTE. A separate timed phase (20 s by default). Vote for one other player with day_vote { "seat": n }; you may change it until the phase ends. It ends when its timer runs out or once every seated human has voted. A player who has not voted then gets a uniformly random vote (anyone but themselves), marked "did not vote in time: voted at random" in the results. Chat is closed during the vote unless the table rule opens it.
 - COUNT. All players tied on the most votes are eliminated (every one of them), if that is at least the table's "Votes to eliminate" (2 by default); otherwise nobody is. A Moon-Thief's queued swap happens the instant the vote phase ends, before anything is counted.
 

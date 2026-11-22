@@ -187,3 +187,21 @@ so both readings of a Sage duel have a winning vote, and the table must decide w
   **Predict: Centaurs 3, wolves 2; no claim collisions between the two wolves in any replay.**
 Falsifiers: H1 at 5-0 Centaurs with the judges citing the count or timing means the twin's win condition was not the
 binding constraint; H2c with a wolf collision means covers are ignored.
+
+## Fine pass 2 outcome, and fine pass 3 predictions (2026-11-22, before any replay)
+
+Fine pass 2: H1 (Hollow Sage duel) Centaurs 4, wolves 1, so it is now talk-live (it was 5-0 with the Moonsage).
+Predicted 3-2: right direction, one game off. H2 Centaurs 5-0 (predicted 4-1). H2c (with packCovers) Centaurs 5-0
+(predicted 3-2): the covers handed out "Centaur" while its other copy was held by an honest player (3 claims for 2
+cards), and in 3 of 5 replays a wolf named "the Hollow Sage" in the centre, which no non-wolf look can see (a census
+slip). Why the pair scenario sweeps: an early Sage read on a wolf whose card NOTHING could have moved after the read,
+plus "one liar beats two". **Amendment B (roster): add a Spooker** (an uncheckable wolf-side mover) so "my card was
+moved after the read" is a story the wolves can tell; the Drifter leaves (M1HS = M1 with Hollow Sage, Spooker for
+Drifter, centre 4).
+
+- **S2-M1HS-pair-spooker** (F2's deal with the Spooker dealt to Gale(6) in place of the Pickpocket, which is now in the
+  centre). The Spooker rotated three CENTRE cards only (invisible to all); the Sentry saw nothing move near it. Sage
+  Bryn read Cass = Werewolf. The Spooker does not know the wolves but hears Bryn's read; it can claim a rotation
+  through Cass to make the read stale. **Predict: Centaurs 3, wolves 2; minority >= 1; path >= 2.5.** Falsified as
+  talk-dead if 5-0 and the judges cite the Sentry or the count.
+- **N-M1HS** (2 natural deals): Centaurs 1, wolves 1; no claim collision between pack wolves in either.

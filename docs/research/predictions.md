@@ -250,3 +250,31 @@ Esme 4, who does not know the wolves). Sage Bryn 1 read Alder = Werewolf; Rustle
   the Centaurs (two honest reads point at two different wolves, so the Centaurs must agree on ONE) or by pulling a
   Centaur vote onto their target. Predict Centaurs 3-4 of 5; path >= 2.5; judges see the deciding factor in talk
   (Centaur coordination on one wolf, the Moonsage duel), not in arithmetic.
+
+## Pre-registration 2026-11-22: CR-10 `openingStatements` tests (before any replay)
+
+Built as a rule option (default off): each seated player's FIRST message is held unseen (no version change, no
+"has posted" indicator for others) and all are revealed together in SEAT order when all are in or after
+`openingSeconds` (default 60); ready and seals are refused until then. Verified live (sim/research/opening-check.mts).
+- **S3c = S3 + openingStatements.** The first-claim asymmetry goes (the real Sage and the Moonsage claim Sage
+  simultaneously, blind to each other). But the likelihood form of the census argument (heuristic 11) and the
+  decision-theory point from the 8-player session (eliminating a Moonsage can never win, so the Centaurs only weigh
+  "Bryn is the wolf" against "Alder is the wolf") remain. Prediction: Centaurs 4, wolves 1 (was 5-0); path stays >= 3.
+  Falsified as useless if 5-0 again with the timing tell still cited; falsified as a strong fix if wolves >= 3.
+- **S5b = S5 (D6 Lure-dressed Phoenix) + openingStatements** (check that it does not kill what works): stays talk-live;
+  Centaurs 3, Pyre 1-2; path >= 3; ToM >= 2.5.
+- **Strategy tagger:** "claim-timing-tell" (used by the Centaurs in 37 of 43 earlier games) appears in at most 4 of
+  these 10 games and is never decisive.
+
+## Pre-registration 2026-11-22 (afternoon): CR-12 and the Lure fix (before any replay)
+
+- **S3d = S3 + `census: "off"`** (the lone wolf learns nothing of the centre): "a wolf would know the Sage is held"
+  cannot be argued. Prediction: Centaurs 3, wolves 2; path >= 3; the wolf's claim collides with an honest claim in at
+  most 2 of 5 (it no longer knows which roles are safe).
+- **New rule option `lureSparesPhoenix`** (default off): a Lure's dress aimed at the card dealt as the Phoenix does not
+  happen (the Lure is told); any other card may be dressed. Scenario S5c = S5 with the rule; the Lure, knowing the rule,
+  dresses its own card as a Rustler (cover) instead; so the Sage's look at the Phoenix now shows "Phoenix", truly.
+  Prediction (opening statements OFF, 5 replays): Centaurs 4, Pyre 1, wolves 0 (was Pyre 1 / Centaurs 4 with the side
+  burn, and Pyre 4 in S9); the Pyre's only route is to discredit the Sage's true Phoenix read. S5d = S5c with opening
+  statements ON (3 replays): Centaurs 2-3 of 3. Falsified if the Pyre still wins 3+ of 5 (then the reverse bluff does
+  not need the dress at all).
