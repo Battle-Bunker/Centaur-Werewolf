@@ -54,3 +54,20 @@ nearly balanced with openings on. Ties: with `bloodPriceCondemned`, I expect 0-1
 
 ## 7 players, F-P7-inversion (only if budget remains; n=5: Centaurs 5-0, ToM 1.4)
 off +5: Centaurs 4-5 of 5 (talk-dead, predicted to stay so). open x10: Centaurs 7-10. Falsified if the wolves or Pyre win 2+ of 5 OFF.
+
+## Addendum, 13:45 UTC (coordinator's revised plan; written before any of these games)
+Changes: 7p ember `spares` arm dropped; 7p adds the K7 "Shadow Court" duel (two-team control roster); 5p adds F5 and a
+`bloodPriceCondemned` arm on F6; the F8 arms and the 6p S2 spares arm move to the back of the queue (run only if
+budget remains). For a spares arm, the coordinator notes that the hub retargeted the Lure's dress to its own card as a
+Rustler; if one is run, I will do the same and state it.
+
+| Scenario, arm | Earlier n=5 | Prediction | Falsified if |
+| --- | --- | --- | --- |
+| F-K7-duel, off (n=10 pooled) | C 4, W 1 | Centaurs 6-8, wolves 2-4; c almost always .67 (bloc votes); talk-live | Centaurs 10 of 10, or wolves >= 6 |
+| F-K7-duel, open x10 | – | Centaurs 6-9, wolves 1-4: the lone wolf and the Stray Herder must commit blind and collide more (L6) | wolves >= 5 |
+| F5 pyre-burn, off (n=10 pooled) | C 3, P 2 | Centaurs 5-7, Pyre 3-5, wolves 0-1 | one team >= 9 |
+| F5, open x10 | – | Centaurs 4-7, Pyre 3-6, wolves 0-1 (the Pyre's self-dress story is fixed at dawn, heuristic 14) | wolves >= 3 or Centaurs >= 9 |
+| F6, cond x5 | (off n=10: W 5, C 4, P 1, 2 wolf wins by tie) | wolves 1-3, Centaurs 2-4, Pyre 0-1; ties no longer win for the wolves | wolves >= 4 |
+
+Roster comparison at 7 (predicted): K7 holds up with tighter consensus (median c .67) but is Centaur-leaning; P7 is
+the more variable, with median c about .6 and more plurality votes.

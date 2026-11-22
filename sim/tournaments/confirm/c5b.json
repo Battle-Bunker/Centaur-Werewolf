@@ -1,0 +1,271 @@
+{
+ "timers": {
+  "dusk": 8,
+  "turn": 2,
+  "day": 240,
+  "vote": 60
+ },
+ "agents": {
+  "model": "opus",
+  "effort": "medium"
+ },
+ "tables": [
+  {
+   "label": "F5-Q3-pyre-burn~off",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "sage",
+    "rustler",
+    "sentry",
+    "centaur"
+   ],
+   "players": [
+    "Bryn",
+    "Alder",
+    "Cass",
+    "Esme",
+    "Dov"
+   ],
+   "scenario": {
+    "seed": 15,
+    "cards": [
+     "sentry",
+     "phoenix",
+     "werewolf",
+     "lure",
+     "sage",
+     "rustler",
+     "werewolf",
+     "centaur"
+    ],
+    "plans": {
+     "Esme": [
+      {
+       "step": "lure",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ],
+         "role": "werewolf"
+        }
+       }
+      }
+     ],
+     "Cass": [
+      {
+       "step": "scent",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Dov": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 2
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   },
+   "center": 3,
+   "replays": 5,
+   "rules": {}
+  },
+  {
+   "label": "F5-Q3-pyre-burn~open",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "sage",
+    "rustler",
+    "sentry",
+    "centaur"
+   ],
+   "players": [
+    "Bryn",
+    "Alder",
+    "Cass",
+    "Esme",
+    "Dov"
+   ],
+   "scenario": {
+    "seed": 15,
+    "cards": [
+     "sentry",
+     "phoenix",
+     "werewolf",
+     "lure",
+     "sage",
+     "rustler",
+     "werewolf",
+     "centaur"
+    ],
+    "plans": {
+     "Esme": [
+      {
+       "step": "lure",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ],
+         "role": "werewolf"
+        }
+       }
+      }
+     ],
+     "Cass": [
+      {
+       "step": "scent",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Dov": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 2
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   },
+   "center": 3,
+   "replays": 10,
+   "rules": {
+    "openingStatements": true
+   }
+  },
+  {
+   "label": "F6-Q3-two-wolves-lure~cond",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "sage",
+    "rustler",
+    "sentry",
+    "centaur"
+   ],
+   "players": [
+    "Bryn",
+    "Dov",
+    "Alder",
+    "Esme",
+    "Cass"
+   ],
+   "scenario": {
+    "seed": 16,
+    "cards": [
+     "werewolf",
+     "werewolf",
+     "centaur",
+     "lure",
+     "sentry",
+     "sage",
+     "rustler",
+     "phoenix"
+    ],
+    "plans": {
+     "Esme": [
+      {
+       "step": "lure",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ],
+         "role": "werewolf"
+        }
+       }
+      }
+     ],
+     "Alder": [
+      {
+       "step": "glance",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "c",
+           "i": 0
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   },
+   "center": 3,
+   "replays": 5,
+   "rules": {
+    "bloodPriceCondemned": true
+   }
+  }
+ ]
+}
