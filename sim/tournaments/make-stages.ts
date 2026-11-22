@@ -61,7 +61,7 @@ const stage4: Arm[] = [
   { label: "O4-forgery7x4", center: 4, players: SEVEN, deck: ["werewolf", "werewolf", "counterfeiter", "forger", "sage", "notary", "signet", "centaur", "herald", "herder", "sentry"] },
   { label: "O5-hush7x4", center: 4, players: SEVEN, deck: ["werewolf", "werewolf", "hush", "sage", "notary", "centaur", "centaur", "herald", "rustler", "herder", "sentry"] },
   { label: "O6-combined7x5", center: 5, players: SEVEN, deck: ["werewolf", "duncentaur", "moonsage", "sage", "notary", "cutpurse", "pickpocket", "poacher", "mistweaver", "counterfeiter", "hush", "herald"] },
-  { label: "O7-combined-mandatory7x5", center: 5, players: SEVEN, rules: { mandatorySteps: true }, deck: ["werewolf", "duncentaur", "moonsage", "sage", "notary", "cutpurse", "pickpocket", "poacher", "mistweaver", "counterfeiter", "hush", "herald"] },
+  { label: "O7-control-mandatory7x4", center: 4, players: SEVEN, rules: { mandatorySteps: true }, deck: control7 },
 ];
-write("stage4-owner", "The owner's families, each isolated against a 7/4 control deck, then combined (with and without mandatory night steps). Default rules unless stated.", tables(stage4, a => 30 + stage4.indexOf(a)));
+write("stage4-owner", "The owner's families, each isolated against a 7/4 control deck, then combined; O7 is the control under the mandatory-night-steps rule. Default rules unless stated.", tables(stage4, a => 30 + stage4.indexOf(a)));
 console.log("wrote stage1-controls.json, stage2-mechanics.json, stage3-combos.json, stage4-owner.json");

@@ -1,5 +1,5 @@
 {
- "about": "The owner's families, each isolated against a 7/4 control deck, then combined (with and without mandatory night steps). Default rules unless stated.",
+ "about": "The owner's families, each isolated against a 7/4 control deck, then combined; O7 is the control under the mandatory-night-steps rule. Default rules unless stated.",
  "timers": {
   "dusk": 120,
   "turn": 12,
@@ -768,8 +768,8 @@
    "seed": 36004
   },
   {
-   "label": "O7-combined-mandatory7x5#1",
-   "center": 5,
+   "label": "O7-control-mandatory7x4#1",
+   "center": 4,
    "players": [
     "Alder",
     "Bryn",
@@ -784,23 +784,22 @@
    },
    "deck": [
     "werewolf",
-    "duncentaur",
-    "moonsage",
+    "werewolf",
     "sage",
     "notary",
-    "cutpurse",
-    "pickpocket",
-    "poacher",
-    "mistweaver",
-    "counterfeiter",
-    "hush",
-    "herald"
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "farrier",
+    "herder",
+    "sentry"
    ],
    "seed": 37001
   },
   {
-   "label": "O7-combined-mandatory7x5#2",
-   "center": 5,
+   "label": "O7-control-mandatory7x4#2",
+   "center": 4,
    "players": [
     "Alder",
     "Bryn",
@@ -815,23 +814,22 @@
    },
    "deck": [
     "werewolf",
-    "duncentaur",
-    "moonsage",
+    "werewolf",
     "sage",
     "notary",
-    "cutpurse",
-    "pickpocket",
-    "poacher",
-    "mistweaver",
-    "counterfeiter",
-    "hush",
-    "herald"
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "farrier",
+    "herder",
+    "sentry"
    ],
    "seed": 37002
   },
   {
-   "label": "O7-combined-mandatory7x5#3",
-   "center": 5,
+   "label": "O7-control-mandatory7x4#3",
+   "center": 4,
    "players": [
     "Alder",
     "Bryn",
@@ -846,23 +844,22 @@
    },
    "deck": [
     "werewolf",
-    "duncentaur",
-    "moonsage",
+    "werewolf",
     "sage",
     "notary",
-    "cutpurse",
-    "pickpocket",
-    "poacher",
-    "mistweaver",
-    "counterfeiter",
-    "hush",
-    "herald"
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "farrier",
+    "herder",
+    "sentry"
    ],
    "seed": 37003
   },
   {
-   "label": "O7-combined-mandatory7x5#4",
-   "center": 5,
+   "label": "O7-control-mandatory7x4#4",
+   "center": 4,
    "players": [
     "Alder",
     "Bryn",
@@ -877,17 +874,16 @@
    },
    "deck": [
     "werewolf",
-    "duncentaur",
-    "moonsage",
+    "werewolf",
     "sage",
     "notary",
-    "cutpurse",
-    "pickpocket",
-    "poacher",
-    "mistweaver",
-    "counterfeiter",
-    "hush",
-    "herald"
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "farrier",
+    "herder",
+    "sentry"
    ],
    "seed": 37004
   }
