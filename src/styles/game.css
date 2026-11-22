@@ -196,3 +196,6 @@ details.deck-group[open] > summary::after { transform: rotate(90deg); }
 .role-rules-more { font-size: 12.5px; font-weight: 700; color: var(--secondary); text-decoration: underline dotted; }
 .role-rules[open] .role-rules-more { display: none; }
 .role-rules > p { margin-top: 6px; }
+.msg-role-art { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1.5px var(--primary); }
+.msg.is-role-only .msg-head b { font-family: var(--display); font-style: italic; }
+.reveals .reveal-sealed svg { color: var(--primary); }

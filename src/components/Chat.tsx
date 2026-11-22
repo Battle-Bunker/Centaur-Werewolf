@@ -6,6 +6,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
 import type { CommandId } from "../../shared/commands";
 import { useApp, useCommand, type Message } from "../app/store";
+import { roleName } from "../../shared/roles";
 import { sealForgers } from "../app/teams";
 import { Avatar } from "./bits";
 import { IconMask, IconSeal, IconSend, IconSpark } from "./icons";
@@ -37,10 +38,11 @@ export function Chat() {
         {v.messages.map(m => {
           const key = `${m.round}:${m.phase}`;
           const head = key !== lastKey ? <div className="chat-sep"><span>{PHASE_TITLE[m.phase] ?? m.phase}{m.round && m.phase !== "lobby" ? ` · round ${m.round}` : ""}</span></div> : null;
-          const author = `${m.name}|${m.mark}|${m.via}`;
-          const cont = !head && author === lastAuthor && !m.mark;
+          const hide = sealedHidden(m, v);
+          const author = hide ? `seal|${m.id}` : `${m.name}|${m.mark}|${m.via}|${m.seal ?? ""}`;
+          const cont = !head && author === lastAuthor && !m.mark && !m.seal;
           lastKey = key; lastAuthor = author;
-          return <div key={m.id}>{head}<Bubble m={m} cont={cont} /></div>;
+          return <div key={m.id}>{head}<Bubble m={m} cont={cont} hide={hide} /></div>;
         })}
       </div>
       <Composer />
@@ -48,16 +50,32 @@ export function Chat() {
   );
 }
 
-function Bubble({ m, cont }: { m: Message; cont: boolean }) {
+/**
+ * A sealed message is signed by a ROLE, never by a player: until its game ends, other viewers see only the claimed
+ * role (no name, avatar, assistant marker or seat bubble). Its poster sees that it is theirs; the result reveals it.
+ */
+export const sealedHidden = (m: Message, v: { phase: string; round: number }) => !!m.seal && !m.mine && m.round === v.round && v.phase !== "ended";
+
+function Bubble({ m, cont, hide }: { m: Message; cont: boolean; hide: boolean }) {
   const anon = m.mark === "unsigned";
   const sealed = !!m.seal;
+  if (hide) return (
+    <div className="msg is-sealed is-role-only">
+      <span className="msg-avatar"><img className="msg-role-art" src={`/art/${m.seal}.webp`} alt="" /></span>
+      <div className="msg-body">
+        <div className="msg-head"><b>Sealed: the {roleName(m.seal!)}</b><time dateTime={new Date(m.at).toISOString()}>{time(m.at)}</time></div>
+        <div className="msg-seal" title="Signed by a role, not by a player. A seal at this table may be forged; who posted it is revealed when the game ends."><IconSeal size={14} /><span>{m.sealNote}</span></div>
+        <p className="msg-text">{m.text}</p>
+      </div>
+    </div>
+  );
   return (
     <div className={`msg${m.mine ? " is-mine" : ""}${cont ? " is-cont" : ""}${sealed ? " is-sealed" : ""}${m.forged ? " is-forged" : ""}${anon ? " is-unsigned" : ""}`}>
       <span className="msg-avatar">{!cont && (anon ? <span className="avatar avatar-sm tone-mask"><IconMask size={16} /></span> : <Avatar name={m.name ?? "?"} size="sm" />)}</span>
       <div className="msg-body">
         {!cont && (
           <div className="msg-head">
-            <b>{anon ? (m.name ? <>Unsigned <span className="msg-revealed">· it was {m.name}</span></> : "Unsigned") : m.name}</b>
+            <b>{anon ? (m.name ? <>Unsigned <span className="msg-revealed">· it was {m.name}</span></> : "Unsigned") : sealed ? <>Sealed: the {roleName(m.seal!)} <span className="msg-revealed">· {m.mine && m.round === undefined ? "" : m.mine ? "posted by you" : `posted by ${m.name}`}</span></> : m.name}</b>
             {m.mine && !anon && <span className="msg-you">you</span>}
             {m.via === "agent" && <span className="msg-agent" title="Sent by this player's assistant"><IconSpark size={12} /> assistant</span>}
             <time dateTime={new Date(m.at).toISOString()}>{time(m.at)}</time>

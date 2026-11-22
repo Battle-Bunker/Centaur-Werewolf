@@ -59,7 +59,7 @@ export function CentreStage({ w, h, pick, legal, order, markers, fresh, lead }: 
                 {o >= 0 && <span className="pick-badge">{pick?.ordered ? o + 1 : <IconCheck size={14} strokeWidth={3} />}</span>}
               </span>
               {!compact && cardSize >= 50 && (!final && shown.length
-                ? <span className="card-caption is-shown" title={shownTitle(shown[shown.length - 1])}><IconEye size={12} /> {shown.length > 1 ? `${shown.length} proclaimed` : `was ${roleName(shown[shown.length - 1].role)}`}</span>
+                ? <span className="card-caption is-shown" title={shownTitle(shown[shown.length - 1])}><IconEye size={12} /> {shown.length > 1 ? `${shown.length} proclaimed` : `said ${roleName(shown[shown.length - 1].role)}`}</span>
                 : <span className="card-caption">{role ? ROLE[role].name : `Centre ${i + 1}`}</span>)}
               {!final && !compact && own.length > 0 && <span className="pins pins-centre">{own.slice(-1).map((m, k) => <Pin key={k} m={{ ...m, title: own.map(x => x.title).join(" ") }} />)}</span>}
             </>
@@ -75,7 +75,7 @@ export function CentreStage({ w, h, pick, legal, order, markers, fresh, lead }: 
   );
 }
 
-const shownTitle = (x: { role: RoleId; by: RoleId; atDawn: boolean }) => `Proclaimed to everyone${x.atDawn ? " at dawn" : ""} as ${roleName(x.role)}, in the ${roleName(x.by)}'s turn. True at that moment unless forged or distorted; it may have moved since.`;
+const shownTitle = (x: { role: RoleId; by: RoleId; atDawn: boolean }) => `Proclaimed to everyone${x.atDawn ? " at dawn" : ""} as ${roleName(x.role)}, in the ${roleName(x.by)}'s turn. A public statement, not proof: it may be forged or distorted, and the card may have moved since.`;
 
 function NightNow({ size, compact }: { size: number; compact: boolean }) {
   const { view } = useApp();
