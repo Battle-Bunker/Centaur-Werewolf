@@ -167,3 +167,23 @@ and M2. Every scenario below was checked with scenario-check.ts (night as intend
   The Rustler Hale peeked Cass = Centaur (after the carry); the Sentry saw Fen's card move. The Centaurs can
   reconstruct the carry only if Cass reveals that she was dealt the Phoenix. **Predict: Centaurs 3, Pyre 1, wolves 1;
   path >= 2.5.** Falsified as talk-dead if Esme is eliminated in all 5.
+
+## Fine pass 1 outcome in one line, and fine pass 2 predictions (2026-11-22, before any replay)
+
+Fine pass 1: all four scenarios swept (F1 Centaurs 5-0, F2 Centaurs 5-0, F3 Pyre 5-0, F4 Centaurs 5-0). F1 was my
+predicted talk-live scenario and it was talk-dead. The judges' reason in 2 of 5 replays was decision theory: under
+Blood Price, eliminating a Moonsage (not a Werewolf) can never win, so when two Sage claims clash and one names a
+Werewolf, the accused is the only vote that can win. The other 3 replays turned on timing: Dov claimed late.
+**Amendment A (new card, additive): Hollow Sage** (`hollowsage`), a shadow twin of the Sage that COUNTS AS A WEREWOLF
+(outside the pack, like the Dun Centaur) and passes as a Sage to every look. Eliminating the fake Sage then also wins,
+so both readings of a Sage duel have a winning vote, and the table must decide which Sage lies.
+
+- **H1-M1H-duel** (F1 with the Hollow Sage in Bryn's seat; otherwise identical). **Predict: Centaurs 3, wolves 2;
+  minority >= 1; path >= 2.5.** The timing tell (Dov claims late) remains, so the Centaurs keep an edge.
+- **H2-M1H-pair** (F2 with the Hollow Sage in the centre, so Dov's glance shows "Sage"). Cass can now claim "Bryn is
+  the Hollow Sage", and that vote would win if it were true. **Predict: Centaurs 4, wolves 1** (the wolves still
+  collide on claims and Cass is late).
+- **H2c-M1H-pair-covers** (H2 plus the hub's `packCovers`: the pack is told distinct cover roles from the centre).
+  **Predict: Centaurs 3, wolves 2; no claim collisions between the two wolves in any replay.**
+Falsifiers: H1 at 5-0 Centaurs with the judges citing the count or timing means the twin's win condition was not the
+binding constraint; H2c with a wolf collision means covers are ignored.
