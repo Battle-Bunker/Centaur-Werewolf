@@ -223,3 +223,17 @@ a false one); the "count proves it" Centaur wins (about 6 of 9 coarse Centaur wi
 players falls by about a fifth; path dependence rises. Not activated yet: all four per-count sessions pre-registered
 rosters with a Herder and no Stray Herder, and the recommended deck uses a Herder; a hard deck rule now would
 invalidate their running experiments. To activate after their current fine passes (coordinator to schedule).
+
+## Fine pass 2: pre-registered (2026-11-22, before any replay; scenarios checked with scenario-check.ts)
+
+- **S3b = S3 with `census: "allButOne"`** (the lone wolf's census: Centaur, Sentry, one role unknown, so it cannot know
+  whether the Sage is held). Prediction (as for CR-8): Centaurs 3, wolves 2 (S3 was 5-0); path about 3; the census
+  argument ("a wolf would never claim Sage") is no longer made, or is answered.
+- **S1b = S1 with `packCovers: true`** (covers: Cass Farrier, Dov Rustler). In S1 the wolf side's failures were
+  Spooker-vs-wolves collisions, not wolf-wolf ones, so I predict covers change little: wolves 3-4, Centaurs 1-2;
+  noise slightly lower (<= 1.5) because the two wolves now tell non-colliding stories.
+- **S9 D6 double read** (6p; Herder in the centre, so no count): the Lure dressed the Phoenix Cass as a Werewolf; the
+  Rustler Dov sincerely saw "Werewolf" on Cass; the Sage Bryn truly read the Werewolf Esme; the second wolf Alder is
+  unread. Two honest "Werewolf" reports, one false. A tie Esme+Cass would be a Centaur win AND a burning; Cass alone a
+  Pyre win; Esme alone a Centaur win. The wolves know Cass is not a wolf (pack). Prediction: Centaurs 3, Pyre 1,
+  wolves 1; talk-live; ToM >= 2.5; c 0.5-0.8.
