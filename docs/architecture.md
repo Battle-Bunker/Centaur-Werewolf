@@ -255,6 +255,42 @@ are named parts that do not tick on the clock or others' turns; `versionKey` in 
   element replaces the avatar inside it; the card thumbnail, notes and name bar are overlays and stay. Hovering a seat
   enlarges it; an active-speaker class can reuse that rule. Hiding the side panel gives the table the full width.
 
+### The app's side of the gate (src/app/store.tsx)
+
+The app treats every failure as one thing: *no answer by the deadline*.
+
+- **Heartbeat.** `presence.heartbeat` every `view.presence.heartbeatMs`, one at a time. The connection state comes from
+  this alone: a heartbeat with no answer within 8 s, or refused, counts as trouble; a refusal is held until that same
+  8 s deadline, so it can never arrive sooner than silence would. After a 2 s grace the page shows "Reconnecting…".
+  While reconnecting it probes every second (a refusal then settles at once) and clears on the first answer.
+- **The view.** Read with `useQueries`, so a refused view is a value, not a crash; the last view received stays on
+  screen in both cases, and presence is computed against the server time of that last view (nobody seems to change).
+- **Commands.** Refused locally while reconnecting, with the same words for every cause. A command that gets no answer
+  in 10 s, or is refused as unreachable (held to the same 10 s), reports "Not sent", and the Convex client is replaced,
+  so nothing the page reported as not sent can be delivered on reconnecting. Typed text stays in the box.
+- **Quiet.** The Convex client runs with `logger: false` and no unsaved-changes prompt; the error text never reaches
+  the screen. The only remaining difference is outside the page's reach: during a real drop the browser itself logs
+  WebSocket failures in its developer tools.
+- **Presence on seats.** Each seat tile shows the server's liveness recomputed against the clock: a lost connection
+  dims the tile like a frozen video and says "Offline", the same for every cause; it will carry over to video tiles.
+
+## The app
+
+`src/` is drawn from the data: teams, turns (shared and twin turns), steps, effects, rule settings and the registry.
+Nothing names a card id, so a new or changed card renders without UI changes; an unknown log event still reads as text.
+
+- **Lobby** (`Setup.tsx`): the deck by team with search, the table rules (one `setup.setRule` per control), timers,
+  and at a play-test table the host's fixed-deal editor (seating, cards per seat, deal and night seeds).
+- **Night** (`PlanBuilder.tsx`): one click queues an unconditional choice; a step after a look can branch on sets of
+  cards; steps that name a role show the legal roles. Copiers get "If I become…": a tab per role they might become,
+  the same editor with `as`, and a coverage line across roles; after the copy, the copied role's steps, live in its turn.
+- **Day and vote** (`SidePanel.tsx`, `CentreStage.tsx`): private notices (copy, bite, Heir), the ready toggle, the
+  ballot on the table, once-per-game powers (seals, forged seals, the cut, the day swap), what you know, and warnings
+  derived from the deck (forgeable seals and proclamations, distortion, twins, copiers, movers, the cut).
+- **Result** (`Result.tsx`): the verdict, the resolution in the engine's order, what is revealed now (cuts, forged
+  seals and proclamations), each seat's dealt / became / held and why, random votes, and the night log with what each
+  distorted look showed beside the truth. Which physical card a seat holds is replayed from the log's moves.
+
 ## Known limits
 
 - Countdowns use each browser's clock against server timestamps; a badly wrong clock shows a wrong countdown (the
