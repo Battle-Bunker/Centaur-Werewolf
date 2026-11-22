@@ -3,7 +3,8 @@
  "timers": {
   "dusk": 120,
   "turn": 12,
-  "day": 420
+  "day": 420,
+  "vote": 20
  },
  "tables": [
   {

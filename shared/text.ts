@@ -73,7 +73,7 @@ function sentence(ev: LogEvent, role: RoleId, step: string, who: string, self: n
     case "bitten": return mine ? `At dawn: you were bitten${ev.by === null ? "" : ` by ${seatWord(ev.by, v, viewer)}`}. You now win only with the Werewolf team. You are not a Werewolf, and you lose any creature rules.` : `${who} ${who === "You" ? "were" : "was"} bitten${ev.by === null ? "" : ` by ${seatWord(ev.by, v, viewer)}`} and joined the Werewolf team.`;
     case "imago": return mine ? "At dawn: the card you were dealt was moved in the night, so you have become an Imago. You now win only by being eliminated, whatever card you hold." : `${who} became an Imago: the card they were dealt was moved in the night.`;
     case "void": return mine ? ev.why : `${who}: ${ev.why.replace(/\byou were\b/g, "they were").replace(/\byou\b/g, "they")}`;
-    case "daySwap": return `${who} swapped the cards of ${seatWord(ev.a, v, viewer)} and ${seatWord(ev.b, v, viewer)} as the votes locked.`;
+    case "daySwap": return `${who} swapped the cards of ${seatWord(ev.a, v, viewer)} and ${seatWord(ev.b, v, viewer)} as the vote phase ended.`;
     case "skip": {
       const s = ROLE[role]?.steps?.find(x => x.id === step);
       return `${who} chose: ${s?.skipLabel ?? "skip"} (${s?.title ?? step}).`;

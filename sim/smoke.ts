@@ -15,7 +15,7 @@ const b64 = (b: Buffer) => b.toString("base64url");
 // (Bo), Sage (Cy), Biter (Di) and Eavesdropper (Ed, who decides nothing and gets forced random moves); in the centre the
 // Herald, Forger, Cuckoo (its egg is laid at random at dawn), Sporeling and Elderbark.
 const DECK = ["moonthief", "glamour", "sage", "biter", "eavesdropper", "herald", "forger", "cuckoo", "sporeling", "elderbark"];
-const table = await setupTable({ label: "smoke", players: ["Ada", "Bo", "Cy", "Di", "Ed"], deck: DECK, center: 5, timers: { dusk: 15, turn: 5, day: 60 }, playtest: true });
+const table = await setupTable({ label: "smoke", players: ["Ada", "Bo", "Cy", "Di", "Ed"], deck: DECK, center: 5, timers: { dusk: 15, turn: 5, day: 60, vote: 8 }, playtest: true });
 const [host, ...rest] = table.seats;
 console.log(`room ${table.code}  MCP ${MCP_URL}`);
 
@@ -114,7 +114,7 @@ await tool(di.key, "night_planStep", { step: "sniff", plan: { branches: [], othe
 await tool(di.key, "night_planStep", { step: "bite", plan: { branches: [{ roles: ["sage", "herald"], decision: { kind: "do" } }], otherwise: { kind: "skip" } } });
 let v = await tool<V>(host.key, "room_view", { compact: true }), waits = 0;
 check("compact view leaves out the deck, rules and timetable", v.table === null);
-while (v.phase === "night") { const w = await tool<{ version: string; changed: boolean }>(host.key, "room_wait", { version: v.version, until: "phase", seconds: 25 }); waits++; v = await tool<V>(host.key, "room_view", { compact: true }); if (!w.changed && waits > 6) break; }
+while (v.phase === "night") { const w = await tool<{ version: string; changed: boolean }>(host.key, "room_wait", { version: v.version, until: "phase", seconds: 25 }); waits++; v = await tool<V>(host.key, "room_view", { compact: true }); if (!w.changed && waits > 30) break; }
 check(`room_wait { until: "phase" } carried the host to the day (${waits} waits)`, v.phase === "day");
 const views = Object.fromEntries((await Promise.all(table.seats.map(async s => [s.name, await tool<V>(s.key, "room_view")] as const))));
 for (const s of table.seats) console.log(`       ${s.name} (${views[s.name].you.dealt!.name}) learned: ${(views[s.name].learned ?? []).join(" | ") || "(nothing)"}`);
@@ -132,16 +132,27 @@ check("the queued swap is shown to its owner only", !!(await tool<V>(ada.key, "r
 // room_wait { until: "chat" } returns when someone talks, not on votes.
 const before = await tool<V>(cy.key, "room_view", { compact: true });
 const waiting = tool<{ changed: boolean; chatCount: number }>(cy.key, "room_wait", { version: before.version, until: "chat", seconds: 20 });
-await tool(di.key, "day_vote", { seat: 2 });
+await tool(di.key, "day_ready", { ready: true });
 await tool(bo.key, "chat_send", { text: "I am a simple Centaur, honest. Cy (seat 2) is lying." });
 const woke = await waiting;
 check("room_wait { until: \"chat\" } wakes on a new message", woke.changed && woke.chatCount === before.chatCount + 1);
 const since = await tool<V>(cy.key, "room_view", { compact: true, chatSince: before.chatCount });
 check("room_view { chatSince } returns only the new message, numbered", since.chat.length === 1 && since.chat[0].n === before.chatCount && since.chat[0].from === "Bo (seat 1)");
-check("voting for yourself is refused", (await refused(tool(host.key, "day_vote", { seat: 0 }))) === "You cannot vote for yourself.");
-for (const [s, target] of [[ada, 2], [bo, 2], [cy, 1], [ed, 2]] as const) await tool(s.key, "day_vote", { seat: target });
+check("voting is refused during the discussion, with how to open it", /day_ready/.test((await refused(tool(ada.key, "day_vote", { seat: 2 }))) ?? ""));
+const readyView = await tool<{ players: { ready: boolean | null }[]; day: { ready: string[] } }>(ada.key, "room_view");
+check("everyone sees who is ready", readyView.day.ready.includes("Di (seat 3)") && readyView.players[3].ready === true);
+for (const s of [ada, bo, cy, ed]) await tool(s.key, "day_ready", { ready: true });
 v = await tool<V>(host.key, "room_view");
-check("the day ends when everyone has voted", v.phase === "ended" && !!v.result);
+check("the vote phase opens when every seated human is ready", v.phase === "vote" && (v as unknown as { vote: { ends: { secondsLeft: number } } }).vote.ends.secondsLeft > 0);
+check("chat is closed during the vote by default", /closed during the vote/.test((await refused(tool(bo.key, "chat_send", { text: "hi" }))) ?? ""));
+check("voting for yourself is refused", (await refused(tool(host.key, "day_vote", { seat: 0 }))) === "You cannot vote for yourself.");
+// Ed does not vote: the phase ends on its timer and Ed gets a random vote, marked as such.
+for (const [s, target] of [[ada, 2], [bo, 2], [cy, 1], [di, 2]] as const) await tool(s.key, "day_vote", { seat: target });
+check("the vote phase waits for a human who has not voted", (await tool<V>(host.key, "room_view")).phase === "vote");
+for (let i = 0; i < 10 && v.phase !== "ended"; i++) { await tool(host.key, "room_wait", { version: v.version, until: "phase" }); v = await tool<V>(host.key, "room_view"); }
+check("the vote phase ends on its timer", v.phase === "ended" && !!v.result);
+const edSeat = (v.result as unknown as { seats: { voteWasRandom: boolean }[]; votes: string[] });
+check("a missing vote is cast at random and marked so", edSeat.seats[4].voteWasRandom && edSeat.votes[4].includes("did not vote in time: voted at random"));
 console.log(`       ${v.result!.headline}`);
 for (const s of v.result!.seats) console.log(`       ${s.name}: dealt ${s.dealt}, held ${s.endedHolding}, ${s.endedOnTeam}. ${s.why}`);
 for (const line of v.result!.nightLog) console.log(`       ${line}`);
@@ -154,6 +165,40 @@ check("host returns the table to the lobby", (await tool<V>(host.key, "room_view
 await tool(host.key, "game_start");
 await tool(host.key, "game_abandon");
 check("the host of a play-test table can abandon a round", (await tool<V>(host.key, "room_view")).phase === "lobby");
+
+console.log("\nseals, forgery, the Hush's cut and presence");
+const DECK2 = ["notary", "counterfeiter", "hush", "signet", "werewolf", "centaur", "sage", "rustler", "herald", "sentry"];
+for (const role of (await view(table.code, host.token))!.settings.deck) await run("setup.removeRole", host.token, table.code, { role });
+for (const role of DECK2) await run("setup.addRole", host.token, table.code, { role });
+await run("setup.setTimer", host.token, table.code, { timer: "dusk", seconds: 5 });
+await run("setup.setRule", host.token, table.code, { rule: "cutSeconds", value: 15 });
+await run("setup.fixDeal", host.token, table.code, { seats: table.seats.map(s => s.id), cards: DECK2 });
+await tool(host.key, "game_start");
+v = await tool<V>(host.key, "room_view", { compact: true });
+for (let i = 0; i < 12 && v.phase === "night"; i++) { await tool(host.key, "room_wait", { version: v.version, until: "phase" }); v = await tool<V>(host.key, "room_view", { compact: true }); }
+check("the second game reaches the day", v.phase === "day");
+await tool(ada.key, "chat_sendReport");
+await tool(bo.key, "chat_forgeSeal", { as: "notary", seat: 4, card: "sage" });
+const sealed = (await tool<V>(di.key, "room_view")).chat.slice(-2) as unknown as { from: string; text: string; verified?: string; FORGED?: string }[];
+console.log(`       ${sealed.map(m => `${m.from}: ${m.text} [${m.verified}]`).join("\n       ")}`);
+check("a real and a forged seal look the same to everyone during the game", sealed.length === 2 && sealed.every(m => /^Sealed report: at night, .+ \(seat \d\)'s card was \w+\.$/.test(m.text) && m.verified === sealed[0].verified && !m.FORGED) && Object.keys(sealed[0]).sort().join() === Object.keys(sealed[1]).sort().join());
+const seenBo = async () => (await tool<{ players: { connection: string }[] }>(ada.key, "room_view", { compact: true })).players[1].connection;
+check("Bo shows online while connected", (await seenBo()) === "online");
+const adaBefore = Object.keys(await tool(ada.key, "room_view")).sort().join();
+await tool(cy.key, "day_cutLine", { seat: 1 });
+const cutAt = Date.now();
+check("the cut player's MCP calls fail like an unreachable server (bare 503)", (await rpc(bo.key, "tools/list")).status === 503);
+check("the cut player's app view fails as unreachable", await view(table.code, bo.token).then(() => false, e => /UNREACHABLE/.test(String(e))));
+check("nothing in another player's view changes at the cut", Object.keys(await tool(ada.key, "room_view")).sort().join() === adaBefore && (await seenBo()) === "online");
+while (Date.now() - cutAt < 17_000) await new Promise(r => setTimeout(r, 1000));
+check("after the usual timeout, others see Bo offline, as for a dropped connection", (await seenBo()) === "offline");
+check("the cut player's calls go through again once the window is over", !!(await tool(bo.key, "room_view")).version && (await seenBo()) === "online");
+for (const s of table.seats) await tool(s.key, "day_ready", { ready: true });
+for (const [s, target] of [[ada, 4], [bo, 4], [cy, 4], [di, 4], [ed, 0]] as const) await tool(s.key, "day_vote", { seat: target });
+v = await tool<V>(host.key, "room_view");
+const r2 = v.result as unknown as { seats: { cutOff: { by: string }[] }[]; dealSeed: number | null };
+check("the results reveal who was cut off and by whom, and the deal seed", r2.seats[1].cutOff[0]?.by === "Cy (seat 2)" && typeof r2.dealSeed === "number");
+check("the results reveal the forged seal", ((await tool<V>(di.key, "room_view")).chat as unknown as { FORGED?: string }[]).some(m => !!m.FORGED));
 
 console.log(failed ? `\n${failed} check(s) FAILED` : "\nall checks passed");
 process.exit(failed ? 1 : 0);

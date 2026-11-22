@@ -61,6 +61,7 @@ forced random moves.
 | `shared/engine.ts` | Pure game logic: deal, plans, running a night script, forced moves, dawn, the vote, who wins and why |
 | `shared/commands.ts` | The command registry, `availability()`, and `toolDefinitions()` for MCP |
 | `convex/mcp.ts`, `convex/agent.ts` | The MCP server and what an assistant reads |
+| `convex/presence.ts` | Heartbeats, liveness and the gate every command, view and future media channel goes through |
 | `convex/commands.ts` | The single `run` mutation every change goes through |
 | `convex/rooms.ts` | The per-viewer room query: the only place hidden information leaves the server |
 | `convex/game.ts`, `convex/timers.ts` | Turn and day transitions, and their scheduled ends |
@@ -71,4 +72,4 @@ forced random moves.
 
 See [docs/architecture.md](docs/architecture.md) for the roster and wake order, the primitives, the rule settings,
 the order in which a game is decided, how to add a role, and secrecy. The design rationale is in
-[docs/design/synthesis.md](docs/design/synthesis.md).
+[docs/design/synthesis.md](docs/design/synthesis.md); the owner's binding requirements in [docs/design/owner-directions.md](docs/design/owner-directions.md).

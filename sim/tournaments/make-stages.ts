@@ -3,6 +3,8 @@
  *   stage1-controls.json   C1 (5/3 and 5/6) and C2 (7/4), each in three rule arms: legacy, +Blood Price, +Blood Price and Census
  *   stage2-mechanics.json  T1 to T6, one mechanic per deck, default rules
  *   stage3-combos.json     X1 (5/3) and X2 (7/6), default rules
+ *   stage4-owner.json      the owner's families (docs/design/owner-directions.md), each isolated against a control
+ *                          deck of the same size, then combined: twins, stealers, distortion, forgery, the Hush
  * Every arm of a deck gets the same deal seeds (seed 1000*deck + n), so arms differ only in their rules. A table with a
  * seed is a play-test table (its host sees the deal). Run:  npx tsx sim/tournaments/make-stages.ts [tables per arm = 4]
  * For the strong/weak pairings of the test plan, add "agents": { "byTeam": { ... } } to a file or table (see arena.ts).
@@ -13,7 +15,7 @@ import { LEGACY_RULES } from "../../shared/settings";
 
 const PER_ARM = Number(process.argv[2] ?? 4);
 const FIVE = ["Alder", "Bryn", "Cass", "Dov", "Esme"], SEVEN = [...FIVE, "Fen", "Greer"];
-const timers = { dusk: 120, turn: 12, day: 420 };
+const timers = { dusk: 120, turn: 12, day: 420, vote: 20 };
 interface Arm { label: string; deck: string[]; center: number; players: string[]; rules?: Record<string, unknown> }
 const ARMS_RULES: [string, Record<string, unknown>][] = [["legacy", { ...LEGACY_RULES }], ["bp", { ...LEGACY_RULES, bloodPrice: true }], ["bp-census", {}]];
 
@@ -49,4 +51,17 @@ const stage3: Arm[] = [
   { label: "X2-combo7x6", center: 6, players: SEVEN, deck: ["werewolf", "eavesdropper", "biter", "stalkinghorse", "sage", "herald", "centaur", "centaur", "farrier", "sentry", "moth", "cuckoo", "oxpecker"] },
 ];
 write("stage3-combos", "Combinations: X1 at 5/3 and the full ecosystem X2 at 7/6, default rules.", tables(stage3, a => 20 + stage3.indexOf(a)));
-console.log("wrote stage1-controls.json, stage2-mechanics.json, stage3-combos.json");
+// ── stage 4: the owner's families, each against the same control (7 players, 4 centre) ──
+const control7 = ["werewolf", "werewolf", "sage", "notary", "centaur", "centaur", "herald", "rustler", "farrier", "herder", "sentry"];
+const stage4: Arm[] = [
+  { label: "O0-control7x4", center: 4, players: SEVEN, deck: control7 },
+  { label: "O1-twins7x4", center: 4, players: SEVEN, deck: ["werewolf", "moonsage", "sage", "notary", "centaur", "duncentaur", "paleherald", "herald", "rustler", "herder", "sentry"] },
+  { label: "O2-stealers7x4", center: 4, players: SEVEN, deck: ["werewolf", "werewolf", "sage", "notary", "cutpurse", "cutpurse", "pickpocket", "drifter", "poacher", "latecomer", "sentry"] },
+  { label: "O3-distortion7x4", center: 4, players: SEVEN, deck: ["werewolf", "glamour", "wisp", "mistweaver", "sage", "notary", "centaur", "centaur", "herald", "herder", "sentry"] },
+  { label: "O4-forgery7x4", center: 4, players: SEVEN, deck: ["werewolf", "werewolf", "counterfeiter", "forger", "sage", "notary", "signet", "centaur", "herald", "herder", "sentry"] },
+  { label: "O5-hush7x4", center: 4, players: SEVEN, deck: ["werewolf", "werewolf", "hush", "sage", "notary", "centaur", "centaur", "herald", "rustler", "herder", "sentry"] },
+  { label: "O6-combined7x5", center: 5, players: SEVEN, deck: ["werewolf", "duncentaur", "moonsage", "sage", "notary", "cutpurse", "pickpocket", "poacher", "mistweaver", "counterfeiter", "hush", "herald"] },
+  { label: "O7-combined-mandatory7x5", center: 5, players: SEVEN, rules: { mandatorySteps: true }, deck: ["werewolf", "duncentaur", "moonsage", "sage", "notary", "cutpurse", "pickpocket", "poacher", "mistweaver", "counterfeiter", "hush", "herald"] },
+];
+write("stage4-owner", "The owner's families, each isolated against a 7/4 control deck, then combined (with and without mandatory night steps). Default rules unless stated.", tables(stage4, a => 30 + stage4.indexOf(a)));
+console.log("wrote stage1-controls.json, stage2-mechanics.json, stage3-combos.json, stage4-owner.json");

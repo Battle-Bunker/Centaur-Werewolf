@@ -5,11 +5,16 @@
 `players + centre` cards are dealt (3 to 6 centre cards, a room setting): one to each seat, the rest face down in the
 centre. The night runs as a fixed public timetable of equal-length turns: dusk, then every night role in the deck in
 wake order, whether a player holds it or not. Dawn publishes the proclamations and the egg and tells a bitten player or
-an Imago. Then the day: talk, a Moon-Thief may queue a swap, vote. You win or lose by the card you **hold** at the count
-(unless you were bitten or became an Imago), which may not be the card you were dealt.
+an Imago. Then the **discussion** (chat, ready toggles, a Moon-Thief may queue a swap, a Hush may cut a player off),
+then a separate timed **vote** phase, then the count. You win or lose by the card you **hold** at the count (unless you
+were bitten or became an Imago), which may not be the card you were dealt.
 
-The rules come from [docs/design/synthesis.md](design/synthesis.md) ("Recommendation"): defector mechanics for the
-Werewolf team and a third faction, the Wildwood, whose creatures win or lose alongside the main result.
+Phases: `lobby → night → day (discussion) → vote → ended`. Discussion ends by its timer, the host, or when every
+seated human is ready; the vote by its timer (20 s default) or when every seated human has voted.
+
+The rules come from [docs/design/synthesis.md](design/synthesis.md) ("Recommendation") and the binding
+[docs/design/owner-directions.md](design/owner-directions.md) (duplicates and twins, stealers, distortion, forged
+seals, the vote phase, the Hush and presence). Any card may appear up to 12 times.
 
 ### Roster and wake order
 
@@ -39,6 +44,19 @@ Werewolf team and a third faction, the Wildwood, whose creatures win or lose alo
 | – | Signet | Centaur | | – | One signed chat message |
 | – | Moth | Centaur | wild | – | If its dealt seat's card moved: that seat is an Imago (wins only if eliminated) (`metamorph`) |
 | – | Sporeling | Wildwood | wild | – | Holder wins if eliminated; their voters lose (`curse`) |
+| 14 | Will-o'-Wisp | Werewolf | | Distorts a card: a random wrong role to every look | Team |
+| 16 / 17 | Mistweaver / Fogbank | Werewolf | | Veils a player's centre looks: a chosen / random wrong role | Team |
+| 32 | Notary | Centaur | seer | Reads a player's card | Day: one sealed report composed from that look (`chat: "report"`) |
+| 44 | Poacher | Werewolf | | Must swap with a player, then looks at the new card | Team (its card's team goes to the victim) |
+| 46 / 47 / 48 | Cutpurse / Pickpocket / Drifter | Centaur | | Must swap (then look) / swap blind / swap with a centre card (then look) | Team |
+| 88 | Latecomer | Centaur | | Must swap blind with a player, late | Team |
+| (Sage) | Moonsage | Werewolf | | The Sage's action in the Sage's turn | Ally; looks show a Sage |
+| (Centaur) | Dun Centaur | Werewolf | wolf | The Centaur's action in its turn | A Werewolf outside the pack |
+| (Herald) | Pale Herald | Werewolf | | A true proclamation in the Herald's turn | Ally; looks show a Herald |
+| (Rustler) | Dusk Rustler | Werewolf | wolf | The Rustler's action in its turn | A Werewolf outside the pack |
+| (Herder) | Stray Herder | Werewolf | | The Herder's count in its turn | Ally; looks show a Herder |
+| – | Counterfeiter | Werewolf | | – | Day: one forged seal (Signet text or Notary report) |
+| – | Hush | Werewolf | | – | Day: once, cut a player off (a blackout seat effect) |
 
 Retired: Sagittarius (a published role in substance), Augur (folded into the Cuckoo), Hybrid (folded into the Oxpecker)
 and the Forger's unsigned chat message (`chat: "unsigned"` stays a primitive no card uses; its command is gone).
@@ -58,6 +76,12 @@ the lobby, shown in both views and described in the MCP rules text. A game copie
 | `eavesdropGhost` | true | bool | Unheld named role: a ghost result from the Eavesdropper's seat, or nothing |
 | `thiefMinPlayers` | 7 | 3–12 | Smallest table that may hold a Moon-Thief |
 | `eliminationVotes` | 2 | 2–4 | Votes needed (with the most votes) to be eliminated |
+| `mandatorySteps` | false | bool | Optional night steps may not be declined |
+| `chatDuringVote` | false | bool | Chat stays open during the vote phase |
+| `cutSeconds` | 60 | 15–180 | Length of a Hush's cut |
+| `cutDuringVote` | true | bool | A Hush may cut during the vote, and a cut may run into it |
+
+Timers (`setup.setTimer`): dusk, each night turn, discussion, vote (default 20 s, 5–120).
 
 `LEGACY_RULES` (Blood Price, census and dawn proclamations off) is the control arm for play-tests.
 
@@ -89,11 +113,15 @@ A role's night action is a script of **steps**; a step may ask for targets (`pic
 | `announce` | A public proclamation (at dawn under `dawnProclamations`) |
 | `count` | How many tagged cards lie in the centre (truth) |
 | `census` | The roles dealt to the centre, per the `census` rule |
-| `glamour` | A token on the picked card: looks show the named role until dawn |
+| `distort` | target card (a token that travels with it) or viewer (their centre looks), value chosen or random: looks show a wrong role tonight |
 | `witness`, `forge` | See a role's proclamations tonight; add a forged one published as that role's |
 | `overhear` | Copy what the holder of the named role learned (first clockwise), or a ghost result |
 | `bite` | The target seat joins the Werewolf team at dawn unless its card is already on it |
 | `mark` | Bind a seat to the actor's dealt card (public at dawn, or private): the egg, the bond |
+
+Twins (`twinOf`, `looksAs`) act in their original's turn (`turnKey`). Cards are instances (`inst`, `cinst`,
+`instRole`), so marks follow the physical card whatever the number of copies. Look order: twin disguise, latest card
+distortion, viewer veil; the Werewolf team's looks and counts see the truth.
 
 Role flags the resolution reads: `win` (`eliminated`, `markEliminated`, `markWins`, `keystone`), `decoy`, `curse`,
 `metamorph`, `vote` (weight; `protectsTarget` and `takesTargetDown` remain primitives no card uses), `chat`, `dayPower`.
@@ -109,6 +137,35 @@ forced-random mover, the journal, the table's click targets and the post-game lo
 new primitive, add an `Effect` kind, its case in `applyEffect` (`shared/engine.ts`) and a sentence in `shared/text.ts`.
 A queued step that turns out not to happen logs a `void` entry, and a conditional decision records the branch it took
 (`LogEntry.cond`). What only the post-game log may show goes in `LogEntry.hidden` (views strip it until the end).
+
+## Presence and the gate
+
+`convex/presence.ts` holds the only two functions that decide liveness and silence:
+
+- `liveness(player, now)`: what other players may see of a player's connection: `online` while the last heartbeat is
+  younger than 16 s, else `offline` (bots: `bot`). Heartbeats: the app's `presence.heartbeat` every 5 s, and every
+  authenticated MCP call. Both views (`rooms.view`, `agent.view`) go through it.
+- `gateOf(game, phase, rules, seat, now)`: may this player emit or receive right now. A **seat effect**
+  (`Game.seatEffects`: seat, kind, window, source) closes it; `blackout` (the Hush's cut) refuses everything.
+
+Enforcement, all central: the dispatcher (`dispatch`) refuses a closed seat's calls with one unreachable error,
+for every command under a blackout and, for lighter effects, every command whose registry entry is `perceivable`
+(every command must declare it; a test fails otherwise). The app view throws the same error to that player; the MCP
+endpoint answers a bare HTTP 503. Their heartbeats fail too, so their `lastSeenAt` stops exactly as in a real drop:
+others see the same lag before "offline" and the return on the first heartbeat after the window. Nothing about an
+effect leaves the server before the game ends (then: `final.seatEffects`, `result.seats[].cutOff`, a log line).
+What happens to attempts in the window is the same in both cases: nothing sent is queued or delivered later, a vote not
+cast before the vote ends becomes a random one, readiness cannot change.
+
+**Contract for the client.** The client must render the unreachable error and a lost connection identically (keep the
+last data, show "reconnecting", keep retrying), and must not queue messages typed while unreachable.
+
+**Contract for video and audio (planned).** Media tokens and subscriptions are issued and revoked only through
+`gateOf`: no token is issued to a closed seat, and a seat that closes has its publish and subscribe grants revoked at
+once. For others, a closed seat's streams freeze and drop exactly as on network loss (no "muted" or "removed" signal);
+for the closed player, everyone else's streams freeze and drop the same way. Liveness of media follows `liveness`
+only. Any new real-time signal (typing, reactions, cursors) is a registry command declared `perceivable: true` or a
+stream gated the same way; nothing may read `seatEffects` directly.
 
 ## Night timing and plans
 
@@ -135,7 +192,7 @@ Outcomes no branch or Otherwise covers are asked live.
 ## Secrecy
 
 The game lives in one document (`rooms.game`). `convex/rooms.ts` `view` (the app) and `convex/agent.ts` `view` (MCP)
-are the only readers, filtered for the caller: your dealt role, plan, progress and own log entries (with `hidden`
+are the only readers, both behind the presence gate, filtered for the caller: your dealt role, plan, progress and own log entries (with `hidden`
 stripped), dawn notices addressed to you (bitten, Imago), proclamations once published (without the forged flag or
 real turn), public marks after dawn, and your own queued day swap. Other roles, the centre, glamours, forgeries,
 the eavesdrop source, the day swap, the full log and who voted for whom are returned only once the phase is `ended`.

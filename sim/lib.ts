@@ -37,7 +37,7 @@ export class Refusal extends Error {}
  * `seed`: makes it a play-test table and fixes the deal's seed, so tables with the same seed (and the same players
  * and deck) get the same seating and cards whatever their rules. `playtest`: a play-test table without a seed.
  */
-export interface TableConfig { label: string; players: string[]; deck: string[]; center: number; timers: { dusk: number; turn: number; day: number }; rules?: Record<string, boolean | number | string>; seed?: number; playtest?: boolean }
+export interface TableConfig { label: string; players: string[]; deck: string[]; center: number; timers: { dusk: number; turn: number; day: number; vote?: number }; rules?: Record<string, boolean | number | string>; seed?: number; playtest?: boolean }
 export interface Table { code: string; config: TableConfig; seats: { name: string; token: string; key: string; host: boolean; id?: string }[] }
 
 /** Opens a room, seats the players, sets the table up, and makes each player an MCP key. Does not start the game. */
