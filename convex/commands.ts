@@ -1,7 +1,9 @@
 /**
  * The one way in for every change: `run` takes a command id from the registry (shared/commands.ts), checks it is
  * available to this caller now, validates its arguments against the registry's schema, and calls its handler.
- * The palette, the buttons and (later) the MCP server all call this mutation and nothing else.
+ * The palette, the buttons and the MCP server all call this mutation and nothing else. It also enforces the presence gate
+ * (convex/presence.ts): while a seat effect silences a player, their calls are refused exactly as an unreachable
+ * server would refuse them.
  */
 import { ConvexError, v } from "convex/values";
 import { internalMutation, mutation, type MutationCtx } from "./_generated/server";
@@ -11,7 +13,9 @@ import { availability, COMMAND, type CommandId } from "../shared/commands";
 import { advance, dealFixed, freshProgress, nightTurns, secureRng, seededRng, shapeOf, shuffle, validPlan, type StepPlan } from "../shared/engine";
 import { CENTER_DEFAULT, recommendedDeck, ROLE } from "../shared/roles";
 import { rulesOf } from "../shared/settings";
-import { endDay, type Game, type Turn } from "./game";
+import { seatName } from "../shared/text";
+import { endVote, seatedHumans, startVote, VOTE_SECONDS_DEFAULT, type Game, type Turn } from "./game";
+import { gateOf, UNREACHABLE } from "./presence";
 import { contextOf, loadScope, type Scope } from "./scope";
 import { answerRequest, createKey } from "./auth";
 
@@ -37,11 +41,20 @@ async function seat(ctx: MutationCtx, code: string, token: string, name: string)
   return { code };
 }
 
-async function markedPost(ctx: MutationCtx, s: Scope, text: string, mark: "signed" | "unsigned", via: "app" | "agent") {
+/**
+ * An authenticated message: the seal of `seal` (a role id). A real one and a forged one are the same artefact (same
+ * text format, same seal); only the hidden `forged` flag differs, revealed after the game.
+ */
+async function sealedPost(ctx: MutationCtx, s: Scope, text: string, seal: string, forged: boolean, via: "app" | "agent") {
   const game = s.room.game as Game;
   game.chatUsed[s.seat] = true;
   await ctx.db.patch(s.room._id, { game });
-  await ctx.db.insert("messages", { room: s.room._id, round: s.room.round, phase: s.room.phase, player: s.me!._id, name: s.me!.name, text, via, mark });
+  await ctx.db.insert("messages", { room: s.room._id, round: s.room.round, phase: s.room.phase, player: s.me!._id, name: s.me!.name, text, via, seal, ...(forged ? { forged } : {}) });
+}
+/** The wording of a Notary's sealed report, shared by the real report and its forgery. */
+const reportText = (seat: number, card: string, names: { players: { name: string }[] }) => `Sealed report: at night, ${seatName(seat, names)}'s card was ${ROLE[card]?.name ?? card}.`;
+async function seatNames(ctx: MutationCtx, game: Game) {
+  return { players: await Promise.all(game.seats.map(async id => ({ name: (await ctx.db.get(id))?.name ?? "(left)" }))) };
 }
 
 const HANDLERS: Record<ServerId, Handler> = {
@@ -49,7 +62,7 @@ const HANDLERS: Record<ServerId, Handler> = {
     let code = "";
     do code = Array.from({ length: 4 }, () => LETTERS[Math.floor(Math.random() * LETTERS.length)]).join("");
     while (await ctx.db.query("rooms").withIndex("code", q => q.eq("code", code)).unique());
-    const room = await ctx.db.insert("rooms", { code, phase: "lobby", round: 0, playtest: a.playtest ?? false, settings: { deck: recommendedDeck(3), centerCount: CENTER_DEFAULT, duskSeconds: 20, turnSeconds: 12, daySeconds: 300, rules: {} } });
+    const room = await ctx.db.insert("rooms", { code, phase: "lobby", round: 0, playtest: a.playtest ?? false, settings: { deck: recommendedDeck(3), centerCount: CENTER_DEFAULT, duskSeconds: 20, turnSeconds: 12, daySeconds: 300, voteSeconds: VOTE_SECONDS_DEFAULT, rules: {} } });
     const host = await ctx.db.insert("players", { room, token, name: a.name, bot: false });
     await ctx.db.patch(room, { host });
     return { code };
@@ -90,7 +103,7 @@ const HANDLERS: Record<ServerId, Handler> = {
     await ctx.db.patch(s!.room._id, { settings: { ...s!.room.settings, deck: recommendedDeck(s!.players.length, s!.room.settings.centerCount) } });
   },
   "setup.setTimer": async (ctx, s, a) => {
-    const key = ({ dusk: "duskSeconds", turn: "turnSeconds", day: "daySeconds" } as const)[a.timer as "dusk" | "turn" | "day"];
+    const key = ({ dusk: "duskSeconds", turn: "turnSeconds", day: "daySeconds", vote: "voteSeconds" } as const)[a.timer as "dusk" | "turn" | "day" | "vote"];
     await ctx.db.patch(s!.room._id, { settings: { ...s!.room.settings, [key]: a.seconds } });
   },
   "setup.setCenter": async (ctx, s, a) => {
@@ -114,7 +127,19 @@ const HANDLERS: Record<ServerId, Handler> = {
     const { room, me } = s!;
     await ctx.db.insert("messages", { room: room._id, round: room.round, phase: room.phase, player: me!._id, name: me!.name, text: a.text, via });
   },
-  "chat.sendSigned": (ctx, s, a, _t, via) => markedPost(ctx, s!, a.text, "signed", via),
+  "chat.sendSigned": (ctx, s, a, _t, via) => sealedPost(ctx, s!, a.text, "signet", false, via),
+  "chat.sendReport": async (ctx, s, _a, _t, via) => {
+    const game = s!.room.game as Game;
+    const look = game.log.find(e => e.seat === s!.seat && e.ev.kind === "look" && e.ev.roles && e.ev.slots[0]?.k === "p");
+    if (!look || look.ev.kind !== "look" || !look.ev.roles) return fail("You have no night look to report.");
+    await sealedPost(ctx, s!, reportText(look.ev.slots[0].i, look.ev.roles[0], await seatNames(ctx, game)), "notary", false, via);
+  },
+  "chat.forgeSeal": async (ctx, s, a, _t, via) => {
+    const game = s!.room.game as Game;
+    if (a.as === "notary" && a.seat >= game.seats.length) return fail("There is no such seat.");
+    const text = a.as === "signet" ? a.text : reportText(a.seat, a.card, await seatNames(ctx, game));
+    await sealedPost(ctx, s!, text, a.as, true, via);
+  },
   "connect.createKey": async (ctx, s, a) => {
     const { key, id } = await createKey(ctx, s!.me!, a.permission, a.label);
     return { key, connection: id };
@@ -142,7 +167,9 @@ const HANDLERS: Record<ServerId, Handler> = {
     const fixed = room.playtest ? room.settings.fixedDeal : undefined;
     const problem = fixed && fixedDealProblem(fixed, players.map(p => p._id), deck);
     if (problem) return fail(`The fixed deal no longer fits the table: ${problem} Clear it or fix it again.`);
-    const seatRng = fixed?.seed !== undefined ? seededRng(fixed.seed) : secureRng, cardRng = fixed?.seed !== undefined ? seededRng(fixed.seed ^ 0x5bd1e995) : secureRng;
+    // Every game has a seed (recorded, shown after the game): the fixed one, or one drawn from the secure generator.
+    const dealSeed = fixed?.seed ?? Math.floor(secureRng() * 2 ** 31);
+    const seatRng = seededRng(dealSeed), cardRng = seededRng(dealSeed ^ 0x5bd1e995);
     const seats = fixed?.seats ?? shuffle(players, seatRng).map(p => p._id);
     const state = dealFixed(fixed?.cards ?? shuffle(deck, cardRng), seats.length, rules);
     let t = Date.now();
@@ -152,7 +179,8 @@ const HANDLERS: Record<ServerId, Handler> = {
       seats, state, turns, turn: 0, log: [],
       plans: seats.map(() => ({})),
       progress: state.dealt.map(r => ({ ...freshProgress(), done: !ROLE[r].steps })),
-      votes: seats.map(() => null), forcedVotes: [], chatUsed: seats.map(() => false), daySwap: null, fixed: !!fixed,
+      votes: seats.map(() => null), forcedVotes: [], chatUsed: seats.map(() => false), powerUsed: seats.map(() => false), ready: seats.map(() => false), seatEffects: [],
+      daySwap: null, fixed: !!fixed, dealSeed,
     };
     const round = room.round + 1;
     await ctx.db.patch(room._id, { phase: "night", round, game });
@@ -179,10 +207,8 @@ const HANDLERS: Record<ServerId, Handler> = {
     if (a.seat >= game.seats.length) return fail("There is no such seat.");
     if (a.seat === seat) return fail("You cannot vote for yourself.");
     game.votes[seat] = a.seat;
-    const bots = new Set(players.filter(p => p.bot).map(p => p._id));
-    const waiting = game.seats.some((id, i) => game.votes[i] === null && !bots.has(id) && players.some(p => p._id === id));
-    if (waiting) await ctx.db.patch(room._id, { game });
-    else await endDay(ctx, { ...room, game });
+    if (seatedHumans(game, players).some(i => game.votes[i] === null)) await ctx.db.patch(room._id, { game });
+    else await endVote(ctx, { ...room, game });
   },
   "day.clearVote": async (ctx, s) => {
     const game = s!.room.game as Game;
@@ -203,7 +229,26 @@ const HANDLERS: Record<ServerId, Handler> = {
     game.daySwap = null;
     await ctx.db.patch(s!.room._id, { game });
   },
-  "day.endDiscussion": (ctx, s) => endDay(ctx, s!.room),
+  "day.ready": async (ctx, s, a) => {
+    const { room, players, seat } = s!;
+    const game = room.game as Game;
+    (game.ready ??= game.seats.map(() => false))[seat] = a.ready;
+    if (seatedHumans(game, players).every(i => game.ready[i])) await startVote(ctx, { ...room, game });
+    else await ctx.db.patch(room._id, { game });
+  },
+  "day.cutLine": async (ctx, s, a) => {
+    const { room, seat } = s!;
+    const game = room.game as Game;
+    if (a.seat >= game.seats.length) return fail("There is no such seat.");
+    if (a.seat === seat) return fail("Choose another player.");
+    if (game.powerUsed?.[seat]) return fail("You have already used it.");
+    (game.powerUsed ??= game.seats.map(() => false))[seat] = true;
+    const now = Date.now();
+    (game.seatEffects ??= []).push({ seat: a.seat, kind: "blackout", from: now, until: now + rulesOf(room.settings.rules).cutSeconds * 1000, by: seat, source: "hush" });
+    await ctx.db.patch(room._id, { game });
+  },
+  "day.endDiscussion": (ctx, s) => startVote(ctx, s!.room),
+  "presence.heartbeat": async (ctx, s) => { await ctx.db.patch(s!.me!._id, { lastSeenAt: Date.now() }); },
   "game.abandon": async (ctx, s) => { await ctx.db.patch(s!.room._id, { phase: "lobby", game: undefined }); },
   "game.playAgain": async (ctx, s) => { await ctx.db.patch(s!.room._id, { phase: "lobby", game: undefined }); },
 };
@@ -233,6 +278,12 @@ export async function dispatch(ctx: MutationCtx, caller: Caller, code: string | 
   const outside = cmd.contexts.length === 1 && cmd.contexts[0] === "home";
   const scope = outside ? null : await loadScope(ctx, caller, code);
   if (!scope && !outside) return fail("That room no longer exists.");
+  // The presence gate, before anything else is decided or revealed: a silenced player's calls fail as an unreachable
+  // server's would. A blackout refuses every call; a lighter effect would refuse only what others can perceive.
+  if (scope?.me) {
+    const g = gateOf(scope.room.game as Game | undefined, scope.room.phase, rulesOf(scope.room.settings.rules), scope.seat, Date.now());
+    if (!g.open && (g.kind === "blackout" || cmd.perceivable)) return fail(UNREACHABLE);
+  }
   const can = availability(cmd, contextOf(scope), parsed.data as Record<string, unknown>);
   if (!can.ok) return fail(can.reason);
   if (outside && agent) return fail("An assistant acts inside the room it was connected to.");

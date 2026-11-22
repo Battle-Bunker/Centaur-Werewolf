@@ -23,6 +23,14 @@ export interface Rules {
   thiefMinPlayers: number;
   /** A seat is eliminated only with at least this many votes (and the most votes). */
   eliminationVotes: number;
+  /** Optional night steps (trade or keep, give or not, bite or not, scent or not) may not be declined. */
+  mandatorySteps: boolean;
+  /** Chat stays open during the vote phase. */
+  chatDuringVote: boolean;
+  /** How long a Hush's cut lasts, in seconds. */
+  cutSeconds: number;
+  /** A Hush may cut during the vote phase too (not only during discussion), and a cut may run on into it. */
+  cutDuringVote: boolean;
 }
 
 export const DEFAULT_RULES: Rules = {
@@ -34,6 +42,10 @@ export const DEFAULT_RULES: Rules = {
   eavesdropGhost: true,
   thiefMinPlayers: 7,
   eliminationVotes: 2,
+  mandatorySteps: false,
+  chatDuringVote: false,
+  cutSeconds: 60,
+  cutDuringVote: true,
 };
 
 /** The rules as they were before the defector mechanics: for control arms. */
@@ -88,6 +100,24 @@ export const RULE_DEFS: RuleDef[] = [
   {
     id: "eliminationVotes", kind: "number", title: "Votes to eliminate", tooltip: "How many votes a player needs to be eliminated.", min: 2, max: 4,
     means: n => `The player or players with the most votes are eliminated, if that is at least ${n} votes; otherwise nobody is.`,
+  },
+  {
+    id: "mandatorySteps", kind: "boolean", title: "Mandatory night steps", tooltip: "Whether optional night steps (trade, give, bite, scent) may be declined.",
+    on: "Every night step must be done: nobody may decline a trade, a gift, a bite or a scent. Cards are sure to move wherever a role can move them.",
+    off: "Optional night steps (trade or keep, give or not, bite or not, scent or not) may be declined.",
+  },
+  {
+    id: "chatDuringVote", kind: "boolean", title: "Chat during the vote", tooltip: "Whether chat stays open during the vote phase.",
+    on: "Chat stays open during the vote phase.", off: "Chat closes when the vote phase begins.",
+  },
+  {
+    id: "cutSeconds", kind: "number", title: "Hush cut length", tooltip: "How long a Hush's cut lasts.", min: 15, max: 180,
+    means: n => `A Hush's cut lasts ${n} seconds.`,
+  },
+  {
+    id: "cutDuringVote", kind: "boolean", title: "Hush during the vote", tooltip: "Whether a Hush may cut during the vote phase, and a cut may run on into it.",
+    on: "A Hush may cut during discussion or the vote phase, and a cut may run on into the vote.",
+    off: "A Hush may cut only during discussion, and a cut ends when the vote phase begins.",
   },
 ];
 export const RULE_DEF: Record<RuleId, RuleDef> = Object.fromEntries(RULE_DEFS.map(r => [r.id, r])) as Record<RuleId, RuleDef>;

@@ -11,6 +11,13 @@ import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import { COMMANDS, grantAllows, toolDefinitions, toolName, versionKey, type CommandDef, type Grant } from "../shared/commands";
 import { sha256 } from "./auth";
+import { UNREACHABLE } from "./presence";
+
+/** How long the server's own room_wait may hold an HTTP action slot (the local backend runs only a few at once). */
+const WAIT_MAX_SECONDS = 4;
+class Unreachable extends Error {}
+/** What an unreachable server looks like from outside: a bare 503, the same for a real outage and a cut. */
+const unreachable = () => new Response("Service Unavailable", { status: 503, headers: { "Content-Type": "text/plain", "Retry-After": "5" } });
 
 declare const process: { env: Record<string, string | undefined> };
 
@@ -48,22 +55,29 @@ async function callTool(ctx: ActionCtx, who: Who, name: string, args: Record<str
     return parsed.data as Record<string, unknown>;
   };
   try {
-    if (cmd.id === "room.view") { const p = parsedRead() as { compact?: boolean; chatSince?: number }; return wrap(await ctx.runQuery(internal.agent.view, { ...at, compact: p.compact, chatSince: p.chatSince })); }
+    if (cmd.id === "room.view") { const p = parsedRead() as { compact?: boolean; chatSince?: number }; return wrap(await ctx.runQuery(internal.agent.view, { ...at, now: Date.now(), compact: p.compact, chatSince: p.chatSince })); }
     if (cmd.id === "rules.read") { parsedRead(); return wrap(await ctx.runQuery(internal.agent.rules, at)); }
     if (cmd.id === "room.wait") {
+      // A short, bounded wait: holding an HTTP action for long starves every other call on a small backend.
       const { version, seconds, until } = parsedRead() as { version?: string; seconds: number; until: string };
       const first = await ctx.runQuery(internal.agent.tick, at);
       const from = version ?? first?.version ?? "";
       let now = first;
       const same = (x: { version: string } | null) => !!x && versionKey(x.version, until) === versionKey(from, until);
-      for (const end = Date.now() + seconds * 1000; same(now) && Date.now() < end;) { await sleep(700); now = await ctx.runQuery(internal.agent.tick, at); }
+      const waitFor = Math.min(seconds, WAIT_MAX_SECONDS);
+      for (const end = Date.now() + waitFor * 1000; same(now) && Date.now() < end;) { await sleep(700); now = await ctx.runQuery(internal.agent.tick, at); }
       if (!now) return wrap("That room no longer exists.", true);
       const changed = !same(now);
-      return wrap({ changed, version: now.version, phase: now.phase, chatCount: now.chatCount, until, next: changed ? "Call room_view to see what changed (room_view { \"compact\": true, \"chatSince\": <your last chatCount> } for only what is new)." : "Nothing changed yet. Call room_wait again with this version." });
+      return wrap({
+        changed, version: now.version, phase: now.phase, chatCount: now.chatCount, until, waitedSeconds: waitFor,
+        ...(version === undefined ? { noVersionGiven: "You passed no version, so this waited for a change from the moment of the call. Pass the version you last saw to catch changes since then." } : {}),
+        next: changed ? "Call room_view to see what changed (room_view { \"compact\": true, \"chatSince\": <your last chatCount> } for only what is new)." : "Nothing yet: call room_wait again with this version.",
+      });
     }
     const result = await ctx.runMutation(internal.commands.runAs, { ...at, id: cmd.id, args });
     return wrap({ ok: true, did: cmd.title, ...(result && typeof result === "object" ? result : {}) });
   } catch (e) {
+    if (e instanceof ConvexError && e.data === UNREACHABLE) throw new Unreachable();
     if (e instanceof ConvexError) return wrap(String(e.data), true);
     throw e;
   }
@@ -107,17 +121,26 @@ export const post = httpAction(async (ctx, req) => {
   const found = bearer ? await ctx.runQuery(internal.auth.resolve, { tokenHash: await sha256(bearer.trim()) }) : null;
   if (!found) return json({ error: "unauthorized", message: "Connect with a key from the app, or sign in through OAuth." }, 401, { "WWW-Authenticate": `Bearer resource_metadata="${site()}/.well-known/oauth-protected-resource/mcp"` });
   if (found.stale) await ctx.runMutation(internal.auth.touch, { credential: found.credential });
+  // The presence gate (convex/presence.ts): a silenced player's calls fail exactly as an unreachable server's would,
+  // and do not count as heartbeats. Otherwise every authenticated call is a heartbeat.
+  const gate = await ctx.runQuery(internal.presence.gate, { player: found.player, code: found.code, now: Date.now() });
+  if (!gate.open) return unreachable();
+  if (gate.due) await ctx.runMutation(internal.presence.touch, { player: found.player });
 
   const text = await req.text();
   if (text.length > 262_144) return json({ jsonrpc: "2.0", id: null, error: { code: -32600, message: "Request too large." } }, 413);
   let body: unknown;
   try { body = JSON.parse(text); } catch { return json({ jsonrpc: "2.0", id: null, error: { code: -32700, message: "Parse error." } }, 400); }
+  try { return await respond(ctx, found, body); } catch (e) { if (e instanceof Unreachable) return unreachable(); throw e; }
+});
+
+async function respond(ctx: ActionCtx, found: Who, body: unknown): Promise<Response> {
   if (Array.isArray(body)) {
     const out = (await Promise.all(body.map(r => answer(ctx, found, r as Rpc)))).filter(r => r !== undefined);
     return out.length ? json(out) : new Response(null, { status: 202 });
   }
   const out = await answer(ctx, found, body as Rpc);
   return out === undefined ? new Response(null, { status: 202 }) : json(out);
-});
+}
 
 export const notAllowed = httpAction(async () => json({ error: "method_not_allowed", message: "This server answers POST only: it keeps no sessions and opens no streams." }, 405, { Allow: "POST" }));

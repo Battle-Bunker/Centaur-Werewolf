@@ -54,7 +54,10 @@ function sentence(ev: LogEvent, role: RoleId, step: string, who: string, self: n
     case "announce": return `${who} proclaimed ${ev.slots.map((s, i) => `${own(s)}: ${roleName(ev.roles[i])}`).join("; ")}. ${ev.atDawn ? "Everyone is shown this at dawn, with any other proclamation." : "Everyone was shown this."}`;
     case "count": return mine ? `${ev.label}: ${ev.n}.` : `${who} counted ${ev.n} ${ev.label.toLowerCase()}.`;
     case "census": return `${who === "You" ? "The census" : `${who}'s census`}: ${ev.roles.length < ev.of ? `${ev.roles.length} of the ${ev.of} roles dealt to the centre` : `the ${ev.of} roles dealt to the centre`} are ${ev.roles.map(roleName).join(", ")} (not where).`;
-    case "glamour": return `${who} glamoured ${own(ev.slot)}: until dawn every look at it shows ${roleName(ev.role)}.`;
+    case "distort":
+      if (ev.slot) return `${who} distorted ${own(ev.slot)}: until dawn every look at it shows ${ev.role ? roleName(ev.role) : "a random wrong role"}.`;
+      return `${who} veiled ${seatWord(ev.viewer!, v, viewer)}'s eyes: tonight every centre card they look at shows ${ev.role ? roleName(ev.role) : "a random wrong role"}.`;
+    case "cut": return `${who} cut ${seatWord(ev.seat, v, viewer)} off for ${Math.round((ev.until - ev.from) / 1000)} seconds, as if their connection had dropped.`;
     case "witness": return ev.roles.length ? `${who} saw the ${roleName(ev.by)}'s proclamation: ${ev.slots.map((s, i) => `${cardOf(s, v, viewer)}: ${roleName(ev.roles[i])}`).join("; ")}.` : `${who} saw that the ${roleName(ev.by)} proclaimed nothing tonight.`;
     case "forge": return `${who} forged a proclamation: ${ev.slots.map((s, i) => `${cardOf(s, v, viewer)}: ${roleName(ev.roles[i])}`).join("; ")}. At dawn it is published as the ${roleName(ev.as)}'s.`;
     case "overhear": {
@@ -93,8 +96,14 @@ export function revealHidden(e: LogEntry, v: Names): string {
   if (!h) return "";
   const out: string[] = [];
   if (h.truth) out.push(`truly ${h.truth.map(roleName).join(", ")}`);
+  if (h.role) out.push(`it showed ${roleName(h.role)}`);
   if (h.source !== undefined) out.push(h.source === "ghost" ? "nobody held it: a ghost result from their own seat" : h.source === "none" ? "nobody held it" : `copied from ${seatName(h.source, v)}`);
   return out.length ? ` [${out.join("; ")}]` : "";
+}
+
+/** How a seat's vote reads in the results: by whom, for whom, and whether the game cast it. */
+export function voteLine(seat: number, target: number, random: boolean, v: Names): string {
+  return random ? `${seatName(seat, v)} did not vote in time: voted at random for ${seatName(target, v)}.` : `${seatName(seat, v)} voted for ${seatName(target, v)}.`;
 }
 
 export const seconds = (ms: number) => Math.max(0, Math.ceil(ms / 1000));

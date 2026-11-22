@@ -14,6 +14,7 @@ import type * as commands from "../commands.js";
 import type * as game from "../game.js";
 import type * as http from "../http.js";
 import type * as mcp from "../mcp.js";
+import type * as presence from "../presence.js";
 import type * as rooms from "../rooms.js";
 import type * as scope from "../scope.js";
 import type * as timers from "../timers.js";
@@ -31,6 +32,7 @@ declare const fullApi: ApiFromModules<{
   game: typeof game;
   http: typeof http;
   mcp: typeof mcp;
+  presence: typeof presence;
   rooms: typeof rooms;
   scope: typeof scope;
   timers: typeof timers;

@@ -5,7 +5,7 @@
  * everything else (other roles, the centre, glamours, forgeries, the full log, who voted for whom) arrives only once
  * the game has ended. At a play-test table the host also sees the deal.
  */
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { query } from "./_generated/server";
 import { sha256 } from "./auth";
 import type { Game } from "./game";
@@ -18,6 +18,10 @@ export const redact = ({ hidden: _hidden, ...e }: LogEntry): LogEntry => e;
 export const publicShown = (game: Game) => visibleShown(game.state).map(({ forged: _f, turn, ...x }) => ({ ...x, turn: x.atDawn ? null : turn }));
 import { site } from "./mcp";
 import { contextOf, loadScope } from "./scope";
+import { gateOf, HEARTBEAT_MS, liveness, ONLINE_TIMEOUT_MS, UNREACHABLE } from "./presence";
+
+/** The seal of an authenticated message, as every viewer sees it until its game ends (real and forged alike). */
+export const sealNote = (seal: string) => `The game confirms this was sent by the player DEALT ${seal === "signet" ? "Signet" : seal === "notary" ? "Notary" : seal}.`;
 
 export const view = query({
   args: { code: v.string(), token: v.string() },
@@ -26,9 +30,13 @@ export const view = query({
     if (!scope) return null;
     const { room, players, me, seat } = scope;
     const game = room.game as Game | undefined;
+    const now = Date.now();
+    // The gate: a silenced player is served nothing, exactly as an unreachable server serves nothing. The client must
+    // render this error and a lost connection identically (docs/architecture.md, "Presence and the gate").
+    if (!gateOf(game, room.phase, rulesOf(room.settings.rules), seat, now).open) throw new ConvexError(UNREACHABLE);
     const person = (id: string, i: number) => {
       const p = players.find(x => x._id === id);
-      return { id, seat: i, name: p?.name ?? "(left)", bot: p?.bot ?? false, host: room.host === id, me: me?._id === id };
+      return { id, seat: i, name: p?.name ?? "(left)", bot: p?.bot ?? false, host: room.host === id, me: me?._id === id, lastSeenAt: p?.lastSeenAt ?? null, presence: liveness(p, now) };
     };
     const ended = room.phase === "ended";
     const rows = await ctx.db.query("messages").withIndex("room", q => q.eq("room", room._id)).order("desc").take(200);
@@ -37,6 +45,10 @@ export const view = query({
       code: room.code,
       phase: room.phase,
       round: room.round,
+      /** The server's clock when this view was made; every countdown is an absolute end time to compare with it. */
+      serverNow: now,
+      /** Presence: a seat is online while its last heartbeat (players[].lastSeenAt) is younger than onlineTimeoutMs. Recompute it with the clock. */
+      presence: { heartbeatMs: HEARTBEAT_MS, onlineTimeoutMs: ONLINE_TIMEOUT_MS },
       /** The fixed deal is the host's alone: others only learn that one is set. */
       settings: { ...room.settings, rules: rulesOf(room.settings.rules), fixedDeal: room.settings.fixedDeal && room.host === me?._id ? room.settings.fixedDeal : undefined },
       fixedDeal: !!room.settings.fixedDeal,
@@ -49,7 +61,8 @@ export const view = query({
       /** Table talk, oldest first. An unsigned message's sender is withheld until its game has ended. */
       messages: rows.reverse().map(m => {
         const hidden = m.mark === "unsigned" && !(ended && m.round === room.round) && m.round === room.round;
-        return { id: m._id, at: m._creationTime, round: m.round, phase: m.phase, text: m.text, mark: m.mark ?? null, via: m.via, name: hidden ? null : m.name, seat: hidden || !game ? null : game.seats.indexOf(m.player), mine: !hidden && me?._id === m.player };
+        const seal = m.seal ?? (m.mark === "signed" ? "signet" : null), revealed = m.round !== room.round || ended;
+        return { id: m._id, at: m._creationTime, round: m.round, phase: m.phase, text: m.text, mark: m.mark ?? null, seal, sealNote: seal ? sealNote(seal) : null, forged: revealed && m.forged ? true : null, via: m.via, name: hidden ? null : m.name, seat: hidden || !game ? null : game.seats.indexOf(m.player), mine: !hidden && me?._id === m.player };
       }),
       /** The viewer's own assistant connections, and where an MCP client connects. */
       connections: creds.filter(c => !c.revokedAt && (c.kind === "oauth" ? (c.refreshExpiresAt ?? 0) : c.expiresAt) > Date.now()).map(c => ({ id: c._id, label: c.label, permission: c.permission, kind: c.kind, lastUsedAt: c.lastUsedAt ?? null, createdAt: c._creationTime })),
@@ -59,6 +72,9 @@ export const view = query({
         turns: game.turns,
         turn: game.turn,
         dayEndsAt: game.dayEndsAt ?? null,
+        voteEndsAt: game.voteEndsAt ?? null,
+        /** Public: who is ready to end the discussion. */
+        ready: game.ready ?? game.seats.map(() => false),
         /** Public: who has voted, never for whom. */
         voted: game.votes.map(x => x !== null),
         /** The proclamations published so far (at dawn, under that rule): a card as it was at that moment of the night. */
@@ -74,7 +90,7 @@ export const view = query({
           journal: game.log.filter(e => e.seat === seat).map(e => (ended ? e : redact(e))),
           vote: game.votes[seat],
           /** Told at dawn. */
-          status: { bitten: game.state.dawn && game.state.bitten?.seat === seat, imago: game.state.imago.includes(seat) },
+          status: { bitten: game.state.dawn && game.state.bitten.some(b => b.seat === seat), imago: game.state.imago.includes(seat) },
           daySwap: game.daySwap?.by === seat ? { a: game.daySwap.a, b: game.daySwap.b } : null,
         } : null,
         /** Play-test tables: the deal, for the host only. */
@@ -92,6 +108,8 @@ export const view = query({
           imago: game.state.imago,
           shown: game.state.shown,
           daySwap: game.daySwap ?? null,
+          seatEffects: game.seatEffects ?? [],
+          dealSeed: game.dealSeed ?? null,
           rules: game.state.rules,
           log: game.log,
         } : null,

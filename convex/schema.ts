@@ -6,12 +6,14 @@ const grant = v.union(v.literal("read"), v.literal("act"), v.literal("host"));
 export default defineSchema({
   rooms: defineTable({
     code: v.string(),
-    phase: v.union(v.literal("lobby"), v.literal("night"), v.literal("day"), v.literal("ended")),
+    phase: v.union(v.literal("lobby"), v.literal("night"), v.literal("day"), v.literal("vote"), v.literal("ended")),
     /** Incremented at every deal, so a timer scheduled for an earlier round does nothing. */
     round: v.number(),
     host: v.optional(v.id("players")),
     settings: v.object({
       deck: v.array(v.string()), centerCount: v.number(), duskSeconds: v.number(), turnSeconds: v.number(), daySeconds: v.number(),
+      /** The vote phase's length; 20 s when absent. */
+      voteSeconds: v.optional(v.number()),
       /** Rule variants (shared/settings.ts); missing ones take their defaults. */
       rules: v.optional(v.record(v.string(), v.union(v.boolean(), v.number(), v.string()))),
       /** Play-test tables only: a fixed seed, seating and/or cards for the next deal. */
@@ -29,6 +31,8 @@ export default defineSchema({
     token: v.optional(v.string()),
     name: v.string(),
     bot: v.boolean(),
+    /** The last heartbeat (convex/presence.ts): the only source of what others see of this player's connection. */
+    lastSeenAt: v.optional(v.number()),
   }).index("room", ["room"]).index("token", ["token", "room"]),
 
   /** Table talk. Public to everyone in the room. */
@@ -43,6 +47,10 @@ export default defineSchema({
     via: v.union(v.literal("app"), v.literal("agent")),
     /** signed: the game vouches it came from the player dealt Signet. unsigned: the sender's name is withheld until the game ends. */
     mark: v.optional(v.union(v.literal("signed"), v.literal("unsigned"))),
+    /** An authenticated message: the role whose seal it carries ("signet", "notary"). Real and forged look identical. */
+    seal: v.optional(v.string()),
+    /** A forged seal: revealed only after its game has ended. */
+    forged: v.optional(v.boolean()),
   }).index("room", ["room"]),
 
   /**

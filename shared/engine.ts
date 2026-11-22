@@ -88,12 +88,22 @@ export interface GameState {
   /** Keys of the slots whose card has changed tonight. */
   moved: string[];
   shown: Shown[];
-  /** Seats marked by cards (by role id): the Cuckoo's egg, the Oxpecker's bond. They bind to the CARD. */
-  marks: Record<RoleId, number>;
-  /** Tokens lying on cards, keyed by the slot the card is in now: they move with the card. */
-  tokens: Record<string, { glamour?: RoleId }>;
-  /** The seat the Biter bit, and the Biter's seat. The bite binds to the SEAT. */
-  bitten: { seat: number; by: number } | null;
+  /**
+   * Card instances. Every card dealt is one instance, numbered by deal position (seat s's dealt card is instance s, the
+   * nth centre card is instance players + n), so several copies of one role stay distinguishable. `inst` and `cinst`
+   * are the instances at each seat and centre position now; `instRole` the role of each instance.
+   */
+  inst: number[];
+  cinst: number[];
+  instRole: RoleId[];
+  /** Seats marked by cards, keyed by card INSTANCE: the Cuckoo's egg, the Oxpecker's bond. They bind to the card. */
+  marks: Record<string, number>;
+  /** Tokens lying on cards, keyed by the slot the card is in now: they move with the card. `distort`: a role, or null for random. */
+  tokens: Record<string, { distort?: RoleId | null }>;
+  /** Viewer distortions, by seat: that player's looks at centre cards show a wrong role (a chosen one, or null: random). */
+  veils: Record<string, { role: RoleId | null }>;
+  /** Bites: the seat bitten and the Biter's seat. A bite binds to the SEAT. */
+  bitten: { seat: number; by: number }[];
   /** Seats that became an Imago at dawn. */
   imago: number[];
   /** The night is over. */
@@ -109,7 +119,9 @@ export interface Progress {
   seen: Record<string, RoleId[]>;
   done: boolean;
 }
-export const shapeOf = (state: GameState): Shape => ({ players: state.dealt.length, center: state.center.length, deck: [...state.dealt, ...state.dealtCenter] });
+export const shapeOf = (state: GameState): Shape => ({ players: state.dealt.length, center: state.center.length, deck: [...state.dealt, ...state.dealtCenter], mandatory: state.rules.mandatorySteps });
+/** The night turn a role acts in: its own, or its original's for a twin. */
+export const turnKey = (role: RoleId): RoleId => ROLE[role]?.twinOf ?? role;
 export const freshProgress = (): Progress => ({ step: 0, picks: {}, seen: {}, done: false });
 
 /** A copied journal line: what the player dealt a role did and learned at one of its steps. */
@@ -124,7 +136,8 @@ export type LogEvent =
   | { kind: "announce"; slots: Slot[]; roles: RoleId[]; atDawn: boolean }
   | { kind: "count"; label: string; n: number }
   | { kind: "census"; roles: RoleId[]; of: number }
-  | { kind: "glamour"; slot: Slot; role: RoleId }
+  /** A distortion cast: on a card (`slot`) or on a viewer (`viewer`); `role` null means a random wrong role per look. */
+  | { kind: "distort"; slot?: Slot; viewer?: number; role: RoleId | null }
   | { kind: "witness"; by: RoleId; slots: Slot[]; roles: RoleId[] }
   | { kind: "forge"; slots: Slot[]; roles: RoleId[]; as: RoleId }
   | { kind: "overhear"; role: RoleId; copied: Overheard[] }
@@ -135,8 +148,10 @@ export type LogEvent =
   | { kind: "imago" }
   /** A step the actor had queued that turned out not to happen. */
   | { kind: "void"; why: string }
-  /** The Moon-Thief's swap, made as the votes locked. */
+  /** The Moon-Thief's swap, made as the vote phase ended. */
   | { kind: "daySwap"; a: number; b: number }
+  /** A Hush's cut: the seat, and the window (ms timestamps). Logged only when the game ends. */
+  | { kind: "cut"; seat: number; from: number; until: number }
   | { kind: "skip" };
 
 export interface LogEntry {
@@ -154,7 +169,7 @@ export interface LogEntry {
    * What only the post-game log may show: the true cards behind a glamoured look, where an Eavesdropper's copy came
    * from. Views strip it until the game has ended.
    */
-  hidden?: { truth?: RoleId[]; source?: number | "ghost" | "none" };
+  hidden?: { truth?: RoleId[]; source?: number | "ghost" | "none"; role?: RoleId };
 }
 
 export function shuffle<T>(xs: readonly T[], rng: Rng): T[] {
@@ -167,16 +182,23 @@ export function shuffle<T>(xs: readonly T[], rng: Rng): T[] {
 export function dealFixed(cards: RoleId[], players: number, rules: Partial<Rules> = {}): GameState {
   if (cards.length < players + CENTER_MIN) throw new Error("The deck is too small for this table.");
   const dealt = cards.slice(0, players), center = cards.slice(players);
-  return { dealt, cards: [...dealt], center: [...center], dealtCenter: [...center], moved: [], shown: [], marks: {}, tokens: {}, bitten: null, imago: [], dawn: false, rules: { ...DEFAULT_RULES, ...rules } };
+  return {
+    dealt, cards: [...dealt], center: [...center], dealtCenter: [...center],
+    inst: dealt.map((_, i) => i), cinst: center.map((_, i) => players + i), instRole: [...cards],
+    moved: [], shown: [], marks: {}, tokens: {}, veils: {}, bitten: [], imago: [], dawn: false, rules: { ...DEFAULT_RULES, ...rules },
+  };
 }
 
 export function deal(deck: RoleId[], players: number, rng: Rng, rules: Partial<Rules> = {}): GameState {
   return dealFixed(shuffle(deck, rng), players, rules);
 }
 
-/** The roles in the deck that take a night turn, in wake order: one turn each, whether dealt or in the centre. */
+/**
+ * The night's turns, in wake order: one per role in the deck that acts at night, whether dealt or in the centre. A twin
+ * acts in its original's turn, so a deck with a twin and no original still shows the original's turn (and only that).
+ */
 export function nightTurns(deck: RoleId[]): RoleId[] {
-  return [...new Set(deck)].filter(r => ROLE[r]?.steps && ROLE[r].wake !== undefined).sort((a, b) => ROLE[a].wake! - ROLE[b].wake!);
+  return [...new Set(deck.filter(r => ROLE[r]?.steps && ROLE[r].wake !== undefined).map(turnKey))].sort((a, b) => ROLE[a].wake! - ROLE[b].wake!);
 }
 
 // ───────────────────────────── steps ─────────────────────────────
@@ -215,7 +237,7 @@ function roleProblem(step: StepDef, shape: Shape, role: RoleId | undefined, acto
 }
 
 export function validDecision(step: StepDef, seat: number, shape: Shape, d: Decision, actor?: RoleId): string | null {
-  if (d.kind === "skip") return step.optional ? null : "This step cannot be skipped.";
+  if (d.kind === "skip") return !step.optional ? "This step cannot be skipped." : shape.mandatory ? "At this table every night step is mandatory (the \"Mandatory night steps\" rule): this one cannot be skipped." : null;
   if (d.kind === "do") return step.pick ? "Choose a target." : step.names ? "Name a role." : null;
   if (d.kind === "name") return step.pick ? "Choose a target (and a role)." : roleProblem(step, shape, d.role, actor);
   if (!step.pick) return step.names ? "This step takes a role only: use { \"kind\": \"name\", \"role\": <id> }." : "This step takes no target.";
@@ -241,20 +263,26 @@ export function validPlan(role: RoleDef, stepId: string, seat: number, shape: Sh
   return null;
 }
 
+/** How many distinct legal decisions a step has (ordered target choices × named roles, plus declining). */
+export function decisionCount(step: StepDef, seat: number, shape: Shape, actor?: RoleId): number {
+  const roles = step.names ? legalRoles(step, shape.deck ?? Object.keys(ROLE), actor).length : 1;
+  let picks = 1;
+  if (step.pick) { const n = legalTargets(step, seat, shape).length, k = pickCount(step, shape); for (let i = 0; i < k; i++) picks *= n - i; }
+  return picks * roles + (step.optional && !shape.mandatory ? 1 : 0);
+}
+
+/** A uniformly random legal decision: every ordered choice of targets, every named role, and declining weigh the same. */
 export function randomDecision(step: StepDef, seat: number, shape: Shape, rng: Rng, actor?: RoleId): Decision {
   const roles = legalRoles(step, shape.deck ?? Object.keys(ROLE), actor);
-  const someRole = () => roles[Math.floor(rng() * roles.length)];
-  const options: Decision[] = [];
+  const total = decisionCount(step, seat, shape, actor);
+  if (step.optional && !shape.mandatory && Math.floor(rng() * total) === 0) return { kind: "skip" };
+  const role = () => roles[Math.floor(rng() * roles.length)];
   if (step.pick) {
-    const legal = legalTargets(step, seat, shape), count = pickCount(step, shape);
-    const withRole = (d: { kind: "pick"; targets: Slot[] }): Decision => (step.names ? { ...d, role: someRole() } : d);
-    if (count === 1) for (const t of legal) options.push(withRole({ kind: "pick", targets: [t] }));
-    else options.push(withRole({ kind: "pick", targets: shuffle(legal, rng).slice(0, count) }));
-  } else if (step.names) options.push({ kind: "name", role: someRole() });
-  else options.push({ kind: "do" });
-  // A step with several targets has too many combinations to list; declining gets the weight of one target.
-  if (step.optional) options.push({ kind: "skip" });
-  return options[Math.floor(rng() * options.length)];
+    const targets = shuffle(legalTargets(step, seat, shape), rng).slice(0, pickCount(step, shape));
+    return step.names ? { kind: "pick", targets, role: role() } : { kind: "pick", targets };
+  }
+  if (step.names) return { kind: "name", role: role() };
+  return { kind: "do" };
 }
 
 function resolveRef(ref: Ref, seat: number, players: number, picks: Slot[], progress: Progress): Slot {
@@ -269,13 +297,31 @@ function resolveRef(ref: Ref, seat: number, players: number, picks: Slot[], prog
 }
 
 export const cardAt = (state: GameState, s: Slot) => (s.k === "p" ? state.cards[s.i] : state.center[s.i]);
-const setCard = (state: GameState, s: Slot, r: RoleId) => { if (s.k === "p") state.cards[s.i] = r; else state.center[s.i] = r; };
+const instAt = (state: GameState, s: Slot) => (s.k === "p" ? state.inst[s.i] : state.cinst[s.i]);
+/** Puts a card (role and instance) at a slot. */
+function setCard(state: GameState, s: Slot, r: RoleId, inst: number) {
+  if (s.k === "p") { state.cards[s.i] = r; state.inst[s.i] = inst; } else { state.center[s.i] = r; state.cinst[s.i] = inst; }
+}
+/** A random role from the deck other than `not`, for random distortions. */
+function wrongRole(state: GameState, not: RoleId, rng: Rng): RoleId {
+  const pool = [...new Set(state.instRole)].filter(r => r !== not);
+  return pool.length ? pool[Math.floor(rng() * pool.length)] : not;
+}
 
-/** What an actor sees at a slot: a glamour fools everyone but the Werewolf team. */
-function seenAt(state: GameState, s: Slot, actor: number): { role: RoleId; truth: RoleId } {
+/**
+ * What an actor sees at a slot, in this order: a twin card shows its original (if it is that kind of twin); a
+ * distortion on the card shows its role instead (the latest cast wins); then, for a look at a centre card, a veil on
+ * the viewer shows its role instead. Distortions are defector noise: the Werewolf team's own looks see the truth.
+ */
+export function seenAt(state: GameState, s: Slot, actor: number, rng: Rng): { role: RoleId; truth: RoleId } {
   const truth = cardAt(state, s);
   if (actor >= 0 && ROLE[state.dealt[actor]].team === "werewolf") return { role: truth, truth };
-  return { role: state.tokens[slotKey(s)]?.glamour ?? truth, truth };
+  let role = ROLE[truth].looksAs ?? truth;
+  const token = state.tokens[slotKey(s)];
+  if (token && "distort" in token) role = token.distort ?? wrongRole(state, truth, rng);
+  const veil = s.k === "c" && actor >= 0 ? state.veils[String(actor)] : undefined;
+  if (veil) role = veil.role ?? wrongRole(state, truth, rng);
+  return { role, truth };
 }
 
 /** Moves the tokens of several slots along with their cards: `to[i]` receives what lay on `from[i]`. */
@@ -298,7 +344,7 @@ function applyEffect(e: Effect, c: Ctx): Applied {
   switch (e.kind) {
     case "look": {
       const slots = e.targets === "picks" ? picks : e.targets.map(ref);
-      const seen = slots.map(s => seenAt(state, s, seat));
+      const seen = slots.map(s => seenAt(state, s, seat, c.rng));
       const roles = seen.map(x => x.role);
       const hidden = seen.some(x => x.role !== x.truth) ? { truth: seen.map(x => x.truth) } : undefined;
       if (e.reveal === "role") { progress.seen[c.stepId] = roles; return { ev: { kind: "look", slots, roles }, hidden }; }
@@ -307,21 +353,21 @@ function applyEffect(e: Effect, c: Ctx): Applied {
     case "swap": {
       const a = ref(e.a), b = ref(e.b);
       if (sameSlot(a, b)) return null;
-      const ca = cardAt(state, a);
-      setCard(state, a, cardAt(state, b)); setCard(state, b, ca);
+      const ca = cardAt(state, a), ia = instAt(state, a);
+      setCard(state, a, cardAt(state, b), instAt(state, b)); setCard(state, b, ca, ia);
       moveTokens(state, [a, b], [b, a]);
       touch(a); touch(b);
       return { ev: { kind: "swap", a, b } };
     }
     case "rotate": {
-      const held = picks.map(s => cardAt(state, s));
+      const held = picks.map(s => cardAt(state, s)), insts = picks.map(s => instAt(state, s));
       const next = picks.map((_, i) => picks[(i + 1) % picks.length]);
-      picks.forEach((s, i) => { setCard(state, next[i], held[i]); touch(s); });
+      picks.forEach((s, i) => { setCard(state, next[i], held[i], insts[i]); touch(s); });
       moveTokens(state, picks, next);
       return { ev: { kind: "rotate", slots: picks } };
     }
     case "announce": {
-      const seen = picks.map(s => seenAt(state, s, seat));
+      const seen = picks.map(s => seenAt(state, s, seat, c.rng));
       const atDawn = state.rules.dawnProclamations;
       picks.forEach((slot, i) => state.shown.push({ slot, role: seen[i].role, by: state.dealt[seat], turn: c.turn, atDawn }));
       return { ev: { kind: "announce", slots: picks, roles: seen.map(x => x.role), atDawn }, hidden: seen.some(x => x.role !== x.truth) ? { truth: seen.map(x => x.truth) } : undefined };
@@ -333,10 +379,18 @@ function applyEffect(e: Effect, c: Ctx): Applied {
       if (state.rules.census === "three") roles = shuffle(roles, c.rng).slice(0, 3);
       return { ev: { kind: "census", roles: roles.sort(), of: state.dealtCenter.length } };
     }
-    case "glamour": {
+    case "distort": {
       const slot = picks[0];
-      state.tokens[slotKey(slot)] = { ...state.tokens[slotKey(slot)], glamour: c.named! };
-      return { ev: { kind: "glamour", slot, role: c.named! } };
+      // A random card distortion picks its wrong role once, when cast, so every look at that card agrees; a random
+      // viewer distortion draws afresh at each look.
+      if (e.target === "card") {
+        const role = e.value === "chosen" ? c.named! : wrongRole(state, cardAt(state, slot), c.rng);
+        state.tokens[slotKey(slot)] = { ...state.tokens[slotKey(slot)], distort: role };
+        return { ev: { kind: "distort", slot, role: e.value === "chosen" ? role : null }, hidden: e.value === "random" ? { role } : undefined };
+      }
+      if (slot.k !== "p") throw new Error("Only a player can be veiled.");
+      state.veils[String(slot.i)] = { role: e.value === "chosen" ? c.named! : null };
+      return { ev: { kind: "distort", viewer: slot.i, role: e.value === "chosen" ? c.named! : null } };
     }
     case "witness": {
       const made = state.shown.filter(s => s.by === e.by && !s.forged);
@@ -360,14 +414,14 @@ function applyEffect(e: Effect, c: Ctx): Applied {
     case "bite": {
       const t = ref(e.target);
       if (t.k !== "p") throw new Error("Only a player can be bitten.");
-      if (ROLE[cardAt(state, t)].team === "werewolf") return { ev: { kind: "bite", seat: t.i, took: false } };
-      state.bitten = { seat: t.i, by: seat };
+      if (ROLE[cardAt(state, t)].team === "werewolf" || state.bitten.some(b => b.seat === t.i)) return { ev: { kind: "bite", seat: t.i, took: false } };
+      state.bitten.push({ seat: t.i, by: seat });
       return { ev: { kind: "bite", seat: t.i, took: true } };
     }
     case "mark": {
       const t = ref(e.target);
       if (t.k !== "p") throw new Error("Only a player can be marked.");
-      state.marks[state.dealt[seat]] = t.i;
+      state.marks[String(seat)] = t.i; // the actor's dealt card is instance `seat`
       return { ev: { kind: "mark", seat: t.i, label: e.label, public: e.public } };
     }
     case "learnSeats": {
@@ -465,19 +519,23 @@ export function advance(state: GameState, seat: number, plan: Plan, progress: Pr
 export function dawn(state: GameState, deck: RoleId[], turn: number, rng: Rng): LogEntry[] {
   const log: LogEntry[] = [];
   const players = state.dealt.length;
-  for (const id of new Set(deck)) for (const step of ROLE[id]?.steps ?? []) for (const e of step.effects) {
-    if (e.kind !== "mark" || !e.public || id in state.marks) continue;
+  void deck;
+  // Centre cards whose role lays a public mark (an unheld Cuckoo): the game lays it at random.
+  state.dealtCenter.forEach((id, n) => {
+    const e = ROLE[id]?.steps?.flatMap(x => x.effects).find(x => x.kind === "mark" && x.public);
+    const inst = String(players + n);
+    if (!e || e.kind !== "mark" || inst in state.marks) return;
     const seat = Math.floor(rng() * players);
-    state.marks[id] = seat;
+    state.marks[inst] = seat;
     log.push({ turn, seat: -1, role: id, step: "dawn", via: "auto", ev: { kind: "mark", seat, label: e.label, public: true, unheld: true } });
-  }
-  const bitten = state.bitten?.seat ?? -1;
+  });
+  const bitten = new Set(state.bitten.map(b => b.seat));
   state.dealt.forEach((r, i) => {
-    if (!ROLE[r].metamorph || i === bitten || !state.moved.includes(slotKey({ k: "p", i }))) return;
+    if (!ROLE[r].metamorph || bitten.has(i) || !state.moved.includes(slotKey({ k: "p", i }))) return;
     state.imago.push(i);
     log.push({ turn, seat: i, role: r, step: "dawn", via: "auto", ev: { kind: "imago" } });
   });
-  if (state.bitten) log.push({ turn, seat: state.bitten.seat, role: state.dealt[state.bitten.seat], step: "dawn", via: "auto", ev: { kind: "bitten", by: state.rules.biteNamesBiter ? state.bitten.by : null } });
+  for (const b of state.bitten) log.push({ turn, seat: b.seat, role: state.dealt[b.seat], step: "dawn", via: "auto", ev: { kind: "bitten", by: state.rules.biteNamesBiter ? b.by : null } });
   state.shown = [...state.shown.filter(s => !s.atDawn), ...shuffle(state.shown.filter(s => s.atDawn), rng)];
   state.dawn = true;
   return log;
@@ -488,7 +546,8 @@ export const visibleShown = (state: GameState) => state.shown.filter(s => !s.atD
 /** Public marks a player may see now (the egg): only after dawn. */
 export function publicMarks(state: GameState): { role: RoleId; seat: number; label: string }[] {
   if (!state.dawn) return [];
-  return Object.entries(state.marks).flatMap(([role, seat]) => {
+  return Object.entries(state.marks).flatMap(([inst, seat]) => {
+    const role = state.instRole[Number(inst)];
     const e = ROLE[role]?.steps?.flatMap(s => s.effects).find(x => x.kind === "mark" && x.public);
     return e && e.kind === "mark" ? [{ role, seat, label: e.label }] : [];
   });
@@ -497,6 +556,7 @@ export function publicMarks(state: GameState): { role: RoleId; seat: number; lab
 /** The Moon-Thief's swap, as the votes lock: two seats' cards change places. */
 export function daySwap(state: GameState, a: number, b: number): LogEvent {
   [state.cards[a], state.cards[b]] = [state.cards[b], state.cards[a]];
+  [state.inst[a], state.inst[b]] = [state.inst[b], state.inst[a]];
   return { kind: "daySwap", a, b };
 }
 
@@ -525,9 +585,13 @@ export interface Outcome {
 export interface ResolveInput {
   /** Seats whose vote the game cast at random. */
   forced?: number[];
-  bitten?: { seat: number; by: number } | null;
+  /** Bitten seats (a single bite, a list, or none). */
+  bitten?: { seat: number; by: number } | { seat: number; by: number }[] | null;
   imago?: number[];
-  marks?: Record<RoleId, number>;
+  /** Marks keyed by card instance (with `held`), or by role id (without). */
+  marks?: Record<string, number>;
+  /** The card instance each seat holds (GameState.inst), to find each held card's marks. */
+  held?: number[];
   rules?: Partial<Rules>;
 }
 
@@ -541,7 +605,7 @@ export function resolveVote(cards: RoleId[], votes: (number | null)[], input: Re
   const rules = { ...DEFAULT_RULES, ...input.rules };
   const n = cards.length;
   const forced = new Set(input.forced ?? []);
-  const marks = input.marks ?? {};
+  const markOf = (i: number): number | undefined => (input.marks ?? {})[input.held ? String(input.held[i]) : cards[i]];
   const tally = Array<number>(n).fill(0);
   votes.forEach((v, i) => { if (v !== null) tally[v] += ROLE[cards[i]].vote?.weight ?? 1; });
   const top = Math.max(...tally);
@@ -557,9 +621,9 @@ export function resolveVote(cards: RoleId[], votes: (number | null)[], input: Re
   const dead = (i: number) => deaths.includes(i);
 
   // ── teams ──
-  const bitten = input.bitten?.seat ?? -1;
-  const imago = new Set((input.imago ?? []).filter(i => i !== bitten));
-  const teams: Team[] = cards.map((r, i) => (i === bitten ? "werewolf" : imago.has(i) ? "wild" : ROLE[r].team));
+  const bittenSeats = new Set((Array.isArray(input.bitten) ? input.bitten : input.bitten ? [input.bitten] : []).map(b => b.seat));
+  const imago = new Set((input.imago ?? []).filter(i => !bittenSeats.has(i)));
+  const teams: Team[] = cards.map((r, i) => (bittenSeats.has(i) ? "werewolf" : imago.has(i) ? "wild" : ROLE[r].team));
   const creature = (i: number) => teams[i] === "wild";
   const winRule = (i: number): WinRule | undefined => (imago.has(i) ? "eliminated" : creature(i) ? ROLE[cards[i]].win : undefined);
   const seatsOf = (team: Team) => teams.flatMap((t, i) => (t === team ? [i] : []));
@@ -622,7 +686,7 @@ export function resolveVote(cards: RoleId[], votes: (number | null)[], input: Re
       return imago.has(i) ? "became an Imago when their card was moved in the night, and lost because they were not eliminated" : `held the ${name} and lost because they were not eliminated`;
     }
     if (rule === "markEliminated") {
-      const m = marks[cards[i]];
+      const m = markOf(i);
       if (m === undefined) return `held the ${name}, which marked nobody, so lost`;
       if (dead(i)) return `held the ${name} and lost, because they were eliminated themselves`;
       if (!dead(m)) return `held the ${name} and lost, because the marked seat ${m} was not eliminated`;
@@ -639,7 +703,7 @@ export function resolveVote(cards: RoleId[], votes: (number | null)[], input: Re
   // ── the Oxpecker: follows its host, after the curse ──
   for (let i = 0; i < n; i++) {
     if (winRule(i) !== "markWins") continue;
-    const host = marks[cards[i]], name = ROLE[cards[i]].name;
+    const host = markOf(i), name = ROLE[cards[i]].name;
     if (host === undefined || host === i) why[i] = `held the ${name}, bonded to ${host === i ? "their own seat" : "nobody"}, so lost`;
     else if (keystoneDead) why[i] = `held the ${name}, but the Elderbark was eliminated, so no other creature wins`;
     else if (winners.has(host) && !cursed.includes(host)) { winners.add(i); why[i] = `held the ${name} and won with the seat it bonded to (seat ${host}), which won`; }
@@ -651,7 +715,7 @@ export function resolveVote(cards: RoleId[], votes: (number | null)[], input: Re
   const teamWord: Record<Team, string> = { centaur: "the Centaur team", werewolf: "the Werewolf team", wild: "the Wildwood" };
   for (let i = 0; i < n; i++) {
     if (!why[i]) {
-      const t = teams[i], on = i === bitten ? `was bitten, so played for ${teamWord[t]}` : `held the ${ROLE[cards[i]].name}, on ${teamWord[t]}`;
+      const t = teams[i], on = bittenSeats.has(i) ? `was bitten, so played for ${teamWord[t]}` : `held the ${ROLE[cards[i]].name}, on ${teamWord[t]}`;
       if (winningTeam === "nobody") why[i] = `${on}, and no team won because ${reason}`;
       else if (t === winningTeam) why[i] = winners.has(i) || cursed.includes(i) ? `${on}, which won because ${reason}` : `${on}, which won because ${reason}, but only its surviving members win`;
       else why[i] = `${on}, which lost because ${reason}`;

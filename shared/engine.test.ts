@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { availability, COMMAND, COMMANDS, grantAllows, HOME_CONTEXT, toolDefinitions } from "./commands";
-import { advance, dawn, daySwap, deal, dealFixed, deckProblem, freshProgress, legalTargets, nightTurns, publicMarks, randomDecision, resolvePlan, resolveVote, secureRng, seededRng, shuffle, uncovered, validDecision, validPlan, visibleShown, type GameState, type LogEntry, type Plan, type StepPlan } from "./engine";
+import { advance, dawn, daySwap, deal, dealFixed, decisionCount, deckProblem, freshProgress, legalTargets, nightTurns, publicMarks, randomDecision, resolvePlan, resolveVote, secureRng, seededRng, shapeOf, shuffle, turnKey, uncovered, validDecision, validPlan, visibleShown, type GameState, type LogEntry, type Plan, type StepPlan } from "./engine";
 import { CENTER_MAX, CENTER_MIN, legalRoles, recommendedDeck, ROLE, ROLES, type RoleId, type Slot } from "./roles";
 import { DEFAULT_RULES, describeRules, LEGACY_RULES, RULE_DEFS, ruleValueProblem, rulesOf, type Rules } from "./settings";
 import { describe as say, revealHidden } from "./text";
@@ -20,7 +20,7 @@ const act = (s: GameState, seat: number, plan: Plan = {}, turn = 1, history: Log
 function night(s: GameState, plans: Record<number, Plan> = {}, seed = 7): LogEntry[] {
   const log: LogEntry[] = [];
   const r = rng(seed);
-  nightTurns([...s.dealt, ...s.dealtCenter]).forEach((role, turn) => s.dealt.forEach((d, seat) => { if (d === role) log.push(...advance(s, seat, plans[seat] ?? {}, freshProgress(), turn + 1, r, { force: true, history: log })); }));
+  nightTurns([...s.dealt, ...s.dealtCenter]).forEach((role, turn) => s.dealt.forEach((d, seat) => { if (turnKey(d) === role) log.push(...advance(s, seat, plans[seat] ?? {}, freshProgress(), turn + 1, r, { force: true, history: log })); }));
   log.push(...dawn(s, [...s.dealt, ...s.dealtCenter], 99, r));
   return log;
 }
@@ -38,12 +38,15 @@ describe("deal", () => {
   });
   it("gives every night role in the deck one turn, in wake order, dealt or not", () => {
     expect(nightTurns(["centaur", "sentry", "werewolf", "werewolf", "farrier", "sage", "chiron"])).toEqual(["werewolf", "sage", "centaur", "farrier", "sentry"]);
-    expect(nightTurns(ROLES.map(r => r.id))).toEqual(["elderbark", "werewolf", "stalkinghorse", "glamour", "moonthief", "tracker", "whisperer", "cuckoo", "sage", "centaur", "herald", "forger", "rustler", "farrier", "spooker", "herder", "oxpecker", "sentry", "eavesdropper", "biter"]);
+    expect(nightTurns(ROLES.map(r => r.id))).toEqual(["elderbark", "werewolf", "stalkinghorse", "glamour", "moonthief", "wisp", "tracker", "mistweaver", "fogbank", "whisperer", "cuckoo", "sage", "notary", "centaur", "herald", "forger", "poacher", "rustler", "cutpurse", "pickpocket", "drifter", "farrier", "spooker", "herder", "oxpecker", "latecomer", "sentry", "eavesdropper", "biter"]);
+    // A twin acts in its original's turn: one public turn for the pair, and the original's turn even if only the twin is in the deck.
+    expect(nightTurns(["sage", "moonsage", "centaur"])).toEqual(["sage", "centaur"]);
+    expect(nightTurns(["moonsage", "centaur"])).toEqual(["sage", "centaur"]);
   });
   it("retires Sagittarius, the Augur and the Hybrid, and every creature is on the Wildwood but the Moth", () => {
     for (const id of ["sagittarius", "augur", "hybrid"]) expect(ROLE[id]).toBeUndefined();
     expect(ROLES.filter(r => r.tags.includes("wild")).map(r => [r.id, r.team])).toEqual([["moth", "centaur"], ["elderbark", "wild"], ["cuckoo", "wild"], ["oxpecker", "wild"], ["sporeling", "wild"]]);
-    expect(ROLES.filter(r => r.tags.includes("pack") && r.id !== "werewolf").every(r => r.max === 1)).toBe(true);
+    expect(ROLES.every(r => r.max >= 12)).toBe(true); // any number of copies of any card
   });
   it("recommends a valid deck for 3 to 12 players and 3 to 6 centre cards", () => {
     for (let n = 3; n <= 12; n++) for (let c = CENTER_MIN; c <= CENTER_MAX; c++) expect(deckProblem(recommendedDeck(n, c), n, c), `${n}p ${c}c`).toBeNull();
@@ -58,7 +61,7 @@ describe("deal", () => {
     expect(deckProblem([...base.slice(1), "forger", "herald"], 5, 3, { dawnProclamations: false })).toMatch(/Proclamations at dawn/);
     expect(deckProblem([...base, "moonthief"], 5, 3)).toMatch(/Moon-Thief needs 7 or more/);
     expect(deckProblem([...base, "moonthief"], 5, 3, { thiefMinPlayers: 5 })).toBeNull();
-    expect(deckProblem([...base, "glamour", "glamour"].slice(1), 5, 3)).toMatch(/Too many copies of Glamour/);
+    expect(deckProblem(["glamour", "glamour", "glamour", "sage", "sage", "sage", "centaur", "centaur"], 5, 3)).toBeNull();
   });
   it("seeds deals repeatably, and the secure generator stays in [0, 1)", () => {
     const deck = recommendedDeck(7, 4);
@@ -234,7 +237,7 @@ describe("Glamour", () => {
   it("makes every look at the glamoured card show the named role, but not Werewolf-team looks or the Herder's count", () => {
     const s = state(["glamour", "sage", "herald", "herder", "biter"], ["werewolf", "centaur", "rustler"]);
     const g = act(s, 0, glam(P(3), "sage"));
-    expect(g.map(e => e.ev.kind)).toEqual(["seats", "census", "glamour"]);
+    expect(g.map(e => e.ev.kind)).toEqual(["seats", "census", "distort"]);
     const read = act(s, 1, { read: always(P(3)) });
     expect(read[0].ev).toEqual({ kind: "look", slots: [P(3)], roles: ["sage"] });
     expect(read[0].hidden).toEqual({ truth: ["herder"] });
@@ -253,7 +256,7 @@ describe("Glamour", () => {
     act(s, 0, glam(P(0), "centaur"));
     act(s, 2, { peek: always(P(0)), trade: decide({ kind: "do" }) }); // the Rustler takes the glamoured card
     expect(s.cards[2]).toBe("glamour");
-    expect(s.tokens).toMatchObject({ p2: { glamour: "centaur" } });
+    expect(s.tokens).toMatchObject({ p2: { distort: "centaur" } });
     expect(s.tokens.p0).toBeUndefined();
     expect(act(s, 3, { read: always(P(2)) })[0].ev).toMatchObject({ roles: ["centaur"] });
   });
@@ -321,7 +324,7 @@ describe("Biter", () => {
     const s = state(["biter", "sage", "centaur", "werewolf"], ["rustler", "herald", "sentry"]);
     const log = act(s, 0, { sniff: always(P(1)), bite: { branches: [{ roles: ["sage", "herald"], decision: { kind: "do" } }], otherwise: { kind: "skip" } } });
     expect(log.map(e => e.ev.kind)).toEqual(["seats", "census", "look", "bite"]);
-    expect(s.bitten).toEqual({ seat: 1, by: 0 });
+    expect(s.bitten).toEqual([{ seat: 1, by: 0 }]);
     const notes = dawn(s, [...s.dealt, ...s.dealtCenter], 9, rng());
     expect(notes).toEqual([{ turn: 9, seat: 1, role: "sage", step: "dawn", via: "auto", ev: { kind: "bitten", by: 0 } }]);
     expect(say(notes[0], names, 1)).toMatch(/you were bitten by Ada \(seat 0\)\. You now win only with the Werewolf team\. You are not a Werewolf/);
@@ -332,7 +335,7 @@ describe("Biter", () => {
   it("has no effect on a card already on the Werewolf team", () => {
     const s = state(["biter", "whisperer", "centaur"], ["rustler", "herald", "sentry"]);
     expect(act(s, 0, { sniff: always(P(1)), bite: decide({ kind: "do" }) }).slice(-1)[0].ev).toEqual({ kind: "bite", seat: 1, took: false });
-    expect(s.bitten).toBeNull();
+    expect(s.bitten).toEqual([]);
   });
 });
 
@@ -345,14 +348,14 @@ describe("creatures at night", () => {
     const s = state(["cuckoo", "oxpecker", "sage", "werewolf"], ["herald", "centaur", "sentry"]);
     act(s, 0, { peek: always(P(3)), egg: always(P(2)) });
     act(s, 1, { bond: always(P(3)) });
-    expect(s.marks).toEqual({ cuckoo: 2, oxpecker: 3 });
+    expect(s.marks).toEqual({ 0: 2, 1: 3 }); // keyed by card instance: seat s's dealt card is instance s
     expect(publicMarks(s)).toEqual([]);
     dawn(s, [...s.dealt, ...s.dealtCenter], 9, rng());
     expect(publicMarks(s)).toEqual([{ role: "cuckoo", seat: 2, label: "The egg" }]);
     const unheld = state(["sage", "centaur", "werewolf"], ["cuckoo", "herald", "sentry"]);
     const notes = dawn(unheld, [...unheld.dealt, ...unheld.dealtCenter], 9, rng());
     expect(notes[0]).toMatchObject({ seat: -1, role: "cuckoo", ev: { kind: "mark", unheld: true, public: true } });
-    expect(unheld.marks.cuckoo).toBeGreaterThanOrEqual(0);
+    expect(unheld.marks[3]).toBeGreaterThanOrEqual(0); // the first centre card is instance 3
   });
   it("turns the Moth's seat into an Imago at dawn if the card dealt to it was moved, unless bitten", () => {
     const moved = state(["moth", "rustler", "sage"], ["werewolf", "herald", "sentry"]);
@@ -383,8 +386,120 @@ describe("creatures at night", () => {
       night(s, {}, seed);
       expect(s.dawn).toBe(true);
       expect([...s.cards, ...s.center].sort()).toEqual([...deck].sort());
-      expect(s.marks.cuckoo).toBeGreaterThanOrEqual(0);
+      expect(Object.keys(s.marks).length).toBeGreaterThanOrEqual(1);
     }
+  });
+});
+
+describe("duplicates and card instances", () => {
+  it("lets several holders of one role act in the same turn, each with their own result", () => {
+    const s = state(["sage", "sage", "werewolf", "centaur"], ["herald", "centaur", "rustler"]);
+    expect(act(s, 0, { read: always(P(2)) })[0].ev).toMatchObject({ roles: ["werewolf"] });
+    expect(act(s, 1, { read: always(P(3)) })[0].ev).toMatchObject({ roles: ["centaur"] });
+  });
+  it("binds a mark to the card instance, so two Cuckoos' eggs stay apart wherever the cards go", () => {
+    const s = state(["cuckoo", "cuckoo", "rustler", "sage", "werewolf"], ["herald", "centaur", "sentry"]);
+    act(s, 0, { peek: always(P(3)), egg: always(P(3)) });
+    act(s, 1, { peek: always(P(3)), egg: always(P(4)) });
+    act(s, 2, { peek: always(P(0)), trade: decide({ kind: "do" }) }); // the first Cuckoo card goes to seat 2
+    expect(s.inst).toEqual([2, 1, 0, 3, 4]);
+    // seat 4 (werewolf) is voted out: only the holder of the SECOND Cuckoo card (instance 1, seat 1) wins by its egg.
+    const o = resolveVote(s.cards, [4, 4, 4, 4, 0], { marks: s.marks, held: s.inst });
+    expect(o.deaths).toEqual([4]);
+    expect(o.winners).toContain(1);
+    expect(o.winners).not.toContain(2);
+  });
+});
+
+describe("shadow twins", () => {
+  it("acts in its original's turn with the original's steps, truthfully", () => {
+    const s = state(["moonsage", "sage", "werewolf", "centaur"], ["herald", "centaur", "rustler"]);
+    expect(turnKey("moonsage")).toBe("sage");
+    expect(act(s, 0, { read: always(P(2)) })[0].ev).toEqual({ kind: "look", slots: [P(2)], roles: ["werewolf"] });
+  });
+  it("passes for its original under a look if it is that kind of twin, and counts as a Werewolf only if tagged", () => {
+    const s = state(["sage", "moonsage", "duncentaur", "centaur"], ["herald", "centaur", "rustler"]);
+    const read = (t: number) => act(dealFixed([...s.dealt, ...s.dealtCenter], 4), 0, { read: always(P(t)) })[0];
+    expect(read(1).ev).toMatchObject({ roles: ["sage"] });
+    expect(read(1).hidden).toEqual({ truth: ["moonsage"] });
+    expect(read(2).ev).toMatchObject({ roles: ["duncentaur"] });
+    expect(resolveVote(["moonsage", "centaur", "sage"], [1, 0, 0]).winningTeam).toBe("nobody"); // an ally falls, no wolf held
+    expect(resolveVote(["duncentaur", "centaur", "sage"], [1, 0, 0]).winningTeam).toBe("centaur");
+    expect(ROLE.moonsage.rules).toMatch(/Sage's turn.*not a Werewolf.*shows a Sage/);
+  });
+});
+
+describe("card stealers", () => {
+  it("Cutpurse and Drifter must swap, then see what they took; Pickpocket and Latecomer swap blind", () => {
+    const s = state(["cutpurse", "pickpocket", "drifter", "latecomer", "werewolf"], ["herald", "centaur", "sentry"]);
+    expect(act(s, 0, { steal: always(P(4)) }).map(e => e.ev)).toEqual([{ kind: "swap", a: P(0), b: P(4) }, { kind: "look", slots: [P(0)], roles: ["werewolf"] }]);
+    expect(act(s, 1, { lift: always(P(0)) }).map(e => e.ev.kind)).toEqual(["swap"]);
+    expect(act(s, 2, { drift: always(C(0)) }).map(e => e.ev)).toEqual([{ kind: "swap", a: P(2), b: C(0) }, { kind: "look", slots: [P(2)], roles: ["herald"] }]);
+    expect(act(s, 3, { swap: always(P(2)) }).map(e => e.ev.kind)).toEqual(["swap"]);
+    for (const r of ["cutpurse", "pickpocket", "drifter", "latecomer", "poacher"]) expect(ROLE[r].steps!.every(st => !st.optional), r).toBe(true);
+  });
+  it("the Poacher's swap carries the Werewolf team to its victim", () => {
+    const s = state(["poacher", "sage", "werewolf"], ["herald", "centaur", "sentry"]);
+    act(s, 0, { poach: always(P(1)) });
+    expect(resolveVote(s.cards, [2, 2, 1]).teams).toEqual(["centaur", "werewolf", "werewolf"]);
+  });
+});
+
+describe("distortion", () => {
+  it("Will-o'-Wisp: a random wrong role, drawn once, the same for every look; the log keeps both", () => {
+    const s = state(["wisp", "sage", "notary", "werewolf"], ["herald", "centaur", "sentry"]);
+    const cast = act(s, 0, { wisp: always(P(3)) })[0];
+    expect(cast.ev).toEqual({ kind: "distort", slot: P(3), role: null });
+    const shown = cast.hidden!.role!;
+    expect(shown).not.toBe("werewolf");
+    expect(act(s, 1, { read: always(P(3)) })[0].ev).toMatchObject({ roles: [shown] });
+    expect(act(s, 2, { read: always(P(3)) })[0].ev).toMatchObject({ roles: [shown] });
+  });
+  it("Mistweaver: one viewer's centre looks show the named role; player reads, team-only looks too, and conditional plans follow what was seen", () => {
+    const s = state(["mistweaver", "farrier", "centaur", "werewolf"], ["sage", "centaur", "sentry"]);
+    act(s, 0, { veil: decide({ kind: "pick", targets: [P(1)], role: "werewolf" }) });
+    // The Farrier sees a "Werewolf" in centre 3 (truly the Sentry) and its plan branches on that.
+    const f = act(s, 1, { peek: always(C(2)), shoe: { branches: [{ roles: ["werewolf"], decision: { kind: "skip" } }], otherwise: pick(P(1)) } });
+    expect(f[0].ev).toMatchObject({ roles: ["werewolf"] });
+    expect(f[0].hidden).toEqual({ truth: ["sentry"] });
+    expect(f[1].ev.kind).toBe("skip");
+    expect(act(s, 2, { glance: always(C(2)) })[0].ev).toMatchObject({ roles: ["sentry"] }); // another viewer: the truth
+  });
+  it("Fogbank: a random wrong role at each centre look by its victim; the Werewolf team and the Herder's count see the truth", () => {
+    const s = state(["fogbank", "centaur", "werewolf", "herder"], ["werewolf", "sage", "sentry"]);
+    act(s, 0, { fog: always(P(1)) });
+    expect((act(s, 1, { glance: always(C(0)) })[0].ev as { roles: string[] }).roles[0]).not.toBe("werewolf");
+    s.veils["3"] = { role: "centaur" };
+    expect(act(s, 3)[0].ev).toMatchObject({ n: 1 });
+  });
+  it("stacks in a fixed order: twin disguise, then the latest card distortion, then the viewer's veil", () => {
+    const s = state(["glamour", "wisp", "centaur", "sage"], ["moonsage", "centaur", "sentry"]);
+    s.tokens.c0 = { distort: "herald" };
+    s.veils["2"] = { role: "rustler" };
+    expect(act(s, 3, {}).length).toBe(0); // the Sage has not chosen yet
+    expect(act(s, 2, { glance: always(C(0)) })[0].ev).toMatchObject({ roles: ["rustler"] });
+    delete s.veils["2"];
+    expect(act(dealFixed([...s.dealt, ...s.dealtCenter], 4), 2, { glance: always(C(0)) })[0].ev).toMatchObject({ roles: ["sage"] }); // twin passes
+  });
+});
+
+describe("table rules for passivity", () => {
+  it("makes optional steps mandatory under the rule: no skip in plans or in forced moves", () => {
+    const s = state(["rustler", "sage", "werewolf"], ["herald", "centaur", "sentry"], { mandatorySteps: true });
+    const shape = shapeOf(s);
+    expect(validDecision(ROLE.rustler.steps![1], 0, shape, { kind: "skip" })).toMatch(/mandatory/);
+    for (let seed = 1; seed < 50; seed++) expect(randomDecision(ROLE.rustler.steps![1], 0, shape, rng(seed)).kind).toBe("do");
+  });
+  it("forces a uniformly random move over every legal decision, multi-target and declining included", () => {
+    const shape = { players: 4, center: 3 };
+    const step = ROLE.spooker.steps![0];
+    expect(decisionCount(step, 0, shape)).toBe(6 * 5 * 4);
+    const farrier = ROLE.farrier.steps![1]; // two targets or decline: 3 options
+    let skips = 0; const N = 30000, r = rng(11);
+    for (let i = 0; i < N; i++) if (randomDecision(farrier, 0, shape, r).kind === "skip") skips++;
+    expect(skips / N).toBeCloseTo(1 / 3, 1.5);
+    const g = ROLE.glamour.steps![1], deck = ["glamour", "sage", "centaur", "werewolf", "herald", "sentry", "rustler"];
+    expect(decisionCount(g, 0, { ...shape, deck })).toBe(7 * 7);
   });
 });
 
@@ -588,6 +703,33 @@ describe("commands", () => {
     expect(p.safeParse({ step: "glamour", plan: { branches: [], otherwise: { kind: "pick", targets: [{ k: "p", i: 1 }], role: "sage" } } }).success).toBe(true);
     expect(p.safeParse({ step: "listen", plan: { branches: [], otherwise: { kind: "name", role: "sage" } } }).success).toBe(true);
     expect(p.safeParse({ step: "listen", plan: { branches: [], otherwise: { kind: "name", role: "augur" } } }).success).toBe(false);
+  });
+  it("declares for every command whether others can perceive it", () => {
+    for (const c of COMMANDS) expect(typeof (c as { perceivable?: unknown }).perceivable, c.id).toBe("boolean");
+    expect(COMMAND["chat.send"].perceivable).toBe(true);
+    expect(COMMAND["night.planStep"].perceivable).toBe(false);
+    expect(COMMAND["day.cutLine"].perceivable).toBe(false);
+  });
+  it("opens the vote only in the vote phase, and says how to get there", () => {
+    const day = { ...lobby, phase: "day" as const, seated: true }, vote = { ...day, phase: "vote" as const };
+    expect(availability(COMMAND["day.vote"], day)).toMatchObject({ ok: false, hidden: false, reason: expect.stringMatching(/day_ready/) });
+    expect(availability(COMMAND["day.vote"], vote)).toEqual({ ok: true });
+    expect(availability(COMMAND["day.ready"], day)).toEqual({ ok: true });
+    expect(availability(COMMAND["chat.send"], vote)).toMatchObject({ ok: false, reason: expect.stringMatching(/closed during the vote/) });
+    expect(availability(COMMAND["chat.send"], { ...vote, rules: { ...DEFAULT_RULES, chatDuringVote: true } })).toEqual({ ok: true });
+    expect(availability(COMMAND["day.queueSwap"], { ...vote, dayPower: "swap" })).toEqual({ ok: true });
+  });
+  it("offers seals and the cut only to the cards that have them", () => {
+    const day = { ...lobby, phase: "day" as const, seated: true, deck: ["signet", "notary", "counterfeiter", "hush", "werewolf"] };
+    expect(availability(COMMAND["chat.sendReport"], { ...day, chatPower: "report" })).toEqual({ ok: true });
+    expect(availability(COMMAND["chat.forgeSeal"], { ...day, chatPower: "forge" }, { as: "notary", seat: 1, card: "werewolf" })).toEqual({ ok: true });
+    expect(availability(COMMAND["chat.forgeSeal"], { ...day, chatPower: "forge", deck: ["werewolf"] }, { as: "signet", text: "x" })).toMatchObject({ ok: false, reason: expect.stringMatching(/no Signet in this deck/) });
+    expect(availability(COMMAND["chat.forgeSeal"], { ...day, chatPower: "report" })).toMatchObject({ ok: false, hidden: true });
+    expect(availability(COMMAND["day.cutLine"], { ...day, dayPower: "cut" })).toEqual({ ok: true });
+    expect(availability(COMMAND["day.cutLine"], { ...day, phase: "vote", dayPower: "cut", rules: { ...DEFAULT_RULES, cutDuringVote: false } })).toMatchObject({ ok: false });
+    expect(availability(COMMAND["day.cutLine"], day)).toMatchObject({ ok: false, hidden: true });
+    expect(toolDefinitions("act").find(t => t.name === "chat_forgeSeal")?.inputSchema).toMatchObject({ type: "object" });
+    expect(toolDefinitions("host").some(t => t.name === "presence_heartbeat")).toBe(false);
   });
   it("narrows the MCP tools by grant and never exposes consent commands", () => {
     const names = (g: "read" | "act" | "host") => toolDefinitions(g).map(t => t.name);
