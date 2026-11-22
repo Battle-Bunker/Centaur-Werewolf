@@ -96,3 +96,9 @@ vote (c: 0.75 or 1.00 everywhere).
    need a KNOWING mover with a reason to lie (F3, coarse Q2#1, natural Q2-n#3).
 6. "Dominant vote" reasoning (vote the seat that is wolf in every world) is the Centaurs' main weapon (20 wins of 28
    uses), and the best wolf lies are built to make an innocent the dominant vote (F3#4).
+
+## 2026-11-22 13:40 Extension of the two best scenarios to 10 replays (10 games, $31; sim/runs/p5/fine3)
+At the hub's request. F3 replays 6-10: W3 C2 (total W6 C4, judges path 3.4); F6 replays 6-10: W3 C2 (total W5 C4 P1;
+two wolf wins by Blood Price tie). Both remain talk-live: the 5-replay splits were not flukes. Timing tell measured on
+the first 71 games: Centaur first speaker in 65; median first message 15.4 s (Centaur) vs 24.6 s (wolf).
+Budget spent: about $245 of $250. Stopping.

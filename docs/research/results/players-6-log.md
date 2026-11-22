@@ -165,3 +165,38 @@ credible counter-story:
   survive an honest holder who knows the unambiguous fact behind it; make the holder's own knowledge ambiguous.**
   Smallest change: a variant Notary that learns only the pair statement it will seal ("at least one of A and B is a
   Werewolf"), like the amended Herald. Requested.
+
+## Fine passes 5 and 6 (13:20-13:45, 10 replays, ~$36; opening statements ON)
+
+| Scenario | Predicted | Result | c | Judges ToM / dec / path / noise |
+| --- | --- | --- | --- | --- |
+| PY6L-S3 (S3 control + a Latecomer in the deck, 4 centre) | C 2, P 2, W 1 | **Centaurs 5-0** | .8 1 .8 .8 1 | 1.2 / 1.6 / 0.9 / 0.0 |
+| PY6-S5 twin held (Moonsage at the table, bloodPriceCondemned on) | W 2, P 2, C 1 | **Centaurs 4, Pyre 1** | .6 .6 .6 .6 .4 | 2.5 / 2.4 / 3.4 / 1.3 |
+
+- **The Latecomer amendment failed** (prediction falsified). The wolf used the late-swap story in 4 of 5 replays, but
+  told it about ITSELF ("I'm the Latecomer, I swapped with Fenn"), which the two looks at its own dealt card refute
+  (the looks saw a Werewolf, not a Latecomer). Nobody else had a motive to tell it for the wolf: the Lure (a Tanner
+  here) preferred its own Phoenix/dress stories, then confessed. **Heuristic P6-8: a counter-story only rescues the
+  accused if a THIRD party with a motive can tell it; a story the accused tells about its own card is refuted by any
+  look at that card.** The fix for "two honest looks" must therefore put the story in an ally's mouth: e.g. a
+  wolf-side late mover (a Werewolf-team Latecomer twin) who can say "I took Bryn's card after your looks" and mean it.
+  Not built tonight (requested, R6-7).
+- **PY6-S5 (twin held) is talk-live** (minority 1, path 3.4, ToM 2.5) but the WOLVES still won 0 of 5 (prediction
+  falsified). The Moonsage saw through the dress ("Phoenix") and, because a burning denies the wolves, told the truth to
+  stop it in 4 of 5 replays; the honest Sage then argued "the Moonsage sees through dresses, so Esme's Phoenix read is
+  true, so Fenn's wolf read on Bryn is the dress, so Dov is the wolf". The wolf side's two members wanted opposite
+  things (the Moonsage to stop the burn, the wolf to hide), and the Moonsage's true read became Centaur evidence.
+  Vote concentration was the lowest of the night (four 0.6s and one 0.4: two Centaurs, two wolf-side, two Pyre: no
+  bloc can make a majority alone). **Heuristic P6-9: under `burningDeniesWolves`, the wolf side's best move against a
+  dressed Phoenix is to tell the truth about it, which helps the Centaurs more than the wolves: in PY6 the denial
+  turns the wolves into the Centaurs' informants.** This, more than lone wolves in my scenarios, is why the wolves won
+  2 of 38 PY6 fixed replays.
+
+## Where the theory stands (summary of prediction vs outcome)
+
+Directionally right: the parity class (after the fact), PY6 talk-live, the S3 control degenerate, S4 Centaur-leaning,
+S2-open stable. Wrong: stealer soup noise; SE6 seal duels; PE6, PF6 and PY6L talk-live (all swept); S1-open (expected
+no change, the Centaurs gained 3); S2-nodenial (expected Pyre stronger, no change); S5 (expected wolves 2). The pattern
+in my misses: I credited cards with the uncertainty they create at night and under-weighted how Opus tables turn each
+player's MOTIVE into evidence. A player whose card moved, whose team changed, or whose side loses to a burning
+becomes an honest witness at once; only lies that some player is MOTIVATED to keep telling survive the discussion.
