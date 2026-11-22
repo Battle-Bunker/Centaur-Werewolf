@@ -180,4 +180,6 @@ Ember-Carrier and dresses the Phoenix card wherever it now is, so the two Pyre t
 - Whether the Hush helps or hurts once the harness keeps a cut player connected (G7 with the Hush is untested in fact).
 - Whether a composing Lure (acting after the ember) removes P7's inversion-type sweeps, and whether allButOne tames P7's
   natural-deal scatter (only the fixed scenario was tested).
+- Asked by the lead, not done (budget): F-P7-ember to 10 replays; F-P7-ember and F-K7-duel with opening statements ON
+  vs OFF; the 8-player session's Hollow Sage (a twin that counts as a Werewolf) in place of the Moonsage in K7.
 - Human tables: Opus discussions end after 80-160 s when everyone marks ready; the dynamics may differ with people.
