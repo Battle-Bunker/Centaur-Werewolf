@@ -322,3 +322,26 @@ gains through chaos, or dress a Kindler), so the Pyre's route to a burning is ta
 than an honest seer's sincere testimony. Prediction for (3): the Pyre's share in Lure scenarios falls from about 4 of 5
 to about 1-2 of 5; path stays >= 3. Also: `burningDeniesWolves` makes doomed wolves kingmake the Pyre (S9#4); with it
 off, wolves would rather tie a Centaur than burn the Phoenix. Worth one test at 6 players.
+
+## 2026-11-22 CR-12: S3 with the census off (5 replays, ~$14)
+
+Predicted Centaurs 3, wolves 2. **Result: Centaurs 5-0 again** (path 2.4, down from 3.0; ToM 2.0; 2 of 10 verdicts
+"blunder"). Without the census the lone wolf claimed blind and was caught by counting or by its own flip-flops ("that's
+THREE Sage-looking cards, but only two exist and nothing moved. So Bryn is lying."; "Bryn, you just admitted your first
+claim was a lie"). Four variants of one night (full census, partial census, simultaneous claims, no census): 20 of 20
+Centaur wins. **Conclusion: the census was a sufficient but not a necessary cause.** The scenario is decided by its
+structure: a true read on the ONLY held Werewolf, plus an independent true count (Herder: one wolf in the centre), and a
+twin whose elimination can never win for whoever votes it. With the census the wolf's safe claim is a tell; without it
+the wolf collides. The duel adds talk but cannot change the decision "Bryn or Alder", where Bryn is the wolf in more
+worlds. *Heuristic 15: a true read of the only Werewolf plus an independent count is decisive whatever the wolves
+know; a twin duel only creates doubt if voting the twin can also win (the 8-player session's `hollowsage`, a twin that
+counts as a Werewolf), or if the count is contestable (CR-6: Stray Herder).* Next test for this scenario would be the
+Herder replaced by a Stray Herder-contested count, not another census variant.
+
+**Opening statements, reconciled with the 6-player session** (its PY6: openings moved the Pyre roster TOWARD balance,
+the opposite of my S5): both results fit one rule: the option hurts whichever side's plan depended on claiming after
+seeing the others. In PY6 that was the lone wolf (it claimed last to avoid collisions; forced to commit blind it
+collided or claimed a read it could not have had). In my S5 it was the wolf defending the Phoenix and the Centaurs
+reading that defence, while the Pyre's story (the Lure "corroborating" the dressed read) needed no one else's claim.
+Its first-message ranks without openings (honest 2.2-2.3, Phoenix 4.7, Lure 4.8, Werewolf 5.3) match my 0.29 vs 0.72.
+So the effect is scenario-specific: predict it by asking, per team, "does my plan need to see claims first?"
