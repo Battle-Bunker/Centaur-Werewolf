@@ -155,7 +155,7 @@ To replay one scenario many times with only the day varying:
 23. Pickpocket (wake 47)
 24. Drifter (wake 48)
 25. Farrier (wake 50)
-26. Spooker (wake 55)
+26. Spooker (wake 55) + Drover
 27. Herder (wake 80) + Stray Herder + Grey Herder
 28. Oxpecker (wake 85)
 29. Latecomer (wake 88)
@@ -579,6 +579,16 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 - **Day / vote / chat powers:** none.
 - **Win:** with the Centaur team.
 - **Card text:** You wake before everyone else. For the rest of the game you are a copy of the card you take: its team, whether it counts as a Werewolf, its win rule, its vote and chat and day powers (your own uses of them), and its night action, which you then perform in that role's own turn (decide it live, or queue it in advance for each role you might become; undecided steps get a random move). You take the card's TRUE identity even if a distortion showed you something else, and you are told what you became. If the card is itself a copier, you become what it has become (or, if it has not, a copier with nothing left to do, on the Centaur team). The pack does not learn about you; if you become a pack card, you do see the pack. A look at your card always shows your own face (Gleaner or Echo), and if your card is moved its new holder holds the copy. If you never become anything, you are on the Centaur team. You look at another player's card and become a copy of it.
+
+### Drover (`drover`)
+
+- **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
+- **Night:** acts in the Spooker's turn (a shadow twin: one public turn for both), wake 55 (position 26 of the full roster's night order).
+  - *Stampede three cards* (MANDATORY): chooses 3 different cards (each another player's card or a centre card); moves the chosen cards one place along (first to second's place, second to third's, third to first's), seeing none of them.
+- **A look at this card shows:** this card, unless distorted.
+- **Day / vote / chat powers:** none.
+- **Win:** with the Centaur team.
+- **Card text:** You act in the Spooker's turn and do exactly what the Spooker does: choose three cards other than your own, from players or the centre. The first goes to the second's place, the second to the third's, the third to the first's. You look at none of them. But you are on the Centaur team. A look at your card shows the Drover.
 
 ## Pyre
 
