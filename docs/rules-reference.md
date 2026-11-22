@@ -17,10 +17,10 @@ It states the game exactly as built. Design history: docs/design/synthesis.md an
 | --- | --- | --- |
 | Night: Dusk | Everyone reads their card and may queue their night decisions. | Dusk timer (5-120 s, default 20) |
 | Night: turns | One turn per night role in the deck, in wake order, each exactly the turn length (5-120 s, default 12), **whether or not anyone holds that card**. A shadow twin acts in its original's turn. Everyone sees which turn it is. Each player acts in the turn of the card they were DEALT, even if it has been moved. Undecided steps at the end of a player's turn get a uniformly random legal decision. | Last turn |
-| Dawn | Proclamations are published (in random order under the dawn rule); a public mark nobody made (an unheld Cuckoo's egg) is laid on a random seat; bitten players and Imagos are told privately. | Immediately |
-| Discussion | Chat. Players mark themselves ready. A Moon-Thief may queue its swap; a Hush may cut. No voting. | Its timer (30-1800 s, default 300), the host, or every seated human ready |
+| Dawn | Proclamations are published (in random order under the dawn rule); a public mark nobody made (an unheld Cuckoo's egg) is laid on a random seat; if the deck's Phoenix is held by no player, every held Heir card becomes a Phoenix; bitten players and Heirs so turned are told privately. | Immediately |
+| Discussion | Chat. Players mark themselves ready. A Hush may cut; a Moon-Thief may queue its swap (only under the day-swap rule, off by default). No voting. | Its timer (30-1800 s, default 300), the host, or every seated human ready |
 | Vote | Each seated player votes for one other player and may change it. Votes are secret until the end; only "has voted" is public. Chat closed unless the rule opens it. | Its timer (5-120 s, default 20) or every seated human has voted |
-| Count | Missing votes are cast uniformly at random (marked "did not vote in time"). The Moon-Thief's swap happens. Then the resolution order below. | |
+| Count | Missing votes are cast uniformly at random (marked "did not vote in time"). The Moon-Thief's swap happens (day-swap rule only). Then the resolution order below. | |
 
 ## 3. Table rule settings
 
@@ -31,12 +31,13 @@ It states the game exactly as built. Design history: docs/design/synthesis.md an
 | `dawnProclamations` | Proclamations at dawn | true | on / off | Every proclamation (the Herald's, and a Forger's) is published together at dawn, in random order, each marked "Herald's turn" and true at that moment of the night. |
 | `biteNamesBiter` | The bitten know the Biter | true | on / off | A bitten player is told which seat bit them. |
 | `eavesdropGhost` | Eavesdropper's own result | true | on / off | If nobody was dealt the role the Eavesdropper names, it secretly gets a real result of its own as if it held that role (looks only, never moves), and is not told which case happened. |
-| `thiefMinPlayers` | Moon-Thief table size | 7 | 3 to 12 | The Moon-Thief may be in the deck only with 7 or more players. |
+| `daySwap` | Moon-Thief's day swap | false | on / off | The Moon-Thief has no day swap: it is a Werewolf of the pack and nothing more. (Off by default: a swap after the talking makes the talking irrelevant.) |
+| `thiefMinPlayers` | Moon-Thief table size | 7 | 3 to 12 | With the day swap on, the Moon-Thief may be in the deck only with 7 or more players. |
 | `eliminationVotes` | Votes to eliminate | 2 | 2 to 4 | The player or players with the most votes are eliminated, if that is at least 2 votes; otherwise nobody is. |
 | `mandatorySteps` | Mandatory night steps | false | on / off | Optional night steps (trade or keep, give or not, bite or not, scent or not) may be declined. |
 | `chatDuringVote` | Chat during the vote | false | on / off | Chat closes when the vote phase begins. |
 | `cutSeconds` | Hush cut length | 60 | 15 to 180 | A Hush's cut lasts 60 seconds. |
-| `cutDuringVote` | Hush during the vote | true | on / off | A Hush may cut during discussion or the vote phase, and a cut may run on into the vote. |
+| `cutDuringVote` | Hush during the vote | false | on / off | A Hush may cut only during discussion, and a cut ends when the vote phase begins. |
 | `phoenixKnowsKindlers` | Phoenix knows its kin | false | on / off | The Phoenix does not know who the Kindlers are; the Kindlers know where the Phoenix was dealt. |
 | `burningDeniesWolves` | A burning denies the wolves | true | on / off | When a Phoenix holder is eliminated (a burning), the Werewolf team cannot win, and the Centaurs win only if a Werewolf was eliminated too (with Blood Price deciding ties as usual). |
 | `pyreFallback` | When no Phoenix is held | "kindler" | kindler / none | If no player holds a Phoenix card at the count, the Pyre wins if any player holding a Kindler card is eliminated (that counts as a burning). |
@@ -47,7 +48,7 @@ It states the game exactly as built. Design history: docs/design/synthesis.md an
 - **Cards move**: swaps, rotations and the Moon-Thief's day swap move cards between seats and the centre. A moved card
   carries its team, its win rule and anything bound to it (an egg, a bond, a distortion token). Nobody is told their
   card moved (the Sentry may detect *that* a nearby card moved; nothing detects direction or destination).
-- **You act by the card you were DEALT; you win by the card you HOLD at the count** (unless bitten or an Imago).
+- **You act by the card you were DEALT; you win by the card you HOLD at the count** (unless bitten: a bitten player plays for the Werewolf team; a copier's card counts as what it copied).
 - **Card instances**: every physical card is distinct even when several copies of a role exist; marks bind to the
   physical card.
 - **What a look shows**, in order: a passing twin shows its original; then the latest card distortion (Glamour: a chosen
@@ -65,31 +66,58 @@ It states the game exactly as built. Design history: docs/design/synthesis.md an
 
 ## 5. How a game is decided (in this order)
 
-1. **Swap.** The Moon-Thief's queued swap is applied.
-2. **Tally.** Each vote weighs by the voter's HELD card (Chiron: 2). Every seat tied on the most votes is eliminated, if
-   that is at least the "Votes to eliminate" rule (default 2). Otherwise nobody is.
-3. **Teams.** A bitten seat is on the Werewolf team and loses creature rules; an Imago is a creature; everyone else is on
-   the team of the card they hold.
-4. **Main result.**
-   - (a) If an eliminated player holds a decoy (Stalking Horse), its team (Werewolf) wins.
+1. **Swap.** The Moon-Thief's queued swap, only if the day-swap rule is on (off by default).
+2. **Tally.** Each vote weighs by the voter's HELD card (Chiron and Heavy Hand: 2). Every seat tied on the most votes is
+   eliminated, if that is at least the "Votes to eliminate" rule (default 2). Otherwise nobody is.
+3. **Teams.** A bitten seat is on the Werewolf team; everyone else is on the team of the card they hold (a copier's
+   card: the team of what it copied).
+4. **Main result** (Centaurs v. Werewolves).
+   - (a) If an eliminated player holds a decoy (Stalking Horse), the Werewolf team wins.
    - (b) Else, if no player holds a Werewolf card: Centaurs win if nobody is eliminated; otherwise the surviving
-     Werewolf-team players win; if there are none, no team wins.
+     Werewolf-team players win; if there are none, no main team wins.
    - (c) Else, with Blood Price: Centaurs win only if W > C (W = Werewolf cards eliminated, C = Centaur-team players
      eliminated). Without it: Centaurs win if W ≥ 1. Otherwise the Werewolf team wins.
-   - Every member of the winning team wins, alive or dead. Allies, creatures, Imagos and bitten players count in
-     neither W nor C. Eliminating a Werewolf-team card that is not a Werewolf never wins for the Centaurs.
-5. **Creatures** (alongside the main result): Sporeling holder and Imagos win if eliminated; the Cuckoo holder wins if
-   its card's egged seat is eliminated and they are not; the Elderbark holder wins if alive and no other creature is
-   eliminated. An eliminated Elderbark denies every other creature.
-6. **Curse.** Every player whose own (non-random, unless the rule says so) vote went to an eliminated Sporeling holder
-   loses.
-7. **Oxpecker.** Its holder wins if its card's bonded seat is a winner after step 6 and no Elderbark was eliminated; the
-   curse then applies to it.
+   - Every member of the winning team wins, alive or dead. Pyre and loner cards and bitten players count in neither W
+     nor C. Eliminating a Werewolf-team card that is not a Werewolf never wins for the Centaurs.
+5. **The burning.** If a player holding a Phoenix card is eliminated (a Phoenix: the card, a copy of it, or an Heir's
+   card turned at dawn), every player holding a Pyre card wins, alive or dead. If no player holds a Phoenix at the
+   count, by default a Pyre card's holder being eliminated counts as the burning (rule "When no Phoenix is held"). With
+   "A burning denies the wolves" (default on), a burning removes any Werewolf-team win (the Stalking Horse's too), and
+   the Centaurs keep their win only if it came from (c).
+6. **Loners.** The Cuckoo holder wins if its card's egged seat is eliminated and they are not; then the Oxpecker holder
+   wins if its card's bonded seat is a winner.
 
 **Count as Werewolves:** Werewolf, Glamour, Moon-Thief, Tracker, Eavesdropper, Biter, Dun Centaur, Dusk Rustler.
 **Werewolf team but not Werewolves:** Stalking Horse, Whisperer, Forger, Spooker, Will-o'-Wisp, Mistweaver, Fogbank, Poacher, Counterfeiter, Hush, Moonsage, Pale Herald, Stray Herder.
 
-## 6. Night order (the full roster)
+## 6. Calibration: abilities act on beliefs, not on the result
+
+The owner's principle (docs/design/owner-directions.md, section 11): an ability may change what is true at night or what
+can credibly be said, but nothing should rewrite who holds what after the table has made up its mind. Applied:
+- **Ember-Carrier**: a mandatory blind swap of two other players' cards at NIGHT (in the brood's turn), not a vote-lock
+  move. It can carry the Phoenix to someone who does not know, but the table talks after it, and the Sentry may notice.
+- **Moon-Thief**: its vote-lock swap is kept but OFF by default (rule "Moon-Thief's day swap").
+- **Heavy Hand**: its vote counts double whoever it goes to (like Chiron), so a misplaced vote costs the Pyre too; it is
+  no longer a free weight that only ever helps the burning.
+- **Heir**: kept; it acts at dawn, before the talk, and its holder must still persuade the table.
+- **Stacking**: several Pyre supporters of one kind are allowed; each acts at night or through talk.
+
+## 7. Scenario replay (play-test tables)
+
+To replay one scenario many times with only the day varying:
+1. Create the room with `room.create { playtest: true }` (everyone sees the play-test badge).
+2. As host (host grant only), fix the deal and every random draw: `setup.fixDeal { seats: [player ids, seat 0 first],
+   cards: [seat 0, …, then centre card 1, …], nightSeed: n }`. The night seed drives every random draw of the night and
+   the count (random information, random distortions, forced moves, the unheld egg, random votes), each moment from its
+   own seeded stream, so identical decisions give identical results. If only `seed` is given, the night seed is
+   derived from it, so `seed` alone already fixes the whole scenario.
+3. Queue every seat's night decisions up front with each seat's own key (`night.planStep`, with `as` for copiers),
+   during dusk. Dusk and night turns may be as short as 1 second at a play-test table (`setup.setTimer`).
+4. After the count, `result.scenario.fingerprint` (MCP) or `game.final.fingerprint` (app) is a canonical hash of the
+   deal, the night seed, the rules, every night event (with what random draws produced) and the order the dawn
+   proclamations were published in; runs with equal fingerprints differed only in the day.
+
+## 8. Night order (the full roster)
 
 1. Gleaner (wake 2)
 2. Echo (wake 3)
@@ -125,7 +153,7 @@ It states the game exactly as built. Design history: docs/design/synthesis.md an
 
 Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 
-## 7. Every card
+## 9. Every card
 
 ## Werewolf team
 
@@ -170,7 +198,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** the player DEALT it may queue a swap of two other players' cards during discussion or the vote; it happens as the vote ends, before counting (day_queueSwap).
 - **Win:** with the Werewolf team.
-- **Card text:** You are a Werewolf. You wake knowing which other players were dealt cards of the pack (the Werewolves and the cards that wake with them) and, under the Den Census rule, which roles lie in the centre (not where). During the day, if you were DEALT this card, you may secretly queue one swap of two other players' cards, and change or clear it until the votes lock. The swap happens the instant voting ends, before anything is counted: votes are weighed and every win is decided by the cards after the swap.
+- **Card text:** You are a Werewolf. You wake knowing which other players were dealt cards of the pack (the Werewolves and the cards that wake with them) and, under the Den Census rule, which roles lie in the centre (not where). Only if the table's "Moon-Thief's day swap" rule is on (it is off by default): during the day, if you were DEALT this card, you may secretly queue one swap of two other players' cards, and change or clear it until the votes lock. The swap happens the instant voting ends, before anything is counted: votes are weighed and every win is decided by the cards after the swap.
 
 ### Tracker (`tracker`)
 
@@ -556,10 +584,11 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 - **Team:** Pyre. **Counts as a Werewolf:** no. Tags: kindler. Copies allowed: up to 12.
 - **Night:** acts in the shared "Kindler" turn, wake 5 (position 3 of the full roster's night order).
   - *The brood gathers* (automatic): learns which other seats were DEALT a card tagged "phoenix" (journal label "The Phoenix (as dealt)"); then learns which other seats were DEALT a card tagged "kindler" (journal label "Fellow Kindlers").
+  - *Carry the ember* (MANDATORY): chooses 2 different cards (each another player's card); swaps the two cards.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
 - **Win:** with the Pyre: every Pyre card's holder wins when a player holding a Phoenix card is eliminated (see section 5).
-- **Card text:** You are a Kindler of the Pyre. In the early turn "The brood gathers" (shared by every Kindler kind, and by the Phoenix only under the "Phoenix knows its kin" rule) you learn which seats were DEALT a Phoenix and which were dealt Kindler cards. You and every Kindler win exactly when a player holding a Phoenix card is eliminated, whether or not you survive (see the Pyre rules for when no player holds one). During discussion or the vote you may queue "carry the ember to seat X" (any other player). The instant the vote ends, after any Moon-Thief swap and before anything is counted, a Phoenix card (one held by a player if any, else one in the centre) swaps places with seat X's card: whoever the herd is about to burn becomes the Phoenix. You may change or clear it until then.
+- **Card text:** You are a Kindler of the Pyre. In the early turn "The brood gathers" (shared by every Kindler kind, and by the Phoenix only under the "Phoenix knows its kin" rule) you learn which seats were DEALT a Phoenix and which were dealt Kindler cards. You and every Kindler win exactly when a player holding a Phoenix card is eliminated, whether or not you survive (see the Pyre rules for when no player holds one). Then, still in the brood's turn, you must swap the cards of two other players, seeing neither. Knowing where the Phoenix was dealt, you can carry it to a player who does not know they now want to burn (and the brood's knowledge goes stale). Nobody is told.
 
 ### Heavy Hand (`heavyhand`)
 
@@ -567,9 +596,9 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 - **Night:** acts in the shared "Kindler" turn, wake 5 (position 3 of the full roster's night order).
   - *The brood gathers* (automatic): learns which other seats were DEALT a card tagged "phoenix" (journal label "The Phoenix (as dealt)"); then learns which other seats were DEALT a card tagged "kindler" (journal label "Fellow Kindlers").
 - **A look at this card shows:** this card, unless distorted.
-- **Day / vote / chat powers:** none.
-- **Win:** with the Pyre: every Pyre card's holder wins when a player holding a Phoenix card is eliminated (see section 5); its holder's vote counts 2 when cast for a holder of a "phoenix" card.
-- **Card text:** You are a Kindler of the Pyre. In the early turn "The brood gathers" (shared by every Kindler kind, and by the Phoenix only under the "Phoenix knows its kin" rule) you learn which seats were DEALT a Phoenix and which were dealt Kindler cards. You and every Kindler win exactly when a player holding a Phoenix card is eliminated, whether or not you survive (see the Pyre rules for when no player holds one). Whoever holds this card when the votes are counted has a vote that counts twice if it goes to a player holding a Phoenix card, once otherwise.
+- **Day / vote / chat powers:** the holder's vote counts 2 times.
+- **Win:** with the Pyre: every Pyre card's holder wins when a player holding a Phoenix card is eliminated (see section 5).
+- **Card text:** You are a Kindler of the Pyre. In the early turn "The brood gathers" (shared by every Kindler kind, and by the Phoenix only under the "Phoenix knows its kin" rule) you learn which seats were DEALT a Phoenix and which were dealt Kindler cards. You and every Kindler win exactly when a player holding a Phoenix card is eliminated, whether or not you survive (see the Pyre rules for when no player holds one). Whoever holds this card when the votes are counted has a vote that counts twice, whoever it goes to (so a misplaced vote costs the Pyre too).
 
 ### Heir (`heir`)
 

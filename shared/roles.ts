@@ -141,9 +141,8 @@ export interface RoleDef {
   /**
    * A day power of the player DEALT this card. swap: queue a swap of two other players' cards, made when the vote
    * phase ends. cut: once, cut one player off the table for a while, exactly as if their connection dropped.
-   * ember: queue a seat to receive the Phoenix card when the vote phase ends.
    */
-  dayPower?: "swap" | "cut" | "ember";
+  dayPower?: "swap" | "cut";
   /** A twin: acts in the named role's turn with the same steps, on another team. */
   twinOf?: RoleId;
   /** What a look at this card shows instead of the card itself (a twin that passes for its original). */
@@ -181,8 +180,8 @@ export const ROLES: RoleDef[] = [
   },
   {
     id: "moonthief", name: "Moon-Thief", team: "werewolf", tags: ["wolf", "pack"], max: 12, wake: 13, dayPower: "swap",
-    blurb: "A Werewolf who may secretly queue a swap of two other players' cards, made as the votes lock.",
-    rules: `You are a Werewolf. ${PACK_RULE} During the day, if you were DEALT this card, you may secretly queue one swap of two other players' cards, and change or clear it until the votes lock. The swap happens the instant voting ends, before anything is counted: votes are weighed and every win is decided by the cards after the swap.`,
+    blurb: "A Werewolf who, under the table's day-swap rule, may secretly queue a swap of two other players' cards, made as the votes lock.",
+    rules: `You are a Werewolf. ${PACK_RULE} Only if the table's "Moon-Thief's day swap" rule is on (it is off by default): during the day, if you were DEALT this card, you may secretly queue one swap of two other players' cards, and change or clear it until the votes lock. The swap happens the instant voting ends, before anything is counted: votes are weighed and every win is decided by the cards after the swap.`,
     steps: [pack],
   },
   {
@@ -378,15 +377,15 @@ export const ROLES: RoleDef[] = [
     steps: [GATHER],
   },
   {
-    id: "embercarrier", name: "Ember-Carrier", team: "pyre", tags: ["kindler"], max: 12, wake: 5, turnOf: "kindler", dayPower: "ember",
-    blurb: "A Kindler who can carry the ember: as the vote ends, the Phoenix card swaps with a chosen player's card.",
-    rules: `${KINDLER_RULE} During discussion or the vote you may queue \"carry the ember to seat X\" (any other player). The instant the vote ends, after any Moon-Thief swap and before anything is counted, a Phoenix card (one held by a player if any, else one in the centre) swaps places with seat X's card: whoever the herd is about to burn becomes the Phoenix. You may change or clear it until then.`,
-    steps: [GATHER],
+    id: "embercarrier", name: "Ember-Carrier", team: "pyre", tags: ["kindler"], max: 12, wake: 5, turnOf: "kindler",
+    blurb: "A Kindler who, at night, must blindly swap two other players' cards: carry the Phoenix to someone who does not know.",
+    rules: `${KINDLER_RULE} Then, still in the brood's turn, you must swap the cards of two other players, seeing neither. Knowing where the Phoenix was dealt, you can carry it to a player who does not know they now want to burn (and the brood's knowledge goes stale). Nobody is told.`,
+    steps: [GATHER, { id: "carry", title: "Carry the ember", pick: { pools: ["others"], count: 2 }, effects: [{ kind: "swap", a: { pick: 0 }, b: { pick: 1 } }] }],
   },
   {
-    id: "heavyhand", name: "Heavy Hand", team: "pyre", tags: ["kindler"], max: 12, wake: 5, turnOf: "kindler", vote: { weightAgainst: { tag: "phoenix", weight: 2 } },
-    blurb: "A Kindler whose vote counts double when cast for whoever holds the Phoenix.",
-    rules: `${KINDLER_RULE} Whoever holds this card when the votes are counted has a vote that counts twice if it goes to a player holding a Phoenix card, once otherwise.`,
+    id: "heavyhand", name: "Heavy Hand", team: "pyre", tags: ["kindler"], max: 12, wake: 5, turnOf: "kindler", vote: { weight: 2 },
+    blurb: "A Kindler whose vote counts double.",
+    rules: `${KINDLER_RULE} Whoever holds this card when the votes are counted has a vote that counts twice, whoever it goes to (so a misplaced vote costs the Pyre too).`,
     steps: [GATHER],
   },
   {

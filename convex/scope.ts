@@ -61,7 +61,7 @@ export function contextOf(scope: Scope | null): CommandContext {
     voted: !!game && seat >= 0 && game.votes[seat] !== null,
     // Powers of the card the viewer was DEALT, as it is now: a copier has its copy's powers (its own uses of them).
     chatPower: game && seat >= 0 && !game.chatUsed[seat] ? (ROLE[actingRole(game.state, seat)].chat ?? null) : null,
-    dayPower: game && seat >= 0 && !game.powerUsed?.[seat] ? (ROLE[actingRole(game.state, seat)].dayPower ?? null) : null,
+    dayPower: game && seat >= 0 && !game.powerUsed?.[seat] ? (p => (p === "swap" && !game.state.rules.daySwap ? null : p ?? null))(ROLE[actingRole(game.state, seat)].dayPower) : null,
     ready: !!game?.ready?.[seat],
     swapQueued: !!game?.daySwap && game.daySwap.by === seat,
     playtest: !!room.playtest,

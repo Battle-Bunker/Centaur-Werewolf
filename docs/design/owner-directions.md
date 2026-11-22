@@ -90,7 +90,7 @@ the results; presence and every perceivable signal go through one central gate.
   the window: exactly a real drop.
 - Every registry command declares `perceivable` (a test fails if one does not); the dispatcher applies seat effects
   from that one property, so future commands cannot forget.
-- The Hush: `day.cutLine { seat }`, once per game; rules `cutSeconds` (default 60) and `cutDuringVote` (default on).
+- The Hush: `day.cutLine { seat }`, once per game; rules `cutSeconds` (default 60) and `cutDuringVote` (default off since round 3: a vote forced at random after the talk is outcome noise).
   Revealed only in the results (`cutOff` per seat, a log line, `seatEffects`).
 - Contract for future real-time channels (video, audio): see docs/architecture.md, "Presence and the gate".
 
@@ -166,3 +166,24 @@ everywhere a rule needs the card's identity (`effRole`, `heldRoles`, `actingRole
 - Slot labels: every text says "centre card 1" for `{ k: "c", i: 0 }`; every legal target in the MCP view now carries
   its `label` beside the slot, and the argument description says the index counts from 0.
 - Evidence: random-play baselines are not evidence of balance; balance is judged from all-Opus tournaments.
+
+## 11. The quality target, and calibration
+
+**Target (owner).** Within each fixed scenario (same deal, same night actions, same random draws) there should be high
+variability in who wins and how, arising entirely from what players choose to SAY during the day. Variation that comes
+only from the deal or from hidden actions is not the goal, and pure noise is a failure: consensus should form fairly
+strongly fairly often (vote concentration skewed toward substantial consensus, not scattered and not always unanimous).
+Defector wins should be clever; Centaur wins should need theory of mind, not just first-order elimination of mechanical
+possibilities.
+
+**Calibration principle.** Abilities act on beliefs and on what can credibly be said, not on the outcome after the
+talking is over. Prefer strong effects that are visible in principle (deducible or preventable through talk) over
+weaker invisible ones. Applied:
+- The Ember-Carrier's vote-lock move (it would have converted any elimination into a burning) became a mandatory blind
+  NIGHT swap of two other players' cards in the brood's turn: it can still carry the Phoenix to someone who does not
+  know, but the talk comes after it, its holder can claim it, and the Sentry can notice the move.
+- The Moon-Thief's vote-lock swap stays implemented behind the rule `daySwap`, OFF by default.
+- The Heavy Hand's double vote counts for any target (like Chiron), so it carries risk and no longer only helps the burning.
+- The Heir (dawn, before the talk) and the Hush (during the talk, revealed at the end) were judged consistent with the
+  principle; several supporters may stack, each acting at night or through talk.
+- Scenario replay (rules reference section 7) exists to measure exactly this target: many days per fixed scenario.

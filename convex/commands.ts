@@ -14,7 +14,7 @@ import { advance, dealFixed, freshProgress, nightTurns, secureRng, seededRng, sh
 import { CENTER_DEFAULT, recommendedDeck, ROLE } from "../shared/roles";
 import { rulesOf } from "../shared/settings";
 import { seatName } from "../shared/text";
-import { endVote, nightSeats, seatedHumans, startVote, VOTE_SECONDS_DEFAULT, type Game, type Turn } from "./game";
+import { endVote, nightSeats, rngFor, seatedHumans, startVote, VOTE_SECONDS_DEFAULT, type Game, type Turn } from "./game";
 import { gateOf, UNREACHABLE } from "./presence";
 import { contextOf, loadScope, type Scope } from "./scope";
 import { answerRequest, createKey } from "./auth";
@@ -117,7 +117,7 @@ const HANDLERS: Record<ServerId, Handler> = {
     const { room, players } = s!;
     const problem = fixedDealProblem({ seats: a.seats, cards: a.cards }, players.map(p => p._id), room.settings.deck);
     if (problem) return fail(problem);
-    await ctx.db.patch(room._id, { settings: { ...room.settings, fixedDeal: { seed: a.seed, seats: a.seats, cards: a.cards } } });
+    await ctx.db.patch(room._id, { settings: { ...room.settings, fixedDeal: { seed: a.seed, seats: a.seats, cards: a.cards, nightSeed: a.nightSeed } } });
   },
   "setup.clearDeal": async (ctx, s) => {
     const { fixedDeal: _gone, ...settings } = s!.room.settings;
@@ -177,10 +177,10 @@ const HANDLERS: Record<ServerId, Handler> = {
     for (const role of nightTurns(deck)) turns.push({ role, startsAt: t, endsAt: (t += turnSeconds * 1000) });
     const game: Game = {
       seats, state, turns, turn: 0, log: [],
-      plans: seats.map(() => ({})), adoptPlans: seats.map(() => ({})), adoptProgress: seats.map(() => null), embers: {},
+      plans: seats.map(() => ({})), adoptPlans: seats.map(() => ({})), adoptProgress: seats.map(() => null),
       progress: state.dealt.map(r => ({ ...freshProgress(), done: !ROLE[r].steps })),
       votes: seats.map(() => null), forcedVotes: [], chatUsed: seats.map(() => false), powerUsed: seats.map(() => false), ready: seats.map(() => false), seatEffects: [],
-      daySwap: null, fixed: !!fixed, dealSeed,
+      daySwap: null, fixed: !!fixed, dealSeed, ...(fixed?.nightSeed !== undefined || fixed?.seed !== undefined ? { nightSeed: fixed.nightSeed ?? (fixed.seed! ^ 0x2545f491) >>> 0 } : {}),
     };
     const round = room.round + 1;
     await ctx.db.patch(room._id, { phase: "night", round, game });
@@ -198,12 +198,12 @@ const HANDLERS: Record<ServerId, Handler> = {
       (game.adoptPlans![seat][a.as] ??= {})[a.step] = a.plan;
       // Planned during the copy's own turn: it runs at once, as a live decision.
       if (game.state.adopted[String(seat)] === a.as && turnRole === turnKey(a.as)) {
-        game.log.push(...advance(game.state, seat, game.adoptPlans![seat][a.as], (seats[seat].adoptProgress ??= freshProgress()), game.turn, secureRng, { live: a.step, history: game.log, role: a.as }));
+        game.log.push(...advance(game.state, seat, game.adoptPlans![seat][a.as], (seats[seat].adoptProgress ??= freshProgress()), game.turn, rngFor(game, `live${game.turn}:${seat}:${a.as}:${a.step}`), { live: a.step, history: game.log, role: a.as }));
         game.adoptProgress![seat] = seats[seat].adoptProgress ?? null;
       }
     } else {
       game.plans[seat][a.step] = a.plan;
-      if (turnRole === turnKey(role.id)) game.log.push(...advance(game.state, seat, game.plans[seat], game.progress[seat], game.turn, secureRng, { live: a.step, history: game.log }));
+      if (turnRole === turnKey(role.id)) game.log.push(...advance(game.state, seat, game.plans[seat], game.progress[seat], game.turn, rngFor(game, `live${game.turn}:${seat}:${a.step}`), { live: a.step, history: game.log }));
     }
     await ctx.db.patch(room._id, { game });
   },
@@ -239,19 +239,6 @@ const HANDLERS: Record<ServerId, Handler> = {
   "day.clearSwap": async (ctx, s) => {
     const game = s!.room.game as Game;
     game.daySwap = null;
-    await ctx.db.patch(s!.room._id, { game });
-  },
-  "day.queueEmber": async (ctx, s, a) => {
-    const { room, seat } = s!;
-    const game = room.game as Game;
-    if (a.seat >= game.seats.length) return fail("There is no such seat.");
-    if (a.seat === seat) return fail("Choose another player.");
-    (game.embers ??= {})[String(seat)] = a.seat;
-    await ctx.db.patch(room._id, { game });
-  },
-  "day.clearEmber": async (ctx, s) => {
-    const game = s!.room.game as Game;
-    delete game.embers?.[String(s!.seat)];
     await ctx.db.patch(s!.room._id, { game });
   },
   "day.ready": async (ctx, s, a) => {

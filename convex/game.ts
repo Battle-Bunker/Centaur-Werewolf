@@ -2,7 +2,7 @@
 import type { MutationCtx } from "./_generated/server";
 import type { Doc, Id } from "./_generated/dataModel";
 import { internal } from "./_generated/api";
-import { dawn, daySwap, emberSwap, heldRoles, isPhoenix, resolveVote, runTurn, secureRng, shapeOf, type GameState, type LogEntry, type NightSeat, type Outcome, type Plan, type Progress } from "../shared/engine";
+import { dawn, daySwap, heldRoles, isPhoenix, resolveVote, runTurn, secureRng, seededRng, shapeOf, type Rng, type GameState, type LogEntry, type NightSeat, type Outcome, type Plan, type Progress } from "../shared/engine";
 import type { RoleId } from "../shared/roles";
 import type { SeatEffect } from "./presence";
 
@@ -36,16 +36,39 @@ export interface Game {
   seatEffects?: SeatEffect[];
   /** The Moon-Thief's queued swap: two seats, and the seat that queued it. Secret until the game ends. */
   daySwap?: { a: number; b: number; by: number } | null;
-  /** Ember-Carriers' queued moves: the seat that is to receive the Phoenix card, by the carrier's seat. Secret. */
-  embers?: Record<string, number>;
   /** The seed of this game's seating and shuffle. Shown only after the game ends. */
   dealSeed?: number;
   /** The deal was fixed at a play-test table. */
   fixed?: boolean;
+  /** Play-test replay: seeds every random draw of the night and the count. */
+  nightSeed?: number;
+  /** A canonical fingerprint of the scenario (deal, night seed, the night as it happened), set at the count. */
+  fingerprint?: string;
   outcome?: Outcome;
 }
 
 export const VOTE_SECONDS_DEFAULT = 20;
+/** FNV-1a over a string, as 8 hex digits: for seeds derived from labels and for scenario fingerprints. */
+export function fnv(text: string, seed = 0x811c9dc5): string {
+  let h = seed >>> 0;
+  for (let i = 0; i < text.length; i++) { h ^= text.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+  return h.toString(16).padStart(8, "0");
+}
+/**
+ * The generator for one random moment of a game (a turn's start or end, a live decision, dawn, the random votes). With a
+ * play-test night seed, each moment has its own seeded stream, so a replay with identical decisions draws identically.
+ */
+export const rngFor = (game: Game, label: string): Rng => (game.nightSeed === undefined ? secureRng : seededRng(parseInt(fnv(`${game.nightSeed}:${label}`), 16)));
+
+/** The canonical fingerprint of a scenario: the deal, the night seed and every night event (who, which step, what happened). */
+export function fingerprint(game: Game): string {
+  const s = game.state;
+  const night = game.log.filter(e => e.turn <= game.turns.length).map(e => [e.turn, e.seat, e.role, e.step, e.ev, e.hidden ?? null]);
+  const shown = s.shown.map(x => [x.slot, x.role, x.by, x.forged ?? false]);
+  const text = JSON.stringify({ dealt: s.dealt, centre: s.dealtCenter, nightSeed: game.nightSeed ?? null, rules: s.rules, night, shown });
+  return `${fnv(text)}${fnv(text, 0x12345678)}`;
+}
+
 /** The game's night seats as the engine's runTurn wants them (shared objects, so progress is kept). */
 export function nightSeats(game: Game): NightSeat[] {
   game.adoptPlans ??= game.seats.map(() => ({}));
@@ -57,7 +80,7 @@ export function playTurn(game: Game, opts: { force?: boolean } = {}) {
   const role = game.turns[game.turn]?.role;
   if (!role) return;
   const seats = nightSeats(game);
-  game.log.push(...runTurn(game.state, role, seats, game.turn, secureRng, game.log, opts));
+  game.log.push(...runTurn(game.state, role, seats, game.turn, rngFor(game, `t${game.turn}:${opts.force ? "end" : "begin"}`), game.log, opts));
   seats.forEach((s, i) => { game.adoptProgress![i] = s.adoptProgress ?? null; });
 }
 
@@ -74,7 +97,7 @@ export async function endTurn(ctx: MutationCtx, room: Doc<"rooms">) {
     await ctx.scheduler.runAt(game.turns[game.turn].endsAt, internal.timers.turnEnds, { room: room._id, round: room.round, turn: game.turn });
     await ctx.db.patch(room._id, { game });
   } else {
-    game.log.push(...dawn(game.state, shapeOf(game.state).deck!, game.turns.length, secureRng));
+    game.log.push(...dawn(game.state, shapeOf(game.state).deck!, game.turns.length, rngFor(game, "dawn")));
     game.dayEndsAt = Date.now() + room.settings.daySeconds * 1000;
     await ctx.scheduler.runAt(game.dayEndsAt, internal.timers.dayEnds, { room: room._id, round: room.round });
     await ctx.db.patch(room._id, { phase: "day", game });
@@ -96,17 +119,17 @@ export const seatedHumans = (game: Game, players: Doc<"players">[]) =>
 /** The vote phase ends: a seat that has not voted votes for a random other seat; the Moon-Thief's swap happens; count. */
 export async function endVote(ctx: MutationCtx, room: Doc<"rooms">) {
   const game = room.game as Game;
-  const n = game.seats.length;
+  const n = game.seats.length, voteRng = rngFor(game, "votes");
   game.votes.forEach((v, seat) => {
     if (v !== null) return;
     const others = [...Array(n).keys()].filter(i => i !== seat);
-    game.votes[seat] = others[Math.floor(secureRng() * others.length)];
+    game.votes[seat] = others[Math.floor(voteRng() * others.length)];
     game.forcedVotes.push(seat);
   });
   const s = game.state, after = game.turns.length + 1;
   if (game.daySwap) game.log.push({ turn: after, seat: game.daySwap.by, role: s.dealt[game.daySwap.by], step: "day", via: "live", ev: daySwap(s, game.daySwap.a, game.daySwap.b) });
-  for (const [by, target] of Object.entries(game.embers ?? {})) game.log.push({ turn: after, seat: Number(by), role: s.dealt[Number(by)], step: "day", via: "live", ev: emberSwap(s, target) });
   for (const e of game.seatEffects ?? []) game.log.push({ turn: after, seat: e.by, role: s.dealt[e.by], step: "day", via: "live", ev: { kind: "cut", seat: e.seat, from: e.from, until: e.until } });
+  game.fingerprint = fingerprint(game);
   game.outcome = resolveVote(heldRoles(s), game.votes, { forced: game.forcedVotes, bitten: s.bitten, marks: s.marks, held: s.inst, phoenix: s.inst.map(i => isPhoenix(s, i)), rules: s.rules });
   await ctx.db.patch(room._id, { phase: "ended", game });
 }

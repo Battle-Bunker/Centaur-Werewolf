@@ -45,7 +45,7 @@ export interface CommandContext {
   /** The unused once-per-game chat power of the card the viewer was dealt, if any. */
   chatPower: "signed" | "unsigned" | "report" | "forge" | null;
   /** The unused day power of the card the viewer was dealt, if any (the Moon-Thief's swap, the Hush's cut). */
-  dayPower: "swap" | "cut" | "ember" | null;
+  dayPower: "swap" | "cut" | null;
   /** Day: the viewer has said they are ready to vote. */
   ready: boolean;
   /** The viewer has a day swap queued. */
@@ -192,10 +192,12 @@ export const COMMANDS = [
     id: "setup.setTimer", perceivable: true, title: "Set a timer", group: "setup", runs: "server", effect: "write", confirm: "none", caller: "host", contexts: ["lobby"],
     description: "Sets how long dusk, each night turn, the day discussion or the vote phase lasts, in seconds. Arguments: { \"timer\": \"dusk\" | \"turn\" | \"day\" | \"vote\", \"seconds\": n } (dusk and turn 5-120, day 30-1800, vote 5-120; the vote defaults to 20). Every night turn lasts exactly the turn time, whoever is awake.",
     tooltip: "Change how long dusk, a night turn or the day lasts.", keywords: ["duration", "time", "seconds", "night", "day", "speed"],
-    params: z.object({ timer: z.enum(["dusk", "turn", "day", "vote"]), seconds: z.number().int().min(5).max(1800) }).strict(),
-    available: (_ctx, args) => {
+    params: z.object({ timer: z.enum(["dusk", "turn", "day", "vote"]), seconds: z.number().int().min(1).max(1800) }).strict(),
+    available: (ctx, args) => {
       const t = args?.timer as keyof typeof TIMERS | undefined, s = args?.seconds as number | undefined;
-      if (t && s !== undefined && (s < TIMERS[t].min || s > TIMERS[t].max)) return no(`Between ${TIMERS[t].min} and ${TIMERS[t].max} seconds.`);
+      // A play-test table may run a fully pre-queued night fast: dusk and turns down to 1 second.
+      const min = t && ctx.playtest && (t === "dusk" || t === "turn") ? 1 : t ? TIMERS[t].min : 5;
+      if (t && s !== undefined && (s < min || s > TIMERS[t].max)) return no(`Between ${min} and ${TIMERS[t].max} seconds.`);
       return OK;
     },
   }),
@@ -214,12 +216,13 @@ export const COMMANDS = [
   }),
   define({
     id: "setup.fixDeal", perceivable: false, title: "Fix the next deal (play-test table)", group: "setup", runs: "server", effect: "write", confirm: "none", caller: "host", contexts: ["lobby"],
-    description: "At a play-test table only: fixes the next deal. `seed` (a whole number) makes the seating and the shuffle repeatable, so different rule arms can be played on the same deal. `seats` (player ids in the order they will sit, seat 0 first) fixes who sits where. `cards` (role ids: one per seat in seat order, then the centre cards) fixes exactly who is dealt what; it must be a rearrangement of the deck. Any of the three may be given; what is not fixed is random. The fixed deal is used by every game until cleared.",
+    description: "At a play-test table only: fixes the next deal (and with `nightSeed`, every random draw of the night and the count: replaying a scenario). `seed` (a whole number) makes the seating and the shuffle repeatable, so different rule arms can be played on the same deal. `seats` (player ids in the order they will sit, seat 0 first) fixes who sits where. `cards` (role ids: one per seat in seat order, then the centre cards) fixes exactly who is dealt what; it must be a rearrangement of the deck. Any of the three may be given; what is not fixed is random. The fixed deal is used by every game until cleared.",
     tooltip: "Make the next deal repeatable, or choose exactly who gets which card.", keywords: ["seed", "deal", "test", "playtest", "fix", "rig"],
     params: z.object({
       seed: z.number().int().min(0).max(2 ** 31).optional().describe("Seeds the seating and the shuffle."),
       seats: z.array(z.string()).min(3).max(12).optional().describe("Player ids in seat order (seat 0 first): every player in the room exactly once."),
       cards: z.array(roleId).min(6).max(18).optional().describe("Role ids: the card of seat 0, seat 1, …, then centre card 1, 2, …"),
+      nightSeed: z.number().int().min(0).max(2 ** 32).optional().describe("Seeds every random draw of the night and the count (random information, random distortions, the Eavesdropper's ghost result, forced moves, the unheld egg, the order of dawn proclamations, random votes), so identical decisions give identical results. Derived from seed when omitted."),
     }).strict(),
     available: ctx => (ctx.playtest ? OK : no("Only at a play-test table (chosen when the room is created).", true)),
   }),
@@ -381,18 +384,6 @@ export const COMMANDS = [
     id: "day.clearSwap", perceivable: false, title: "Cancel your day swap", group: "play", runs: "server", effect: "write", confirm: "none", caller: "seated", contexts: ["day", "vote"],
     description: "Only for the player DEALT the Moon-Thief: cancels the queued day swap.", tooltip: "Cancel your queued swap.", keywords: ["moon-thief", "undo", "swap"], params: none,
     available: ctx => (ctx.dayPower !== "swap" ? no("Only the player dealt the Moon-Thief can do this.", true) : ctx.swapQueued ? OK : no("You have no swap queued.")),
-  }),
-  define({
-    id: "day.queueEmber", perceivable: false, title: "Carry the ember", group: "play", runs: "server", effect: "write", confirm: "none", caller: "seated", contexts: ["day", "vote"],
-    description: "Only for the player DEALT an Ember-Carrier (or a copy of one): queues the seat that receives a Phoenix card the instant the vote ends (after any Moon-Thief swap, before counting): that Phoenix card and the seat's card swap places. Arguments: { \"seat\": <another player's seat> }. Call again to change it; day_clearEmber to cancel. Secret until the game ends.",
-    tooltip: "Secretly send the Phoenix card to a player as the vote ends.", keywords: ["ember", "pyre", "phoenix", "kindler"],
-    params: z.object({ seat: seatNo("The player who is to receive the Phoenix card") }).strict(), seatArgs: ["seat"],
-    available: ctx => (ctx.dayPower === "ember" ? OK : no("Only an Ember-Carrier can do this.", true)),
-  }),
-  define({
-    id: "day.clearEmber", perceivable: false, title: "Put the ember down", group: "play", runs: "server", effect: "write", confirm: "none", caller: "seated", contexts: ["day", "vote"],
-    description: "Only for an Ember-Carrier: cancels its queued ember.", tooltip: "Cancel your queued ember.", keywords: ["ember", "undo"], params: none,
-    available: ctx => (ctx.dayPower === "ember" ? OK : no("Only an Ember-Carrier can do this.", true)),
   }),
   define({
     id: "day.ready", perceivable: true, title: "Say you are ready to vote", group: "play", runs: "server", effect: "write", confirm: "none", caller: "seated", contexts: ["day"],

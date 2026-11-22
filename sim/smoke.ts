@@ -71,7 +71,8 @@ await tokenCall({ grant_type: "refresh_token", refresh_token: tok.refresh_token,
 check("replaying a retired refresh token revokes the grant", (await rpc(fresh.access_token, "tools/list")).status === 401);
 
 console.log("\nrule settings and the play-test hooks");
-check("the deck is refused until the Moon-Thief table size allows 5 players", /Moon-Thief needs 7/.test((await refused(tool(host.key, "game_start"))) ?? ""));
+await tool(host.key, "setup_setRule", { rule: "daySwap", value: true });
+check("with the day swap on, the deck is refused until the Moon-Thief table size allows 5 players", /Moon-Thief needs 7/.test((await refused(tool(host.key, "game_start"))) ?? ""));
 check("a bad rule value is refused with the reason", /one of/.test((await refused(tool(host.key, "setup_setRule", { rule: "census", value: "most" }))) ?? ""));
 await tool(host.key, "setup_setRule", { rule: "thiefMinPlayers", value: 5 });
 const ruleView = await tool<{ table: { rules: { rule: string; value: unknown; means: string }[] } }>(rest[0].key, "room_view");
@@ -200,34 +201,48 @@ const r2 = v.result as unknown as { seats: { cutOff: { by: string }[] }[]; dealS
 check("the results reveal who was cut off and by whom, and the deal seed", r2.seats[1].cutOff[0]?.by === "Cy (seat 2)" && typeof r2.dealSeed === "number");
 check("the results reveal the forged seal", ((await tool<V>(di.key, "room_view")).chat as unknown as { FORGED?: string }[]).some(m => !!m.FORGED));
 
-console.log("\na copier, the brood and the ember");
+console.log("\na copier, the brood and the ember, replayed");
 await tool(host.key, "game_playAgain");
 const DECK3 = ["echo", "phoenix", "embercarrier", "kindler", "werewolf", "lure", "sage", "centaur", "herald", "sentry"];
 for (const role of (await view(table.code, host.token))!.settings.deck) await run("setup.removeRole", host.token, table.code, { role });
 for (const role of DECK3) await run("setup.addRole", host.token, table.code, { role });
-await run("setup.fixDeal", host.token, table.code, { seats: table.seats.map(s => s.id), cards: DECK3 });
-await tool(host.key, "game_start");
-const ada3 = await tool<{ copier: { stepsIfYouBecome: Record<string, unknown> } }>(ada.key, "room_view");
-check("a copier sees the steps of every role it may become, to plan them with \"as\"", !!ada3.copier && "werewolf" in ada3.copier.stepsIfYouBecome && "sage" in ada3.copier.stepsIfYouBecome);
-await tool(ada.key, "night_planStep", { step: "echo", plan: { branches: [], otherwise: { kind: "pick", targets: [{ k: "p", i: 4 }] } } });
-await tool(ada.key, "night_planStep", { step: "scent", as: "werewolf", plan: { branches: [], otherwise: { kind: "skip" } } });
-check("a plan for a role the copier is not becoming is accepted before copying", true);
-v = await tool<V>(host.key, "room_view", { compact: true });
-for (let i = 0; i < 20 && v.phase === "night"; i++) { await tool(host.key, "room_wait", { version: v.version, until: "phase" }); v = await tool<V>(host.key, "room_view", { compact: true }); }
-const adaL = (await tool<V>(ada.key, "room_view")).learned!, diL = (await tool<V>(di.key, "room_view")).learned!;
-console.log(`       Ada: ${adaL.join(" | ")}\n       Di: ${diL.join(" | ")}`);
-check("the Echo became a copy of the Werewolf and acted in its turn", adaL.some(l => /became a copy of the Werewolf/.test(l)) && adaL.some(l => /The pack: Ed \(seat 4\)/.test(l)));
-check("the brood gathered: a Kindler knows where the Phoenix was dealt", diL.some(l => /The Phoenix \(as dealt\): Bo \(seat 1\)/.test(l)));
-await tool(cy.key, "day_queueEmber", { seat: 4 });
-check("only an Ember-Carrier may carry the ember", /Ember-Carrier/.test((await refused(tool(bo.key, "day_queueEmber", { seat: 4 }))) ?? ""));
-for (const s of table.seats) await tool(s.key, "day_ready", { ready: true });
-for (const [s, target] of [[ada, 4], [bo, 4], [cy, 4], [di, 4], [ed, 0]] as const) await tool(s.key, "day_vote", { seat: target });
-v = await tool<V>(host.key, "room_view");
-const r3 = v.result as unknown as { headline: string; pyreWon: boolean; seats: { summary: string; won: boolean }[] };
+await run("setup.fixDeal", host.token, table.code, { seats: table.seats.map(s => s.id), cards: DECK3, nightSeed: 12345 });
+await run("setup.setTimer", host.token, table.code, { timer: "dusk", seconds: 6 });
+check("a play-test table may run night turns of 1 second", (await run("setup.setTimer", host.token, table.code, { timer: "turn", seconds: 1 }).then(() => true, () => false)));
+interface R3 { headline: string; pyreWon: boolean; seats: { summary: string; won: boolean }[]; scenario: { fingerprint: string; nightSeed: number }; nightLog: string[] }
+async function scenario3(first: boolean): Promise<R3> {
+  await tool(host.key, "game_start");
+  if (first) {
+    const ada3 = await tool<{ copier: { stepsIfYouBecome: Record<string, unknown> } }>(ada.key, "room_view");
+    check("a copier sees the steps of every role it may become, to plan them with \"as\"", !!ada3.copier && "werewolf" in ada3.copier.stepsIfYouBecome && "sage" in ada3.copier.stepsIfYouBecome);
+  }
+  // Every night decision queued during dusk; Di (a plain Kindler) has nothing to decide.
+  await tool(ada.key, "night_planStep", { step: "echo", plan: { branches: [], otherwise: { kind: "pick", targets: [{ k: "p", i: 4 }] } } });
+  await tool(ada.key, "night_planStep", { step: "scent", as: "werewolf", plan: { branches: [], otherwise: { kind: "skip" } } });
+  await tool(cy.key, "night_planStep", { step: "carry", plan: { branches: [], otherwise: { kind: "pick", targets: [{ k: "p", i: 1 }, { k: "p", i: 4 }] } } });
+  await tool(ed.key, "night_planStep", { step: "scent", plan: { branches: [], otherwise: { kind: "pick", targets: [{ k: "p", i: 2 }] } } });
+  let w = await tool<V>(host.key, "room_view", { compact: true });
+  for (let i = 0; i < 20 && w.phase === "night"; i++) { await tool(host.key, "room_wait", { version: w.version, until: "phase" }); w = await tool<V>(host.key, "room_view", { compact: true }); }
+  if (first) {
+    const adaL = (await tool<V>(ada.key, "room_view")).learned!, diL = (await tool<V>(di.key, "room_view")).learned!;
+    console.log(`       Ada: ${adaL.join(" | ")}\n       Di: ${diL.join(" | ")}`);
+    check("the Echo became a copy of the Werewolf and acted in its turn", adaL.some(l => /became a copy of the Werewolf/.test(l)) && adaL.some(l => /The pack: Ed \(seat 4\)/.test(l)));
+    check("the brood gathered: a Kindler knows where the Phoenix was dealt", diL.some(l => /The Phoenix \(as dealt\): Bo \(seat 1\)/.test(l)));
+  }
+  for (const s of table.seats) await tool(s.key, "day_ready", { ready: true });
+  for (const [s, target] of [[ada, 4], [bo, 4], [cy, 4], [di, 4], [ed, 0]] as const) await tool(s.key, "day_vote", { seat: target });
+  const r = (await tool<V>(host.key, "room_view")).result as unknown as R3;
+  await tool(host.key, "game_playAgain");
+  return r;
+}
+const r3 = await scenario3(true);
 console.log(`       ${r3.headline}`);
 for (const x of r3.seats) console.log(`       ${x.summary}`);
-check("the ember moved the Phoenix onto the herd's target: the Pyre burned and won, the wolves were denied", r3.pyreWon && r3.seats[4].summary.includes("ended holding Phoenix") && [2, 3, 4].every(i => r3.seats[i].won) && !r3.seats[0].won);
+check("the Ember-Carrier carried the Phoenix at night to a player who did not know; the table burned them: the Pyre won, the wolves were denied", r3.pyreWon && r3.seats[4].summary.includes("ended holding Phoenix") && [2, 3, 4].every(i => r3.seats[i].won) && !r3.seats[0].won);
 check("the result says what the copier became", r3.seats[0].summary.startsWith("dealt Echo, became Werewolf"));
+const again = await scenario3(false);
+console.log(`       fingerprints: ${r3.scenario.fingerprint} / ${again.scenario.fingerprint}`);
+check("a replay with the same deal, night seed and decisions has the same fingerprint and night", again.scenario.fingerprint === r3.scenario.fingerprint && again.scenario.nightSeed === 12345 && JSON.stringify(again.nightLog.filter(l => !l.startsWith("[Day]"))) === JSON.stringify(r3.nightLog.filter(l => !l.startsWith("[Day]"))));
 
 console.log(failed ? `\n${failed} check(s) FAILED` : "\nall checks passed");
 process.exit(failed ? 1 : 0);
