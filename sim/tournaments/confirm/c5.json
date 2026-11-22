@@ -1,0 +1,514 @@
+{
+ "timers": {
+  "dusk": 8,
+  "turn": 2,
+  "day": 240,
+  "vote": 60
+ },
+ "agents": {
+  "model": "opus",
+  "effort": "medium"
+ },
+ "tables": [
+  {
+   "label": "F6-Q3-two-wolves-lure~open",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "sage",
+    "rustler",
+    "sentry",
+    "centaur"
+   ],
+   "players": [
+    "Bryn",
+    "Dov",
+    "Alder",
+    "Esme",
+    "Cass"
+   ],
+   "scenario": {
+    "seed": 16,
+    "cards": [
+     "werewolf",
+     "werewolf",
+     "centaur",
+     "lure",
+     "sentry",
+     "sage",
+     "rustler",
+     "phoenix"
+    ],
+    "plans": {
+     "Esme": [
+      {
+       "step": "lure",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ],
+         "role": "werewolf"
+        }
+       }
+      }
+     ],
+     "Alder": [
+      {
+       "step": "glance",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "c",
+           "i": 0
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   },
+   "center": 3,
+   "replays": 10,
+   "rules": {
+    "openingStatements": true
+   }
+  },
+  {
+   "label": "F8-Q3-dressed-phoenix~off",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "sage",
+    "rustler",
+    "sentry",
+    "centaur"
+   ],
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "scenario": {
+    "seed": 24,
+    "cards": [
+     "phoenix",
+     "lure",
+     "sage",
+     "werewolf",
+     "rustler",
+     "werewolf",
+     "centaur",
+     "sentry"
+    ],
+    "plans": {
+     "Bryn": [
+      {
+       "step": "lure",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 0
+          }
+         ],
+         "role": "werewolf"
+        }
+       }
+      }
+     ],
+     "Dov": [
+      {
+       "step": "scent",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 1
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Cass": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 0
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Esme": [
+      {
+       "step": "peek",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ]
+        }
+       }
+      },
+      {
+       "step": "trade",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "skip"
+        }
+       }
+      }
+     ]
+    }
+   },
+   "center": 3,
+   "replays": 5,
+   "rules": {}
+  },
+  {
+   "label": "F8-Q3-dressed-phoenix~open",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "sage",
+    "rustler",
+    "sentry",
+    "centaur"
+   ],
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "scenario": {
+    "seed": 24,
+    "cards": [
+     "phoenix",
+     "lure",
+     "sage",
+     "werewolf",
+     "rustler",
+     "werewolf",
+     "centaur",
+     "sentry"
+    ],
+    "plans": {
+     "Bryn": [
+      {
+       "step": "lure",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 0
+          }
+         ],
+         "role": "werewolf"
+        }
+       }
+      }
+     ],
+     "Dov": [
+      {
+       "step": "scent",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 1
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Cass": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 0
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Esme": [
+      {
+       "step": "peek",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ]
+        }
+       }
+      },
+      {
+       "step": "trade",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "skip"
+        }
+       }
+      }
+     ]
+    }
+   },
+   "center": 3,
+   "replays": 10,
+   "rules": {
+    "openingStatements": true
+   }
+  },
+  {
+   "label": "F8-Q3-dressed-phoenix~spares",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "sage",
+    "rustler",
+    "sentry",
+    "centaur"
+   ],
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "scenario": {
+    "seed": 24,
+    "cards": [
+     "phoenix",
+     "lure",
+     "sage",
+     "werewolf",
+     "rustler",
+     "werewolf",
+     "centaur",
+     "sentry"
+    ],
+    "plans": {
+     "Bryn": [
+      {
+       "step": "lure",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 0
+          }
+         ],
+         "role": "werewolf"
+        }
+       }
+      }
+     ],
+     "Dov": [
+      {
+       "step": "scent",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 1
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Cass": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 0
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Esme": [
+      {
+       "step": "peek",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ]
+        }
+       }
+      },
+      {
+       "step": "trade",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "skip"
+        }
+       }
+      }
+     ]
+    }
+   },
+   "center": 3,
+   "replays": 5,
+   "rules": {
+    "lureSparesPhoenix": true
+   }
+  },
+  {
+   "label": "F6-Q3-two-wolves-lure~off",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "sage",
+    "rustler",
+    "sentry",
+    "centaur"
+   ],
+   "players": [
+    "Bryn",
+    "Dov",
+    "Alder",
+    "Esme",
+    "Cass"
+   ],
+   "scenario": {
+    "seed": 16,
+    "cards": [
+     "werewolf",
+     "werewolf",
+     "centaur",
+     "lure",
+     "sentry",
+     "sage",
+     "rustler",
+     "phoenix"
+    ],
+    "plans": {
+     "Esme": [
+      {
+       "step": "lure",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ],
+         "role": "werewolf"
+        }
+       }
+      }
+     ],
+     "Alder": [
+      {
+       "step": "glance",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "c",
+           "i": 0
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   },
+   "center": 3,
+   "replays": 5,
+   "rules": {}
+  }
+ ]
+}

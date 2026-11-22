@@ -11,21 +11,21 @@
  * server's own rule), and returns the same shape the server's `room_wait` returns. Arguments the
  * shim does not accept are forwarded, so the server's own refusal comes back. It holds no keys and keeps no state.
  *
- * Unreachable server (a genuine outage, or a Hush cut, which the server answers with a bare 503): a headless `claude`
- * client drops an MCP server whose HTTP calls fail and never reconnects, which would turn a 60 s cut into a permanent
- * removal. So a JSON-RPC call that fails upstream (status >= 500, or no connection) is answered with one and the same
- * tool-level error, UNREACHABLE below, whatever the cause: the player cannot tell a cut from a real drop, and keeps the
- * server and can retry.
+ * Connection drops: a headless AI client drops an MCP server for good after an HTTP failure (a 503, a refused
+ * connection). A Hush's cut answers the cut player with a bare 503 for the cut window, exactly as a real outage. So the
+ * shim turns ANY upstream failure (non-2xx, or no answer) into an HTTP 200 carrying a retryable error: a tool-level
+ * error result for `tools/call`, a JSON-RPC error for other methods, with one fixed wording that says only that the
+ * game server could not be reached. A genuine outage and a cut produce the identical answer; nothing names a cause.
  */
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import type { AddressInfo } from "node:net";
 import { versionKey } from "../shared/commands";
 
 const POLL_MS = 1000;
-export const UNREACHABLE = "unreachable: the server could not be reached. Your connection may have dropped; try again in a few seconds.";
-const unreachable = (id: unknown, method: string) => (method === "tools/call"
+export const UNREACHABLE = "Network error: the game server could not be reached (your connection may have dropped). Nothing you sent in this call went through. Wait a few seconds and try again; keep calling room_wait or room_view until it answers.";
+const unreachable = (id: unknown, method: string | undefined) => method === "tools/call"
   ? { jsonrpc: "2.0", id, result: { content: [{ type: "text", text: UNREACHABLE }], isError: true } }
-  : { jsonrpc: "2.0", id, error: { code: -32000, message: UNREACHABLE } });
+  : { jsonrpc: "2.0", id, error: { code: -32000, message: UNREACHABLE } };
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
 export async function startShim(upstream: string): Promise<{ url: string; close: () => void; stats: { forwarded: number; waits: number } }> {
@@ -36,8 +36,8 @@ export async function startShim(upstream: string): Promise<{ url: string; close:
   });
   const call = async (auth: string, name: string, args: Record<string, unknown>) => {
     const res = await fetch(upstream, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream", Authorization: auth }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/call", params: { name, arguments: args } }) });
-    if (res.status >= 500) return "unreachable" as const;
-    return res.ok ? ((await res.json()) as { result?: { isError?: boolean; structuredContent?: { notice: string; data: { version: string; phase: string; chatCount: number } } } }).result : undefined;
+    if (!res.ok) return "unreachable" as const;
+    return ((await res.json()) as { result?: { isError?: boolean; structuredContent?: { notice: string; data: { version: string; phase: string; chatCount: number } } } }).result;
   };
 
   async function wait(auth: string, id: unknown, args: Record<string, unknown>) {
@@ -45,13 +45,20 @@ export async function startShim(upstream: string): Promise<{ url: string; close:
     const ok = Object.keys(args).every(k => k === "seconds" || k === "version" || k === "until") && Number.isInteger(seconds) && (seconds as number) >= 1 && (seconds as number) <= 25 && (version === undefined || typeof version === "string") && ["any", "phase", "chat", "turn"].includes(until);
     if (!ok) return null; // let the server refuse it in its own words
     stats.waits++;
-    const look = () => call(auth, "room_view", { compact: true, chatSince: 1e9 });
-    let now = await look().catch(() => "unreachable" as const);
-    if (now === "unreachable") return unreachable(id, "tools/call");
-    if (!now || now.isError || !now.structuredContent) return { jsonrpc: "2.0", id, result: now ?? { content: [{ type: "text", text: "That room no longer exists." }], isError: true } };
-    const notice = now.structuredContent.notice, from = (version as string | undefined) ?? now.structuredContent.data.version;
-    const same = () => typeof now === "object" && !!now?.structuredContent && versionKey(now.structuredContent.data.version, until) === versionKey(from, until);
-    for (const end = Date.now() + (seconds as number) * 1000; same() && Date.now() < end;) { await sleep(POLL_MS); const next = await look().catch(() => "unreachable" as const); if (next === "unreachable") return unreachable(id, "tools/call"); now = next; }
+    type View = { isError?: boolean; structuredContent?: { notice: string; data: { version: string; phase: string; chatCount: number } } } | undefined;
+    const look = async (): Promise<View | "unreachable"> => { try { return await call(auth, "room_view", { compact: true, chatSince: 1e9 }); } catch { return "unreachable"; } };
+    const first = await look();
+    if (first === "unreachable") return unreachable(id, "tools/call");
+    if (!first || first.isError || !first.structuredContent) return { jsonrpc: "2.0", id, result: first ?? { content: [{ type: "text", text: "That room no longer exists." }], isError: true } };
+    let now: View = first;
+    const notice = first.structuredContent.notice, from = (version as string | undefined) ?? first.structuredContent.data.version;
+    const same = () => !!now?.structuredContent && versionKey(now.structuredContent.data.version, until) === versionKey(from, until);
+    for (const end = Date.now() + (seconds as number) * 1000; same() && Date.now() < end;) {
+      await sleep(POLL_MS);
+      const n = await look();
+      if (n === "unreachable") return unreachable(id, "tools/call");
+      now = n;
+    }
     if (!now?.structuredContent) return { jsonrpc: "2.0", id, result: { content: [{ type: "text", text: "That room no longer exists." }], isError: true } };
     const v = now.structuredContent.data, changed = !same();
     const data = { changed, version: v.version, phase: v.phase, chatCount: v.chatCount, until, next: changed ? "Call room_view to see what changed (room_view { \"compact\": true, \"chatSince\": <your last chatCount> } for only what is new)." : "Nothing changed yet. Call room_wait again with this version." };
@@ -70,10 +77,15 @@ export async function startShim(upstream: string): Promise<{ url: string; close:
         if (answer) { res.writeHead(200, { "Content-Type": "application/json" }); res.end(JSON.stringify(answer)); return; }
       }
       stats.forwarded++;
-      const isRpc = req.method === "POST" && rpc && !Array.isArray(rpc) && rpc.id !== undefined;
-      const up = await forward(req, body).catch(e => { if (isRpc) return null; throw e; });
-      if (isRpc && (!up || up.status >= 500)) { res.writeHead(200, { "Content-Type": "application/json" }); res.end(JSON.stringify(unreachable(rpc.id, rpc.method))); return; }
-      if (!up) throw new Error("upstream unreachable");
+      const rpcId = rpc && !Array.isArray(rpc) ? rpc.id : null, rpcMethod = rpc && !Array.isArray(rpc) ? rpc.method : undefined;
+      const up = await forward(req, body).catch(() => null);
+      // Any upstream failure on a JSON-RPC request becomes a retryable error the client keeps the server for.
+      // (A notification has no id and expects no body: answer 202 as the server would.)
+      if (req.method === "POST" && rpc && !Array.isArray(rpc) && (!up || !up.ok) && !(up && up.status === 401)) {
+        if (rpcId === undefined) { res.writeHead(202); res.end(); return; }
+        res.writeHead(200, { "Content-Type": "application/json" }); res.end(JSON.stringify(unreachable(rpcId, rpcMethod))); return;
+      }
+      if (!up) { res.writeHead(502, { "Content-Type": "application/json" }); res.end(JSON.stringify({ error: "shim", message: "upstream unreachable" })); return; }
       const headers: Record<string, string> = {};
       for (const h of ["content-type", "www-authenticate", "allow"]) { const v = up.headers.get(h); if (v) headers[h] = v; }
       res.writeHead(up.status, headers); res.end(Buffer.from(await up.arrayBuffer()));

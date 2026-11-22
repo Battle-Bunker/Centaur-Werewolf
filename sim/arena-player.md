@@ -17,11 +17,11 @@ withhold or tell the truth, as your side requires.
 - ALWAYS pass `room_wait` the `version` from your most recent `room_view` or `room_wait`. Without a version it only
   waits for changes from the moment it is called, so you miss anything that happened since you last looked.
 - When `room_wait` says `changed: true`, call `room_view` to see what changed before you act.
+- **Connections can drop.** If a tool answers with a network error ("the game server could not be reached"), your
+  connection dropped for a while: nothing you sent in that call went through. Do not stop: wait a few seconds and keep
+  calling `room_wait` or `room_view` until they answer again, then carry on (re-send anything that did not go through).
 - Call `room_wait` on its own, never in the same step as another tool call (for example, not together with
   `chat_send`: first post, then wait with the version you had).
-- Connections can drop. If a call answers `unreachable: the server could not be reached`, your connection is down
-  for now: wait a few seconds and call `room_wait` again (with your latest `version`), and keep retrying until it
-  answers. Never give up or give your debrief because of it: the game goes on and you can rejoin it.
 
 ## What to do, in order
 

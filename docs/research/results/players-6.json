@@ -1,0 +1,3856 @@
+{
+ "generatedBy": "sim/research/p6-report.ts + sim/research/p6-json.mjs",
+ "generated": "2026-11-22T13:35:07.656Z",
+ "players": 6,
+ "agents": "all seats Opus, medium effort",
+ "timers": {
+  "dusk": "60 coarse (90 in coarse3) / 8 fixed",
+  "turn": "8 coarse (10 in coarse3) / 2 fixed",
+  "day": 240,
+  "vote": 60
+ },
+ "spend": {
+  "games": 73,
+  "playersUsd": 267,
+  "judgeVerdicts": 146,
+  "judgesUsdApprox": 10
+ },
+ "headline": [
+  "One well-supported roster: PY6 (werewolf x2, phoenix, lure, sage, moonsage, rustler, centaur, pickpocket; 3 centre). 41 games; 6 of 8 fixed-scenario arms talk-live; all-PY6 judge means ToM 2.46, deception 2.76, path 2.88, noise 0.96. Flaw: wolves 2 of 38 fixed replays.",
+  "No second or third good roster found at 6: five rosters rejected on coarse games; three scenarios built to be talk-live on other rosters (PE6, PF6, PY6L) swept 5-0 for the Centaurs.",
+  "Parity bloc: 6 of 7 parity deals were wolf wins under plain Blood Price; fix: bloodPriceCondemned (hub-tested) or at most 3 wolf-team cards in 9.",
+  "Opening statements moved PY6-S1 from Pyre 4 / wolves 1 to Centaurs 3 / Pyre 1 / wolves 1; without them honest players spoke first in most games (first-message rank 2.2-2.3 vs 4.7-5.3).",
+  "Lesson: Opus tables turn motives into evidence; only lies that some player is motivated to keep telling survive the discussion."
+ ],
+ "rosters": {
+  "PY6": {
+   "name": "Pyre with a twin",
+   "recommended": true,
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "sage",
+    "moonsage",
+    "rustler",
+    "centaur",
+    "pickpocket"
+   ],
+   "centre": 3,
+   "rules": "defaults; arms: openingStatements on/off, burningDeniesWolves off (S2), bloodPriceCondemned on (S5)",
+   "games": {
+    "total": 41,
+    "natural": 3,
+    "fixedReplays": 38,
+    "fixedArms": 8
+   },
+   "winsNatural": {
+    "pyre": 1,
+    "centaur": 1,
+    "werewolf": 1
+   },
+   "winsFixed": {
+    "centaur": 21,
+    "pyre": 15,
+    "werewolf": 2
+   },
+   "concentration": {
+    "median": 0.8,
+    "bands": {
+     "majority": 15,
+     "plurality": 16,
+     "unanimous": 9,
+     "scattered": 1
+    }
+   },
+   "judges": {
+    "verdicts": 82,
+    "tom": 2.46,
+    "deception": 2.76,
+    "path": 2.88,
+    "noise": 0.96,
+    "agreementMeanAbsDiff": {
+     "tom": 0.1,
+     "deception": 0.29,
+     "path": 0.2,
+     "noise": 0.12
+    },
+    "howWonExact": "35/41",
+    "gamesWithTwoPointDisagreement": 0
+   },
+   "talkLiveArms": "6 of 8 (S1 off/on, S2 off/on/nodenial, S5); S4 talk-dead (path 1.9); S3 control degenerate"
+  },
+  "TW6": {
+   "recommended": false,
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "moonsage",
+    "herder",
+    "strayherder",
+    "rustler",
+    "centaur",
+    "sentry"
+   ],
+   "centre": 3,
+   "rules": "defaults",
+   "why": "parity bloc (4 wolf-team cards of 9)"
+  },
+  "TW6c": {
+   "recommended": false,
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "moonsage",
+    "sage",
+    "rustler",
+    "centaur",
+    "sentry",
+    "pickpocket",
+    "drifter"
+   ],
+   "centre": 3,
+   "rules": {
+    "census": "allButOne",
+    "packCovers": true
+   },
+   "why": "honest-info-converged; parity"
+  },
+  "SE6": {
+   "recommended": false,
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "counterfeiter",
+    "notary",
+    "moonsage",
+    "rustler",
+    "centaur",
+    "sentry",
+    "pickpocket"
+   ],
+   "centre": 3,
+   "rules": "defaults",
+   "why": "parity bloc in all 3 games; Counterfeiter forged once"
+  },
+  "SO6": {
+   "recommended": false,
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "spooker",
+    "pickpocket",
+    "latecomer",
+    "cutpurse",
+    "drifter",
+    "centaur",
+    "sentry"
+   ],
+   "centre": 3,
+   "rules": "defaults",
+   "why": "predicted bad (noise); actually first-order reconstruction, Centaurs 2-0, noise 1.0"
+  },
+  "PE6": {
+   "recommended": false,
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "embercarrier",
+    "sage",
+    "rustler",
+    "centaur",
+    "sentry",
+    "pickpocket"
+   ],
+   "centre": 3,
+   "rules": "defaults; fixed scenario with openingStatements",
+   "why": "PE6-S1 swept 5-0: the dealt Phoenix holder, now a Centaur, revealed its dealt card"
+  },
+  "GL6": {
+   "recommended": false,
+   "deck": [
+    "glamour",
+    "werewolf",
+    "sage",
+    "rustler",
+    "centaur",
+    "sentry",
+    "pickpocket",
+    "drifter",
+    "cutpurse"
+   ],
+   "centre": 3,
+   "rules": "defaults",
+   "why": "path 1.25; too many honest looks"
+  },
+  "PF6": {
+   "recommended": false,
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "falsewitness",
+    "notary",
+    "rustler",
+    "centaur",
+    "sentry",
+    "pickpocket"
+   ],
+   "centre": 3,
+   "rules": {
+    "openingStatements": true
+   },
+   "why": "PF6-S1 swept 5-0: the Notary knew both roles"
+  },
+  "PY6L": {
+   "recommended": false,
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "sage",
+    "moonsage",
+    "rustler",
+    "centaur",
+    "pickpocket",
+    "latecomer"
+   ],
+   "centre": 4,
+   "rules": {
+    "openingStatements": true
+   },
+   "why": "amendment test: S3 + Latecomer still 5-0; the wolf told the late-swap story about its own card"
+  },
+  "HU6": {
+   "recommended": false,
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "hush",
+    "sage",
+    "echo",
+    "cutpurse",
+    "pickpocket",
+    "centaur",
+    "sentry"
+   ],
+   "centre": 3,
+   "why": "not run: Hush cut kills the AI player's MCP connection (harness)"
+  }
+ },
+ "parity": {
+  "naturalDeals": 19,
+  "parity": {
+   "games": 7,
+   "werewolf": 6,
+   "centaur": 1
+  },
+  "nonParity": {
+   "games": 12,
+   "centaur": 9,
+   "werewolf": 2,
+   "pyre": 1
+  }
+ },
+ "timingTell": {
+  "openingStatementsOff": "mean first-message rank of 6 over 18 PY6 fixed replays",
+  "ranks": {
+   "centaur": 2.17,
+   "rustler": 2.17,
+   "pickpocket": 2.25,
+   "sage": 2.31,
+   "phoenix": 4.67,
+   "lure": 4.83,
+   "werewolf": 5.28
+  }
+ },
+ "strategies": [
+  {
+   "strategy": "Lure fakes a Sage read of Werewolf on the Phoenix",
+   "team": "pyre",
+   "appeared": 5,
+   "of": 18,
+   "sideWon": 4
+  },
+  {
+   "strategy": "Phoenix reverse bluff: counter-claims and fights the vote",
+   "team": "pyre",
+   "appeared": 8,
+   "of": 18,
+   "sideWon": 7
+  },
+  {
+   "strategy": "Phoenix baits openly (burn me / confession)",
+   "team": "pyre",
+   "appeared": 5,
+   "of": 18,
+   "sideWon": 1
+  },
+  {
+   "strategy": "Lone wolf claims to be the dressed Phoenix",
+   "team": "werewolf",
+   "appeared": 10,
+   "of": 18,
+   "sideWon": 1
+  },
+  {
+   "strategy": "Lone wolf truthfully explains the Lure/Phoenix setup",
+   "team": "werewolf",
+   "appeared": 5,
+   "of": 18,
+   "sideWon": 0
+  },
+  {
+   "strategy": "Fake Pickpocket claim to explain a read away",
+   "team": "pyre/werewolf",
+   "appeared": 7,
+   "of": 18,
+   "sideWon": 3
+  },
+  {
+   "strategy": "'A Phoenix would want the votes' used to classify the accused",
+   "team": "all",
+   "appeared": 18,
+   "of": 18
+  },
+  {
+   "strategy": "Tie hedge proposed",
+   "team": "all",
+   "appeared": 18,
+   "of": 18,
+   "adopted": 0
+  },
+  {
+   "strategy": "(opening on) Moonsage tells the truth about the dressed Phoenix to stop a burning",
+   "team": "werewolf",
+   "appeared": 4,
+   "of": 5,
+   "sideWon": 0
+  }
+ ],
+ "games": [
+  {
+   "label": "PY6-S1-fakesage#3",
+   "opening": "off",
+   "winner": "werewolf",
+   "crux": "lone wolf claims Phoenix last and exposes the Lure's impossible Sage claim",
+   "quotes": [
+    "Alder: I was dealt Phoenix... Dov's Sage claim is just as impossible as Esme's Centaur claim",
+    "Alder: Voting Dov: either you hit a wolf, or you stop a burning.",
+    "Fenn: Alder is the Phoenix, Esme is the Lure... I'm switching to Dov."
+   ]
+  },
+  {
+   "label": "PY6-S1-fakesage#1",
+   "opening": "off",
+   "winner": "pyre",
+   "crux": "Phoenix double bluff",
+   "quotes": [
+    "Esme: I'm actually the Phoenix... DON'T vote me",
+    "Dov: A real Phoenix WANTS to be voted out — it would never say 'don't vote me'. That's a caught Werewolf grabbing the Phoenix excuse"
+   ]
+  },
+  {
+   "label": "PY6-S2-open#3",
+   "opening": "on",
+   "winner": "centaur",
+   "crux": "Sage's second-order step: a Moonsage would never expose a real wolf, so the co-claimant is the Lure and the accused the dressed Phoenix"
+  },
+  {
+   "label": "PY6-S5-twinheld#5",
+   "opening": "on",
+   "winner": "centaur",
+   "crux": "Moonsage tells the truth to stop a burning; the Sage turns it into proof of the wolf; 2-2 tie Dov+Cass, W 1 C 0"
+  }
+ ],
+ "notKnown": [
+  "PY6 natural-deal balance (3 natural games only).",
+  "How to give PY6's wolves a live game (hollowsage instead of moonsage; burningDeniesWolves off where the wolf is not the alternative suspect).",
+  "Whether the opening-statements effect generalises (hub's 6p Lure scenario moved the other way).",
+  "The Hush at 6 (harness bug).",
+  "Whether requested variants R6-3, R6-4, R6-7 fix the PE6, PF6, PY6L sweeps."
+ ],
+ "requests": [
+  "R6-1 bloodPriceCondemned on at 6",
+  "R6-2 opening statements kept as an option, reported both ways",
+  "R6-3 Ember-Carrier variant: dealt Phoenix holder stays Pyre",
+  "R6-4 Notary variant learning only its pair statement",
+  "R6-5 Hush harness fix",
+  "R6-6 AI-table dusk 90 s",
+  "R6-7 wolf-side late mover (Werewolf-team Latecomer twin)"
+ ],
+ "groups": [
+  {
+   "group": "V6",
+   "roster": "V6-setup",
+   "fixedScenario": false,
+   "games": 1,
+   "deck": [
+    "centaur",
+    "herder",
+    "moonsage",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "sentry",
+    "werewolf",
+    "werewolf"
+   ],
+   "centre": 3,
+   "rules": {},
+   "openingStatements": false,
+   "fingerprints": 1,
+   "winners": {
+    "centaur": 1
+   },
+   "minority": 0,
+   "entropyWinner": 0,
+   "eliminated": {
+    "Fenn": 1
+   },
+   "parityGames": 0,
+   "concentration": [
+    {
+     "c": 0.8,
+     "band": "majority"
+    }
+   ],
+   "judges": null,
+   "talkLive": null,
+   "costUsd": 3.37,
+   "perGame": [
+    {
+     "label": "V6#1",
+     "code": "PABE",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Fenn (seat 1)"
+     ],
+     "c": 0.8,
+     "messages": 28,
+     "judges": []
+    }
+   ]
+  },
+  {
+   "group": "PY6",
+   "roster": "PY6",
+   "fixedScenario": false,
+   "games": 3,
+   "deck": [
+    "centaur",
+    "lure",
+    "moonsage",
+    "phoenix",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "werewolf",
+    "werewolf"
+   ],
+   "centre": 3,
+   "rules": {},
+   "openingStatements": false,
+   "fingerprints": 3,
+   "winners": {
+    "pyre": 1,
+    "centaur": 1,
+    "werewolf": 1
+   },
+   "minority": 2,
+   "entropyWinner": 1.58,
+   "eliminated": {
+    "Esme": 1,
+    "Cass": 1,
+    "Cass+Esme": 1
+   },
+   "parityGames": 0,
+   "concentration": [
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 0.6,
+     "band": "plurality"
+    }
+   ],
+   "judges": {
+    "verdicts": 6,
+    "tom": 2.33,
+    "deception": 2.83,
+    "path": 3,
+    "noise": 1.5,
+    "howWon": {
+     "lie-believed": 2,
+     "honest-info-converged": 2,
+     "blunder": 1,
+     "framing-or-decoy": 1
+    },
+    "agreement": {
+     "tom": 0,
+     "deception": 0.33,
+     "path": 0,
+     "noise": 0.33,
+     "howWonExact": "2/3"
+    }
+   },
+   "talkLive": null,
+   "costUsd": 13.5,
+   "perGame": [
+    {
+     "label": "PY6#1",
+     "code": "TYWC",
+     "winner": "pyre",
+     "parity": false,
+     "eliminated": [
+      "Esme (seat 5)"
+     ],
+     "c": 0.8,
+     "messages": 34,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Lure's fake Sage claim burned Phoenix"
+      },
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Fake Sage's Werewolf call burned Phoenix"
+      }
+     ]
+    },
+    {
+     "label": "PY6#2",
+     "code": "JKTY",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Cass (seat 4)"
+     ],
+     "c": 0.8,
+     "messages": 40,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 2,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "True Sage look beat Moonsage counter-claim"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 2,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "True Sage look plus Lure-motive reasoning"
+      }
+     ]
+    },
+    {
+     "label": "PY6#3",
+     "code": "RKHS",
+     "winner": "werewolf",
+     "parity": false,
+     "eliminated": [
+      "Cass (seat 2)",
+      "Esme (seat 4)"
+     ],
+     "c": 0.6,
+     "messages": 45,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 4,
+       "noise": 2,
+       "howWon": "blunder",
+       "label": "Real Lure's Esme vote forced fatal tie"
+      },
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 4,
+       "noise": 3,
+       "howWon": "framing-or-decoy",
+       "label": "Esme framed via swap; tie triggers Blood Price"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "group": "SE6",
+   "roster": "SE6",
+   "fixedScenario": false,
+   "games": 3,
+   "deck": [
+    "centaur",
+    "counterfeiter",
+    "moonsage",
+    "notary",
+    "pickpocket",
+    "rustler",
+    "sentry",
+    "werewolf",
+    "werewolf"
+   ],
+   "centre": 3,
+   "rules": {},
+   "openingStatements": false,
+   "fingerprints": 3,
+   "winners": {
+    "werewolf": 3
+   },
+   "minority": 0,
+   "entropyWinner": 0,
+   "eliminated": {
+    "Bryn+Esme": 1,
+    "Alder+Esme": 1,
+    "Alder": 1
+   },
+   "parityGames": 3,
+   "concentration": [
+    {
+     "c": 0.6,
+     "band": "plurality"
+    },
+    {
+     "c": 0.6,
+     "band": "plurality"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    }
+   ],
+   "judges": {
+    "verdicts": 6,
+    "tom": 1.83,
+    "deception": 2.17,
+    "path": 1.67,
+    "noise": 1,
+    "howWon": {
+     "framing-or-decoy": 3,
+     "other": 2,
+     "lie-believed": 1
+    },
+    "agreement": {
+     "tom": 0.33,
+     "deception": 0.33,
+     "path": 0,
+     "noise": 0,
+     "howWonExact": "2/3"
+    }
+   },
+   "talkLive": null,
+   "costUsd": 13.12,
+   "perGame": [
+    {
+     "label": "SE6#1",
+     "code": "VBYK",
+     "winner": "werewolf",
+     "parity": true,
+     "eliminated": [
+      "Bryn (seat 2)",
+      "Esme (seat 3)"
+     ],
+     "c": 0.6,
+     "messages": 36,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 1,
+       "howWon": "framing-or-decoy",
+       "label": "Wolf bloc framed Bryn, forcing tie"
+      },
+      {
+       "tom": 1,
+       "deception": 2,
+       "path": 1,
+       "noise": 1,
+       "howWon": "framing-or-decoy",
+       "label": "Three-seat wolf bloc forced 3-3 tie"
+      }
+     ]
+    },
+    {
+     "label": "SE6#2",
+     "code": "FKWH",
+     "winner": "werewolf",
+     "parity": true,
+     "eliminated": [
+      "Esme (seat 1)",
+      "Alder (seat 5)"
+     ],
+     "c": 0.6,
+     "messages": 39,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 1,
+       "noise": 1,
+       "howWon": "other",
+       "label": "Wolf-team bloc forced a 3-3 tie"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 1,
+       "howWon": "other",
+       "label": "3v3 parity tie under Blood Price"
+      }
+     ]
+    },
+    {
+     "label": "SE6#3",
+     "code": "WJCG",
+     "winner": "werewolf",
+     "parity": true,
+     "eliminated": [
+      "Alder (seat 3)"
+     ],
+     "c": 0.8,
+     "messages": 31,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 3,
+       "noise": 1,
+       "howWon": "framing-or-decoy",
+       "label": "Counterfeiter drew vote, Werewolf Dov walked"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 3,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Fake Pickpocket claim; Counterfeiter absorbed votes"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "group": "SO6",
+   "roster": "SO6",
+   "fixedScenario": false,
+   "games": 2,
+   "deck": [
+    "centaur",
+    "cutpurse",
+    "drifter",
+    "latecomer",
+    "pickpocket",
+    "sentry",
+    "spooker",
+    "werewolf",
+    "werewolf"
+   ],
+   "centre": 3,
+   "rules": {},
+   "openingStatements": false,
+   "fingerprints": 2,
+   "winners": {
+    "centaur": 2
+   },
+   "minority": 0,
+   "entropyWinner": 0,
+   "eliminated": {
+    "Esme": 1,
+    "Dov": 1
+   },
+   "parityGames": 0,
+   "concentration": [
+    {
+     "c": 1,
+     "band": "unanimous"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    }
+   ],
+   "judges": {
+    "verdicts": 4,
+    "tom": 2.25,
+    "deception": 2.25,
+    "path": 2.25,
+    "noise": 1,
+    "howWon": {
+     "honest-info-converged": 4
+    },
+    "agreement": {
+     "tom": 0.5,
+     "deception": 0.5,
+     "path": 0.5,
+     "noise": 0,
+     "howWonExact": "2/2"
+    }
+   },
+   "talkLive": null,
+   "costUsd": 8.73,
+   "perGame": [
+    {
+     "label": "SO6#1",
+     "code": "EPAE",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Esme (seat 1)"
+     ],
+     "c": 1,
+     "messages": 42,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 2,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Esme's stalled census claim exposed"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 3,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Stalling wolf caught as only unclaimed seat"
+      }
+     ]
+    },
+    {
+     "label": "SO6#2",
+     "code": "SWYK",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Dov (seat 4)"
+     ],
+     "c": 0.8,
+     "messages": 31,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 2,
+       "path": 2,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Spook trail plus swapped wolf's confession"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 2,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Spook trace plus Alder's confession found wolf"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "group": "TW6",
+   "roster": "TW6",
+   "fixedScenario": false,
+   "games": 3,
+   "deck": [
+    "centaur",
+    "herder",
+    "moonsage",
+    "rustler",
+    "sage",
+    "sentry",
+    "strayherder",
+    "werewolf",
+    "werewolf"
+   ],
+   "centre": 3,
+   "rules": {},
+   "openingStatements": false,
+   "fingerprints": 3,
+   "winners": {
+    "centaur": 1,
+    "werewolf": 2
+   },
+   "minority": 1,
+   "entropyWinner": 0.92,
+   "eliminated": {
+    "Esme": 1,
+    "Alder+Fenn": 1,
+    "Dov+Fenn": 1
+   },
+   "parityGames": 2,
+   "concentration": [
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 0.6,
+     "band": "plurality"
+    },
+    {
+     "c": 0.6,
+     "band": "plurality"
+    }
+   ],
+   "judges": {
+    "verdicts": 6,
+    "tom": 2,
+    "deception": 2.33,
+    "path": 1.5,
+    "noise": 1,
+    "howWon": {
+     "honest-info-converged": 2,
+     "framing-or-decoy": 2,
+     "split-vote-no-consensus": 1,
+     "other": 1
+    },
+    "agreement": {
+     "tom": 0,
+     "deception": 0,
+     "path": 0.33,
+     "noise": 0,
+     "howWonExact": "2/3"
+    }
+   },
+   "talkLive": null,
+   "costUsd": 12.93,
+   "perGame": [
+    {
+     "label": "TW6#1",
+     "code": "GGGZ",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Esme (seat 2)"
+     ],
+     "c": 0.8,
+     "messages": 38,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 2,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Sage read, Sentry, Herder count converged"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 3,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Esme's inconsistent story exposed, Dov swung"
+      }
+     ]
+    },
+    {
+     "label": "TW6#2",
+     "code": "YSPF",
+     "winner": "werewolf",
+     "parity": true,
+     "eliminated": [
+      "Alder (seat 1)",
+      "Fenn (seat 4)"
+     ],
+     "c": 0.6,
+     "messages": 33,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 1,
+       "noise": 1,
+       "howWon": "framing-or-decoy",
+       "label": "Moonsage's secret defection forced a 3-3 tie"
+      },
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 1,
+       "noise": 1,
+       "howWon": "framing-or-decoy",
+       "label": "Moonsage secretly votes the decoy, forcing a tie"
+      }
+     ]
+    },
+    {
+     "label": "TW6#3",
+     "code": "PKUJ",
+     "winner": "werewolf",
+     "parity": true,
+     "eliminated": [
+      "Dov (seat 0)",
+      "Fenn (seat 2)"
+     ],
+     "c": 0.6,
+     "messages": 39,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 1,
+       "howWon": "split-vote-no-consensus",
+       "label": "Wolf-team voting bloc forced 3-3 tie"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 1,
+       "howWon": "other",
+       "label": "Wolf-team bloc forced Blood Price tie"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "group": "PE6",
+   "roster": "PE6",
+   "fixedScenario": false,
+   "games": 3,
+   "deck": [
+    "centaur",
+    "embercarrier",
+    "phoenix",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "sentry",
+    "werewolf",
+    "werewolf"
+   ],
+   "centre": 3,
+   "rules": {},
+   "openingStatements": false,
+   "fingerprints": 3,
+   "winners": {
+    "werewolf": 1,
+    "centaur": 2
+   },
+   "minority": 1,
+   "entropyWinner": 0.92,
+   "eliminated": {
+    "Bryn": 1,
+    "Esme": 1,
+    "Dov": 1
+   },
+   "parityGames": 0,
+   "concentration": [
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 1,
+     "band": "unanimous"
+    }
+   ],
+   "judges": {
+    "verdicts": 6,
+    "tom": 1.67,
+    "deception": 2.33,
+    "path": 2.33,
+    "noise": 0.67,
+    "howWon": {
+     "framing-or-decoy": 1,
+     "lie-believed": 1,
+     "honest-info-converged": 4
+    },
+    "agreement": {
+     "tom": 0,
+     "deception": 0,
+     "path": 0,
+     "noise": 0,
+     "howWonExact": "2/3"
+    }
+   },
+   "talkLive": null,
+   "costUsd": 13.81,
+   "perGame": [
+    {
+     "label": "PE6#1",
+     "code": "YXCJ",
+     "winner": "werewolf",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 0.8,
+     "messages": 46,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 4,
+       "noise": 2,
+       "howWon": "framing-or-decoy",
+       "label": "Fake Phoenix steered vote onto Pyre Bryn"
+      },
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 4,
+       "noise": 2,
+       "howWon": "lie-believed",
+       "label": "Fake Phoenix claim steered the vote to Bryn"
+      }
+     ]
+    },
+    {
+     "label": "PE6#2",
+     "code": "DXFV",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Esme (seat 5)"
+     ],
+     "c": 0.8,
+     "messages": 41,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 2,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Contradictory fake Sentry caught, gambit rejected"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 2,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Consistent true claims exposed fake Sentry"
+      }
+     ]
+    },
+    {
+     "label": "PE6#3",
+     "code": "FSAP",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Dov (seat 2)"
+     ],
+     "c": 1,
+     "messages": 32,
+     "judges": [
+      {
+       "tom": 1,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Sage-Rustler-Sentry chain pinned the lone wolf"
+      },
+      {
+       "tom": 1,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Sage-Rustler chain exposed the lone wolf"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "group": "TW6c",
+   "roster": "TW6c",
+   "fixedScenario": false,
+   "games": 3,
+   "deck": [
+    "centaur",
+    "drifter",
+    "moonsage",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "sentry",
+    "werewolf",
+    "werewolf"
+   ],
+   "centre": 3,
+   "rules": {
+    "census": "allButOne",
+    "packCovers": true
+   },
+   "openingStatements": false,
+   "fingerprints": 3,
+   "winners": {
+    "werewolf": 1,
+    "centaur": 2
+   },
+   "minority": 1,
+   "entropyWinner": 0.92,
+   "eliminated": {
+    "Alder+Dov": 1,
+    "Bryn": 1,
+    "Fenn": 1
+   },
+   "parityGames": 2,
+   "concentration": [
+    {
+     "c": 0.6,
+     "band": "plurality"
+    },
+    {
+     "c": 1,
+     "band": "unanimous"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    }
+   ],
+   "judges": {
+    "verdicts": 6,
+    "tom": 1.67,
+    "deception": 2,
+    "path": 1.33,
+    "noise": 0.5,
+    "howWon": {
+     "framing-or-decoy": 1,
+     "other": 1,
+     "honest-info-converged": 4
+    },
+    "agreement": {
+     "tom": 0,
+     "deception": 0,
+     "path": 0,
+     "noise": 0.33,
+     "howWonExact": "2/3"
+    }
+   },
+   "talkLive": null,
+   "costUsd": 11.33,
+   "perGame": [
+    {
+     "label": "TW6c#1",
+     "code": "VZGR",
+     "winner": "werewolf",
+     "parity": true,
+     "eliminated": [
+      "Alder (seat 2)",
+      "Dov (seat 5)"
+     ],
+     "c": 0.6,
+     "messages": 36,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 1,
+       "noise": 1,
+       "howWon": "framing-or-decoy",
+       "label": "Moonsage vouch forced 3-3 tie on Dov"
+      },
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 1,
+       "noise": 1,
+       "howWon": "other",
+       "label": "Wolf team's three votes forced fatal tie"
+      }
+     ]
+    },
+    {
+     "label": "TW6c#2",
+     "code": "CRAU",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 4)"
+     ],
+     "c": 1,
+     "messages": 24,
+     "judges": [
+      {
+       "tom": 1,
+       "deception": 1,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Swapped wolf confessed; all claims converged"
+      },
+      {
+       "tom": 1,
+       "deception": 1,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Swapped wolf confessed; all claims fit together"
+      }
+     ]
+    },
+    {
+     "label": "TW6c#3",
+     "code": "YXWE",
+     "winner": "centaur",
+     "parity": true,
+     "eliminated": [
+      "Fenn (seat 2)"
+     ],
+     "c": 0.8,
+     "messages": 29,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 2,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Sage collision exposed Fenn; ring push sank him"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 2,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Centre look exposed Fenn's Sage cover"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "group": "GL6",
+   "roster": "GL6",
+   "fixedScenario": false,
+   "games": 2,
+   "deck": [
+    "centaur",
+    "cutpurse",
+    "drifter",
+    "glamour",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "sentry",
+    "werewolf"
+   ],
+   "centre": 3,
+   "rules": {},
+   "openingStatements": false,
+   "fingerprints": 2,
+   "winners": {
+    "centaur": 2
+   },
+   "minority": 0,
+   "entropyWinner": 0,
+   "eliminated": {
+    "Esme": 1,
+    "Dov": 1
+   },
+   "parityGames": 0,
+   "concentration": [
+    {
+     "c": 1,
+     "band": "unanimous"
+    },
+    {
+     "c": 1,
+     "band": "unanimous"
+    }
+   ],
+   "judges": {
+    "verdicts": 4,
+    "tom": 1.5,
+    "deception": 1.25,
+    "path": 1.25,
+    "noise": 0.5,
+    "howWon": {
+     "honest-info-converged": 4
+    },
+    "agreement": {
+     "tom": 0,
+     "deception": 0.5,
+     "path": 0.5,
+     "noise": 0,
+     "howWonExact": "2/2"
+    }
+   },
+   "talkLive": null,
+   "costUsd": 7.42,
+   "perGame": [
+    {
+     "label": "GL6#1",
+     "code": "YJXQ",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Esme (seat 0)"
+     ],
+     "c": 1,
+     "messages": 29,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 1,
+       "path": 1,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Fake Centaur's centre guess clashed with Drifter"
+      },
+      {
+       "tom": 2,
+       "deception": 1,
+       "path": 2,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Fake Centaur's wrong centre index exposed"
+      }
+     ]
+    },
+    {
+     "label": "GL6#2",
+     "code": "REJZ",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Dov (seat 5)"
+     ],
+     "c": 1,
+     "messages": 28,
+     "judges": [
+      {
+       "tom": 1,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Sage's true read, confirmed, caught the wolf"
+      },
+      {
+       "tom": 1,
+       "deception": 1,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Sage read on wolf, cross-confirmed"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "group": "PY6-S1-fakesage",
+   "roster": "PY6",
+   "fixedScenario": true,
+   "games": 5,
+   "deck": [
+    "centaur",
+    "lure",
+    "moonsage",
+    "phoenix",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "werewolf",
+    "werewolf"
+   ],
+   "centre": 3,
+   "rules": {},
+   "openingStatements": false,
+   "fingerprints": 1,
+   "winners": {
+    "pyre": 4,
+    "werewolf": 1
+   },
+   "minority": 1,
+   "entropyWinner": 0.72,
+   "eliminated": {
+    "Esme": 4,
+    "Dov": 1
+   },
+   "parityGames": 0,
+   "concentration": [
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 1,
+     "band": "unanimous"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 1,
+     "band": "unanimous"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    }
+   ],
+   "judges": {
+    "verdicts": 10,
+    "tom": 3,
+    "deception": 3.6,
+    "path": 3.4,
+    "noise": 1,
+    "howWon": {
+     "lie-believed": 9,
+     "creature-or-side-win": 1
+    },
+    "agreement": {
+     "tom": 0,
+     "deception": 0.8,
+     "path": 0.4,
+     "noise": 0,
+     "howWonExact": "4/5"
+    }
+   },
+   "talkLive": "talk-live",
+   "costUsd": 17.83,
+   "perGame": [
+    {
+     "label": "PY6-S1-fakesage#1",
+     "code": "XZGF",
+     "winner": "pyre",
+     "parity": false,
+     "eliminated": [
+      "Esme (seat 5)"
+     ],
+     "c": 0.8,
+     "messages": 35,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 4,
+       "path": 4,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Phoenix's reverse-psychology plea read as wolf"
+      },
+      {
+       "tom": 3,
+       "deception": 4,
+       "path": 4,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Phoenix double-bluff plus Lure's fake Sage look"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S1-fakesage#2",
+     "code": "RWBX",
+     "winner": "pyre",
+     "parity": false,
+     "eliminated": [
+      "Esme (seat 5)"
+     ],
+     "c": 1,
+     "messages": 30,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Lure's fake read, Phoenix's reverse-psychology resistance"
+      },
+      {
+       "tom": 3,
+       "deception": 4,
+       "path": 3,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Phoenix feigned resistance; Lure's fake werewolf read"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S1-fakesage#3",
+     "code": "LPRQ",
+     "winner": "werewolf",
+     "parity": false,
+     "eliminated": [
+      "Dov (seat 4)"
+     ],
+     "c": 0.8,
+     "messages": 42,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 4,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Late fake Phoenix claim redirected votes"
+      },
+      {
+       "tom": 3,
+       "deception": 4,
+       "path": 4,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Wolf's fake Phoenix claim redirected votes"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S1-fakesage#4",
+     "code": "GUVL",
+     "winner": "pyre",
+     "parity": false,
+     "eliminated": [
+      "Esme (seat 5)"
+     ],
+     "c": 1,
+     "messages": 29,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 4,
+       "path": 4,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Fake Centaur bait plus decoy Phoenix claim"
+      },
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Phoenix baited votes; Lure posed as Phoenix"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S1-fakesage#5",
+     "code": "RBWF",
+     "winner": "pyre",
+     "parity": false,
+     "eliminated": [
+      "Esme (seat 5)"
+     ],
+     "c": 0.8,
+     "messages": 38,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 4,
+       "path": 3,
+       "noise": 1,
+       "howWon": "creature-or-side-win",
+       "label": "Lure framed Phoenix; Phoenix acted wolf, burned"
+      },
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 2,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Lure-dressed Phoenix played wolf, got burned"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "group": "PY6-S2-twowolfreads",
+   "roster": "PY6",
+   "fixedScenario": true,
+   "games": 5,
+   "deck": [
+    "centaur",
+    "lure",
+    "moonsage",
+    "phoenix",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "werewolf",
+    "werewolf"
+   ],
+   "centre": 3,
+   "rules": {},
+   "openingStatements": false,
+   "fingerprints": 1,
+   "winners": {
+    "centaur": 2,
+    "pyre": 3
+   },
+   "minority": 2,
+   "entropyWinner": 0.97,
+   "eliminated": {
+    "Dov": 2,
+    "Bryn": 3
+   },
+   "parityGames": 0,
+   "concentration": [
+    {
+     "c": 0.6,
+     "band": "plurality"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 0.6,
+     "band": "plurality"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    }
+   ],
+   "judges": {
+    "verdicts": 10,
+    "tom": 2.5,
+    "deception": 2.7,
+    "path": 2.8,
+    "noise": 1,
+    "howWon": {
+     "honest-info-converged": 3,
+     "lie-believed": 2,
+     "framing-or-decoy": 4,
+     "blunder": 1
+    },
+    "agreement": {
+     "tom": 0.2,
+     "deception": 0.2,
+     "path": 0.4,
+     "noise": 0,
+     "howWonExact": "4/5"
+    }
+   },
+   "talkLive": "talk-live",
+   "costUsd": 17.51,
+   "perGame": [
+    {
+     "label": "PY6-S2-twowolfreads#1",
+     "code": "HSQN",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Dov (seat 3)"
+     ],
+     "c": 0.6,
+     "messages": 31,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Rustler read plus centre count caught Dov"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 2,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Rustler read plus count exposed wolf"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S2-twowolfreads#2",
+     "code": "ULAT",
+     "winner": "pyre",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 0.8,
+     "messages": 31,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Phoenix faked wolf resistance, table burned it"
+      },
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Phoenix faked wolf resistance, table burned it"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S2-twowolfreads#3",
+     "code": "LBUM",
+     "winner": "pyre",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 0.6,
+     "messages": 33,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 3,
+       "noise": 1,
+       "howWon": "framing-or-decoy",
+       "label": "Lure-dressed Phoenix drew the Sage-led vote"
+      },
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "framing-or-decoy",
+       "label": "Lure-dressed Phoenix resisted, got burned anyway"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S2-twowolfreads#4",
+     "code": "DDRU",
+     "winner": "pyre",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 0.8,
+     "messages": 31,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "framing-or-decoy",
+       "label": "Lure-dressed Phoenix baited as wolf"
+      },
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 2,
+       "noise": 1,
+       "howWon": "framing-or-decoy",
+       "label": "Lure-dressed Phoenix drew the vote"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S2-twowolfreads#5",
+     "code": "PQNJ",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Dov (seat 3)"
+     ],
+     "c": 0.8,
+     "messages": 37,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 4,
+       "noise": 1,
+       "howWon": "blunder",
+       "label": "Silent wolf broke cover, drew the vote"
+      },
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 4,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Rustler read plus logic redirected vote to wolf"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "group": "PY6-S3-control",
+   "roster": "PY6",
+   "fixedScenario": true,
+   "games": 3,
+   "deck": [
+    "centaur",
+    "lure",
+    "moonsage",
+    "phoenix",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "werewolf",
+    "werewolf"
+   ],
+   "centre": 3,
+   "rules": {},
+   "openingStatements": false,
+   "fingerprints": 1,
+   "winners": {
+    "centaur": 3
+   },
+   "minority": 0,
+   "entropyWinner": 0,
+   "eliminated": {
+    "Bryn": 3
+   },
+   "parityGames": 0,
+   "concentration": [
+    {
+     "c": 1,
+     "band": "unanimous"
+    },
+    {
+     "c": 1,
+     "band": "unanimous"
+    },
+    {
+     "c": 1,
+     "band": "unanimous"
+    }
+   ],
+   "judges": {
+    "verdicts": 6,
+    "tom": 1.5,
+    "deception": 1.67,
+    "path": 1,
+    "noise": 0,
+    "howWon": {
+     "honest-info-converged": 6
+    },
+    "agreement": {
+     "tom": 0.33,
+     "deception": 0,
+     "path": 0,
+     "noise": 0,
+     "howWonExact": "3/3"
+    }
+   },
+   "talkLive": "degenerate",
+   "costUsd": 9.41,
+   "perGame": [
+    {
+     "label": "PY6-S3-control#1",
+     "code": "XAHM",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 1,
+     "messages": 35,
+     "judges": [
+      {
+       "tom": 1,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Two independent looks caught the wolf"
+      },
+      {
+       "tom": 1,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Two honest looks caught the wolf"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S3-control#2",
+     "code": "VCPC",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 1,
+     "messages": 34,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Two honest looks caught the Werewolf"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Two honest looks caught the wolf"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S3-control#3",
+     "code": "ZJQJ",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 1,
+     "messages": 29,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 1,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Two independent wolf looks, card unmoved"
+      },
+      {
+       "tom": 1,
+       "deception": 1,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Two Wolf looks at an unmoved card"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "group": "PY6-S4-sagehits",
+   "roster": "PY6",
+   "fixedScenario": true,
+   "games": 5,
+   "deck": [
+    "centaur",
+    "lure",
+    "moonsage",
+    "phoenix",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "werewolf",
+    "werewolf"
+   ],
+   "centre": 3,
+   "rules": {},
+   "openingStatements": false,
+   "fingerprints": 1,
+   "winners": {
+    "centaur": 4,
+    "pyre": 1
+   },
+   "minority": 1,
+   "entropyWinner": 0.72,
+   "eliminated": {
+    "Alder": 4,
+    "Cass": 1
+   },
+   "parityGames": 0,
+   "concentration": [
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 0.6,
+     "band": "plurality"
+    },
+    {
+     "c": 0.6,
+     "band": "plurality"
+    }
+   ],
+   "judges": {
+    "verdicts": 10,
+    "tom": 2.2,
+    "deception": 2.6,
+    "path": 1.9,
+    "noise": 0.7,
+    "howWon": {
+     "honest-info-converged": 8,
+     "lie-believed": 2
+    },
+    "agreement": {
+     "tom": 0,
+     "deception": 0.8,
+     "path": 0.2,
+     "noise": 0.2,
+     "howWonExact": "5/5"
+    }
+   },
+   "talkLive": "talk-dead",
+   "costUsd": 17.94,
+   "perGame": [
+    {
+     "label": "PY6-S4-sagehits#1",
+     "code": "JLTE",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Alder (seat 0)"
+     ],
+     "c": 0.8,
+     "messages": 35,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Cross-confirmed honest looks isolated the lone wolf"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Sage look plus verified pair held"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S4-sagehits#2",
+     "code": "KTNW",
+     "winner": "pyre",
+     "parity": false,
+     "eliminated": [
+      "Cass (seat 2)"
+     ],
+     "c": 0.8,
+     "messages": 28,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 4,
+       "path": 3,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Lure's fake Sage look confirmed Phoenix bait"
+      },
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Fake Sage framed Phoenix decoy as wolf"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S4-sagehits#3",
+     "code": "GJEC",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Alder (seat 0)"
+     ],
+     "c": 0.8,
+     "messages": 45,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Honest Sage look held against bait"
+      },
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "True Sage look outlasted layered fake claims"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S4-sagehits#4",
+     "code": "XMSK",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Alder (seat 0)"
+     ],
+     "c": 0.6,
+     "messages": 43,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 2,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Sage read held; Phoenix claim and confession rejected"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 2,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "True Sage look on lone wolf held"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S4-sagehits#5",
+     "code": "PVYK",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Alder (seat 0)"
+     ],
+     "c": 0.6,
+     "messages": 34,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 2,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Sage read plus centre look caught wolf"
+      },
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Sage read plus centre look exposed Alder"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "group": "PY6-S1-open",
+   "roster": "PY6",
+   "fixedScenario": true,
+   "games": 5,
+   "deck": [
+    "centaur",
+    "lure",
+    "moonsage",
+    "phoenix",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "werewolf",
+    "werewolf"
+   ],
+   "centre": 3,
+   "rules": {
+    "openingStatements": true
+   },
+   "openingStatements": true,
+   "fingerprints": 1,
+   "winners": {
+    "centaur": 3,
+    "pyre": 1,
+    "werewolf": 1
+   },
+   "minority": 2,
+   "entropyWinner": 1.37,
+   "eliminated": {
+    "Alder": 3,
+    "Esme": 1,
+    "Dov": 1
+   },
+   "parityGames": 0,
+   "concentration": [
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 0.6,
+     "band": "plurality"
+    },
+    {
+     "c": 1,
+     "band": "unanimous"
+    },
+    {
+     "c": 0.6,
+     "band": "plurality"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    }
+   ],
+   "judges": {
+    "verdicts": 10,
+    "tom": 2.4,
+    "deception": 2.8,
+    "path": 3,
+    "noise": 0.8,
+    "howWon": {
+     "blunder": 2,
+     "honest-info-converged": 4,
+     "lie-believed": 1,
+     "framing-or-decoy": 3
+    },
+    "agreement": {
+     "tom": 0,
+     "deception": 0.4,
+     "path": 0,
+     "noise": 0,
+     "howWonExact": "4/5"
+    }
+   },
+   "talkLive": "talk-live",
+   "costUsd": 17.06,
+   "perGame": [
+    {
+     "label": "PY6-S1-open#1",
+     "code": "GTMX",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Alder (seat 1)"
+     ],
+     "c": 0.8,
+     "messages": 39,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 4,
+       "noise": 1,
+       "howWon": "blunder",
+       "label": "Phoenix overplayed confession; wolf's fake read exposed"
+      },
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 4,
+       "noise": 1,
+       "howWon": "blunder",
+       "label": "Phoenix overplay and wolf's defence exposed Alder"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S1-open#2",
+     "code": "HNNN",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Alder (seat 1)"
+     ],
+     "c": 0.6,
+     "messages": 35,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 4,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Late switch onto provably false Sage"
+      },
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 4,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Late switch onto provably false Sage"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S1-open#3",
+     "code": "DEAQ",
+     "winner": "pyre",
+     "parity": false,
+     "eliminated": [
+      "Esme (seat 5)"
+     ],
+     "c": 1,
+     "messages": 31,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Lure's fake Sage read sold Phoenix burning"
+      },
+      {
+       "tom": 3,
+       "deception": 4,
+       "path": 3,
+       "noise": 1,
+       "howWon": "framing-or-decoy",
+       "label": "Phoenix dressed as wolf, fake Sage confirmed"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S1-open#4",
+     "code": "GVUS",
+     "winner": "werewolf",
+     "parity": false,
+     "eliminated": [
+      "Dov (seat 4)"
+     ],
+     "c": 0.6,
+     "messages": 32,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "framing-or-decoy",
+       "label": "Busted Lure claim drew vote off wolf"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 3,
+       "noise": 1,
+       "howWon": "framing-or-decoy",
+       "label": "Lure's busted Rustler claim drew the vote"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S1-open#5",
+     "code": "DZKC",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Alder (seat 1)"
+     ],
+     "c": 0.8,
+     "messages": 39,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Rustler look exposed wolf's fake Centaur claim"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Wolf's Centaur claim refuted by Rustler look"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "group": "PY6-S2-nodenial",
+   "roster": "PY6",
+   "fixedScenario": true,
+   "games": 5,
+   "deck": [
+    "centaur",
+    "lure",
+    "moonsage",
+    "phoenix",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "werewolf",
+    "werewolf"
+   ],
+   "centre": 3,
+   "rules": {
+    "openingStatements": true,
+    "burningDeniesWolves": false
+   },
+   "openingStatements": true,
+   "fingerprints": 1,
+   "winners": {
+    "pyre": 3,
+    "centaur": 2
+   },
+   "minority": 2,
+   "entropyWinner": 0.97,
+   "eliminated": {
+    "Bryn": 3,
+    "Dov": 2
+   },
+   "parityGames": 0,
+   "concentration": [
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 0.6,
+     "band": "plurality"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 1,
+     "band": "unanimous"
+    },
+    {
+     "c": 0.6,
+     "band": "plurality"
+    }
+   ],
+   "judges": {
+    "verdicts": 10,
+    "tom": 2.4,
+    "deception": 3,
+    "path": 3.3,
+    "noise": 1.1,
+    "howWon": {
+     "framing-or-decoy": 6,
+     "honest-info-converged": 4
+    },
+    "agreement": {
+     "tom": 0,
+     "deception": 0,
+     "path": 0.2,
+     "noise": 0.2,
+     "howWonExact": "5/5"
+    }
+   },
+   "talkLive": "talk-live",
+   "costUsd": 15.62,
+   "perGame": [
+    {
+     "label": "PY6-S2-nodenial#1",
+     "code": "ZMTP",
+     "winner": "pyre",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 0.8,
+     "messages": 24,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "framing-or-decoy",
+       "label": "Lure-dressed Phoenix framed; fake Sage backed it"
+      },
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "framing-or-decoy",
+       "label": "Lure-dressed Phoenix drew the vote"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S2-nodenial#2",
+     "code": "RUJB",
+     "winner": "pyre",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 0.6,
+     "messages": 32,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 3,
+       "noise": 2,
+       "howWon": "framing-or-decoy",
+       "label": "Lure-dressed Phoenix drew the vote off Dov"
+      },
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "framing-or-decoy",
+       "label": "Lure-dressed Phoenix plus fake Sage corroboration"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S2-nodenial#3",
+     "code": "BPQA",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Dov (seat 3)"
+     ],
+     "c": 0.8,
+     "messages": 39,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 4,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Phoenix-Lure theory turned table onto wolf"
+      },
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 4,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Real Centaur exposed Lure, Sage switched"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S2-nodenial#4",
+     "code": "QTNF",
+     "winner": "pyre",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 1,
+     "messages": 28,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 2,
+       "noise": 1,
+       "howWon": "framing-or-decoy",
+       "label": "Lure-dressed Phoenix decoy; fake Pickpocket covers wolf"
+      },
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "framing-or-decoy",
+       "label": "Lured Phoenix decoy covered Dov's fake Pickpocket claim"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S2-nodenial#5",
+     "code": "JKBD",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Dov (seat 3)"
+     ],
+     "c": 0.6,
+     "messages": 31,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 4,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Sage saw through the Lure's disguise in time"
+      },
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 4,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Sage saw through Lure frame, flipped table"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "group": "PY6-S2-open",
+   "roster": "PY6",
+   "fixedScenario": true,
+   "games": 5,
+   "deck": [
+    "centaur",
+    "lure",
+    "moonsage",
+    "phoenix",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "werewolf",
+    "werewolf"
+   ],
+   "centre": 3,
+   "rules": {
+    "openingStatements": true
+   },
+   "openingStatements": true,
+   "fingerprints": 1,
+   "winners": {
+    "centaur": 3,
+    "pyre": 2
+   },
+   "minority": 2,
+   "entropyWinner": 0.97,
+   "eliminated": {
+    "Dov": 3,
+    "Bryn": 2
+   },
+   "parityGames": 0,
+   "concentration": [
+    {
+     "c": 0.6,
+     "band": "plurality"
+    },
+    {
+     "c": 1,
+     "band": "unanimous"
+    },
+    {
+     "c": 0.6,
+     "band": "plurality"
+    },
+    {
+     "c": 0.6,
+     "band": "plurality"
+    },
+    {
+     "c": 1,
+     "band": "unanimous"
+    }
+   ],
+   "judges": {
+    "verdicts": 10,
+    "tom": 2.9,
+    "deception": 2.8,
+    "path": 3.4,
+    "noise": 1.1,
+    "howWon": {
+     "honest-info-converged": 6,
+     "lie-believed": 2,
+     "framing-or-decoy": 2
+    },
+    "agreement": {
+     "tom": 0.2,
+     "deception": 0,
+     "path": 0,
+     "noise": 0.2,
+     "howWonExact": "3/5"
+    }
+   },
+   "talkLive": "talk-live",
+   "costUsd": 16.84,
+   "perGame": [
+    {
+     "label": "PY6-S2-open#1",
+     "code": "YAPK",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Dov (seat 3)"
+     ],
+     "c": 0.6,
+     "messages": 40,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 2,
+       "path": 3,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Sage exposed Lure; Rustler read found wolf"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 3,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Sage spotted Lure, table pivoted to wolf"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S2-open#2",
+     "code": "RYYW",
+     "winner": "pyre",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 1,
+     "messages": 32,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 3,
+       "noise": 2,
+       "howWon": "lie-believed",
+       "label": "Phoenix faked wolf tells to get burned"
+      },
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "framing-or-decoy",
+       "label": "Lure-dressed Phoenix baited the table into burning it"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S2-open#3",
+     "code": "JQZE",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Dov (seat 3)"
+     ],
+     "c": 0.6,
+     "messages": 35,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 4,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Sage saw through Lure, consolidated on wolf"
+      },
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 4,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Sage saw through Lure, consolidated on wolf"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S2-open#4",
+     "code": "BRHX",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Dov (seat 3)"
+     ],
+     "c": 0.6,
+     "messages": 33,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 4,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Real Sage exposed fake Sage, Lure plot"
+      },
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 4,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Sage saw through the Lure's matching claim"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S2-open#5",
+     "code": "UYWL",
+     "winner": "pyre",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 1,
+     "messages": 29,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "framing-or-decoy",
+       "label": "Lure-dressed Phoenix drew the whole vote"
+      },
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Lure-dressed Phoenix faked resistance, got burned"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "group": "PE6-S1-carried",
+   "roster": "PE6",
+   "fixedScenario": true,
+   "games": 5,
+   "deck": [
+    "centaur",
+    "embercarrier",
+    "phoenix",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "sentry",
+    "werewolf",
+    "werewolf"
+   ],
+   "centre": 3,
+   "rules": {
+    "openingStatements": true
+   },
+   "openingStatements": true,
+   "fingerprints": 1,
+   "winners": {
+    "centaur": 5
+   },
+   "minority": 0,
+   "entropyWinner": 0,
+   "eliminated": {
+    "Dov": 5
+   },
+   "parityGames": 0,
+   "concentration": [
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    }
+   ],
+   "judges": {
+    "verdicts": 10,
+    "tom": 1.7,
+    "deception": 2.1,
+    "path": 1.6,
+    "noise": 0.3,
+    "howWon": {
+     "honest-info-converged": 10
+    },
+    "agreement": {
+     "tom": 0.6,
+     "deception": 0.2,
+     "path": 0,
+     "noise": 0.2,
+     "howWonExact": "5/5"
+    }
+   },
+   "talkLive": "degenerate",
+   "costUsd": 18.08,
+   "perGame": [
+    {
+     "label": "PE6-S1-carried#1",
+     "code": "SPJJ",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Dov (seat 3)"
+     ],
+     "c": 0.8,
+     "messages": 29,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Sentry, Sage and Rustler reads pinned Dov"
+      },
+      {
+       "tom": 1,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Rustler read plus Sentry watch exposed wolf"
+      }
+     ]
+    },
+    {
+     "label": "PE6-S1-carried#2",
+     "code": "VBAJ",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Dov (seat 3)"
+     ],
+     "c": 0.8,
+     "messages": 34,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Sage, Sentry and Rustler reads converged on Dov"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Sage and Sentry clues exposed the swap"
+      }
+     ]
+    },
+    {
+     "label": "PE6-S1-carried#3",
+     "code": "GGNC",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Dov (seat 3)"
+     ],
+     "c": 0.8,
+     "messages": 33,
+     "judges": [
+      {
+       "tom": 1,
+       "deception": 1,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Sage, Rustler and Sentry facts lined up"
+      },
+      {
+       "tom": 1,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Sage, Rustler and Sentry info converged"
+      }
+     ]
+    },
+    {
+     "label": "PE6-S1-carried#4",
+     "code": "PPES",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Dov (seat 3)"
+     ],
+     "c": 0.8,
+     "messages": 40,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 4,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Pyre's confession exposed the wolf's borrowed lifeline"
+      },
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 4,
+       "noise": 2,
+       "howWon": "honest-info-converged",
+       "label": "Pyre confession exposed Dov's pickpocket lifeline"
+      }
+     ]
+    },
+    {
+     "label": "PE6-S1-carried#5",
+     "code": "UULH",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Dov (seat 3)"
+     ],
+     "c": 0.8,
+     "messages": 33,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "True Rustler look exposed the lone wolf"
+      },
+      {
+       "tom": 1,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Rustler look plus Sentry watch exposed wolf"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "group": "PF6-S1-seals",
+   "roster": "PF6",
+   "fixedScenario": true,
+   "games": 5,
+   "deck": [
+    "centaur",
+    "falsewitness",
+    "notary",
+    "phoenix",
+    "pickpocket",
+    "rustler",
+    "sentry",
+    "werewolf",
+    "werewolf"
+   ],
+   "centre": 3,
+   "rules": {
+    "openingStatements": true
+   },
+   "openingStatements": true,
+   "fingerprints": 1,
+   "winners": {
+    "centaur": 5
+   },
+   "minority": 0,
+   "entropyWinner": 0,
+   "eliminated": {
+    "Bryn": 5
+   },
+   "parityGames": 0,
+   "concentration": [
+    {
+     "c": 0.6,
+     "band": "plurality"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 0.6,
+     "band": "plurality"
+    },
+    {
+     "c": 0.6,
+     "band": "plurality"
+    }
+   ],
+   "judges": {
+    "verdicts": 10,
+    "tom": 2,
+    "deception": 2.1,
+    "path": 1,
+    "noise": 0.2,
+    "howWon": {
+     "honest-info-converged": 10
+    },
+    "agreement": {
+     "tom": 0,
+     "deception": 0.2,
+     "path": 0,
+     "noise": 0,
+     "howWonExact": "5/5"
+    }
+   },
+   "talkLive": "degenerate",
+   "costUsd": 16.95,
+   "perGame": [
+    {
+     "label": "PF6-S1-seals#1",
+     "code": "MJGG",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 0.6,
+     "messages": 35,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "True Notary read confirmed by motive logic"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Notary look plus centre wolf converged"
+      }
+     ]
+    },
+    {
+     "label": "PF6-S1-seals#2",
+     "code": "ZFHM",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 0.8,
+     "messages": 36,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Notary read plus Rustler confirmation converged"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Notary, Rustler and Centaur claims pinned the wolf"
+      }
+     ]
+    },
+    {
+     "label": "PF6-S1-seals#3",
+     "code": "SVQW",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 0.8,
+     "messages": 30,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Notary look plus seal pinned the wolf"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Notary look plus seal pinned wolf"
+      }
+     ]
+    },
+    {
+     "label": "PF6-S1-seals#4",
+     "code": "FGQV",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 0.6,
+     "messages": 31,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Notary read plus Rustler look converged"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Real Notary plus Rustler confirmation converged"
+      }
+     ]
+    },
+    {
+     "label": "PF6-S1-seals#5",
+     "code": "NDMN",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 0.6,
+     "messages": 36,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "True Notary read plus Rustler confirmation"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Notary read plus Rustler confirmation held"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "group": "PY6L-S3-latecomer",
+   "roster": "PY6L",
+   "fixedScenario": true,
+   "games": 5,
+   "deck": [
+    "centaur",
+    "latecomer",
+    "lure",
+    "moonsage",
+    "phoenix",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "werewolf",
+    "werewolf"
+   ],
+   "centre": 4,
+   "rules": {
+    "openingStatements": true
+   },
+   "openingStatements": true,
+   "fingerprints": 1,
+   "winners": {
+    "centaur": 5
+   },
+   "minority": 0,
+   "entropyWinner": 0,
+   "eliminated": {
+    "Bryn": 5
+   },
+   "parityGames": 0,
+   "concentration": [
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 1,
+     "band": "unanimous"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 1,
+     "band": "unanimous"
+    }
+   ],
+   "judges": {
+    "verdicts": 10,
+    "tom": 1.2,
+    "deception": 1.6,
+    "path": 0.9,
+    "noise": 0,
+    "howWon": {
+     "honest-info-converged": 10
+    },
+    "agreement": {
+     "tom": 0,
+     "deception": 0,
+     "path": 0.2,
+     "noise": 0,
+     "howWonExact": "5/5"
+    }
+   },
+   "talkLive": "degenerate",
+   "costUsd": 15.32,
+   "perGame": [
+    {
+     "label": "PY6L-S3-latecomer#1",
+     "code": "ZNAC",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 0.8,
+     "messages": 31,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Two independent looks caught the wolf"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Two matching looks nailed the lone wolf"
+      }
+     ]
+    },
+    {
+     "label": "PY6L-S3-latecomer#2",
+     "code": "SDCQ",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 1,
+     "messages": 29,
+     "judges": [
+      {
+       "tom": 1,
+       "deception": 1,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Two independent looks exposed the wolf"
+      },
+      {
+       "tom": 1,
+       "deception": 1,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Two looks confirmed Bryn as Werewolf"
+      }
+     ]
+    },
+    {
+     "label": "PY6L-S3-latecomer#3",
+     "code": "MUMY",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 0.8,
+     "messages": 28,
+     "judges": [
+      {
+       "tom": 1,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Two honest wolf looks plus Centaur collision"
+      },
+      {
+       "tom": 1,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Two looks plus a role clash"
+      }
+     ]
+    },
+    {
+     "label": "PY6L-S3-latecomer#4",
+     "code": "GZKA",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 0.8,
+     "messages": 28,
+     "judges": [
+      {
+       "tom": 1,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Two independent seers caught the wolf"
+      },
+      {
+       "tom": 1,
+       "deception": 2,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Two matching Werewolf looks on Bryn"
+      }
+     ]
+    },
+    {
+     "label": "PY6L-S3-latecomer#5",
+     "code": "UGXG",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 1,
+     "messages": 32,
+     "judges": [
+      {
+       "tom": 1,
+       "deception": 1,
+       "path": 1,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Two honest looks caught the lone wolf"
+      },
+      {
+       "tom": 1,
+       "deception": 1,
+       "path": 0,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "Two independent looks exposed the wolf"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "group": "PY6-S5-twinheld",
+   "roster": "PY6",
+   "fixedScenario": true,
+   "games": 5,
+   "deck": [
+    "centaur",
+    "lure",
+    "moonsage",
+    "phoenix",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "werewolf",
+    "werewolf"
+   ],
+   "centre": 3,
+   "rules": {
+    "openingStatements": true,
+    "bloodPriceCondemned": true
+   },
+   "openingStatements": true,
+   "fingerprints": 1,
+   "winners": {
+    "centaur": 4,
+    "pyre": 1
+   },
+   "minority": 1,
+   "entropyWinner": 0.72,
+   "eliminated": {
+    "Dov": 3,
+    "Bryn": 1,
+    "Cass+Dov": 1
+   },
+   "parityGames": 0,
+   "concentration": [
+    {
+     "c": 0.6,
+     "band": "plurality"
+    },
+    {
+     "c": 0.6,
+     "band": "plurality"
+    },
+    {
+     "c": 0.6,
+     "band": "plurality"
+    },
+    {
+     "c": 0.6,
+     "band": "plurality"
+    },
+    {
+     "c": 0.4,
+     "band": "scattered"
+    }
+   ],
+   "judges": {
+    "verdicts": 10,
+    "tom": 2.5,
+    "deception": 2.4,
+    "path": 3.4,
+    "noise": 1.3,
+    "howWon": {
+     "honest-info-converged": 8,
+     "framing-or-decoy": 2
+    },
+    "agreement": {
+     "tom": 0.2,
+     "deception": 0,
+     "path": 0.4,
+     "noise": 0.2,
+     "howWonExact": "5/5"
+    }
+   },
+   "talkLive": "talk-live",
+   "costUsd": 20.07,
+   "perGame": [
+    {
+     "label": "PY6-S5-twinheld#1",
+     "code": "EFFA",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Dov (seat 3)"
+     ],
+     "c": 0.6,
+     "messages": 38,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 3,
+       "noise": 2,
+       "howWon": "honest-info-converged",
+       "label": "Sage read held; census slip exposed Dov"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 2,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Sage read plus Lure deduction caught Dov"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S5-twinheld#2",
+     "code": "XKWC",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Dov (seat 3)"
+     ],
+     "c": 0.6,
+     "messages": 36,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 4,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Moonsage confession redirected votes onto Werewolf"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 4,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Moonsage confession redirected votes onto Dov"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S5-twinheld#3",
+     "code": "KCZR",
+     "winner": "pyre",
+     "parity": false,
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 0.6,
+     "messages": 38,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 4,
+       "noise": 2,
+       "howWon": "framing-or-decoy",
+       "label": "Lure-dressed Phoenix burned via forced consolidation"
+      },
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 4,
+       "noise": 2,
+       "howWon": "framing-or-decoy",
+       "label": "Lure-dressed Phoenix framed, Centaurs consolidated on it"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S5-twinheld#4",
+     "code": "PNFA",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Dov (seat 3)"
+     ],
+     "c": 0.6,
+     "messages": 39,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Sage read and Lure-disguise analysis held"
+      },
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "True Sage read survives Lure trap"
+      }
+     ]
+    },
+    {
+     "label": "PY6-S5-twinheld#5",
+     "code": "YFXC",
+     "winner": "centaur",
+     "parity": false,
+     "eliminated": [
+      "Cass (seat 2)",
+      "Dov (seat 3)"
+     ],
+     "c": 0.4,
+     "messages": 43,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 2,
+       "path": 4,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Sage read plus Phoenix-risk logic moved Fenn"
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 3,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Sage reconstructs Lure disguise, Fenn switches"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,29 +1,70 @@
 {
- "generatedAt": "2026-11-22T13:31:45.297Z",
+ "generatedAt": "2026-11-22T13:37:45.167Z",
  "top3": [
   {
    "rank": 1,
    "key": "players-5.json:Q3 Little Pyre",
    "players": 5,
-   "weakness": "Lure-dressed Phoenix read by the Sage: Pyre 4 of 5 (F8); Pyre share inflated by Pyre-centred scenarios"
+   "weakness": "Lure-dressed Phoenix read by the Sage: Pyre 4 of 5 (F8)"
   },
   {
    "rank": 2,
-   "key": "players-7.json:P7",
-   "players": 7,
-   "weakness": "one fixed scenario only (confirmation at n=10 running); noise 1.5; two plurality votes of five"
+   "key": "players-6.json:PY6",
+   "players": 6,
+   "alsoSee": "hub.json:D6",
+   "weakness": "wolves near-spectators in lone-wolf scenarios (2 of 38 fixed); Pyre too strong with the Lure dress"
   },
   {
    "rank": 3,
-   "key": "hub.json:D6 + players-6 PY6",
-   "players": 6,
-   "weakness": "Pyre too strong when the Lure dresses the Phoenix; wolves near-spectators in lone-wolf deals; opening statements shift it per scenario"
+   "key": "players-7.json:K7",
+   "players": 7,
+   "weakness": "Centaur-leaning (8 of 10 fixed); two scenarios only"
+  }
+ ],
+ "honourable": [
+  {
+   "key": "players-7.json:P7",
+   "why": "best single scenario (Pyre 2 / wolves 2 / Centaurs 1, ToM 2.7) but misses the consensus criterion: 5 of 19 votes in band"
   }
  ],
  "notSolved": {
   "players": 8,
   "why": "of 10 fixed scenarios 1 talk-live, 2 borderline, 7 swept; 63 games Centaurs 52, wolves 6, Pyre 5 (first 8-player session)"
  },
+ "sessions": [
+  {
+   "file": "hub.json",
+   "games": 89,
+   "usd": 313,
+   "note": "players only (judges and taggers about $10 more)"
+  },
+  {
+   "file": "players-5.json",
+   "games": 81,
+   "usd": 236,
+   "note": ""
+  },
+  {
+   "file": "players-6.json",
+   "games": 73,
+   "usd": 277,
+   "note": ""
+  },
+  {
+   "file": "players-7.json",
+   "games": 57,
+   "usd": 296,
+   "note": ""
+  },
+  {
+   "file": "players-8.json",
+   "games": 63,
+   "usd": 334,
+   "note": "from players-8.md: $317 games + $17 judging"
+  }
+ ],
+ "totalGames": 363,
+ "unparsed": [],
  "strategies": {
   "hub-strategies.json": {
    "taxonomy": {
@@ -480,6 +521,70 @@
     }
    }
   },
+  "players-6.json": [
+   {
+    "strategy": "Lure fakes a Sage read of Werewolf on the Phoenix",
+    "team": "pyre",
+    "appeared": 5,
+    "of": 18,
+    "sideWon": 4
+   },
+   {
+    "strategy": "Phoenix reverse bluff: counter-claims and fights the vote",
+    "team": "pyre",
+    "appeared": 8,
+    "of": 18,
+    "sideWon": 7
+   },
+   {
+    "strategy": "Phoenix baits openly (burn me / confession)",
+    "team": "pyre",
+    "appeared": 5,
+    "of": 18,
+    "sideWon": 1
+   },
+   {
+    "strategy": "Lone wolf claims to be the dressed Phoenix",
+    "team": "werewolf",
+    "appeared": 10,
+    "of": 18,
+    "sideWon": 1
+   },
+   {
+    "strategy": "Lone wolf truthfully explains the Lure/Phoenix setup",
+    "team": "werewolf",
+    "appeared": 5,
+    "of": 18,
+    "sideWon": 0
+   },
+   {
+    "strategy": "Fake Pickpocket claim to explain a read away",
+    "team": "pyre/werewolf",
+    "appeared": 7,
+    "of": 18,
+    "sideWon": 3
+   },
+   {
+    "strategy": "'A Phoenix would want the votes' used to classify the accused",
+    "team": "all",
+    "appeared": 18,
+    "of": 18
+   },
+   {
+    "strategy": "Tie hedge proposed",
+    "team": "all",
+    "appeared": 18,
+    "of": 18,
+    "adopted": 0
+   },
+   {
+    "strategy": "(opening on) Moonsage tells the truth about the dressed Phoenix to stop a burning",
+    "team": "werewolf",
+    "appeared": 4,
+    "of": 5,
+    "sideWon": 0
+   }
+  ],
   "players-8.json": {
    "games": 63,
    "rows": {
@@ -774,29 +879,35 @@
  "sources": [
   "hub.json",
   "players-5.json",
+  "players-6.json",
   "players-7.json",
   "players-8.json"
  ],
  "rankingRule": "talk-live share of fixed scenarios, then judge ToM, then share of games with 0.6 <= c < 1, then lower noise",
  "ranked": [
-  "players-7.json:P7",
-  "players-5.json:Q3 Little Pyre",
   "hub.json:F7",
-  "players-7.json:K7",
+  "players-5.json:Q3 Little Pyre",
   "players-7.json:S7",
   "players-7.json:G7",
+  "players-7.json:K7",
   "hub.json:A5",
   "hub.json:D6",
+  "players-6.json:PY6",
+  "players-7.json:P7",
   "hub.json:P6",
   "players-5.json:Q1D Moon and Drover",
   "players-5.json:Q2 Three Hands",
   "players-8.json:M1H",
   "hub.json:B5",
   "players-8.json:M2",
+  "players-7.json:K7g",
   "players-5.json:Q1 Moon and Stampede",
+  "players-6.json:PF6",
   "hub.json:X1",
   "players-8.json:M1HS",
-  "players-8.json:M1"
+  "players-8.json:M1",
+  "players-6.json:PE6",
+  "players-6.json:PY6L"
  ],
  "rosters": [
   {
@@ -1882,6 +1993,972 @@
    "costUsd": 29
   },
   {
+   "source": "players-6.json",
+   "roster": "V6-setup",
+   "players": 6,
+   "centre": 3,
+   "deck": [
+    "centaur",
+    "herder",
+    "moonsage",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "sentry",
+    "werewolf",
+    "werewolf"
+   ],
+   "ruleVariants": [
+    "{}"
+   ],
+   "games": 1,
+   "coarseGames": 1,
+   "fixedScenarios": 0,
+   "fixedReplays": 0,
+   "winsAll": {
+    "centaur": 1
+   },
+   "winsFixed": {},
+   "talkLive": 0,
+   "swept": [],
+   "concentration": {
+    "values": [
+     0.8
+    ],
+    "bands": {
+     "majority": 1
+    },
+    "median": 0.8,
+    "inBand": 1
+   },
+   "judgesFixed": {
+    "tom": null,
+    "deception": null,
+    "path": null,
+    "noise": null
+   },
+   "judgesAll": {
+    "tom": null,
+    "deception": null,
+    "path": null,
+    "noise": null
+   },
+   "scenarios": [],
+   "costUsd": 3
+  },
+  {
+   "source": "players-6.json",
+   "roster": "PY6",
+   "players": 6,
+   "centre": 3,
+   "deck": [
+    "centaur",
+    "lure",
+    "moonsage",
+    "phoenix",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "werewolf",
+    "werewolf"
+   ],
+   "ruleVariants": [
+    "{}",
+    "{\"openingStatements\":true}",
+    "{\"openingStatements\":true,\"burningDeniesWolves\":false}",
+    "{\"openingStatements\":true,\"bloodPriceCondemned\":true}"
+   ],
+   "games": 41,
+   "coarseGames": 3,
+   "fixedScenarios": 8,
+   "fixedReplays": 38,
+   "winsAll": {
+    "pyre": 16,
+    "centaur": 22,
+    "werewolf": 3
+   },
+   "winsFixed": {
+    "pyre": 15,
+    "werewolf": 2,
+    "centaur": 21
+   },
+   "talkLive": 6,
+   "swept": [
+    "PY6-S3-control (degenerate)",
+    "PY6-S4-sagehits (talk-dead)"
+   ],
+   "concentration": {
+    "values": [
+     0.8,
+     0.8,
+     0.6,
+     0.8,
+     1,
+     0.8,
+     1,
+     0.8,
+     0.6,
+     0.8,
+     0.6,
+     0.8,
+     0.8,
+     1,
+     1,
+     1,
+     0.8,
+     0.8,
+     0.8,
+     0.6,
+     0.6,
+     0.8,
+     0.6,
+     1,
+     0.6,
+     0.8,
+     0.8,
+     0.6,
+     0.8,
+     1,
+     0.6,
+     0.6,
+     1,
+     0.6,
+     0.6,
+     1,
+     0.6,
+     0.6,
+     0.6,
+     0.6,
+     0.4
+    ],
+    "bands": {
+     "majority": 15,
+     "plurality": 16,
+     "unanimous": 9,
+     "scattered": 1
+    },
+    "median": 0.8,
+    "inBand": 31
+   },
+   "judgesFixed": {
+    "tom": 2.47,
+    "deception": 2.75,
+    "path": 2.87,
+    "noise": 0.92
+   },
+   "judgesAll": {
+    "tom": 2.46,
+    "deception": 2.76,
+    "path": 2.88,
+    "noise": 0.96
+   },
+   "scenarios": [
+    {
+     "group": "PY6-S1-fakesage",
+     "rules": {},
+     "games": 5,
+     "winners": {
+      "pyre": 4,
+      "werewolf": 1
+     },
+     "talkLive": "talk-live",
+     "path": 3.4,
+     "tom": 3,
+     "deception": 3.6,
+     "noise": 1,
+     "c": [
+      0.8,
+      1,
+      0.8,
+      1,
+      0.8
+     ],
+     "agreement": {
+      "tom": 0,
+      "deception": 0.8,
+      "path": 0.4,
+      "noise": 0,
+      "howWonExact": "4/5"
+     }
+    },
+    {
+     "group": "PY6-S2-twowolfreads",
+     "rules": {},
+     "games": 5,
+     "winners": {
+      "centaur": 2,
+      "pyre": 3
+     },
+     "talkLive": "talk-live",
+     "path": 2.8,
+     "tom": 2.5,
+     "deception": 2.7,
+     "noise": 1,
+     "c": [
+      0.6,
+      0.8,
+      0.6,
+      0.8,
+      0.8
+     ],
+     "agreement": {
+      "tom": 0.2,
+      "deception": 0.2,
+      "path": 0.4,
+      "noise": 0,
+      "howWonExact": "4/5"
+     }
+    },
+    {
+     "group": "PY6-S3-control",
+     "rules": {},
+     "games": 3,
+     "winners": {
+      "centaur": 3
+     },
+     "talkLive": "degenerate",
+     "path": 1,
+     "tom": 1.5,
+     "deception": 1.67,
+     "noise": 0,
+     "c": [
+      1,
+      1,
+      1
+     ],
+     "agreement": {
+      "tom": 0.33,
+      "deception": 0,
+      "path": 0,
+      "noise": 0,
+      "howWonExact": "3/3"
+     }
+    },
+    {
+     "group": "PY6-S4-sagehits",
+     "rules": {},
+     "games": 5,
+     "winners": {
+      "centaur": 4,
+      "pyre": 1
+     },
+     "talkLive": "talk-dead",
+     "path": 1.9,
+     "tom": 2.2,
+     "deception": 2.6,
+     "noise": 0.7,
+     "c": [
+      0.8,
+      0.8,
+      0.8,
+      0.6,
+      0.6
+     ],
+     "agreement": {
+      "tom": 0,
+      "deception": 0.8,
+      "path": 0.2,
+      "noise": 0.2,
+      "howWonExact": "5/5"
+     }
+    },
+    {
+     "group": "PY6-S1-open",
+     "rules": {
+      "openingStatements": true
+     },
+     "games": 5,
+     "winners": {
+      "centaur": 3,
+      "pyre": 1,
+      "werewolf": 1
+     },
+     "talkLive": "talk-live",
+     "path": 3,
+     "tom": 2.4,
+     "deception": 2.8,
+     "noise": 0.8,
+     "c": [
+      0.8,
+      0.6,
+      1,
+      0.6,
+      0.8
+     ],
+     "agreement": {
+      "tom": 0,
+      "deception": 0.4,
+      "path": 0,
+      "noise": 0,
+      "howWonExact": "4/5"
+     }
+    },
+    {
+     "group": "PY6-S2-nodenial",
+     "rules": {
+      "openingStatements": true,
+      "burningDeniesWolves": false
+     },
+     "games": 5,
+     "winners": {
+      "pyre": 3,
+      "centaur": 2
+     },
+     "talkLive": "talk-live",
+     "path": 3.3,
+     "tom": 2.4,
+     "deception": 3,
+     "noise": 1.1,
+     "c": [
+      0.8,
+      0.6,
+      0.8,
+      1,
+      0.6
+     ],
+     "agreement": {
+      "tom": 0,
+      "deception": 0,
+      "path": 0.2,
+      "noise": 0.2,
+      "howWonExact": "5/5"
+     }
+    },
+    {
+     "group": "PY6-S2-open",
+     "rules": {
+      "openingStatements": true
+     },
+     "games": 5,
+     "winners": {
+      "centaur": 3,
+      "pyre": 2
+     },
+     "talkLive": "talk-live",
+     "path": 3.4,
+     "tom": 2.9,
+     "deception": 2.8,
+     "noise": 1.1,
+     "c": [
+      0.6,
+      1,
+      0.6,
+      0.6,
+      1
+     ],
+     "agreement": {
+      "tom": 0.2,
+      "deception": 0,
+      "path": 0,
+      "noise": 0.2,
+      "howWonExact": "3/5"
+     }
+    },
+    {
+     "group": "PY6-S5-twinheld",
+     "rules": {
+      "openingStatements": true,
+      "bloodPriceCondemned": true
+     },
+     "games": 5,
+     "winners": {
+      "centaur": 4,
+      "pyre": 1
+     },
+     "talkLive": "talk-live",
+     "path": 3.4,
+     "tom": 2.5,
+     "deception": 2.4,
+     "noise": 1.3,
+     "c": [
+      0.6,
+      0.6,
+      0.6,
+      0.6,
+      0.4
+     ],
+     "agreement": {
+      "tom": 0.2,
+      "deception": 0,
+      "path": 0.4,
+      "noise": 0.2,
+      "howWonExact": "5/5"
+     }
+    }
+   ],
+   "costUsd": 146
+  },
+  {
+   "source": "players-6.json",
+   "roster": "SE6",
+   "players": 6,
+   "centre": 3,
+   "deck": [
+    "centaur",
+    "counterfeiter",
+    "moonsage",
+    "notary",
+    "pickpocket",
+    "rustler",
+    "sentry",
+    "werewolf",
+    "werewolf"
+   ],
+   "ruleVariants": [
+    "{}"
+   ],
+   "games": 3,
+   "coarseGames": 3,
+   "fixedScenarios": 0,
+   "fixedReplays": 0,
+   "winsAll": {
+    "werewolf": 3
+   },
+   "winsFixed": {},
+   "talkLive": 0,
+   "swept": [],
+   "concentration": {
+    "values": [
+     0.6,
+     0.6,
+     0.8
+    ],
+    "bands": {
+     "plurality": 2,
+     "majority": 1
+    },
+    "median": 0.6,
+    "inBand": 3
+   },
+   "judgesFixed": {
+    "tom": null,
+    "deception": null,
+    "path": null,
+    "noise": null
+   },
+   "judgesAll": {
+    "tom": 1.83,
+    "deception": 2.17,
+    "path": 1.67,
+    "noise": 1
+   },
+   "scenarios": [],
+   "costUsd": 13
+  },
+  {
+   "source": "players-6.json",
+   "roster": "SO6",
+   "players": 6,
+   "centre": 3,
+   "deck": [
+    "centaur",
+    "cutpurse",
+    "drifter",
+    "latecomer",
+    "pickpocket",
+    "sentry",
+    "spooker",
+    "werewolf",
+    "werewolf"
+   ],
+   "ruleVariants": [
+    "{}"
+   ],
+   "games": 2,
+   "coarseGames": 2,
+   "fixedScenarios": 0,
+   "fixedReplays": 0,
+   "winsAll": {
+    "centaur": 2
+   },
+   "winsFixed": {},
+   "talkLive": 0,
+   "swept": [],
+   "concentration": {
+    "values": [
+     1,
+     0.8
+    ],
+    "bands": {
+     "unanimous": 1,
+     "majority": 1
+    },
+    "median": 1,
+    "inBand": 1
+   },
+   "judgesFixed": {
+    "tom": null,
+    "deception": null,
+    "path": null,
+    "noise": null
+   },
+   "judgesAll": {
+    "tom": 2.25,
+    "deception": 2.25,
+    "path": 2.25,
+    "noise": 1
+   },
+   "scenarios": [],
+   "costUsd": 9
+  },
+  {
+   "source": "players-6.json",
+   "roster": "TW6",
+   "players": 6,
+   "centre": 3,
+   "deck": [
+    "centaur",
+    "herder",
+    "moonsage",
+    "rustler",
+    "sage",
+    "sentry",
+    "strayherder",
+    "werewolf",
+    "werewolf"
+   ],
+   "ruleVariants": [
+    "{}"
+   ],
+   "games": 3,
+   "coarseGames": 3,
+   "fixedScenarios": 0,
+   "fixedReplays": 0,
+   "winsAll": {
+    "centaur": 1,
+    "werewolf": 2
+   },
+   "winsFixed": {},
+   "talkLive": 0,
+   "swept": [],
+   "concentration": {
+    "values": [
+     0.8,
+     0.6,
+     0.6
+    ],
+    "bands": {
+     "majority": 1,
+     "plurality": 2
+    },
+    "median": 0.6,
+    "inBand": 3
+   },
+   "judgesFixed": {
+    "tom": null,
+    "deception": null,
+    "path": null,
+    "noise": null
+   },
+   "judgesAll": {
+    "tom": 2,
+    "deception": 2.33,
+    "path": 1.5,
+    "noise": 1
+   },
+   "scenarios": [],
+   "costUsd": 13
+  },
+  {
+   "source": "players-6.json",
+   "roster": "PE6",
+   "players": 6,
+   "centre": 3,
+   "deck": [
+    "centaur",
+    "embercarrier",
+    "phoenix",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "sentry",
+    "werewolf",
+    "werewolf"
+   ],
+   "ruleVariants": [
+    "{}",
+    "{\"openingStatements\":true}"
+   ],
+   "games": 8,
+   "coarseGames": 3,
+   "fixedScenarios": 1,
+   "fixedReplays": 5,
+   "winsAll": {
+    "werewolf": 1,
+    "centaur": 7
+   },
+   "winsFixed": {
+    "centaur": 5
+   },
+   "talkLive": 0,
+   "swept": [
+    "PE6-S1-carried (degenerate)"
+   ],
+   "concentration": {
+    "values": [
+     0.8,
+     0.8,
+     1,
+     0.8,
+     0.8,
+     0.8,
+     0.8,
+     0.8
+    ],
+    "bands": {
+     "majority": 7,
+     "unanimous": 1
+    },
+    "median": 0.8,
+    "inBand": 7
+   },
+   "judgesFixed": {
+    "tom": 1.7,
+    "deception": 2.1,
+    "path": 1.6,
+    "noise": 0.3
+   },
+   "judgesAll": {
+    "tom": 1.69,
+    "deception": 2.19,
+    "path": 1.87,
+    "noise": 0.44
+   },
+   "scenarios": [
+    {
+     "group": "PE6-S1-carried",
+     "rules": {
+      "openingStatements": true
+     },
+     "games": 5,
+     "winners": {
+      "centaur": 5
+     },
+     "talkLive": "degenerate",
+     "path": 1.6,
+     "tom": 1.7,
+     "deception": 2.1,
+     "noise": 0.3,
+     "c": [
+      0.8,
+      0.8,
+      0.8,
+      0.8,
+      0.8
+     ],
+     "agreement": {
+      "tom": 0.6,
+      "deception": 0.2,
+      "path": 0,
+      "noise": 0.2,
+      "howWonExact": "5/5"
+     }
+    }
+   ],
+   "costUsd": 32
+  },
+  {
+   "source": "players-6.json",
+   "roster": "TW6c",
+   "players": 6,
+   "centre": 3,
+   "deck": [
+    "centaur",
+    "drifter",
+    "moonsage",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "sentry",
+    "werewolf",
+    "werewolf"
+   ],
+   "ruleVariants": [
+    "{\"census\":\"allButOne\",\"packCovers\":true}"
+   ],
+   "games": 3,
+   "coarseGames": 3,
+   "fixedScenarios": 0,
+   "fixedReplays": 0,
+   "winsAll": {
+    "werewolf": 1,
+    "centaur": 2
+   },
+   "winsFixed": {},
+   "talkLive": 0,
+   "swept": [],
+   "concentration": {
+    "values": [
+     0.6,
+     1,
+     0.8
+    ],
+    "bands": {
+     "plurality": 1,
+     "unanimous": 1,
+     "majority": 1
+    },
+    "median": 0.8,
+    "inBand": 2
+   },
+   "judgesFixed": {
+    "tom": null,
+    "deception": null,
+    "path": null,
+    "noise": null
+   },
+   "judgesAll": {
+    "tom": 1.67,
+    "deception": 2,
+    "path": 1.33,
+    "noise": 0.5
+   },
+   "scenarios": [],
+   "costUsd": 11
+  },
+  {
+   "source": "players-6.json",
+   "roster": "GL6",
+   "players": 6,
+   "centre": 3,
+   "deck": [
+    "centaur",
+    "cutpurse",
+    "drifter",
+    "glamour",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "sentry",
+    "werewolf"
+   ],
+   "ruleVariants": [
+    "{}"
+   ],
+   "games": 2,
+   "coarseGames": 2,
+   "fixedScenarios": 0,
+   "fixedReplays": 0,
+   "winsAll": {
+    "centaur": 2
+   },
+   "winsFixed": {},
+   "talkLive": 0,
+   "swept": [],
+   "concentration": {
+    "values": [
+     1,
+     1
+    ],
+    "bands": {
+     "unanimous": 2
+    },
+    "median": 1,
+    "inBand": 0
+   },
+   "judgesFixed": {
+    "tom": null,
+    "deception": null,
+    "path": null,
+    "noise": null
+   },
+   "judgesAll": {
+    "tom": 1.5,
+    "deception": 1.25,
+    "path": 1.25,
+    "noise": 0.5
+   },
+   "scenarios": [],
+   "costUsd": 7
+  },
+  {
+   "source": "players-6.json",
+   "roster": "PF6",
+   "players": 6,
+   "centre": 3,
+   "deck": [
+    "centaur",
+    "falsewitness",
+    "notary",
+    "phoenix",
+    "pickpocket",
+    "rustler",
+    "sentry",
+    "werewolf",
+    "werewolf"
+   ],
+   "ruleVariants": [
+    "{\"openingStatements\":true}"
+   ],
+   "games": 5,
+   "coarseGames": 0,
+   "fixedScenarios": 1,
+   "fixedReplays": 5,
+   "winsAll": {
+    "centaur": 5
+   },
+   "winsFixed": {
+    "centaur": 5
+   },
+   "talkLive": 0,
+   "swept": [
+    "PF6-S1-seals (degenerate)"
+   ],
+   "concentration": {
+    "values": [
+     0.6,
+     0.8,
+     0.8,
+     0.6,
+     0.6
+    ],
+    "bands": {
+     "plurality": 3,
+     "majority": 2
+    },
+    "median": 0.6,
+    "inBand": 5
+   },
+   "judgesFixed": {
+    "tom": 2,
+    "deception": 2.1,
+    "path": 1,
+    "noise": 0.2
+   },
+   "judgesAll": {
+    "tom": 2,
+    "deception": 2.1,
+    "path": 1,
+    "noise": 0.2
+   },
+   "scenarios": [
+    {
+     "group": "PF6-S1-seals",
+     "rules": {
+      "openingStatements": true
+     },
+     "games": 5,
+     "winners": {
+      "centaur": 5
+     },
+     "talkLive": "degenerate",
+     "path": 1,
+     "tom": 2,
+     "deception": 2.1,
+     "noise": 0.2,
+     "c": [
+      0.6,
+      0.8,
+      0.8,
+      0.6,
+      0.6
+     ],
+     "agreement": {
+      "tom": 0,
+      "deception": 0.2,
+      "path": 0,
+      "noise": 0,
+      "howWonExact": "5/5"
+     }
+    }
+   ],
+   "costUsd": 17
+  },
+  {
+   "source": "players-6.json",
+   "roster": "PY6L",
+   "players": 6,
+   "centre": 4,
+   "deck": [
+    "centaur",
+    "latecomer",
+    "lure",
+    "moonsage",
+    "phoenix",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "werewolf",
+    "werewolf"
+   ],
+   "ruleVariants": [
+    "{\"openingStatements\":true}"
+   ],
+   "games": 5,
+   "coarseGames": 0,
+   "fixedScenarios": 1,
+   "fixedReplays": 5,
+   "winsAll": {
+    "centaur": 5
+   },
+   "winsFixed": {
+    "centaur": 5
+   },
+   "talkLive": 0,
+   "swept": [
+    "PY6L-S3-latecomer (degenerate)"
+   ],
+   "concentration": {
+    "values": [
+     0.8,
+     1,
+     0.8,
+     0.8,
+     1
+    ],
+    "bands": {
+     "majority": 3,
+     "unanimous": 2
+    },
+    "median": 0.8,
+    "inBand": 3
+   },
+   "judgesFixed": {
+    "tom": 1.2,
+    "deception": 1.6,
+    "path": 0.9,
+    "noise": 0
+   },
+   "judgesAll": {
+    "tom": 1.2,
+    "deception": 1.6,
+    "path": 0.9,
+    "noise": 0
+   },
+   "scenarios": [
+    {
+     "group": "PY6L-S3-latecomer",
+     "rules": {
+      "openingStatements": true
+     },
+     "games": 5,
+     "winners": {
+      "centaur": 5
+     },
+     "talkLive": "degenerate",
+     "path": 0.9,
+     "tom": 1.2,
+     "deception": 1.6,
+     "noise": 0,
+     "c": [
+      0.8,
+      1,
+      0.8,
+      0.8,
+      1
+     ],
+     "agreement": {
+      "tom": 0,
+      "deception": 0,
+      "path": 0.2,
+      "noise": 0,
+      "howWonExact": "5/5"
+     }
+    }
+   ],
+   "costUsd": 15
+  },
+  {
    "source": "players-7.json",
    "roster": "S7",
    "players": 7,
@@ -2089,47 +3166,55 @@
    "ruleVariants": [
     "{}"
    ],
-   "games": 7,
-   "coarseGames": 2,
-   "fixedScenarios": 1,
-   "fixedReplays": 5,
+   "games": 14,
+   "coarseGames": 4,
+   "fixedScenarios": 2,
+   "fixedReplays": 10,
    "winsAll": {
-    "werewolf": 3,
-    "centaur": 4
+    "werewolf": 4,
+    "centaur": 10
    },
    "winsFixed": {
-    "centaur": 4,
-    "werewolf": 1
+    "centaur": 8,
+    "werewolf": 2
    },
-   "talkLive": 1,
+   "talkLive": 2,
    "swept": [],
    "concentration": {
     "values": [
      0.5,
      0.83,
+     0.83,
+     0.83,
      0.67,
      0.67,
      0.67,
      0.67,
-     0.67
+     0.67,
+     1,
+     0.67,
+     0.67,
+     0.67,
+     0.83
     ],
     "bands": {
      "plurality": 1,
-     "majority": 6
+     "majority": 12,
+     "unanimous": 1
     },
     "median": 0.67,
-    "inBand": 6
+    "inBand": 12
    },
    "judgesFixed": {
-    "tom": 2.4,
-    "deception": 3,
-    "path": 3.4,
-    "noise": 1
+    "tom": 2.2,
+    "deception": 2.7,
+    "path": 2.95,
+    "noise": 1.05
    },
    "judgesAll": {
-    "tom": 2.43,
-    "deception": 2.93,
-    "path": 3.14,
+    "tom": 2.11,
+    "deception": 2.64,
+    "path": 2.64,
     "noise": 1
    },
    "scenarios": [
@@ -2160,9 +3245,37 @@
       "noise": 0,
       "howWonExact": "4/5"
      }
+    },
+    {
+     "group": "F-K7-solo",
+     "rules": {},
+     "games": 5,
+     "winners": {
+      "werewolf": 1,
+      "centaur": 4
+     },
+     "talkLive": "talk-live",
+     "path": 2.5,
+     "tom": 2,
+     "deception": 2.4,
+     "noise": 1.1,
+     "c": [
+      1,
+      0.67,
+      0.67,
+      0.67,
+      0.83
+     ],
+     "agreement": {
+      "tom": 0,
+      "deception": 0.4,
+      "path": 0.6,
+      "noise": 0.2,
+      "howWonExact": "5/5"
+     }
     }
    ],
-   "costUsd": 34
+   "costUsd": 66
   },
   {
    "source": "players-7.json",
@@ -2182,52 +3295,69 @@
     "pickpocket"
    ],
    "ruleVariants": [
-    "{}"
+    "{}",
+    "{\"census\":\"allButOne\"}"
    ],
-   "games": 7,
-   "coarseGames": 2,
-   "fixedScenarios": 1,
-   "fixedReplays": 5,
+   "games": 19,
+   "coarseGames": 4,
+   "fixedScenarios": 3,
+   "fixedReplays": 15,
    "winsAll": {
-    "pyre": 3,
-    "centaur": 2,
+    "pyre": 5,
+    "centaur": 11,
+    "centaur+pyre": 1,
     "werewolf": 2
    },
    "winsFixed": {
-    "centaur": 1,
-    "pyre": 2,
+    "centaur": 10,
+    "pyre": 3,
     "werewolf": 2
    },
-   "talkLive": 1,
-   "swept": [],
+   "talkLive": 2,
+   "swept": [
+    "F-P7-inversion (swept, but talk mattered)"
+   ],
    "concentration": {
     "values": [
      0.67,
      0.5,
+     0.33,
+     0.33,
      0.67,
      0.67,
      0.5,
      0.5,
-     0.83
+     0.83,
+     0.5,
+     0.5,
+     0.5,
+     0.5,
+     0.5,
+     0.5,
+     0.67,
+     0.5,
+     0.5,
+     0.5
     ],
     "bands": {
-     "majority": 4,
-     "plurality": 3
+     "majority": 5,
+     "plurality": 12,
+     "scattered": 2
     },
-    "median": 0.67,
-    "inBand": 4
+    "median": 0.5,
+    "inBand": 5
    },
    "judgesFixed": {
-    "tom": 2.7,
-    "deception": 3.1,
-    "path": 3.3,
+    "tom": 2.1,
+    "deception": 2.7,
+    "path": 2.87,
     "noise": 1.5
    },
    "judgesAll": {
-    "tom": 2.57,
-    "deception": 3,
-    "path": 3.5,
-    "noise": 1.43
+    "tom": 1.97,
+    "deception": 2.58,
+    "path": 3.03,
+    "noise": 1.55
    },
    "scenarios": [
     {
@@ -2258,9 +3388,66 @@
       "noise": 0.2,
       "howWonExact": "5/5"
      }
+    },
+    {
+     "group": "F-P7-inversion",
+     "rules": {},
+     "games": 5,
+     "winners": {
+      "centaur": 5
+     },
+     "talkLive": "swept, but talk mattered",
+     "path": 2.5,
+     "tom": 1.4,
+     "deception": 2.1,
+     "noise": 1.5,
+     "c": [
+      0.5,
+      0.5,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "agreement": {
+      "tom": 0.4,
+      "deception": 0.6,
+      "path": 0.2,
+      "noise": 0.2,
+      "howWonExact": "5/5"
+     }
+    },
+    {
+     "group": "F-P7-inversion-abo",
+     "rules": {
+      "census": "allButOne"
+     },
+     "games": 5,
+     "winners": {
+      "centaur": 4,
+      "pyre": 1
+     },
+     "talkLive": "talk-live",
+     "path": 2.8,
+     "tom": 2.2,
+     "deception": 2.9,
+     "noise": 1.5,
+     "c": [
+      0.5,
+      0.67,
+      0.5,
+      0.5,
+      0.5
+     ],
+     "agreement": {
+      "tom": 0.4,
+      "deception": 0.2,
+      "path": 0.4,
+      "noise": 0.2,
+      "howWonExact": "4/5"
+     }
     }
    ],
-   "costUsd": 40
+   "costUsd": 103
   },
   {
    "source": "players-7.json",
@@ -2320,6 +3507,156 @@
    "costUsd": 9
   },
   {
+   "source": "players-7.json",
+   "roster": "K7g",
+   "players": 7,
+   "centre": 3,
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "moonsage",
+    "greyherder",
+    "sage",
+    "herder",
+    "rustler",
+    "sentry",
+    "centaur",
+    "centaur"
+   ],
+   "ruleVariants": [
+    "{}"
+   ],
+   "games": 5,
+   "coarseGames": 0,
+   "fixedScenarios": 1,
+   "fixedReplays": 5,
+   "winsAll": {
+    "centaur": 5
+   },
+   "winsFixed": {
+    "centaur": 5
+   },
+   "talkLive": 0,
+   "swept": [
+    "F-K7g-duel (swept, but talk mattered)"
+   ],
+   "concentration": {
+    "values": [
+     0.67,
+     0.67,
+     0.67,
+     0.67,
+     0.67
+    ],
+    "bands": {
+     "majority": 5
+    },
+    "median": 0.67,
+    "inBand": 5
+   },
+   "judgesFixed": {
+    "tom": 2.1,
+    "deception": 2.9,
+    "path": 2.6,
+    "noise": 1.1
+   },
+   "judgesAll": {
+    "tom": 2.1,
+    "deception": 2.9,
+    "path": 2.6,
+    "noise": 1.1
+   },
+   "scenarios": [
+    {
+     "group": "F-K7g-duel",
+     "rules": {},
+     "games": 5,
+     "winners": {
+      "centaur": 5
+     },
+     "talkLive": "swept, but talk mattered",
+     "path": 2.6,
+     "tom": 2.1,
+     "deception": 2.9,
+     "noise": 1.1,
+     "c": [
+      0.67,
+      0.67,
+      0.67,
+      0.67,
+      0.67
+     ],
+     "agreement": {
+      "tom": 0.2,
+      "deception": 0.2,
+      "path": 0,
+      "noise": 0.2,
+      "howWonExact": "4/5"
+     }
+    }
+   ],
+   "costUsd": 21
+  },
+  {
+   "source": "players-7.json",
+   "roster": "M7",
+   "players": 7,
+   "centre": 3,
+   "deck": [
+    "werewolf",
+    "mirage",
+    "whisperer",
+    "sage",
+    "echo",
+    "rustler",
+    "sentry",
+    "centaur",
+    "centaur",
+    "cutpurse"
+   ],
+   "ruleVariants": [
+    "{}"
+   ],
+   "games": 4,
+   "coarseGames": 4,
+   "fixedScenarios": 0,
+   "fixedReplays": 0,
+   "winsAll": {
+    "werewolf": 2,
+    "centaur": 2
+   },
+   "winsFixed": {},
+   "talkLive": 0,
+   "swept": [],
+   "concentration": {
+    "values": [
+     0.83,
+     0.83,
+     0.67,
+     0.67
+    ],
+    "bands": {
+     "majority": 4
+    },
+    "median": 0.83,
+    "inBand": 4
+   },
+   "judgesFixed": {
+    "tom": null,
+    "deception": null,
+    "path": null,
+    "noise": null
+   },
+   "judgesAll": {
+    "tom": 2.25,
+    "deception": 2.63,
+    "path": 2.25,
+    "noise": 0.88
+   },
+   "scenarios": [],
+   "costUsd": 21
+  },
+  {
    "source": "players-5.json",
    "roster": "Q3 Little Pyre",
    "players": 5,
@@ -2337,19 +3674,19 @@
    "ruleVariants": [
     "\"defaults\""
    ],
-   "games": 21,
+   "games": 26,
    "coarseGames": 6,
    "fixedScenarios": 3,
-   "fixedReplays": 15,
+   "fixedReplays": 20,
    "winsAll": {
-    "centaur": 8,
-    "werewolf": 5,
+    "centaur": 10,
+    "werewolf": 8,
     "pyre": 8
    },
    "winsFixed": {
-    "centaur": 5,
+    "centaur": 7,
     "pyre": 7,
-    "werewolf": 3
+    "werewolf": 6
    },
    "talkLive": 3,
    "swept": [],
@@ -2375,27 +3712,32 @@
      0.75,
      0.75,
      0.75,
+     0.75,
+     0.5,
+     0.75,
+     0.75,
+     0.75,
      0.75
     ],
     "bands": {
-     "majority": 16,
-     "plurality": 3,
+     "majority": 20,
+     "plurality": 4,
      "unanimous": 2
     },
     "median": 0.75,
-    "inBand": 16
+    "inBand": 20
    },
    "judgesFixed": {
-    "tom": 2.5,
-    "deception": 2.9,
-    "path": 3.03,
+    "tom": 2.45,
+    "deception": 2.93,
+    "path": 3.18,
     "noise": 1.27
    },
    "judgesAll": {
-    "tom": 2.45,
-    "deception": 2.76,
-    "path": 2.86,
-    "noise": 1.19
+    "tom": 2.42,
+    "deception": 2.81,
+    "path": 3,
+    "noise": 1.21
    },
    "scenarios": [
     {
@@ -2422,21 +3764,26 @@
     {
      "group": "F6-Q3-two-wolves-lure",
      "rules": "defaults",
-     "games": 5,
+     "games": 10,
      "winners": {
-      "werewolf": 2,
-      "centaur": 2,
+      "werewolf": 5,
+      "centaur": 4,
       "pyre": 1
      },
      "talkLive": "talk-live",
-     "path": 3.2,
-     "tom": 2.4,
-     "deception": 2.8,
-     "noise": 1.5,
+     "path": 3.4,
+     "tom": 2.35,
+     "deception": 2.9,
+     "noise": 1.4,
      "c": [
       0.5,
       0.75,
       1,
+      0.75,
+      0.75,
+      0.5,
+      0.75,
+      0.75,
       0.75,
       0.75
      ]
@@ -2463,7 +3810,7 @@
      ]
     }
    ],
-   "costUsd": 63.06
+   "costUsd": 80.11
   },
   {
    "source": "players-5.json",
@@ -2483,17 +3830,17 @@
    "ruleVariants": [
     "\"defaults\""
    ],
-   "games": 20,
+   "games": 25,
    "coarseGames": 5,
    "fixedScenarios": 3,
-   "fixedReplays": 15,
+   "fixedReplays": 20,
    "winsAll": {
-    "werewolf": 5,
-    "centaur": 15
+    "werewolf": 8,
+    "centaur": 17
    },
    "winsFixed": {
-    "werewolf": 3,
-    "centaur": 12
+    "werewolf": 6,
+    "centaur": 14
    },
    "talkLive": 1,
    "swept": [
@@ -2521,47 +3868,57 @@
      1,
      1,
      0.75,
+     1,
+     1,
+     1,
+     1,
+     0.75,
      1
     ],
     "bands": {
-     "majority": 5,
-     "unanimous": 15
+     "majority": 6,
+     "unanimous": 19
     },
     "median": 1,
-    "inBand": 5
+    "inBand": 6
    },
    "judgesFixed": {
-    "tom": 1.77,
-    "deception": 1.9,
-    "path": 2,
-    "noise": 0.33
+    "tom": 1.93,
+    "deception": 2.08,
+    "path": 2.25,
+    "noise": 0.5
    },
    "judgesAll": {
-    "tom": 1.88,
-    "deception": 1.98,
-    "path": 2.1,
-    "noise": 0.45
+    "tom": 1.98,
+    "deception": 2.1,
+    "path": 2.28,
+    "noise": 0.56
    },
    "scenarios": [
     {
      "group": "F3-Q2-cutpurse-wolf",
      "rules": "defaults",
-     "games": 5,
+     "games": 10,
      "winners": {
-      "werewolf": 3,
-      "centaur": 2
+      "werewolf": 6,
+      "centaur": 4
      },
      "talkLive": "talk-live",
-     "path": 3.7,
-     "tom": 2.6,
-     "deception": 2.9,
+     "path": 3.35,
+     "tom": 2.5,
+     "deception": 2.75,
      "noise": 1,
      "c": [
       1,
       0.75,
       1,
       0.75,
-      0.75
+      0.75,
+      1,
+      1,
+      1,
+      0.75,
+      1
      ]
     },
     {
@@ -2605,7 +3962,7 @@
      ]
     }
    ],
-   "costUsd": 54.02
+   "costUsd": 67.5
   },
   {
    "source": "players-5.json",

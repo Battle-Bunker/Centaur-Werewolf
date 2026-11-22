@@ -1,0 +1,284 @@
+{
+ "timers": {
+  "dusk": 8,
+  "turn": 2,
+  "day": 240,
+  "vote": 60
+ },
+ "agents": {
+  "model": "opus",
+  "effort": "medium"
+ },
+ "tables": [
+  {
+   "label": "F-P7-inversion~off",
+   "replays": 5,
+   "center": 3,
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "embercarrier",
+    "sage",
+    "rustler",
+    "sentry",
+    "centaur",
+    "pickpocket"
+   ],
+   "players": [
+    "Cass",
+    "Bryn",
+    "Gale",
+    "Dov",
+    "Esme",
+    "Alder",
+    "Fen"
+   ],
+   "scenario": {
+    "seed": 32,
+    "cards": [
+     "lure",
+     "phoenix",
+     "sentry",
+     "werewolf",
+     "embercarrier",
+     "sage",
+     "centaur",
+     "werewolf",
+     "rustler",
+     "pickpocket"
+    ],
+    "plans": {
+     "Cass": [
+      {
+       "step": "lure",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 1
+          }
+         ],
+         "role": "werewolf"
+        }
+       }
+      }
+     ],
+     "Esme": [
+      {
+       "step": "carry",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 1
+          },
+          {
+           "k": "p",
+           "i": 3
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Dov": [
+      {
+       "step": "scent",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 6
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Alder": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 1
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Fen": [
+      {
+       "step": "glance",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "c",
+           "i": 1
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   },
+   "rules": {}
+  },
+  {
+   "label": "F-P7-inversion~open",
+   "replays": 10,
+   "center": 3,
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "embercarrier",
+    "sage",
+    "rustler",
+    "sentry",
+    "centaur",
+    "pickpocket"
+   ],
+   "players": [
+    "Cass",
+    "Bryn",
+    "Gale",
+    "Dov",
+    "Esme",
+    "Alder",
+    "Fen"
+   ],
+   "scenario": {
+    "seed": 32,
+    "cards": [
+     "lure",
+     "phoenix",
+     "sentry",
+     "werewolf",
+     "embercarrier",
+     "sage",
+     "centaur",
+     "werewolf",
+     "rustler",
+     "pickpocket"
+    ],
+    "plans": {
+     "Cass": [
+      {
+       "step": "lure",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 1
+          }
+         ],
+         "role": "werewolf"
+        }
+       }
+      }
+     ],
+     "Esme": [
+      {
+       "step": "carry",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 1
+          },
+          {
+           "k": "p",
+           "i": 3
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Dov": [
+      {
+       "step": "scent",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 6
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Alder": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 1
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Fen": [
+      {
+       "step": "glance",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "c",
+           "i": 1
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   },
+   "rules": {
+    "openingStatements": true
+   }
+  }
+ ]
+}
