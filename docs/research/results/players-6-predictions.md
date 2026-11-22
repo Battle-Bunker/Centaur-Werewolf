@@ -121,3 +121,24 @@ Deck: werewolf x2, spooker, pickpocket, latecomer, cutpurse, drifter, centaur, s
   predicted for the old one-card report should now be a split (3-2) when the pair contains a Centaur with no
   corroborator. Falsified if the pair report is still decisive 5-0 whenever it is real.
 - Other rosters contain no Herald, Notary or Signet: predictions unchanged.
+
+## Fine pass 1: PY6 fixed scenarios (written 12:25, after the coarse pass, before these games)
+
+Roster PY6 (werewolf x2, phoenix, lure, sage, moonsage, rustler, centaur, pickpocket; 3 centre). Each scenario: deal,
+night plans and night seed fixed (sim/tournaments/players-6/fine1.json, built by sim/research/p6-fine1.mjs; nights
+checked with scenario-check.ts).
+
+- **PY6-S1-fakesage** (replay of coarse PY6#1; 5 replays). Both Sage cards are in the centre; the Lure dressed the
+  Phoenix as a Werewolf but nobody looks at it; a lone wolf knows (census) that every Sage claim is false; the Centaur
+  saw "Sage" in centre card 1. Crux: will the Lure fake a Sage read on the Phoenix (as in coarse), and can the lone wolf
+  expose it without exposing itself? Prediction: talk-live, **Pyre 3, wolves 1, Centaurs 1**; judges path >= 2.5.
+  Falsified if 5-0 for any team.
+- **PY6-S2-twowolfreads** (5 replays). Sage reads the dressed Phoenix: "Werewolf"; Rustler peeks the real wolf:
+  "Werewolf"; the Centaur saw a Werewolf in the centre, so only one held wolf exists: one read is a dress. The table
+  must decide which accused is the Phoenix; the wolf knows the other accused is not pack and can claim to be the
+  dressed Phoenix itself. Prediction: the most talk-live scenario of the night: **Centaurs 2, Pyre 2, wolves 1**,
+  path >= 3, ToM >= 2.5. Falsified if one team wins 5-0 (then the asymmetry between the accused's natural behaviours
+  decides it).
+- **PY6-S3-control** (3 replays, predicted SWEEP). Sage and Rustler both see the only held wolf; Phoenix in the
+  centre so the Lure is a Tanner (Kindler fallback). Prediction: **Centaurs 3-0, path < 2, I4 degenerate (talk-dead)**,
+  c >= 0.8. Falsified if the wolf or the Lure wins a replay.
