@@ -1,0 +1,10 @@
+{
+ "timers": { "dusk": 60, "turn": 8, "day": 240, "vote": 60 },
+ "agents": { "model": "opus", "effort": "medium" },
+ "redeal": "wolfDealt",
+ "tables": [
+  { "label": "P7-setup", "center": 3,
+    "deck": ["werewolf","werewolf","spooker","sage","rustler","sentry","centaur","herder","pickpocket","centaur"],
+    "players": ["Alder","Bryn","Cass","Dov","Esme","Fen","Gale"] }
+ ]
+}

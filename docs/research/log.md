@@ -48,3 +48,58 @@
   control X1' (one fixed 5-player scenario, 3 replays). If X1' sweeps with low path dependence, the owner's prediction
   about the ember is confirmed by its structural twin; if not, my structural argument is wrong and the ember question
   reopens.
+
+## 2026-11-22 Coarse pass 1 (14 games, 2 per roster, natural deals redealt until a wolf is held; ~$58)
+
+Data: sim/runs/research/coarse1 (metrics.txt, metrics.json, judge-*.json per game). Old-code caveat: these games ran
+before the merge of 3dd1da1 (old Heavy Hand; old Ember-Carrier absent from these decks).
+
+| Roster | Result (2 games) | Judges mean ToM / deception / path / noise | c | Predicted |
+| --- | --- | --- | --- | --- |
+| A5 Spooker | wolves 2 (frame of own Spooker; false rotation story) | 2.8 / 3.5 / 3.5 / 1.3 | 1.00, 1.00 | Centaurs ~45% |
+| B5 Twin Sage | Centaurs 2 (one real duel: the Moonsage lost to Herder count + Rustler) | 2.0 / 2.3 / 1.8 / 0.8 | 1.00, 0.75 | ~50% |
+| C6 Mirror | Centaurs 2 (wolves' claims collided; Eavesdropper copied the Herder and duelled it, lost) | 1.0 / 1.0 / 1.3 / 0.0 | 0.80, 1.00 | ~55%, talk-live mirror |
+| D6 Pyre six | Pyre 1 (a forced random Lure self-dress + fallback burning), Centaurs 1 | 1.5 / 2.3 / 1.8 / 0.8 | 0.60, 0.80 | C40/W35/P25 |
+| E7 Seals | Centaurs 2 (two wolves claimed Centaur; a lone wolf's "team-only read" tell) | 2.0 / 2.0 / 1.8 / 0.3 | 0.67, 0.83 | ~55% |
+| F7 Pyre seven | wolves 1 (fake Echo+Sage chain), Centaurs 1 (+Pyre side burn) | 2.3 / 2.8 / 1.8 / 1.0 | 0.67, 0.50 | C35/W35/P30 |
+| G8 Grand | Centaurs 2 (wolf claim collisions; Herder count) | 2.5 / 2.5 / 2.5 / 1.0 | 0.71, 0.71 | C40/W35/P25 |
+
+Totals: Centaurs 9, wolves 4, Pyre 1 (+1 side burning) of 14. Vote concentration: 13 of 14 games majority or
+unanimous; unanimous 4; scattered 0 (G2 held: Opus tables concentrate). Judges agreed within 0.5 on average per scale;
+`howWon` exact in 9 of 14 pairs (G5 held). Discussions ended by "everyone ready" every time, after 46-182 s (median
+~90 s; 22-52 messages): Opus tables finish fast.
+
+### What the theory got right
+- Every wolf win came from a credibility card used as theorised: the Spooker's uncheckable rotation (A5 x2), a wolf
+  framing its own wolf-team ally whose elimination is a wolf win (A5#1), a coordinated fake copy chain backed by the
+  census knowing the Sage was in the centre (F7#1). Judges scored these deception 3.5-4, path 3-4.
+- Talk-dead classes were talk-dead: "two honest looks at one seat" (pilot, D6#2) ended the same way.
+
+### What it got wrong (and the general lesson)
+1. **The wolves lose to their own claim collisions.** In 4 of 9 Centaur wins (C6#1, E7#1, G8#2, and B5#2's late
+   Rustler claim) two pack members, each choosing a "safe" claim from the census independently, claimed the same role
+   (twice "Centaur"). The census makes a claim safe against the Centaurs but not against your own partner, and the pack
+   cannot talk at night. I had not modelled the wolves' coordination problem at all.
+   *Heuristic 5: a team that cannot communicate privately needs either distinct information per member or a
+   convention; otherwise its members' best individual lies collide.*
+2. **The Herder is the Centaurs' sledgehammer.** Its true count of wolves in the centre turned claim-counting into
+   proof in at least 6 of 9 Centaur wins (B5#1, B5#2, C6#2, D6#2, G8#1, G8#2). With the census, the wolves know the
+   count too, but nothing lets them dispute it (no Stray Herder in these decks).
+   *Heuristic 6: a single true, uncontestable global number collapses the world space; pair it with its twin or
+   leave it out.*
+3. **Owning a credibility card is not using it.** The Eavesdropper never made the mirror claim I predicted: in C6#2 it
+   copied the Herder and claimed Herder, so it duelled a player two others could vouch for. The Moonsage did duel in
+   B5#2 but against a Sage corroborated by a Rustler peek and a Centaur glance.
+   *Heuristic 7: a mirror is only unanswerable if the original cannot be corroborated by a third party; predict
+   duels by asking who can vouch for each side.*
+4. Coarse games with natural deals rarely produced the class each roster was built for (B5's duel 1 of 2; C6's mirror
+   0 of 2; E7's forged-vs-real seal 0 of 2). Cheap lesson: build the fine pass from constructed scenarios, which I did.
+
+### Change requests arising (each to be pre-registered before implementing)
+- **CR-6 (rosters, no code):** pair the Herder with the Stray Herder, or drop the Herder from 5-6 player rosters.
+  Prediction: removes the count-proof in about two thirds of Centaur wins at those sizes; Centaur share falls toward
+  half; path dependence rises.
+- **CR-7 (new rule, "Pack covers"):** the census additionally hands each pack member a DIFFERENT suggested cover role
+  drawn from the centre roles (told privately: "your cover: Rustler"; each pack member learns the others' covers too).
+  Prediction: wolf-wolf claim collisions (4 of 14 coarse games) disappear; wolves' win share in 2-wolf deals rises;
+  judges' deception score unchanged or higher because lies must now survive positional checks rather than counts.

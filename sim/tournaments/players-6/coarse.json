@@ -1,0 +1,338 @@
+{
+ "about": "players-6 coarse pass: natural deals redealt until a wolf card is held; see docs/research/results/players-6-predictions.md",
+ "timers": {
+  "dusk": 60,
+  "turn": 8,
+  "day": 240,
+  "vote": 60
+ },
+ "agents": {
+  "model": "opus",
+  "effort": "medium"
+ },
+ "redeal": "wolfDealt",
+ "tables": [
+  {
+   "label": "TW6#1",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "moonsage",
+    "herder",
+    "strayherder",
+    "rustler",
+    "centaur",
+    "sentry"
+   ]
+  },
+  {
+   "label": "TW6#2",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "moonsage",
+    "herder",
+    "strayherder",
+    "rustler",
+    "centaur",
+    "sentry"
+   ]
+  },
+  {
+   "label": "TW6#3",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "moonsage",
+    "herder",
+    "strayherder",
+    "rustler",
+    "centaur",
+    "sentry"
+   ]
+  },
+  {
+   "label": "PY6#1",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "sage",
+    "moonsage",
+    "rustler",
+    "centaur",
+    "pickpocket"
+   ]
+  },
+  {
+   "label": "PY6#2",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "sage",
+    "moonsage",
+    "rustler",
+    "centaur",
+    "pickpocket"
+   ]
+  },
+  {
+   "label": "PY6#3",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "sage",
+    "moonsage",
+    "rustler",
+    "centaur",
+    "pickpocket"
+   ]
+  },
+  {
+   "label": "SE6#1",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "counterfeiter",
+    "notary",
+    "moonsage",
+    "rustler",
+    "centaur",
+    "sentry",
+    "pickpocket"
+   ]
+  },
+  {
+   "label": "SE6#2",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "counterfeiter",
+    "notary",
+    "moonsage",
+    "rustler",
+    "centaur",
+    "sentry",
+    "pickpocket"
+   ]
+  },
+  {
+   "label": "SE6#3",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "counterfeiter",
+    "notary",
+    "moonsage",
+    "rustler",
+    "centaur",
+    "sentry",
+    "pickpocket"
+   ]
+  },
+  {
+   "label": "HU6#1",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "hush",
+    "sage",
+    "echo",
+    "cutpurse",
+    "pickpocket",
+    "centaur",
+    "sentry"
+   ]
+  },
+  {
+   "label": "HU6#2",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "hush",
+    "sage",
+    "echo",
+    "cutpurse",
+    "pickpocket",
+    "centaur",
+    "sentry"
+   ]
+  },
+  {
+   "label": "HU6#3",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "hush",
+    "sage",
+    "echo",
+    "cutpurse",
+    "pickpocket",
+    "centaur",
+    "sentry"
+   ]
+  },
+  {
+   "label": "SO6#1",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "spooker",
+    "pickpocket",
+    "latecomer",
+    "cutpurse",
+    "drifter",
+    "centaur",
+    "sentry"
+   ]
+  },
+  {
+   "label": "SO6#2",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "spooker",
+    "pickpocket",
+    "latecomer",
+    "cutpurse",
+    "drifter",
+    "centaur",
+    "sentry"
+   ]
+  }
+ ]
+}

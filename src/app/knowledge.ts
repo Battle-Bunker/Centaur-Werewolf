@@ -85,7 +85,7 @@ export function markersFor(v: View, journal: LogEntry[], viewer: number): Record
   const add = (s: Slot, m: Marker) => { (out[slotKey(s)] ??= []).push(m); };
   for (const e of journal) eventMarkers(e.ev, e, v, viewer, add);
   for (const sh of v.game?.shown ?? []) {
-    add(sh.slot, { label: `Shown ${roleName(sh.role)}`, role: sh.role, team: ROLE[sh.role]?.team, tone: "shown", title: `Proclaimed to everyone${sh.atDawn ? " at dawn" : ""} as ${roleName(sh.role)} (the ${roleName(sh.by)}'s turn). True at that moment unless forged or distorted; it may have moved since.` });
+    add(sh.slot, { label: `Said ${roleName(sh.role)}`, role: sh.role, team: ROLE[sh.role]?.team, tone: "shown", title: `Proclaimed to everyone${sh.atDawn ? " at dawn" : ""} as ${roleName(sh.role)} (the ${roleName(sh.by)}'s turn). A public statement, not proof: it may be forged or distorted, and the card may have moved since.` });
   }
   for (const m of v.game?.marks ?? []) {
     add({ k: "p", i: m.seat }, { label: pinWord(m.label), tone: "mark", title: `${m.label} lies on ${v.players[m.seat]?.name ?? `seat ${m.seat}`}: everyone sees it, nobody knows who laid it.` });

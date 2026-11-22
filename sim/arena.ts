@@ -54,7 +54,7 @@ interface AgentsConfig extends AgentSpec { seats?: Record<string, AgentSpec>; by
 /** redeal "wolfDealt": the runner starts each game itself and, before launching any agent, abandons and reopens the table until at least one wolf card was dealt to a player. rules/seed/playtest: see sim/lib.ts TableConfig. */
 type Redeal = "wolfDealt" | { dealtAnyOf: string[] };
 /** seed: the night seed (every random draw of the night and the count). */
-interface Scenario { cards: string[]; seed?: number; plans: Record<string, { step: string; plan: unknown }[]> }
+interface Scenario { cards: string[]; seed?: number; plans: Record<string, { step: string; plan: unknown; as?: string }[]> }
 interface TableSpec { label: string; deck: string[]; center: number; players: string[]; timers?: TableConfig["timers"]; agents?: AgentsConfig; redeal?: Redeal; rules?: TableConfig["rules"]; seed?: number; playtest?: boolean; scenario?: Scenario; replays?: number }
 /** prompt: another player-prompt file in sim/ (default arena-player.md). rules: rule variants for every table (a table's own rules override them). */
 interface Tournament { timers: TableConfig["timers"]; agents?: AgentsConfig; redeal?: Redeal; prompt?: string; rules?: TableConfig["rules"]; tables: TableSpec[] }
@@ -167,7 +167,7 @@ async function playTable(t: TableSpec) {
   mkdirSync(dir, { recursive: true });
   const timers = TIMERS ?? t.timers ?? spec.timers, cfg = t.agents ?? spec.agents;
   const redeal = t.scenario ? undefined : t.redeal ?? spec.redeal, prestart = !!cfg?.byTeam || !!redeal || !!t.scenario;
-  const config: TableConfig = { label, deck: t.deck, center: t.center, players: t.players, timers, rules: { ...spec.rules, ...t.rules }, seed: t.seed, playtest: t.playtest };
+  const config: TableConfig = { label, deck: t.deck, center: t.center, players: t.players, timers, rules: { ...spec.rules, ...t.rules }, seed: t.seed, playtest: t.playtest || !!t.scenario };
   let table: Table = await setupTable(config);
   if (t.scenario) await fixScenario(table, t.scenario);
   // With a pre-start, the runner deals before any agent exists; with redeal it keeps only deals that put a wolf card in a player's hand.
@@ -280,11 +280,11 @@ async function fixScenario(table: Table, sc: Scenario) {
 }
 /** Fixed scenario: queue every seat's night plan with that seat's own key during Dusk, and check each is queued. */
 async function queuePlans(label: string, table: Table, sc: Scenario) {
-  for (const s of table.seats) for (const p of sc.plans[s.name] ?? []) await tool(s.key, "night_planStep", { step: p.step, plan: p.plan });
+  for (const s of table.seats) for (const p of sc.plans[s.name] ?? []) await tool(s.key, "night_planStep", { step: p.step, plan: p.plan, ...(p.as ? { as: p.as } : {}) });
   for (const s of table.seats) {
     const steps = (await tool<View>(s.key, "room_view")).yourNightSteps ?? [];
     const open = steps.filter(st => st.status.startsWith("NOT DECIDED"));
-    if (open.length) throw new Error(`${label}: ${s.name} has undecided night steps ${open.map(o => o.step).join(",")}`);
+    if (open.length) log(label, `note: ${s.name} leaves ${open.map(o => o.step).join(",")} undecided (a seeded, hence replayable, random move)`);
   }
   log(label, `room ${table.code}: scenario deal fixed and every night plan queued`);
 }

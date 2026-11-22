@@ -43,7 +43,7 @@ export function Result() {
   const name = (i: number) => (i === viewer ? "you" : v.players[i]?.name ?? `seat ${i}`);
   const held = heldInstances(final);
   const cuts = final.seatEffects ?? [];
-  const forgedMsgs = v.messages.filter(m => m.round === v.round && m.forged);
+  const sealedMsgs = v.messages.filter(m => m.round === v.round && m.seal);
   const forgedShown = final.shown.filter(s => s.forged);
   const nightEnd = game.turns.length;
   return (
@@ -73,14 +73,14 @@ export function Result() {
         </ol>
       </section>
 
-      {(cuts.length > 0 || forgedMsgs.length > 0 || forgedShown.length > 0) && (
+      {(cuts.length > 0 || sealedMsgs.length > 0 || forgedShown.length > 0) && (
         <section className="reveals">
           <h2 className="section-title">Revealed now</h2>
           {cuts.map((c, i) => (
             <p key={`c${i}`} className="reveal-cut"><IconScissors size={16} /><span><b>{name(c.seat)}</b> did not lose their connection{c.from ? ` at ${new Date(c.from).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}` : ""}: <b>{name(c.by)}</b> ({roleName(c.source)}) cut them off for {clock(c.until - c.from)}.</span></p>
           ))}
-          {forgedMsgs.map(m => (
-            <p key={m.id} className="reveal-forged"><IconSeal size={16} /><span>The sealed message from <b>{m.name}</b> carrying the {m.seal ? roleName(m.seal) : ""} seal was <b>forged</b>: “{m.text.length > 90 ? `${m.text.slice(0, 88)}…` : m.text}”</span></p>
+          {sealedMsgs.map(m => (
+            <p key={m.id} className={m.forged ? "reveal-forged" : "reveal-sealed"}><IconSeal size={16} /><span>The message sealed as the {m.seal ? roleName(m.seal) : ""} was posted by <b>{m.mine ? "you" : m.name}</b>{m.forged ? <>, and the seal was <b>forged</b></> : ", and the seal was genuine"}: “{m.text.length > 90 ? `${m.text.slice(0, 88)}…` : m.text}”</span></p>
           ))}
           {forgedShown.map((s, i) => (
             <p key={`s${i}`} className="reveal-forged"><IconSeal size={16} /><span>The proclamation that {s.slot.k === "c" ? `centre card ${s.slot.i + 1}` : name(s.slot.i)} was <b>{roleName(s.role)}</b> was <b>forged</b>, published as the {roleName(s.by)}'s.</span></p>

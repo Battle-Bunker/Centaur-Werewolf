@@ -12,14 +12,21 @@ What is different from a table-top night:
   branch on what you will see ("if Werewolf team → keep mine, otherwise → trade").
 - **Forced random moves.** Anything still undecided when your turn ends is chosen at random, and marked so in the log.
 - **A journal.** What you did and learned stays on screen through the day, pinned to the seats it concerns.
+- **Discussion, then a timed vote.** Players mark themselves ready; when everyone is, the short vote opens. A vote not
+  cast in time is cast at random, and the results say so.
 - **One command registry.** Every action is declared once and reaches the server, the command palette (`Ctrl/⌘ K`),
   the buttons and the MCP tools from that one declaration.
 - **Rule variants as room settings.** Blood Price, the Den Census, dawn proclamations and other table rules are set
   in the lobby and shown to every player (`setup.setRule`).
 
-![The night: a queued conditional plan beside the table](docs/screenshots/night-plan.webp)
+![Dusk: a copier queues what it will do for each role it might become](docs/screenshots/night-copier-plan.webp)
 
-More: [command palette](docs/screenshots/palette.webp), [seven players](docs/screenshots/night-seven.webp), [results and log](docs/screenshots/ended.webp).
+More: [the lobby and table rules](docs/screenshots/lobby.webp), [a copy acting live in its turn](docs/screenshots/night-live-copy-seen.webp),
+[discussion and the ready toggle](docs/screenshots/day-discussion.webp), [sealed messages](docs/screenshots/day-chat-seals.webp),
+[the vote](docs/screenshots/vote.webp), [a player who dropped offline, as everyone sees it](docs/screenshots/interrupt-observer.webp),
+[the result](docs/screenshots/ended.webp), [the night log with what was seen and what was true](docs/screenshots/end-night-log.webp),
+[the Phoenix burning](docs/screenshots/ended-burning.webp), [the command palette](docs/screenshots/palette.webp),
+[eight players on a phone](docs/screenshots/phone-night-eight.webp).
 
 ## Run it
 

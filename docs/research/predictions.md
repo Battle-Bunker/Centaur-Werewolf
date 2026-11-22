@@ -162,3 +162,43 @@ Checked against the merged rules reference (origin/develop 5f62f40). Changes tha
 - **Moon-Thief** day swap off by default: without it the Moon-Thief is a plain pack Werewolf (W as a distinct card).
 - **cutDuringVote** is still on by default: CR-2 did not land; I will change it (prediction in log.md).
 - A5, B5, C6, D6, E7 and G8 cards are otherwise unchanged; their predictions stand.
+
+## Fine pass 1: pre-registered scenario predictions (2026-11-22, before any replay)
+
+Each scenario: fixed deal, night seed and night decisions (checked with sim/research/scenario-check.ts: the night ran as
+intended). 5 replays each (X1' 3). "Talk-live?" is my prediction of the charter's test. Seats in brackets.
+
+- **S1 A5-direction** (replay of coarse A5#2): wolves Cass(0), Dov(4); Sage Alder(1) read the Spooker Bryn(3); the
+  Spooker rotated Cass->Alder->Dov->Cass, so Alder (the Sage) now holds a Werewolf, Dov holds the Sage, Cass still a
+  Werewolf; the Sentry Esme(2) saw only Alder's card move. Crux: the Spooker's claimed direction. Coarse result: the
+  Spooker's false cycle got Dov (holding Sage) eliminated. **Predict: talk-live; wolves 3, Centaurs 2.** Judges path >= 3.
+- **S2 A5-frame** (replay of A5#1): lone wolf Alder(3) knows (census) the Sage is in the centre and (scent) Dov(1) is
+  wolf-team (the Spooker); nothing moved near the Sentry. Eliminating the Spooker wins for the wolves. **Predict:
+  wolves 4, Centaurs 1; talk-live only weakly** (the frame is hard to answer because the wolf side wins either by
+  Dov's or by nobody's elimination; the Centaurs need to see that the Sage claim is uncontestable because the Sage is in
+  the centre, which they cannot know). If 5-0 wolves: the unanswerable element is "a wolf-team non-wolf is a free
+  decoy"; candidate fix: the Spooker's elimination should not count as a wolf win (it already does not count as a
+  Centaur win; it is the "no wolf eliminated" default that wins).
+- **S3 B5-duel** (constructed): Sage Alder(0) read the lone wolf Bryn(1); the Moonsage Dov(3) read the Rustler
+  Cass(2) truly; the Rustler peeked Dov and saw "Sage" (the twin passes); Herder Esme(4) counted 1 wolf in the centre.
+  So the Moonsage's Sage claim is mechanically CORROBORATED by an honest Rustler, and the real Sage accuses the wolf.
+  **Predict: talk-live; Centaurs 2, wolves 3.** Falsified as talk-dead if the table always reasons "a twin in the deck +
+  the accused wolf backs one Sage" the same way.
+- **S4 C6-mirror** (constructed): Sage Alder(0) read Bryn(1) = Centaur; the Eavesdropper Cass(2) copied exactly that;
+  Herald proclaimed centre 2 = Herder; Werewolf Esme(4) unread; Sentry: nobody near moved. The Eavesdropper can claim
+  Sage with the identical read. **Predict: talk-live; Centaurs 3, wolves 2; noise judged >= 1.5** (a pure mirror).
+- **S5 D6-lure** (constructed): Lure Dov(3) dressed the Phoenix Bryn(1) as a Werewolf; Sage Alder(0) read Bryn as a
+  Werewolf (truly Phoenix); Herder: 1 wolf in the centre, so exactly one held: Cass(2), who knows from the census that
+  the Phoenix and the Lure are held, hence that "Bryn = Werewolf" is false. **Predict: talk-live three ways: Pyre 2,
+  Centaurs 2, wolves 1.** Judges ToM >= 2.5.
+- **S6 E7-seals** (constructed): Notary Alder(0) read Cass(2) = Signet; Sage Esme(4) read Fen(5) = Centaur; lone wolf
+  Bryn(1) scented the Counterfeiter Dov(3) (an ally); no read touches a wolf; Herder in the centre. The Counterfeiter
+  may forge a Notary report framing anyone. **Predict: talk-live; Centaurs 3, wolves 2.**
+- **S7 F7-chain** (replay of F7#1, now with the NEW Heavy Hand rule): the Echo Dov(2) copied the Werewolf Fen(3) (three
+  wolves: Fen, Bryn(6), Dov); the Rustler Alder(0) saw Fen as a Werewolf; the Lure Esme(4) dressed herself as a Sage;
+  Phoenix and Sage in the centre. Coarse: the wolves built a fake Echo/Sage chain and won. **Predict: wolves 3,
+  Centaurs 2; talk-live.**
+- **X1' Moon-Thief control** (`daySwap` on): Sage Alder(0) read Bryn(1) = Werewolf; the Moon-Thief Cass(2) is unread and
+  can safely claim a centre role (Herder/Sentry per census); the table will converge on Bryn; Cass swaps Bryn's card
+  away at the vote's end. **Predict: wolves 3-0, judges' path < 2: DEGENERATE.** Falsified if the table targets Cass
+  (reasoning that a consensus on Bryn is what the Thief wants).

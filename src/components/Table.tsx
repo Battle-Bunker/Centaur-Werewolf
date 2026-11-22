@@ -175,7 +175,8 @@ function useBubbles(v: View) {
     for (const m of v.messages) {
       if (seen.current.has(m.id)) continue;
       seen.current.add(m.id);
-      if (m.seat === null || m.seat === undefined) continue;
+      // A sealed message is signed by a role, not a player: no bubble on anyone's seat.
+      if (m.seat === null || m.seat === undefined || m.seal) continue;
       const seat = m.seat;
       setBubbles(b => ({ ...b, [seat]: { id: m.id, text: m.text } }));
       setTimeout(() => setBubbles(b => (b[seat]?.id === m.id ? Object.fromEntries(Object.entries(b).filter(([k]) => +k !== seat)) : b)), 6500);

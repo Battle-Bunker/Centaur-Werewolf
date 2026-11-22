@@ -1,0 +1,917 @@
+{
+ "timers": {
+  "dusk": 8,
+  "turn": 2,
+  "day": 240,
+  "vote": 60
+ },
+ "agents": {
+  "model": "opus",
+  "effort": "medium"
+ },
+ "tables": [
+  {
+   "label": "S1-A5-direction",
+   "deck": [
+    "centaur",
+    "farrier",
+    "rustler",
+    "sage",
+    "sentry",
+    "spooker",
+    "werewolf",
+    "werewolf"
+   ],
+   "center": 3,
+   "players": [
+    "Cass",
+    "Alder",
+    "Esme",
+    "Bryn",
+    "Dov"
+   ],
+   "replays": 5,
+   "scenario": {
+    "cards": [
+     "werewolf",
+     "sage",
+     "sentry",
+     "spooker",
+     "werewolf",
+     "farrier",
+     "centaur",
+     "rustler"
+    ],
+    "seed": 7,
+    "plans": {
+     "Cass": [
+      {
+       "step": "scent",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "skip"
+        }
+       }
+      }
+     ],
+     "Dov": [
+      {
+       "step": "scent",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "skip"
+        }
+       }
+      }
+     ],
+     "Alder": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Bryn": [
+      {
+       "step": "stampede",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 0
+          },
+          {
+           "k": "p",
+           "i": 1
+          },
+          {
+           "k": "p",
+           "i": 4
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "label": "S2-A5-frame",
+   "deck": [
+    "centaur",
+    "farrier",
+    "rustler",
+    "sage",
+    "sentry",
+    "spooker",
+    "werewolf",
+    "werewolf"
+   ],
+   "center": 3,
+   "players": [
+    "Cass",
+    "Dov",
+    "Bryn",
+    "Alder",
+    "Esme"
+   ],
+   "replays": 5,
+   "scenario": {
+    "cards": [
+     "farrier",
+     "spooker",
+     "sentry",
+     "werewolf",
+     "centaur",
+     "werewolf",
+     "sage",
+     "rustler"
+    ],
+    "seed": 7,
+    "plans": {
+     "Alder": [
+      {
+       "step": "scent",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 1
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Esme": [
+      {
+       "step": "glance",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "c",
+           "i": 0
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Cass": [
+      {
+       "step": "peek",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "c",
+           "i": 0
+          }
+         ]
+        }
+       }
+      },
+      {
+       "step": "shoe",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "skip"
+        }
+       }
+      }
+     ],
+     "Dov": [
+      {
+       "step": "stampede",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "c",
+           "i": 0
+          },
+          {
+           "k": "c",
+           "i": 1
+          },
+          {
+           "k": "c",
+           "i": 2
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "label": "S3-B5-duel",
+   "deck": [
+    "centaur",
+    "herder",
+    "moonsage",
+    "rustler",
+    "sage",
+    "sentry",
+    "werewolf",
+    "werewolf"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "replays": 5,
+   "scenario": {
+    "cards": [
+     "sage",
+     "werewolf",
+     "rustler",
+     "moonsage",
+     "herder",
+     "werewolf",
+     "centaur",
+     "sentry"
+    ],
+    "seed": 7,
+    "plans": {
+     "Bryn": [
+      {
+       "step": "scent",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 2
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Alder": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 1
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Dov": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 2
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Cass": [
+      {
+       "step": "peek",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ]
+        }
+       }
+      },
+      {
+       "step": "trade",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "skip"
+        }
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "label": "S4-C6-mirror",
+   "deck": [
+    "centaur",
+    "centaur",
+    "eavesdropper",
+    "herald",
+    "herder",
+    "rustler",
+    "sage",
+    "sentry",
+    "werewolf"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen"
+   ],
+   "replays": 5,
+   "scenario": {
+    "cards": [
+     "sage",
+     "centaur",
+     "eavesdropper",
+     "herald",
+     "werewolf",
+     "sentry",
+     "rustler",
+     "herder",
+     "centaur"
+    ],
+    "seed": 7,
+    "plans": {
+     "Esme": [
+      {
+       "step": "scent",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "skip"
+        }
+       }
+      }
+     ],
+     "Cass": [
+      {
+       "step": "listen",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "name",
+         "role": "sage"
+        }
+       }
+      }
+     ],
+     "Alder": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 1
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Bryn": [
+      {
+       "step": "glance",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "c",
+           "i": 0
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Dov": [
+      {
+       "step": "proclaim",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "c",
+           "i": 1
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "label": "S5-D6-lure",
+   "deck": [
+    "centaur",
+    "herder",
+    "lure",
+    "phoenix",
+    "rustler",
+    "sage",
+    "sentry",
+    "werewolf",
+    "werewolf"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen"
+   ],
+   "replays": 5,
+   "scenario": {
+    "cards": [
+     "sage",
+     "phoenix",
+     "werewolf",
+     "lure",
+     "herder",
+     "sentry",
+     "werewolf",
+     "rustler",
+     "centaur"
+    ],
+    "seed": 7,
+    "plans": {
+     "Dov": [
+      {
+       "step": "lure",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 1
+          }
+         ],
+         "role": "werewolf"
+        }
+       }
+      }
+     ],
+     "Cass": [
+      {
+       "step": "scent",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 5
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Alder": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 1
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "label": "S6-E7-seals",
+   "deck": [
+    "centaur",
+    "counterfeiter",
+    "herder",
+    "notary",
+    "rustler",
+    "sage",
+    "sentry",
+    "signet",
+    "werewolf",
+    "werewolf"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Gale"
+   ],
+   "replays": 5,
+   "scenario": {
+    "cards": [
+     "notary",
+     "werewolf",
+     "signet",
+     "counterfeiter",
+     "sage",
+     "centaur",
+     "sentry",
+     "werewolf",
+     "rustler",
+     "herder"
+    ],
+    "seed": 7,
+    "plans": {
+     "Bryn": [
+      {
+       "step": "scent",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Alder": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 2
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Esme": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 5
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Fen": [
+      {
+       "step": "glance",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "c",
+           "i": 1
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "label": "S7-F7-chain",
+   "deck": [
+    "centaur",
+    "echo",
+    "heavyhand",
+    "lure",
+    "phoenix",
+    "rustler",
+    "sage",
+    "sentry",
+    "werewolf",
+    "werewolf"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Gale",
+    "Dov",
+    "Fen",
+    "Esme",
+    "Cass",
+    "Bryn"
+   ],
+   "replays": 5,
+   "scenario": {
+    "cards": [
+     "rustler",
+     "heavyhand",
+     "echo",
+     "werewolf",
+     "lure",
+     "sentry",
+     "werewolf",
+     "centaur",
+     "phoenix",
+     "sage"
+    ],
+    "seed": 7,
+    "plans": {
+     "Dov": [
+      {
+       "step": "echo",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ]
+        }
+       }
+      },
+      {
+       "step": "scent",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "skip"
+        }
+       },
+       "as": "werewolf"
+      }
+     ],
+     "Fen": [
+      {
+       "step": "scent",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "skip"
+        }
+       }
+      }
+     ],
+     "Bryn": [
+      {
+       "step": "scent",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "skip"
+        }
+       }
+      }
+     ],
+     "Esme": [
+      {
+       "step": "lure",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 4
+          }
+         ],
+         "role": "sage"
+        }
+       }
+      }
+     ],
+     "Alder": [
+      {
+       "step": "peek",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ]
+        }
+       }
+      },
+      {
+       "step": "trade",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "skip"
+        }
+       }
+      }
+     ]
+    }
+   }
+  },
+  {
+   "label": "X1-thief-control",
+   "deck": [
+    "centaur",
+    "centaur",
+    "herder",
+    "moonthief",
+    "rustler",
+    "sage",
+    "sentry",
+    "werewolf"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "replays": 3,
+   "scenario": {
+    "cards": [
+     "sage",
+     "werewolf",
+     "moonthief",
+     "centaur",
+     "rustler",
+     "herder",
+     "centaur",
+     "sentry"
+    ],
+    "seed": 7,
+    "plans": {
+     "Bryn": [
+      {
+       "step": "scent",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "skip"
+        }
+       }
+      }
+     ],
+     "Cass": [],
+     "Alder": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 1
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Dov": [
+      {
+       "step": "glance",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "c",
+           "i": 1
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Esme": [
+      {
+       "step": "peek",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ]
+        }
+       }
+      },
+      {
+       "step": "trade",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "skip"
+        }
+       }
+      }
+     ]
+    }
+   },
+   "rules": {
+    "daySwap": true,
+    "thiefMinPlayers": 5
+   }
+  }
+ ]
+}

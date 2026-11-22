@@ -163,7 +163,7 @@ function Day({ v }: { v: View }) {
         {game.shown.length > 0 && (
           <div className="shown-list">
             <span className="eyebrow">Proclaimed to everyone{game.shown.some(s => s.atDawn) ? " at dawn" : ""}</span>
-            {game.shown.map((s, i) => <p key={i}><img src={`/art/${s.role}.webp`} alt="" /><span>{s.slot.k === "c" ? `Centre ${s.slot.i + 1}` : v.players[s.slot.i]?.name} was <b>{roleName(s.role)}</b>, in the {roleName(s.by)}'s turn. It may have moved since.</span></p>)}
+            {game.shown.map((s, i) => <p key={i}><img src={`/art/${s.role}.webp`} alt="" /><span>{s.slot.k === "c" ? `Centre ${s.slot.i + 1}` : v.players[s.slot.i]?.name} was said to be <b>{roleName(s.role)}</b> (the {roleName(s.by)}'s turn). Not proof: it may be forged or distorted, and the card may have moved.</span></p>)}
             {proclamationForgers(v.settings.deck).length > 0 && <p className="quiet small">A proclamation may be forged at this table.</p>}
           </div>
         )}
