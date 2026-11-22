@@ -1,0 +1,6 @@
+{
+  "timers": { "dusk": 120, "turn": 12, "day": 420 },
+  "tables": [
+    { "label": "B-movement#1", "center": 3, "players": ["Alder", "Bryn", "Cass", "Dov", "Esme"], "deck": ["werewolf", "werewolf", "rustler", "farrier", "spooker", "sentry", "sage", "centaur"] }
+  ]
+}

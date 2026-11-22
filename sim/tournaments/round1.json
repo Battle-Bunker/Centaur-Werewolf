@@ -1,0 +1,381 @@
+{
+ "timers": {
+  "dusk": 120,
+  "turn": 12,
+  "day": 420
+ },
+ "tables": [
+  {
+   "label": "A-information#1",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "herder",
+    "sentry"
+   ]
+  },
+  {
+   "label": "A-information#2",
+   "center": 3,
+   "players": [
+    "Fen",
+    "Greer",
+    "Hale",
+    "Ines",
+    "Jory"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "herder",
+    "sentry"
+   ]
+  },
+  {
+   "label": "B-movement#1",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "rustler",
+    "farrier",
+    "spooker",
+    "sentry",
+    "sage",
+    "centaur"
+   ]
+  },
+  {
+   "label": "B-movement#2",
+   "center": 3,
+   "players": [
+    "Fen",
+    "Greer",
+    "Hale",
+    "Ines",
+    "Jory"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "rustler",
+    "farrier",
+    "spooker",
+    "sentry",
+    "sage",
+    "centaur"
+   ]
+  },
+  {
+   "label": "C-votes-and-loners#1",
+   "center": 4,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "augur",
+    "hybrid",
+    "sage",
+    "rustler",
+    "centaur",
+    "chiron",
+    "sagittarius"
+   ]
+  },
+  {
+   "label": "C-votes-and-loners#2",
+   "center": 4,
+   "players": [
+    "Fen",
+    "Greer",
+    "Hale",
+    "Ines",
+    "Jory"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "augur",
+    "hybrid",
+    "sage",
+    "rustler",
+    "centaur",
+    "chiron",
+    "sagittarius"
+   ]
+  },
+  {
+   "label": "D-chat-trust#1",
+   "center": 4,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "deck": [
+    "werewolf",
+    "tracker",
+    "forger",
+    "signet",
+    "sage",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry"
+   ]
+  },
+  {
+   "label": "D-chat-trust#2",
+   "center": 4,
+   "players": [
+    "Fen",
+    "Greer",
+    "Hale",
+    "Ines",
+    "Jory"
+   ],
+   "deck": [
+    "werewolf",
+    "tracker",
+    "forger",
+    "signet",
+    "sage",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry"
+   ]
+  },
+  {
+   "label": "E-sparse-table#1",
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "tracker",
+    "whisperer",
+    "centaur",
+    "centaur",
+    "herald",
+    "herder",
+    "sage",
+    "farrier",
+    "sentry"
+   ]
+  },
+  {
+   "label": "E-sparse-table#2",
+   "center": 6,
+   "players": [
+    "Fen",
+    "Greer",
+    "Hale",
+    "Ines",
+    "Jory"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "tracker",
+    "whisperer",
+    "centaur",
+    "centaur",
+    "herald",
+    "herder",
+    "sage",
+    "farrier",
+    "sentry"
+   ]
+  },
+  {
+   "label": "F-late-reversals#1",
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "farrier",
+    "spooker",
+    "hybrid",
+    "augur",
+    "sentry"
+   ]
+  },
+  {
+   "label": "F-late-reversals#2",
+   "center": 6,
+   "players": [
+    "Fen",
+    "Greer",
+    "Hale",
+    "Ines",
+    "Jory"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "farrier",
+    "spooker",
+    "hybrid",
+    "augur",
+    "sentry"
+   ]
+  },
+  {
+   "label": "G-seven-classic#1",
+   "center": 3,
+   "players": [
+    "Pax",
+    "Quill",
+    "Rhea",
+    "Sol",
+    "Tam",
+    "Una",
+    "Vale"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "whisperer",
+    "sage",
+    "rustler",
+    "farrier",
+    "centaur",
+    "chiron",
+    "sagittarius",
+    "sentry"
+   ]
+  },
+  {
+   "label": "G-seven-classic#2",
+   "center": 3,
+   "players": [
+    "Wren",
+    "Xan",
+    "Yara",
+    "Zeb",
+    "Arlo",
+    "Bex",
+    "Cade"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "whisperer",
+    "sage",
+    "rustler",
+    "farrier",
+    "centaur",
+    "chiron",
+    "sagittarius",
+    "sentry"
+   ]
+  },
+  {
+   "label": "H-seven-everything#1",
+   "center": 5,
+   "players": [
+    "Pax",
+    "Quill",
+    "Rhea",
+    "Sol",
+    "Tam",
+    "Una",
+    "Vale"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "tracker",
+    "forger",
+    "spooker",
+    "signet",
+    "centaur",
+    "herald",
+    "herder",
+    "sage",
+    "augur",
+    "hybrid"
+   ]
+  },
+  {
+   "label": "H-seven-everything#2",
+   "center": 5,
+   "players": [
+    "Wren",
+    "Xan",
+    "Yara",
+    "Zeb",
+    "Arlo",
+    "Bex",
+    "Cade"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "tracker",
+    "forger",
+    "spooker",
+    "signet",
+    "centaur",
+    "herald",
+    "herder",
+    "sage",
+    "augur",
+    "hybrid"
+   ]
+  }
+ ]
+}
