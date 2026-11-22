@@ -1,20 +1,37 @@
 # Balance research: summary for the owner
 
-Version 2 (14:00 UTC; refreshed again by 18:30 UTC with the 6-player JSON, 8-player round 2 and the confirmation runs).
+Version 3 (13:40 UTC). A refresh by 18:30 UTC will add 8-player round 2 (players-8b), 6-player round 2 (players-6b) and
+the n=10 confirmation reruns (confirm) where they exist.
 Machine-readable companion: [overnight-summary.json](overnight-summary.json), rebuilt by
 `npx tsx sim/research/overnight.ts` from `docs/research/results/*.json`. Method and measures: [charter.md](charter.md);
 full record and heuristics: [log.md](log.md); per player count: `results/players-N.md`.
 
 ## In one paragraph
 
-About 300 all-Opus games were played today by five sessions (hub, and one per player count 5-8), most of them as
-**fixed scenarios**: one deal, one night, replayed 5 times with fresh AI players so that only the discussion differs.
-The best rosters at 5, 6 and 7 players all contain the **Pyre** (a Phoenix that wants to be eliminated and Kindlers
+363 all-Opus games (counted below) were played today by five finished sessions (the hub, and one per player count
+5-8; three more are still running), most of them as **fixed scenarios**: one deal, one night, replayed 5 times with
+fresh AI players so that only the discussion differs. Two of the three leading rosters (5 and 6 players) contain the
+**Pyre** (a Phoenix that wants to be eliminated and Kindlers
 who help it): with three teams, every side has a credible story and a private reason to distrust the others, and the
-neutral judges gave those games the highest theory-of-mind and path-dependence scores. **8 players is not solved.**
+neutral judges gave those games the highest theory-of-mind and path-dependence scores. The third (7 players) is a
+two-team roster built on enemy shadow twins, with the cleanest consensus of the leaders. **8 players is not solved.**
 The most important design lessons: talk decides only when a claim is credible but uncheckable; information handed to
 liars becomes a tell because the rules are common knowledge; and several "fixes" moved power to a different team
 instead of into the talk.
+
+## Games and spend (as each session reports it; 13:40 UTC)
+
+| Session | Games (all-Opus, full) | Spend (USD) | Note |
+| --- | --- | --- | --- |
+| Hub (this file's author) | 89 | about 323 | 313 players + about 10 judges/taggers |
+| 5 players | 81 | 236 | players + judges |
+| 6 players | 73 | 277 | 267 players + about 10 judges |
+| 7 players | 57 | 296 | 286 games + 10 judges |
+| 8 players (round 1) | 63 | 334 | 317 games + 17 judging |
+| **Total, finished sessions** | **363** | **about 1,466** | |
+| Build session (rules, replay hook) | 0 | about 31 | smoke games only |
+| App-UI session | 0 | about 20 | |
+| Still running at the time of writing | | | 8 players round 2 (players-8b), 6 players round 2 (players-6b), confirmation reruns (confirm) |
 
 ## How to read the numbers
 
@@ -53,7 +70,8 @@ a criterion outright. 8 players: not solved.
 ### 1. "Little Pyre", 5 players (5-player session, Q3) — passes every criterion
 - **Deck** (8, centre 3): werewolf, werewolf, phoenix, lure, sage, rustler, sentry, centaur. **Rules**: defaults.
 - **Games**: 26 = 6 natural + 20 fixed replays (3 scenarios, one also with opening statements). Natural: Centaurs 3,
-  wolves 2, Pyre 1. Fixed: F5 Centaurs 3 / Pyre 2; F6 wolves 2 / Centaurs 2 / Pyre 1; F8 Pyre 4 / wolves 1.
+  wolves 2, Pyre 1. Fixed: F5 Centaurs 3 / Pyre 2; F6 (rerun to n=10) wolves 5 / Centaurs 4 / Pyre 1 (two wolf wins by Blood Price
+  ties: still talk-live at n=10); F8 Pyre 4 / wolves 1.
 - **Judges** (two per game): ToM 2.45, deception 2.9, path 3.2, noise 1.3; agreement 0.14-0.29 per scale.
 - **Votes**: mostly majority (median 0.75), none scattered.
 - **Weakness**: the Lure-dresses-Phoenix line (F8: Pyre 4 of 5); the fix I built (`lureSparesPhoenix`) removes it but,
@@ -72,7 +90,8 @@ a criterion outright. 8 players: not solved.
 ### 3. "Shadow Court", 7 players (7-player session K7) — the two-team candidate
 - **Deck** (10, centre 3): werewolf, werewolf, moonsage, strayherder, sage, herder, rustler, sentry, centaur, centaur.
   **Rules**: defaults. Every information claim has a wolf-side twin that can make it truthfully (the Moonsage passes as
-  a Sage, so an honest Rustler's peek "confirms" it; the Stray Herder knows the true count).
+  a Sage, so an honest Rustler's peek "confirms" it; the Stray Herder knows the true count). It is also the model for
+  proposed change 3: its Herder's count is contestable.
 - **Games**: 14 = 4 natural + 2 fixed scenarios x 5. Natural: wolves 2, Centaurs 2. Fixed: Centaurs 4 / wolves 1 twice.
 - **Judges** (28 verdicts): ToM 2.1, deception 2.6, path 2.6, noise 1.0; agreement <= 0.6; "how won" 13 of 14.
 - **Votes**: 12 majority, 1 plurality, 1 unanimous, 0 scattered (median 0.67): the cleanest consensus of the leaders.
@@ -134,7 +153,7 @@ deception 3.1): across its 19 games only 5 votes fell in the consensus band (12 
 ## Strategies observed (prevalence)
 
 Hub games (89, tagged by a neutral AI pass with a fixed taxonomy, sim/research/strategies-hub.ts; JSON in results/hub-strategies.json; "won" = that team won the game; "decisive" = the
-tagger judged it decided the game). The per-count sessions' tables agree in direction (5p: 71 games; 8p: 63; see
+tagger judged it decided the game). The per-count sessions' tables agree in direction (5p: 81 games; 8p: 63; see
 their files).
 
 | Strategy (team using it) | Games used | That team won | Decisive |
@@ -210,7 +229,9 @@ prediction very likely held for the old card.
   held and revealed together in seat order; no leak of order or timing; verified live).
 - **Gleaner leak**: before 13:00 UTC an AI Gleaner's planning view listed the roles dealt to the centre. Fixed; copier
   results before the fix are contaminated (the 5-player copier roster).
-- **Hush harness**: a cut AI player never came back. Fixed in the harness (7-player session).
+- **Hush harness**: a cut AI player never came back (the headless client drops the server after the 503). Fixed in
+  the shim (any outage, cut or real, now returns one identical retryable error); verified by a scripted check, not yet
+  in a full Hush game. Hush rosters before the fix are affected (the 7-player G7 games).
 - **packCovers defect**: covers could name a duplicated role an honest player held. Fixed (covers only from roles with
   no copy in any hand).
 - **Parity bloc**: see below.
@@ -227,14 +248,14 @@ prediction very likely held for the old card.
 | 6 | `lureSparesPhoenix` only together with a rule that a Kindler's death is not a free wolf win (e.g. a new option: eliminating a non-Phoenix Pyre card while a Phoenix is held denies both main teams, as a burning denies the wolves) | Lure fix at 6p: Pyre 0 of 8, but wolves 4 of 5 without openings via the Lure decoy; Centaurs 3-0 with openings | Lure option built; Kindler-death option proposed, untested |
 | 7 | Notary that learns only the pair statement it seals; same test for every "ambiguous" artefact | 6p sealed pair reports: Centaurs 5-0, path 1.0 | proposed |
 | 8 | Ember variant in which the player dealt the Phoenix stays on the Pyre (no reason to out the swap); or always pair the ember with another innocent mover | ember at 6: 5-0; at 7 with a Pickpocket: the most balanced scenario | proposed |
-| 9 | `packCovers` (fixed) and `census: "allButOne"` stay options | neutral where tested (S1); allButOne did not break S3 | built; default off |
+| 9 | `packCovers` (fixed) and `census: "allButOne"` stay options | covers neutral where tested (S1); allButOne did not break S3 at 5p but turned a swept 7p Pyre night into 4-1 talk-live | built; default off |
 | 10 | 5-player requests: Drover (Centaur twin of the Spooker) | 5p F1: wolves 5-0 -> Centaurs 4 / wolves 1 | 5p session's card; adopt as option |
 
 ## What is not yet known
 
 - Natural-deal win shares for any roster (fixed scenarios measure day-variability, not how often each class is dealt).
 - Whether the top rosters' talk-live scenarios hold at n=10 and with opening statements on (confirmation runs under way:
-  7p ember, 5p Little Pyre, 6p PY6).
+  7p ember, 5p Little Pyre, 6p PY6, 7p K7 duel).
 - Whether results transfer to human players (talk speed, the timing tell, patience for 5-minute discussions: AI tables
   always ended the discussion early, after 45-180 s, by everyone marking ready).
 - 8 players: unsolved; a second 8-player session is running.
