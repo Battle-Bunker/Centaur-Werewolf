@@ -1,0 +1,215 @@
+{
+ "about": "Combinations: X1 at 5/3 and the full ecosystem X2 at 7/6, default rules.",
+ "timers": {
+  "dusk": 120,
+  "turn": 12,
+  "day": 420,
+  "vote": 20
+ },
+ "tables": [
+  {
+   "label": "X1-combo5x3#1",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "deck": [
+    "werewolf",
+    "glamour",
+    "stalkinghorse",
+    "sage",
+    "centaur",
+    "herald",
+    "sentry",
+    "sporeling"
+   ],
+   "seed": 20001
+  },
+  {
+   "label": "X1-combo5x3#2",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "deck": [
+    "werewolf",
+    "glamour",
+    "stalkinghorse",
+    "sage",
+    "centaur",
+    "herald",
+    "sentry",
+    "sporeling"
+   ],
+   "seed": 20002
+  },
+  {
+   "label": "X1-combo5x3#3",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "deck": [
+    "werewolf",
+    "glamour",
+    "stalkinghorse",
+    "sage",
+    "centaur",
+    "herald",
+    "sentry",
+    "sporeling"
+   ],
+   "seed": 20003
+  },
+  {
+   "label": "X1-combo5x3#4",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "deck": [
+    "werewolf",
+    "glamour",
+    "stalkinghorse",
+    "sage",
+    "centaur",
+    "herald",
+    "sentry",
+    "sporeling"
+   ],
+   "seed": 20004
+  },
+  {
+   "label": "X2-combo7x6#1",
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Greer"
+   ],
+   "deck": [
+    "werewolf",
+    "eavesdropper",
+    "biter",
+    "stalkinghorse",
+    "sage",
+    "herald",
+    "centaur",
+    "centaur",
+    "farrier",
+    "sentry",
+    "moth",
+    "cuckoo",
+    "oxpecker"
+   ],
+   "seed": 21001
+  },
+  {
+   "label": "X2-combo7x6#2",
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Greer"
+   ],
+   "deck": [
+    "werewolf",
+    "eavesdropper",
+    "biter",
+    "stalkinghorse",
+    "sage",
+    "herald",
+    "centaur",
+    "centaur",
+    "farrier",
+    "sentry",
+    "moth",
+    "cuckoo",
+    "oxpecker"
+   ],
+   "seed": 21002
+  },
+  {
+   "label": "X2-combo7x6#3",
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Greer"
+   ],
+   "deck": [
+    "werewolf",
+    "eavesdropper",
+    "biter",
+    "stalkinghorse",
+    "sage",
+    "herald",
+    "centaur",
+    "centaur",
+    "farrier",
+    "sentry",
+    "moth",
+    "cuckoo",
+    "oxpecker"
+   ],
+   "seed": 21003
+  },
+  {
+   "label": "X2-combo7x6#4",
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Greer"
+   ],
+   "deck": [
+    "werewolf",
+    "eavesdropper",
+    "biter",
+    "stalkinghorse",
+    "sage",
+    "herald",
+    "centaur",
+    "centaur",
+    "farrier",
+    "sentry",
+    "moth",
+    "cuckoo",
+    "oxpecker"
+   ],
+   "seed": 21004
+  }
+ ]
+}

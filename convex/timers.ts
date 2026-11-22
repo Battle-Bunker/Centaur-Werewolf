@@ -1,7 +1,7 @@
-/** The scheduled ends of night turns and of the day. Each checks it is still the timer for the current moment. */
+/** The scheduled ends of night turns, the discussion and the vote. Each checks it is still the timer for the current moment (round and phase). */
 import { v } from "convex/values";
 import { internalMutation } from "./_generated/server";
-import { endDay, endTurn, type Game } from "./game";
+import { endTurn, endVote, startVote, type Game } from "./game";
 
 export const turnEnds = internalMutation({
   args: { room: v.id("rooms"), round: v.number(), turn: v.number() },
@@ -17,6 +17,15 @@ export const dayEnds = internalMutation({
   handler: async (ctx, a) => {
     const room = await ctx.db.get(a.room);
     if (!room || room.phase !== "day" || room.round !== a.round) return;
-    await endDay(ctx, room);
+    await startVote(ctx, room);
+  },
+});
+
+export const voteEnds = internalMutation({
+  args: { room: v.id("rooms"), round: v.number() },
+  handler: async (ctx, a) => {
+    const room = await ctx.db.get(a.room);
+    if (!room || room.phase !== "vote" || room.round !== a.round) return;
+    await endVote(ctx, room);
   },
 });

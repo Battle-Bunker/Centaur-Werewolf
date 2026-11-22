@@ -5,6 +5,7 @@ import type { CommandContext } from "../shared/commands";
 import { HOME_CONTEXT } from "../shared/commands";
 import { isAuto } from "../shared/engine";
 import { ROLE } from "../shared/roles";
+import { rulesOf } from "../shared/settings";
 import type { Game } from "./game";
 
 export interface Scope {
@@ -48,5 +49,10 @@ export function contextOf(scope: Scope | null): CommandContext {
     openSteps: room.phase === "night" && game && seat >= 0 ? openSteps(game, seat) : [],
     voted: !!game && seat >= 0 && game.votes[seat] !== null,
     chatPower: game && seat >= 0 && !game.chatUsed[seat] ? (ROLE[game.state.dealt[seat]].chat ?? null) : null,
+    dayPower: game && seat >= 0 && !game.powerUsed?.[seat] ? (ROLE[game.state.dealt[seat]].dayPower ?? null) : null,
+    ready: !!game?.ready?.[seat],
+    swapQueued: !!game?.daySwap && game.daySwap.by === seat,
+    playtest: !!room.playtest,
+    rules: rulesOf(room.settings.rules),
   };
 }

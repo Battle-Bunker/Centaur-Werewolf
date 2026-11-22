@@ -6,6 +6,7 @@
  */
 import { readFileSync, writeFileSync } from "node:fs";
 import { tool, type Table } from "./lib";
+import { ROLES } from "../shared/roles";
 
 interface Seat { seat: number; name: string; dealt: string; endedHolding: string; endedOnTeam: string; votedFor: string; voteWasRandom: boolean; votesReceived: number; eliminated: boolean; won: boolean }
 interface Result { headline: string; notes: string[]; winningTeam: string; eliminated: string[]; seats: Seat[]; centre: string[]; nightLog: string[] }
@@ -13,7 +14,7 @@ interface View { phase: string; chat: { from: string; text: string; phase: strin
 
 const out = process.argv[2];
 const tables = JSON.parse(readFileSync(`${out}/tables.json`, "utf8")) as Table[];
-const WOLF = new Set(["Werewolf", "Tracker"]);
+const WOLF = new Set(ROLES.filter(r => r.tags.includes("wolf")).map(r => r.name));
 const rows = [];
 for (const t of tables) {
   const v = await tool<View>(t.seats[0].key, "room_view");

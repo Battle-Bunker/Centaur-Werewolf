@@ -1,0 +1,1019 @@
+{
+ "about": "Control decks in three rule arms (legacy; +Blood Price; +Blood Price and Census, i.e. the defaults). Same deal seeds across arms.",
+ "timers": {
+  "dusk": 120,
+  "turn": 12,
+  "day": 420,
+  "vote": 20
+ },
+ "tables": [
+  {
+   "label": "C1-control5x3-legacy#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "rules": {
+    "bloodPrice": false,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 1001
+  },
+  {
+   "label": "C1-control5x3-legacy#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "rules": {
+    "bloodPrice": false,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 1002
+  },
+  {
+   "label": "C1-control5x3-legacy#3",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "rules": {
+    "bloodPrice": false,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 1003
+  },
+  {
+   "label": "C1-control5x3-legacy#4",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "rules": {
+    "bloodPrice": false,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 1004
+  },
+  {
+   "label": "C1-control5x3-bp#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "rules": {
+    "bloodPrice": true,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 1001
+  },
+  {
+   "label": "C1-control5x3-bp#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "rules": {
+    "bloodPrice": true,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 1002
+  },
+  {
+   "label": "C1-control5x3-bp#3",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "rules": {
+    "bloodPrice": true,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 1003
+  },
+  {
+   "label": "C1-control5x3-bp#4",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "rules": {
+    "bloodPrice": true,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 1004
+  },
+  {
+   "label": "C1-control5x3-bp-census#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "seed": 1001
+  },
+  {
+   "label": "C1-control5x3-bp-census#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "seed": 1002
+  },
+  {
+   "label": "C1-control5x3-bp-census#3",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "seed": 1003
+  },
+  {
+   "label": "C1-control5x3-bp-census#4",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "seed": 1004
+  },
+  {
+   "label": "C1-control5x6-legacy#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry",
+    "centaur",
+    "farrier",
+    "herder"
+   ],
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "rules": {
+    "bloodPrice": false,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 2001
+  },
+  {
+   "label": "C1-control5x6-legacy#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry",
+    "centaur",
+    "farrier",
+    "herder"
+   ],
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "rules": {
+    "bloodPrice": false,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 2002
+  },
+  {
+   "label": "C1-control5x6-legacy#3",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry",
+    "centaur",
+    "farrier",
+    "herder"
+   ],
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "rules": {
+    "bloodPrice": false,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 2003
+  },
+  {
+   "label": "C1-control5x6-legacy#4",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry",
+    "centaur",
+    "farrier",
+    "herder"
+   ],
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "rules": {
+    "bloodPrice": false,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 2004
+  },
+  {
+   "label": "C1-control5x6-bp#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry",
+    "centaur",
+    "farrier",
+    "herder"
+   ],
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "rules": {
+    "bloodPrice": true,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 2001
+  },
+  {
+   "label": "C1-control5x6-bp#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry",
+    "centaur",
+    "farrier",
+    "herder"
+   ],
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "rules": {
+    "bloodPrice": true,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 2002
+  },
+  {
+   "label": "C1-control5x6-bp#3",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry",
+    "centaur",
+    "farrier",
+    "herder"
+   ],
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "rules": {
+    "bloodPrice": true,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 2003
+  },
+  {
+   "label": "C1-control5x6-bp#4",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry",
+    "centaur",
+    "farrier",
+    "herder"
+   ],
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "rules": {
+    "bloodPrice": true,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 2004
+  },
+  {
+   "label": "C1-control5x6-bp-census#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry",
+    "centaur",
+    "farrier",
+    "herder"
+   ],
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "seed": 2001
+  },
+  {
+   "label": "C1-control5x6-bp-census#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry",
+    "centaur",
+    "farrier",
+    "herder"
+   ],
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "seed": 2002
+  },
+  {
+   "label": "C1-control5x6-bp-census#3",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry",
+    "centaur",
+    "farrier",
+    "herder"
+   ],
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "seed": 2003
+  },
+  {
+   "label": "C1-control5x6-bp-census#4",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "centaur",
+    "centaur",
+    "herald",
+    "rustler",
+    "sentry",
+    "centaur",
+    "farrier",
+    "herder"
+   ],
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "seed": 2004
+  },
+  {
+   "label": "C2-control7x4-legacy#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "rustler",
+    "centaur",
+    "farrier",
+    "herald",
+    "sentry",
+    "centaur",
+    "herder",
+    "whisperer"
+   ],
+   "center": 4,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Greer"
+   ],
+   "rules": {
+    "bloodPrice": false,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 3001
+  },
+  {
+   "label": "C2-control7x4-legacy#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "rustler",
+    "centaur",
+    "farrier",
+    "herald",
+    "sentry",
+    "centaur",
+    "herder",
+    "whisperer"
+   ],
+   "center": 4,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Greer"
+   ],
+   "rules": {
+    "bloodPrice": false,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 3002
+  },
+  {
+   "label": "C2-control7x4-legacy#3",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "rustler",
+    "centaur",
+    "farrier",
+    "herald",
+    "sentry",
+    "centaur",
+    "herder",
+    "whisperer"
+   ],
+   "center": 4,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Greer"
+   ],
+   "rules": {
+    "bloodPrice": false,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 3003
+  },
+  {
+   "label": "C2-control7x4-legacy#4",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "rustler",
+    "centaur",
+    "farrier",
+    "herald",
+    "sentry",
+    "centaur",
+    "herder",
+    "whisperer"
+   ],
+   "center": 4,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Greer"
+   ],
+   "rules": {
+    "bloodPrice": false,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 3004
+  },
+  {
+   "label": "C2-control7x4-bp#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "rustler",
+    "centaur",
+    "farrier",
+    "herald",
+    "sentry",
+    "centaur",
+    "herder",
+    "whisperer"
+   ],
+   "center": 4,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Greer"
+   ],
+   "rules": {
+    "bloodPrice": true,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 3001
+  },
+  {
+   "label": "C2-control7x4-bp#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "rustler",
+    "centaur",
+    "farrier",
+    "herald",
+    "sentry",
+    "centaur",
+    "herder",
+    "whisperer"
+   ],
+   "center": 4,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Greer"
+   ],
+   "rules": {
+    "bloodPrice": true,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 3002
+  },
+  {
+   "label": "C2-control7x4-bp#3",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "rustler",
+    "centaur",
+    "farrier",
+    "herald",
+    "sentry",
+    "centaur",
+    "herder",
+    "whisperer"
+   ],
+   "center": 4,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Greer"
+   ],
+   "rules": {
+    "bloodPrice": true,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 3003
+  },
+  {
+   "label": "C2-control7x4-bp#4",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "rustler",
+    "centaur",
+    "farrier",
+    "herald",
+    "sentry",
+    "centaur",
+    "herder",
+    "whisperer"
+   ],
+   "center": 4,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Greer"
+   ],
+   "rules": {
+    "bloodPrice": true,
+    "census": "off",
+    "dawnProclamations": false
+   },
+   "seed": 3004
+  },
+  {
+   "label": "C2-control7x4-bp-census#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "rustler",
+    "centaur",
+    "farrier",
+    "herald",
+    "sentry",
+    "centaur",
+    "herder",
+    "whisperer"
+   ],
+   "center": 4,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Greer"
+   ],
+   "seed": 3001
+  },
+  {
+   "label": "C2-control7x4-bp-census#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "rustler",
+    "centaur",
+    "farrier",
+    "herald",
+    "sentry",
+    "centaur",
+    "herder",
+    "whisperer"
+   ],
+   "center": 4,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Greer"
+   ],
+   "seed": 3002
+  },
+  {
+   "label": "C2-control7x4-bp-census#3",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "rustler",
+    "centaur",
+    "farrier",
+    "herald",
+    "sentry",
+    "centaur",
+    "herder",
+    "whisperer"
+   ],
+   "center": 4,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Greer"
+   ],
+   "seed": 3003
+  },
+  {
+   "label": "C2-control7x4-bp-census#4",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "sage",
+    "rustler",
+    "centaur",
+    "farrier",
+    "herald",
+    "sentry",
+    "centaur",
+    "herder",
+    "whisperer"
+   ],
+   "center": 4,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Greer"
+   ],
+   "seed": 3004
+  }
+ ]
+}

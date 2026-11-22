@@ -40,10 +40,10 @@ import { startShim } from "./mcp-shim";
 // ── configuration ──
 interface AgentSpec { model?: string; effort?: string }
 interface AgentsConfig extends AgentSpec { seats?: Record<string, AgentSpec>; byTeam?: Record<string, AgentSpec> }
-/** redeal "wolfDealt": the runner starts each game itself and, before launching any agent, abandons and reopens the table until at least one wolf card was dealt to a player. */
-interface TableSpec { label: string; deck: string[]; center: number; players: string[]; timers?: TableConfig["timers"]; agents?: AgentsConfig; redeal?: "wolfDealt" }
-/** prompt: another player-prompt file in sim/ (default arena-player.md). */
-interface Tournament { timers: TableConfig["timers"]; agents?: AgentsConfig; redeal?: "wolfDealt"; prompt?: string; tables: TableSpec[] }
+/** redeal "wolfDealt": the runner starts each game itself and, before launching any agent, abandons and reopens the table until at least one wolf card was dealt to a player. rules/seed/playtest: see sim/lib.ts TableConfig. */
+interface TableSpec { label: string; deck: string[]; center: number; players: string[]; timers?: TableConfig["timers"]; agents?: AgentsConfig; redeal?: "wolfDealt"; rules?: TableConfig["rules"]; seed?: number; playtest?: boolean }
+/** prompt: another player-prompt file in sim/ (default arena-player.md). rules: rule variants for every table (a table's own rules override them). */
+interface Tournament { timers: TableConfig["timers"]; agents?: AgentsConfig; redeal?: "wolfDealt"; prompt?: string; rules?: TableConfig["rules"]; tables: TableSpec[] }
 
 const argv = process.argv.slice(2);
 const flag = (name: string, dflt?: string) => { const i = argv.indexOf(`--${name}`); return i >= 0 ? argv[i + 1] : dflt; };
@@ -152,7 +152,8 @@ async function playTable(t: TableSpec) {
   mkdirSync(dir, { recursive: true });
   const timers = TIMERS ?? t.timers ?? spec.timers, cfg = t.agents ?? spec.agents;
   const redeal = t.redeal ?? spec.redeal, prestart = !!cfg?.byTeam || !!redeal;
-  let table: Table = await setupTable({ label, deck: t.deck, center: t.center, players: t.players, timers });
+  const config: TableConfig = { label, deck: t.deck, center: t.center, players: t.players, timers, rules: { ...spec.rules, ...t.rules }, seed: t.seed, playtest: t.playtest };
+  let table: Table = await setupTable(config);
   // With a pre-start, the runner deals before any agent exists; with redeal it keeps only deals that put a wolf card in a player's hand.
   const dealt: Record<string, { id: string; team: string }> = {};
   let discarded = 0;
@@ -162,7 +163,7 @@ async function playTable(t: TableSpec) {
     if (redeal !== "wolfDealt" || Object.values(dealt).some(d => ROLE[d.id]?.tags.includes("wolf"))) break;
     if (++discarded > 40) throw new Error("40 deals without a wolf dealt");
     log(label, `room ${table.code}: no wolf card dealt to a player, discarded`);
-    table = await setupTable({ label, deck: t.deck, center: t.center, players: t.players, timers });
+    table = await setupTable(config);
   }
   writeFileSync(`${dir}/table.json`, JSON.stringify(table, null, 1));
   writeFileSync(`${dir}/run.json`, JSON.stringify({ tournament: file, prompt: PROMPT_VERSION, promptFile: PROMPT_FILE, redeal: redeal ?? null, discardedDeals: discarded, timers, transport: DIRECT ? "direct" : "shim", agents: cfg ?? null, default: DEFAULT, cli: argv.join(" "), at: new Date().toISOString() }, null, 1));
@@ -198,7 +199,7 @@ async function playTable(t: TableSpec) {
 
   const agents: Promise<void>[] = [];
   if (prestart) {
-    for (const s of table.seats) { const d = dealt[s.name]; agents.push(startAgent(s, agentSpec(cfg, s.name, d.team.startsWith("Werewolf") ? "werewolf" : d.team.startsWith("Centaur") ? "centaur" : "lone"), true)); }
+    for (const s of table.seats) { const d = dealt[s.name]; agents.push(startAgent(s, agentSpec(cfg, s.name, d.team.startsWith("Werewolf") ? "werewolf" : d.team.startsWith("Centaur") ? "centaur" : "wild"), true)); }
   } else for (const s of table.seats) agents.push(startAgent(s, agentSpec(cfg, s.name), false));
 
   // Watch the table through the host's view (and, at night, each seat's own view of its plan) to measure timing.
