@@ -1,0 +1,430 @@
+{
+ "about": "players-6 fine pass 3: PY6 S1/S2 with opening statements; S2 with burningDeniesWolves off",
+ "timers": {
+  "dusk": 8,
+  "turn": 2,
+  "day": 240,
+  "vote": 60
+ },
+ "agents": {
+  "model": "opus",
+  "effort": "medium"
+ },
+ "tables": [
+  {
+   "label": "PY6-S1-open",
+   "replays": 5,
+   "center": 3,
+   "deck": [
+    "centaur",
+    "lure",
+    "moonsage",
+    "phoenix",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "werewolf",
+    "werewolf"
+   ],
+   "players": [
+    "Cass",
+    "Alder",
+    "Fenn",
+    "Bryn",
+    "Dov",
+    "Esme"
+   ],
+   "scenario": {
+    "seed": 601,
+    "cards": [
+     "pickpocket",
+     "werewolf",
+     "rustler",
+     "centaur",
+     "lure",
+     "phoenix",
+     "sage",
+     "werewolf",
+     "moonsage"
+    ],
+    "plans": {
+     "Dov": [
+      {
+       "step": "lure",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 5
+          }
+         ],
+         "role": "werewolf"
+        }
+       }
+      }
+     ],
+     "Alder": [
+      {
+       "step": "scent",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 2
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Bryn": [
+      {
+       "step": "glance",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "c",
+           "i": 0
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Fenn": [
+      {
+       "step": "peek",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ]
+        }
+       }
+      },
+      {
+       "step": "trade",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "skip"
+        }
+       }
+      }
+     ],
+     "Cass": [
+      {
+       "step": "lift",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   },
+   "rules": {
+    "openingStatements": true
+   }
+  },
+  {
+   "label": "PY6-S2-open",
+   "replays": 5,
+   "center": 3,
+   "deck": [
+    "centaur",
+    "lure",
+    "moonsage",
+    "phoenix",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "werewolf",
+    "werewolf"
+   ],
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "scenario": {
+    "seed": 602,
+    "cards": [
+     "sage",
+     "phoenix",
+     "lure",
+     "werewolf",
+     "rustler",
+     "centaur",
+     "werewolf",
+     "moonsage",
+     "pickpocket"
+    ],
+    "plans": {
+     "Cass": [
+      {
+       "step": "lure",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 1
+          }
+         ],
+         "role": "werewolf"
+        }
+       }
+      }
+     ],
+     "Dov": [
+      {
+       "step": "scent",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 0
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Alder": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 1
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Fenn": [
+      {
+       "step": "glance",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "c",
+           "i": 0
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Esme": [
+      {
+       "step": "peek",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ]
+        }
+       }
+      },
+      {
+       "step": "trade",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "skip"
+        }
+       }
+      }
+     ]
+    }
+   },
+   "rules": {
+    "openingStatements": true
+   }
+  },
+  {
+   "label": "PY6-S2-nodenial",
+   "replays": 5,
+   "center": 3,
+   "deck": [
+    "centaur",
+    "lure",
+    "moonsage",
+    "phoenix",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "werewolf",
+    "werewolf"
+   ],
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "scenario": {
+    "seed": 602,
+    "cards": [
+     "sage",
+     "phoenix",
+     "lure",
+     "werewolf",
+     "rustler",
+     "centaur",
+     "werewolf",
+     "moonsage",
+     "pickpocket"
+    ],
+    "plans": {
+     "Cass": [
+      {
+       "step": "lure",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 1
+          }
+         ],
+         "role": "werewolf"
+        }
+       }
+      }
+     ],
+     "Dov": [
+      {
+       "step": "scent",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 0
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Alder": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 1
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Fenn": [
+      {
+       "step": "glance",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "c",
+           "i": 0
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Esme": [
+      {
+       "step": "peek",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ]
+        }
+       }
+      },
+      {
+       "step": "trade",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "skip"
+        }
+       }
+      }
+     ]
+    }
+   },
+   "rules": {
+    "openingStatements": true,
+    "burningDeniesWolves": false
+   }
+  }
+ ]
+}

@@ -14,10 +14,11 @@ import { advance, dealFixed, freshProgress, nightTurns, secureRng, seededRng, sh
 import { aRole, CENTER_DEFAULT, recommendedDeck, ROLE } from "../shared/roles";
 import { rulesOf } from "../shared/settings";
 import { seatName } from "../shared/text";
-import { endVote, nightSeats, rngFor, seatedHumans, startVote, VOTE_SECONDS_DEFAULT, type Game, type Turn } from "./game";
+import { endVote, nightSeats, openingOpen, revealOpening, rngFor, seatedHumans, startVote, VOTE_SECONDS_DEFAULT, type Game, type Turn } from "./game";
 import { gateOf, UNREACHABLE } from "./presence";
 import { contextOf, loadScope, type Scope } from "./scope";
 import { answerRequest, createKey } from "./auth";
+const OPENING_WAIT = "Opening statements are under way: sealed messages open once they are revealed.";
 
 /** Commands that change something. Reads (room.view, room.wait, rules.read) are answered by convex/agent.ts. */
 type ServerId = Exclude<CommandId, `ui.${string}` | "room.view" | "room.wait" | "rules.read">;
@@ -128,10 +129,21 @@ const HANDLERS: Record<ServerId, Handler> = {
   },
   "chat.send": async (ctx, s, a, _token, via) => {
     const { room, me } = s!;
+    const og = room.game as Game | undefined;
+    if (room.phase === "day" && og && openingOpen(og)) {
+      const seat = s!.seat;
+      if (seat < 0) return fail("Opening statements are under way: only seated players post one, and free chat opens after the reveal.");
+      if (og.opening!.statements[seat]) return fail("Your opening statement is in. It will be revealed with everyone's (in seat order) when all are in or the opening window ends; free chat opens then.");
+      og.opening!.statements[seat] = { text: a.text, name: me!.name, player: me!._id, via };
+      if (seatedHumans(og, s!.players).every(i => og.opening!.statements[i])) return revealOpening(ctx, room, og);
+      await ctx.db.patch(room._id, { game: og });
+      return;
+    }
     await ctx.db.insert("messages", { room: room._id, round: room.round, phase: room.phase, player: me!._id, name: me!.name, text: a.text, via });
   },
-  "chat.sendSigned": (ctx, s, a, _t, via) => sealedPost(ctx, s!, a.text, "signet", false, via),
+  "chat.sendSigned": (ctx, s, a, _t, via) => (openingOpen(s!.room.game as Game) ? fail(OPENING_WAIT) : sealedPost(ctx, s!, a.text, "signet", false, via)),
   "chat.sendReport": async (ctx, s, a, _t, via) => {
+    if (openingOpen(s!.room.game as Game)) return fail(OPENING_WAIT);
     const game = s!.room.game as Game;
     const look = game.log.find(e => e.seat === s!.seat && e.ev.kind === "look" && e.ev.roles && e.ev.slots.length === 2 && e.ev.slots.every(x => x.k === "p"));
     if (!look || look.ev.kind !== "look" || !look.ev.roles) return fail("You have no night look at two players to report.");
@@ -141,6 +153,7 @@ const HANDLERS: Record<ServerId, Handler> = {
     await sealedPost(ctx, s!, reportText(look.ev.slots.map(x => x.i), card, await seatNames(ctx, game)), "notary", false, via);
   },
   "chat.forgeSeal": async (ctx, s, a, _t, via) => {
+    if (openingOpen(s!.room.game as Game)) return fail(OPENING_WAIT);
     const game = s!.room.game as Game;
     if (a.as === "notary" && (a.seat >= game.seats.length || a.seat2 >= game.seats.length)) return fail("There is no such seat.");
     const text = a.as === "signet" ? a.text : reportText([a.seat, a.seat2], a.card, await seatNames(ctx, game));
@@ -250,6 +263,7 @@ const HANDLERS: Record<ServerId, Handler> = {
   "day.ready": async (ctx, s, a) => {
     const { room, players, seat } = s!;
     const game = room.game as Game;
+    if (openingOpen(game)) return fail("Opening statements are under way: you can get ready once they are revealed.");
     (game.ready ??= game.seats.map(() => false))[seat] = a.ready;
     if (seatedHumans(game, players).every(i => game.ready[i])) await startVote(ctx, { ...room, game });
     else await ctx.db.patch(room._id, { game });

@@ -22,6 +22,8 @@ export interface Game {
   adoptProgress?: (Progress | null)[];
   log: LogEntry[];
   dayEndsAt?: number;
+  /** Opening statements (rule openingStatements): held, unseen by others, until all are in or the window ends; then posted in seat order. */
+  opening?: { until: number; done: boolean; statements: ({ text: string; name: string; player: Id<"players">; via: "app" | "agent" } | null)[] };
   voteEndsAt?: number;
   /** Discussion: seats that have said they are ready to vote. Public. */
   ready: boolean[];
@@ -98,14 +100,32 @@ export async function endTurn(ctx: MutationCtx, room: Doc<"rooms">) {
     await ctx.db.patch(room._id, { game });
   } else {
     game.log.push(...dawn(game.state, shapeOf(game.state).deck!, game.turns.length, rngFor(game, "dawn")));
-    game.dayEndsAt = Date.now() + room.settings.daySeconds * 1000;
+    const rules = game.state.rules;
+    const openFor = rules.openingStatements ? rules.openingSeconds * 1000 : 0;
+    if (openFor) {
+      game.opening = { until: Date.now() + openFor, done: false, statements: game.seats.map(() => null) };
+      await ctx.scheduler.runAt(game.opening.until, internal.timers.openingEnds, { room: room._id, round: room.round });
+    }
+    game.dayEndsAt = Date.now() + openFor + room.settings.daySeconds * 1000;
     await ctx.scheduler.runAt(game.dayEndsAt, internal.timers.dayEnds, { room: room._id, round: room.round });
     await ctx.db.patch(room._id, { phase: "day", game });
   }
 }
 
+/** Is the opening-statement window open (statements held, free chat closed)? */
+export const openingOpen = (game: Game) => !!game.opening && !game.opening.done;
+
+/** Reveal the opening statements: one chat message per seat that posted, in seat order, all at once. */
+export async function revealOpening(ctx: MutationCtx, room: Doc<"rooms">, game: Game) {
+  if (!game.opening || game.opening.done) return;
+  for (const st of game.opening.statements) if (st) await ctx.db.insert("messages", { room: room._id, round: room.round, phase: "day", player: st.player, name: st.name, text: st.text, via: st.via });
+  game.opening.done = true;
+  await ctx.db.patch(room._id, { game });
+}
+
 /** The discussion ends (its timer, the host, or everyone ready): the vote phase begins. */
 export async function startVote(ctx: MutationCtx, room: Doc<"rooms">) {
+  if (openingOpen(room.game as Game)) await revealOpening(ctx, room, room.game as Game);
   const game = room.game as Game;
   game.voteEndsAt = Date.now() + (room.settings.voteSeconds ?? VOTE_SECONDS_DEFAULT) * 1000;
   await ctx.scheduler.runAt(game.voteEndsAt, internal.timers.voteEnds, { room: room._id, round: room.round });

@@ -45,3 +45,53 @@ Judges agreed within 0.5 per scale on average; `howWon` exact 7/11. Discussions 
   But note: in PY6#1 and PY6#2 the Lure's dress was a FORCED RANDOM move (the agent did not queue it in a 60 s dusk +
   8 s turn): the coarse-game Lure plays are partly luck. In the fine pass the dress is fixed.
 - Opus tables concentrate: no scattered vote in 11 games; the plurality games (c = 0.6) are all 3-3 ties.
+
+### Parity versus non-parity in the coarse pass (coordinator's request)
+All three SE6 games were parity deals (three wolf-team cards held): SE6#1 and SE6#2 were 3-3 Blood Price ties, SE6#3 a
+decoy (the Counterfeiter drew four votes on a false Pickpocket claim). None was decided by a seal. TW6: #2 and #3
+parity (wolf wins by tie), #1 non-parity (Centaur win). Non-parity coarse games (6): Centaurs 4 (TW6#1, PY6#2, SO6#1, SO6#2), Pyre 1 (PY6#1),
+wolves 1 (PY6#3, a 3-3 tie forced by the Lure's vote). Parity games (5): wolves 5. What made the stealer soup
+legible: every mover but the Spooker was a Centaur who reported its own move truthfully; the Sentry fixed which seats
+moved; the robbed wolf confessed (it was now a Centaur); the Spooker's rotation was then the only unexplained movement
+and was solved by elimination.
+
+## Fine pass 1 (PY6, 13 replays, 12:13-12:27, ~$46)
+
+| Scenario | Predicted | Result | c | Judges ToM / dec / path / noise | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| S1 fake Sage (both Sages in centre; dressed Phoenix unread) | Pyre 3, W 1, C 1 | Pyre 4, wolves 1 | .8 1 .8 1 .8 | 3.0 / 3.6 / 3.4 / 1.0 | talk-live |
+| S2 two wolf reads (Sage reads dressed Phoenix, Rustler reads wolf) | C 2, P 2, W 1 | Pyre 3, Centaurs 2 | .6 .8 .6 .8 .8 | 2.5 / 2.7 / 2.8 / 1.0 | talk-live |
+| S3 control: two honest looks at the wolf | C 3-0, path < 2 | Centaurs 3-0 | 1 1 1 | 1.5 / 1.7 / 1.0 / 0.0 | degenerate (as predicted) |
+
+What decided them (judges' pivots, checked against transcripts):
+- **The Phoenix detector and its inversion.** Every table used "a Phoenix WANTS the votes" to classify the accused. In
+  S1 the Phoenix beat it 3 times by resisting ("I'm the Phoenix... DON'T vote me", read as a cornered wolf grabbing the
+  Phoenix excuse; or a plainly false counter-claim and "Vote Dov, or at least split"). In S2 the Phoenix won 3 of 5 the
+  same way ("a dressed Phoenix would happily take the vote, not fight it, and Bryn is fighting"). This is second-order
+  play by the Phoenix, and it is the main source of within-scenario variance: whether some Centaur raises the
+  third-order point ("a Phoenix who knows we use that test would fight") decides it.
+- **The wolf's dilemma.** With `burningDeniesWolves`, the lone wolf must stop the burning but every defence of the
+  Phoenix exposes it (S1#1, #2, #5: the wolf correctly explained the Lure/Phoenix setup and was ignored as self-serving).
+  The one wolf win (S1#3) came from the wolf claiming to be the Phoenix late, which made the table vote the Lure.
+- In S2 the Centaurs won when the real wolf broke silence too loudly (S2#5) or three Pickpocket claims collided (S2#1).
+
+Lessons: **Heuristic P6-3: a sincere false accusation (an honest seer fooled by a dress) plus a player whose motive
+inverts the normal reading (wants to be voted) is the most reliable talk-live engine found at 6 players.**
+**Heuristic P6-4: "two independent honest looks at an unmoved card" is talk-dead whatever else is in the deck,
+unless some card in play can explain BOTH looks away (a late mover, or a dress).**
+
+## Coarse pass 2 (6 games, 12:29-12:40, ~$25)
+
+| Roster | Result | c | Judges ToM / dec / path / noise |
+| --- | --- | --- | --- |
+| PE6 Ember Pyre | Centaurs 2, wolves 1 | .8 .8 1 | 1.7 / 2.3 / 2.3 / 0.7 |
+| TW6c twins, census allButOne + packCovers | Centaurs 2, wolves 1 (parity, 3-3 tie) | .6 1 .8 | 1.7 / 2.0 / 1.3 / 0.5 |
+
+- PE6: the Ember-Carrier's swap was a forced random move in PE6#1 (agent did not queue it), the Pyre lost all three.
+  An Ember swap is a Spooker without a direction to lie about: once the Sentry and honest movers speak, the swap is
+  reconstructed. Not promising for the target; dropped.
+- TW6c: packCovers worked (no wolf-wolf claim collisions; the wolves took the covers Sentry and Sage), but the Moonsage
+  was absent or the cover was refuted by centre looks (a "Sage" seen in the centre was the Moonsage). Non-parity games
+  were honest-info-converged. Dropped; the hub is testing these options within scenario.
+- Recurrent harness issue: in coarse games with dusk 60 s / turn 8 s, the Pyre's early-turn plan (wake 5) is often not
+  queued in time and becomes a forced random move (PY6#1, PY6#2, PE6#1). Coarse pass 3 uses dusk 90 s / turn 10 s.
