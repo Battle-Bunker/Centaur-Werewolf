@@ -1,5 +1,22 @@
 # Research log
 
+## DESIGN PRINCIPLE (from fine pass 1, S3): information handed to liars becomes a tell
+
+The rules are common knowledge, so the table can run any defector's decision problem backwards. If a mechanic makes
+one defector option strictly SAFE, and the table can compute which option that is, then choosing it is evidence.
+In S3 (5 replays of one fixed night, Centaurs 5-0) the honest side won every time with exactly this argument about the
+Den Census, which was designed to help the wolves lie:
+- "If Alder were the Werewolf, the centre would hold WW + Moonsage + Sentry, so he'd know a real Sage is sitting at the
+  table. He'd never claim Sage." (S3#4, the swing voter)
+- "No wolf would claim Sage into a guaranteed counterclaim when Sentry is a safe unclaimed role... Bryn claimed
+  CENTAUR, a role his census told him nobody holds." (S3#2: this reversed a four-player consensus on the real Sage)
+- "Alder pointed out that the wolves' Den Census made Bryn's 'Centaur, saw Sentry' claim cost him nothing." (S3#5)
+**Steer design toward mechanics where the defector's safe option is NOT computable by the table**: private randomness
+in what the pack learns (census "allButOne"), covers assigned rather than chosen (packCovers), twins that make the
+"impossible" claim possible. Corollary (S5): a rule that aligns the wolves with the Centaurs against a third party
+(burningDeniesWolves) makes the wolf's private knowledge visible when it acts on it ("If Bryn were a real wolf, why
+would a non-wolf Dov need to lie?").
+
 ## Heuristics for predicting balance (running; the in-context learning is itself a deliverable)
 
 1. **Classify scenarios by whether an unrefutable claim is in play.** If every defector claim can be refuted by a

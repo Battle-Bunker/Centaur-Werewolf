@@ -214,3 +214,12 @@ intended). 5 replays each (X1' 3). "Talk-live?" is my prediction of the charter'
   coarse games, 1-2 per 5 replays in S1/X1') go to about zero; in two-wolf deals the wolves' share rises by about a
   quarter; deception scores unchanged or higher. Risk: a cover is "the safe claim", hence a tell (heuristic 8): the
   table may learn "the wolves always claim centre roles"; combined with allButOne this risk falls.
+
+## Pre-registration 2026-11-22: CR-6 (Herder needs a contradicting card), NOT yet activated
+
+Proposed deck rule: "A Herder needs a Stray Herder in the deck" (same pattern as Herald needs Forger). Prediction: in
+5-6 player decks the Herder claim becomes contestable (a Stray Herder passes for a Herder and claims the true count, or
+a false one); the "count proves it" Centaur wins (about 6 of 9 coarse Centaur wins) become duels; Centaur share at 5-6
+players falls by about a fifth; path dependence rises. Not activated yet: all four per-count sessions pre-registered
+rosters with a Herder and no Stray Herder, and the recommended deck uses a Herder; a hard deck rule now would
+invalidate their running experiments. To activate after their current fine passes (coordinator to schedule).
