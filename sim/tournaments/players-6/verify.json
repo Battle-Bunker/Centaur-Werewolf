@@ -1,0 +1,11 @@
+{
+ "about": "players-6 setup check: one natural-deal all-Opus game (twin-Sage roster, 6 players, 3 centre).",
+ "timers": { "dusk": 60, "turn": 8, "day": 240, "vote": 60 },
+ "agents": { "model": "opus", "effort": "medium" },
+ "redeal": "wolfDealt",
+ "tables": [
+  { "label": "V6#1", "center": 3,
+    "players": ["Alder","Bryn","Cass","Dov","Esme","Fenn"],
+    "deck": ["werewolf","werewolf","moonsage","sage","rustler","sentry","centaur","herder","pickpocket"] }
+ ]
+}
