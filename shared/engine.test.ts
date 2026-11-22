@@ -212,6 +212,10 @@ describe("night", () => {
     expect(new Set(ca.covers.map(c => c.role)).size).toBe(2);
     expect(ca.covers.every(c => ["centaur", "rustler", "sentry"].includes(c.role!))).toBe(true);
     expect(say(a.find(e => e.ev.kind === "census")!, names, 0)).toMatch(/2 of the 3 roles .* Pack covers .*you: /);
+    // A duplicated role with a copy in a player's hand is never a cover (the honest holder would contest it).
+    const dup = state(["werewolf", "centaur", "werewolf"], ["centaur", "rustler", "sentry"], { packCovers: true });
+    const cd = act(dup, 0, {}).find(e => e.ev.kind === "census")!.ev as typeof ca;
+    expect(cd.covers.map(c => c.role).sort()).toEqual(["rustler", "sentry"]);
     const off = act(state(["werewolf", "sage", "werewolf"], ["rustler", "centaur", "sentry"]), 0, {});
     expect(off.find(e => e.ev.kind === "census")!.ev).not.toHaveProperty("covers");
   });

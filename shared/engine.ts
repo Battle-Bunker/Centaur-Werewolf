@@ -814,10 +814,11 @@ export function deckProblem(deck: RoleId[], players: number, center: number, rul
   return null;
 }
 
-/** The pack-covers assignment (rule packCovers): pack seats in seat order, each given a distinct Centaur-team role dealt to the centre, or null when there are fewer such roles than pack seats. Deterministic in the deal. */
+/** The pack-covers assignment (rule packCovers): pack seats in seat order, each given a distinct Centaur-team role dealt to the centre and to no player, or null when there are fewer such roles than pack seats. Deterministic in the deal. */
 export function packCovers(state: GameState): { seat: number; role: RoleId | null }[] {
   const pack = state.dealt.flatMap((r, i) => (ROLE[r].tags.includes("pack") ? [i] : []));
-  const pool = [...new Set(state.dealtCenter.filter(r => ROLE[r].team === "centaur"))].sort();
+  // Only roles with NO copy in any player's hand: a claim no honest player can contest by holding the card.
+  const pool = [...new Set(state.dealtCenter.filter(r => ROLE[r].team === "centaur" && !state.dealt.includes(r)))].sort();
   const offset = pool.length ? pack.reduce((a, i) => a + i, 0) % pool.length : 0;
   return pack.map((seat, k) => ({ seat, role: k < pool.length ? pool[(offset + k) % pool.length] : null }));
 }
