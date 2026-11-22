@@ -97,3 +97,8 @@ off):** the discussion opens with a statement round: each player's FIRST message
 claim-timing tell drops out as decisive; the wolves' share in 5-player rosters rises by about a tenth; the census
 backward-induction argument becomes stronger (the wolf can no longer wait to see claims), so pair it with
 `census: "allButOne"`. Owner's taste question too: simultaneous claims are a known human mechanic.
+
+## CR-11. Hush cut at the transport level [noted, low priority]
+From the app session: during a Hush cut the app's WebSocket is not cut server-side, so a browser's devtools can still
+tell a cut from a real drop. Wish: cut the transport for the victim's session for the cut window. Not done; the AI
+harness sees only the MCP 503, which already matches a real drop.

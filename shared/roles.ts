@@ -435,6 +435,7 @@ const TWINS: { id: RoleId; name: string; of: RoleId; team: Team; wolf: boolean; 
   { id: "duncentaur", name: "Dun Centaur", of: "centaur", team: "werewolf", wolf: true, passes: false, blurb: "A Werewolf (outside the pack) who looks at a centre card in the Centaur's turn." },
   { id: "paleherald", name: "Pale Herald", of: "herald", team: "werewolf", wolf: false, passes: true, blurb: "A wolf ally who makes a Herald's proclamation in the Herald's turn and shows as a Herald to every look." },
   { id: "duskrustler", name: "Dusk Rustler", of: "rustler", team: "werewolf", wolf: true, passes: false, blurb: "A Werewolf (outside the pack) who peeks and may trade in the Rustler's turn." },
+  { id: "hollowsage", name: "Hollow Sage", of: "sage", team: "werewolf", wolf: true, passes: true, blurb: "A Werewolf (outside the pack) who reads a card in the Sage's turn, exactly as the Sage does, and shows as a Sage to every look." },
   { id: "strayherder", name: "Stray Herder", of: "herder", team: "werewolf", wolf: false, passes: true, blurb: "A wolf ally who counts the centre's wolves in the Herder's turn and shows as a Herder to every look." },
 ];
 for (const t of TWINS) {

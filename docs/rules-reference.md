@@ -95,7 +95,7 @@ It states the game exactly as built. Design history: docs/design/synthesis.md an
 6. **Loners.** The Cuckoo holder wins if its card's egged seat is eliminated and they are not; then the Oxpecker holder
    wins if its card's bonded seat is a winner.
 
-**Count as Werewolves:** Werewolf, Glamour, Moon-Thief, Tracker, Eavesdropper, Biter, Dun Centaur, Dusk Rustler, Mirage.
+**Count as Werewolves:** Werewolf, Glamour, Moon-Thief, Tracker, Eavesdropper, Biter, Dun Centaur, Dusk Rustler, Hollow Sage, Mirage.
 **Werewolf team but not Werewolves:** Stalking Horse, Whisperer, Forger, Spooker, Will-o'-Wisp, Mistweaver, Fogbank, Poacher, Counterfeiter, Hush, Moonsage, Pale Herald, Stray Herder, Grey Herder.
 
 ## 6. Calibration: abilities act on beliefs, not on the result
@@ -141,7 +141,7 @@ To replay one scenario many times with only the day varying:
 12. Mirage (wake 18)
 13. Whisperer (wake 20)
 14. Cuckoo (wake 25)
-15. Sage (wake 30) + Moonsage
+15. Sage (wake 30) + Moonsage + Hollow Sage
 16. Notary (wake 32)
 17. Centaur (wake 35) + Dun Centaur
 18. Herald (wake 40) + Pale Herald
@@ -372,6 +372,16 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 - **Day / vote / chat powers:** none.
 - **Win:** with the Werewolf team.
 - **Card text:** You act in the Rustler's turn and do exactly what the Rustler does: Look at one other player's card. Then decide whether to swap your card with it. If you swap, you are now on that card's team. But you are on the Werewolf team and you count as a Werewolf (you do not wake with the pack, and the pack does not know you). A look at your card shows the Dusk Rustler. You win when the Werewolf team wins.
+
+### Hollow Sage (`hollowsage`)
+
+- **Team:** Werewolf team. **Counts as a Werewolf:** yes. Tags: wolf. Copies allowed: up to 12.
+- **Night:** acts in the Sage's turn (a shadow twin: one public turn for both), wake 30 (position 15 of the full roster's night order).
+  - *Read a player's card* (MANDATORY): chooses another player's card; sees the role of the chosen card.
+- **A look at this card shows:** a Sage (it passes for its original), except to Werewolf-team looks.
+- **Day / vote / chat powers:** none.
+- **Win:** with the Werewolf team.
+- **Card text:** You act in the Sage's turn and do exactly what the Sage does: Look at one other player's card. You see it as it is at that moment (a glamour, if one is on it). But you are on the Werewolf team and you count as a Werewolf (you do not wake with the pack, and the pack does not know you). Any look at your card shows a Sage. You win when the Werewolf team wins.
 
 ### Stray Herder (`strayherder`)
 

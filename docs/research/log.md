@@ -209,3 +209,48 @@ its holder cannot be profitably targeted instead; check what eliminating the pow
   the single most common way the defectors lose. CR-7 (pack covers) addresses it.
 - Discussions stay short (46-156 s) even when the table is split; the closing "ready" is triggered by perceived
   consensus, and secret ballots then show splits nobody discussed (S7 3-3).
+
+## 2026-11-22 Fine pass 2 (3 scenarios x 5 replays, ~$53) and backend changes
+
+| Scenario | Predicted | Result | c | Judges ToM / dec / path / noise |
+| --- | --- | --- | --- | --- |
+| S3b = S3 + `census: allButOne` | C 3, W 2 | **Centaurs 5-0 again** | .75 x5 | 2.3 / 2.8 / 3.2 / 1.0 |
+| S1b = S1 + `packCovers` | W 3-4, little change | **wolves 3, Centaurs 2** (same as S1) | .75 1 .75 .75 .75 | 1.6 / 3.0 / 3.6 / 1.9 |
+| S9 D6 double read (Lure-dressed Phoenix + true read of a wolf) | C 3, Pyre 1, W 1 | **Pyre 4, Centaurs 1** | .4 .6 .8 .8 .6 | 2.6 / 3.2 / 3.1 / 1.3 |
+
+**CR-8 falsified as a fix (S3b).** The partial census did not break the sweep. The argument survived in probabilistic
+form: "Alder would LIKELY know the Sage is held and still claimed Sage blind, first? Bad bluff" (#2); "Three worlds
+fit... Bryn is the wolf in 2 of 3" (#3); and a new one: "a Moonsage KNOWS he isn't the Sage, so the moment I claimed
+Sage he knew I was real... his win depends on saving you" (#1). The deeper asymmetry is not the census but CLAIM
+ORDER: the real Sage claims first, and a first Sage claim is far more likely from a real Sage than from a wolf; the
+counter-claimer is suspect whatever it knows. *Heuristic 11: reducing a tell from certain to probable does not remove
+it for Opus tables; they reason in likelihoods ("2 of 3 worlds"). To kill a tell, make the honest and dishonest
+behaviours equally likely, not merely uncertain.* Candidate (CR-10, opening statements): simultaneous first claims
+remove the first-claim advantage; that is now the better test for this scenario.
+
+**CR-7 neutral where predicted (S1b).** Covers did not change S1 (3-2 both times): its wolf-side failures were
+Spooker-vs-wolf, not wolf-vs-wolf. Covers still untested where they should matter (two pack members both lying).
+
+**S9: the Phoenix learned the reverse bluff, and doomed wolves kingmade the Pyre.** Tables expect a Phoenix to welcome
+votes, so the Phoenix FOUGHT the votes ("I'm NOT the Phoenix: a Phoenix would just take the wolf read and smile, not
+fight it", #5) and was eliminated as "the wolf I saw" 4 of 5 times. In #4 the two real wolves, once their own Esme was
+in danger, switched their votes to the Phoenix: a burning denies the wolves anyway, so they preferred the Pyre winning to
+the Centaurs winning. *Heuristic 12: when a team cannot win, it becomes a kingmaker; with three teams, predict where the
+losing team's votes go (here: against the leader).* Path 3.1, deception 3.2: a high-quality talk-live scenario, but
+Pyre-heavy; D6's balance depends on whether the Phoenix is read as a wolf.
+
+### Backend changes made (as owner of shared/ and convex/), all with tests; 104 engine tests, tsc, smoke green
+- **Copier leak fixed** (reported by the app session): the Gleaner's pre-copy `stepsIfYouBecome` was built from the
+  DEALT CENTRE, telling an AI Gleaner which decision-bearing roles lay there. Now every copier's options come from the
+  deck (`copierOptions` in shared/engine.ts); verified live: two different deals of one Gleaner deck show identical
+  options. The Echo was not affected. Any Gleaner game before this fix is contaminated.
+- **New rule option `bloodPriceCondemned`** (CR-9, default off): an eliminated Centaur-team player counts against the
+  Centaurs only if a non-Werewolf-team player voted for them. Test: a 3-3 parity bloc tie now wins for the Centaurs;
+  a Centaur hedge still costs them.
+- **New rule options `census: "allButOne"` and `packCovers`** (CR-8, CR-7; default off), as recorded above.
+- **Final result exposes held card instances**: app view `game.final.inst` / `final.cinst`; MCP `result.heldInstances`.
+
+### For the UI (additive only; nothing renamed or removed)
+- `settings.rules` may carry `bloodPriceCondemned`, `packCovers` (booleans) and `census: "allButOne"`.
+- `game.final.inst` (instance per seat) and `game.final.cinst` (instance per centre slot) in the app view.
+- A census journal line may end with "Pack covers (...)"; a result's `notes` may carry the condemned-Blood-Price note.
