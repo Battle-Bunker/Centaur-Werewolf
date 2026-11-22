@@ -43,10 +43,10 @@
      "centaur",
      "echo",
      "werewolf",
-     "hush",
+     "centaur",
      "sentry",
      "rustler",
-     "centaur",
+     "hush",
      "cutpurse"
     ],
     "plans": {
@@ -113,6 +113,23 @@
           {
            "k": "c",
            "i": 1
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Fen": [
+      {
+       "step": "glance",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "c",
+           "i": 0
           }
          ]
         }
