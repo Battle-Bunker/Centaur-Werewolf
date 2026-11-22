@@ -115,3 +115,10 @@ runs: the shim holds each agent's FIRST `chat_send` of the day until 15 s after 
 ## CR-12. Test the Den Census itself on the S3 duel [proposal]
 S3 swept 5-0 under the full census, a partial census and simultaneous claims: each time decided by "a wolf with the
 census would know the Sage is held". Test `census: "off"` on S3 (5 replays, ~$15). Prediction: Centaurs 3, wolves 2.
+
+## CR-14. Transport check for the first-message gap [measured; harness clean]
+Requested after two 8-player wolf debriefs said their first post "appeared later than sent". The shim forwards every
+non-`room_wait` call immediately (no per-seat queue). Measured from agent streams (89 hub games): `chat_send` round
+trip median 0.13 s, p90 0.20-0.22 s for every team. The first `chat_send` is ISSUED later by the wolf side (median
+13.8 s after day start for Centaur-team players, 19.2 s Werewolf team, 22.4 s Pyre). The gap is the model composing
+(and choosing to wait), not transport.
