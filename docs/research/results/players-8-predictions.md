@@ -205,3 +205,16 @@ Drifter, centre 4).
   through Cass to make the read stale. **Predict: Centaurs 3, wolves 2; minority >= 1; path >= 2.5.** Falsified as
   talk-dead if 5-0 and the judges cite the Sentry or the count.
 - **N-M1HS** (2 natural deals): Centaurs 1, wolves 1; no claim collision between pack wolves in either.
+
+## Fine pass 3 outcome, and fine pass 4 prediction (2026-11-22, before any replay)
+
+S2 (pair + Spooker): Centaurs 4, wolves 1 (predicted 3-2). The minority count is 1, but the judges' mean path is 1.9:
+just short of talk-live. The wolf win: a census-safe "I am the Pickpocket, I swapped with Dov" claim, made credible
+by the Spooker's invisible movement, framed the real Sage.
+
+- **S3-M1HS-duel-spooker** (H1's deal with the Spooker in Esme's seat; the Dun Centaur now in the centre). The Sage
+  Alder read the lone wolf Dov; the Hollow Sage Bryn read Cass truly; Cass's glance shows a Sage in the centre; Dov's
+  scent says Bryn is wolf-team; the Spooker Esme rotated three centre cards (invisible); Hale and Fen swapped (Sentry
+  sees both). Two independent counter-stories are open to the wolves: "Alder is the Hollow Sage" (now a winning vote if
+  true) and "the Spooker moved Dov's card after the read". **Predict: Centaurs 3, wolves 2; minority 2; path >= 2.5.**
+  Compared with H1 (4-1, path 2.3): falsified if the Spooker adds nothing (4-1 or 5-0 again with path < 2.3).
