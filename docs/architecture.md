@@ -2,68 +2,113 @@
 
 ## The game
 
-`players + 3` cards are dealt: one to each seat, three face down in the centre. The night runs as a fixed timetable of
-turns (dusk, then every night role in the deck in wake order). Then the day: talk, vote, and the seat or seats with the
-most votes are eliminated, unless nobody received more than one. You win or lose by the card you **hold** at the end,
-which may not be the card you were dealt.
+`players + centre` cards are dealt (3 to 6 centre cards, a room setting): one to each seat, the rest face down in the
+centre. The night runs as a fixed public timetable of equal-length turns: dusk, then every night role in the deck in
+wake order, whether a player holds it or not. Dawn publishes the proclamations and the egg and tells a bitten player or
+an Imago. Then the day: talk, a Moon-Thief may queue a swap, vote. You win or lose by the card you **hold** at the count
+(unless you were bitten or became an Imago), which may not be the card you were dealt.
 
-- The village wins if a Werewolf is eliminated. With no Werewolf at the table, it wins only if nobody is eliminated.
-- The Werewolf team wins if no Werewolf is eliminated.
-- An eliminated Glitch wins alone.
+The rules come from [docs/design/synthesis.md](design/synthesis.md) ("Recommendation"): defector mechanics for the
+Werewolf team and a third faction, the Wildwood, whose creatures win or lose alongside the main result.
 
-### Starting roles
+### Roster and wake order
 
-These are a first set to make the game playable; they are meant to be replaced and extended.
+| Wake | Role | Team | Tags | Night | Win / notes |
+| --- | --- | --- | --- | --- | --- |
+| 8 | Elderbark | Wildwood | wild | Learns which seats were dealt creatures (Moth included) | Wins if not eliminated and no other creature or Imago is; eliminated, no other creature wins |
+| 10 | Werewolf (×3) | Werewolf | wolf pack | Pack + census; alone: scents a team | Team |
+| 11 | Stalking Horse | Werewolf | pack | Pack + census; alone: scents a team | Not a Werewolf. Eliminated: the Werewolf team wins (`decoy`) |
+| 12 | Glamour | Werewolf | wolf pack | Pack + census; one card shows a chosen deck role to every look until dawn | Team |
+| 13 | Moon-Thief | Werewolf | wolf pack | Pack + census | Day: queues a swap of two other players' cards, made as the votes lock (`dayPower`) |
+| 15 | Tracker | Werewolf | wolf pack | Pack + census; one information role's seat | Team |
+| 20 | Whisperer | Werewolf | | Told one Werewolf's seat | Team |
+| 25 | Cuckoo | Wildwood | wild | Looks at a card; lays a public egg on a seat (random at dawn if unheld) | Holder wins if the egged seat falls and they do not |
+| 30 | Sage | Centaur | seer | Reads a player's card | Team |
+| 35 | Centaur (×4) | Centaur | | Looks at a centre card | Team |
+| 40 | Herald | Centaur | seer | Proclaims a centre card (two with 5+ centre), published at dawn | Team |
+| 42 | Forger | Werewolf | | Sees the Herald's proclamation; forges as many, published with it | Needs a Herald and dawn proclamations |
+| 45 | Rustler | Centaur | | Peeks at a player; may trade (conditional) | Team |
+| 50 | Farrier | Centaur | | Peeks at a centre card; may give it to self or clockwise | Team |
+| 55 | Spooker | Werewolf | | Rotates three cards, unseen | Team |
+| 80 | Herder | Centaur | seer | Counts wolf cards in the centre (truth, never glamoured) | Team |
+| 85 | Oxpecker | Wildwood | wild | Looks at a player and bonds to that seat | Holder wins exactly when the bonded seat wins (after the curse) |
+| 90 | Sentry | Centaur | | Learns whether own/neighbours' cards moved | Team |
+| 93 | Eavesdropper | Werewolf | wolf pack | Pack + census; names a non-pack night role and copies its holder's night (or a ghost result) | Team |
+| 96 | Biter | Werewolf | wolf pack | Pack + census; looks at a true card, may bite (conditional): the seat joins the Werewolf team at dawn | Team |
+| – | Chiron | Centaur | | – | Vote counts twice |
+| – | Signet | Centaur | | – | One signed chat message |
+| – | Moth | Centaur | wild | – | If its dealt seat's card moved: that seat is an Imago (wins only if eliminated) (`metamorph`) |
+| – | Sporeling | Wildwood | wild | – | Holder wins if eliminated; their voters lose (`curse`) |
 
-| Role | Team | Night | Notes |
+Retired: Sagittarius (a published role in substance), Augur (folded into the Cuckoo), Hybrid (folded into the Oxpecker)
+and the Forger's unsigned chat message (`chat: "unsigned"` stays a primitive no card uses; its command is gone).
+
+### Rule settings
+
+Table-wide variants are room settings (`shared/settings.ts`), set by the host with `setup.setRule { rule, value }` in
+the lobby, shown in both views and described in the MCP rules text. A game copies them into `GameState.rules` at the deal.
+
+| Rule | Default | Values | What it does |
 | --- | --- | --- | --- |
-| Werewolf | Werewolf | Sees the pack. A lone wolf may scent one player's team | |
-| Whisperer | Werewolf | Told one Werewolf at random | Human; wins with the wolves even if eliminated |
-| Sage | Village | Reads one other player's card | |
-| Rustler | Village | Peeks at a player's card, then decides whether to trade with it | Conditional |
-| Farrier | Village | Peeks at a centre card, then may give it to any player | Conditional |
-| Courier | Village | Passes one player's card to the next seat clockwise, unseen | Uses the circle |
-| Wanderer | Village | Trades their card for a centre card; learns only its team | |
-| Sentry | Village | Wakes last; learns whether their own and neighbours' cards moved | Uses the circle |
-| Archer | Village | None | Vote counts twice |
-| Villager | Village | None | |
-| Glitch | Alone | None | Wins only by being eliminated |
+| `bloodPrice` | true | bool | Centaurs win only if more wolf cards than Centaur-team players are eliminated |
+| `census` | `"all"` | all / three / off | What the pack learns of the roles dealt to the centre |
+| `dawnProclamations` | true | bool | Proclamations published together at dawn in random order (required with a Forger) |
+| `randomVotesCurse` | false | bool | Whether a vote cast at random triggers the Sporeling's curse |
+| `biteNamesBiter` | true | bool | Whether the bitten player is told the Biter's seat |
+| `eavesdropGhost` | true | bool | Unheld named role: a ghost result from the Eavesdropper's seat, or nothing |
+| `thiefMinPlayers` | 7 | 3–12 | Smallest table that may hold a Moon-Thief |
+| `eliminationVotes` | 2 | 2–4 | Votes needed (with the most votes) to be eliminated |
+
+`LEGACY_RULES` (Blood Price, census and dawn proclamations off) is the control arm for play-tests.
+
+### How a game is decided (`resolveVote`)
+
+1. **Swap.** The Moon-Thief's queued swap is applied (`endDay`, before counting).
+2. **Tally.** Votes weighted by the voter's held card; eliminated = all seats tied on the most votes, if ≥ `eliminationVotes`.
+3. **Teams.** Bitten seat → Werewolf team, no creature rules; Imago → Wildwood; everyone else → their held card's team.
+4. **Main result.** (a) a held `decoy` (Stalking Horse) eliminated → its team wins; (b) no wolf card held → Centaurs win
+   if nobody fell, else surviving Werewolf-team players win (or nobody); (c) Centaurs win iff W > C under Blood Price
+   (W ≥ 1 without), W = wolf cards eliminated, C = Centaur-team players eliminated; otherwise the Werewolf team wins.
+5. **Creatures.** Sporeling holder / Imago win if eliminated; Cuckoo holder if the egged seat fell and they did not;
+   Elderbark holder if alive and no other creature fell; Elderbark eliminated → no other creature wins.
+6. **Curse.** Seats whose own vote (random ones only under `randomVotesCurse`) went to an eliminated Sporeling holder lose.
+7. **Oxpecker.** Wins if its bonded seat is a winner after step 6 and the Elderbark did not fall; then the curse applies to it.
+8. **Report.** `Outcome.why[seat]`: one sentence per seat, "Won: …" or "Lost: …".
 
 ## Roles are data
 
-A role's night action is a script of **steps**; a step may ask for targets and applies **effects**:
+A role's night action is a script of **steps**; a step may ask for targets (`pick`), name a role (`names: "deck" |
+"nightNonPack"`), be optional, apply only when alone (`onlyIfAlone`), and applies **effects**:
 
 | Effect | Meaning |
 | --- | --- |
-| `look` | See the card, or only its team, at one or more slots |
-| `swap` | Two slots trade cards |
-| `learnSeats` | Learn which other seats were dealt a tagged role (all, or a random few) |
-| `learnMoved` | Learn whether nearby cards moved tonight |
+| `look` | See the card, or its team, at slots, as it is at that moment (glamour fools everyone but the Werewolf team) |
+| `swap`, `rotate` | Cards move, carrying their tokens (glamour) with them |
+| `learnSeats` | Which other seats were dealt a tagged role (all, or a random few) |
+| `learnMoved` | Whether nearby cards moved tonight |
+| `announce` | A public proclamation (at dawn under `dawnProclamations`) |
+| `count` | How many tagged cards lie in the centre (truth) |
+| `census` | The roles dealt to the centre, per the `census` rule |
+| `glamour` | A token on the picked card: looks show the named role until dawn |
+| `witness`, `forge` | See a role's proclamations tonight; add a forged one published as that role's |
+| `overhear` | Copy what the holder of the named role learned (first clockwise), or a ghost result |
+| `bite` | The target seat joins the Werewolf team at dawn unless its card is already on it |
+| `mark` | Bind a seat to the actor's dealt card (public at dawn, or private): the egg, the bond |
+
+Role flags the resolution reads: `win` (`eliminated`, `markEliminated`, `markWins`, `keystone`), `decoy`, `curse`,
+`metamorph`, `vote` (weight; `protectsTarget` and `takesTargetDown` remain primitives no card uses), `chat`, `dayPower`.
+Tags: `wolf` counts as a Werewolf at the count; `pack` wakes with the pack and gets the census; `seer` is the
+Tracker's quarry; `wild` is on the Elderbark's map.
 
 Slots are named relative to the actor (`self`, the nth pick of this step, the nth pick of an earlier step, the next
 seat clockwise from another slot), so one engine runs every role. Because steps are data, the plan builder, the
 forced-random mover, the journal, the table's click targets and the post-game log need no role-specific code.
+`dawn()` runs after the last turn: random egg for an unheld Cuckoo, Imagos, the bite notice, shuffled proclamations.
 
-**To add a role:** add an entry to `ROLES` in `shared/roles.ts` and a `public/art/<id>.webp`. If it needs a new
-primitive, add an `Effect` kind and its case in `applyEffect` (`shared/engine.ts`) and a sentence in `describe`
-(`src/app/text.ts`).
-
-### Room for richer roles
-
-The model was shaped to reach what one-night hidden-role games commonly need. Present and working: multi-step actions,
-optional steps, steps that depend on earlier picks and on what was seen, passive knowledge, position-based effects,
-vote weight, team wins and lone wins, acting by dealt role while winning by held role. The vote count also handles a
-role that protects whoever it votes for and a role whose death takes its vote target down, but no starting role uses
-those two yet and they have no tests. Not built yet, with where each would go:
-
-- **Copying another role's action** (wake, look at a card, then act as it): an `adopt` effect that appends the seen
-  role's steps to the actor's script in `advance`. Plans for adopted steps can only be made live.
-- **Public reveals and tokens** (a card turned face up, a shield that blocks swaps): a `faceUp`/`tokens` field on
-  `GameState`, checked in `applyEffect`, shown by `Table`.
-- **Steps with more than one target**: supported by the engine and registry; the plan builder's chips currently set
-  one target per click.
-- **Extra cards or conditional wakes** (a role that only wakes if another is in play): an `onlyIf` predicate beside
-  `onlyIfAlone`.
+**To add a role:** add an entry to `ROLES` in `shared/roles.ts` and a `public/art/<id>.webp` (512×512). If it needs a
+new primitive, add an `Effect` kind, its case in `applyEffect` (`shared/engine.ts`) and a sentence in `shared/text.ts`.
+A queued step that turns out not to happen logs a `void` entry, and a conditional decision records the branch it took
+(`LogEntry.cond`). What only the post-game log may show goes in `LogEntry.hidden` (views strip it until the end).
 
 ## Night timing and plans
 
@@ -89,9 +134,17 @@ Outcomes no branch or Otherwise covers are asked live.
 
 ## Secrecy
 
-The game lives in one document (`rooms.game`). `convex/rooms.ts` `view` is the only reader that returns it, filtered
-for the caller: your dealt role, your plan, your progress and your own log entries. Other roles, the centre, the full
-log and who voted for whom are returned only once the phase is `ended`.
+The game lives in one document (`rooms.game`). `convex/rooms.ts` `view` (the app) and `convex/agent.ts` `view` (MCP)
+are the only readers, filtered for the caller: your dealt role, plan, progress and own log entries (with `hidden`
+stripped), dawn notices addressed to you (bitten, Imago), proclamations once published (without the forged flag or
+real turn), public marks after dawn, and your own queued day swap. Other roles, the centre, glamours, forgeries,
+the eavesdrop source, the day swap, the full log and who voted for whom are returned only once the phase is `ended`.
+
+**Play-test tables** (`room.create { playtest: true }`, shown to everyone as a badge) let the host fix the next deal
+(`setup.fixDeal { seed?, seats?, cards? }`, `setup.clearDeal`), abandon a round (`game.abandon`), and see the deal in
+the app view (`game.playtestDeal`, host only; never in the MCP view). Other players learn only that a deal is fixed.
+Deals draw seating and cards from independent generators (`secureRng`, or two streams of the seed);
+`sim/deal-uniformity.ts` checks uniformity through the real server.
 
 Identity is a random token kept in the browser's localStorage. There are no accounts yet.
 
@@ -107,7 +160,7 @@ group, a zod parameter schema, the phases it applies in, who may call it, whethe
         ┌──────────────┬─────────┴────────┬──────────────────┐
         ▼              ▼                  ▼                  ▼
  convex `run`     command palette    CommandButton      toolDefinitions()
- (the only        (lists, dims,      (enabled iff       (MCP tools; planned)
+ (the only        (lists, dims,      (enabled iff       (MCP tools)
   mutation)        explains)          available)
 ```
 
@@ -119,19 +172,15 @@ group, a zod parameter schema, the phases it applies in, who may call it, whethe
 - **Buttons.** `<CommandButton id=…>` and `useCommand(id)` use the same `availability`, so a button, its palette row
   and the server cannot disagree.
 
-### MCP (planned, not implemented)
+### MCP
 
-`toolDefinitions()` already returns each server command as `{ name, title, description, inputSchema, annotations }`.
-The remaining work:
-
-1. **Credential.** A command `room.createAgentKey` that mints a key bound to one room and one seat, with a grant of
-   `read` or `act`. `run` accepts a key in place of the browser token and refuses commands above its grant.
-2. **Server.** A Convex HTTP action speaking MCP over streamable HTTP: `tools/list` returns `toolDefinitions()`
-   filtered by `availability` for the key's seat; `tools/call` forwards to `run`.
-3. **Reading.** One read tool, `room_view`, returning the same filtered view the app gets, so an agent sees exactly
-   what its seat may see.
-4. **The embedded assistant** uses the same tool list in-process, so the bottom panel and a remote agent have
-   identical powers.
+`convex/mcp.ts` serves the registry as MCP tools over streamable HTTP (`POST /mcp`), authenticated by key or OAuth
+(`convex/auth.ts`) and narrowed by grant (read / act / host). The tool list is static per grant; a tool that cannot
+run now answers with the reason. Every write goes through `dispatch`. Reads: `room_view { compact?, chatSince? }`
+(`convex/agent.ts`: every top-level key always present, seats paired with names, caveats for the deck, a countdown to
+your own turn, per-seat `why` after the game), `room_wait { version, until: any|phase|chat|turn, seconds }` (versions
+are named parts that do not tick on the clock or others' turns; `versionKey` in `shared/commands.ts`), `rules_read`
+(rules text with the resolution order and this table's rule settings).
 
 ## Layout
 
