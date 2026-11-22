@@ -69,7 +69,7 @@ Never a rate on 2 games; what the games show:
 | Strategy | Games | Won by the user's side |
 | --- | --- | --- |
 | Census-safe cover claim by a wolf | 9/9 | - |
-| Two wolf-side players claim the same role (collision) | 6/9 (S, K1, P1, P2, G2, and P1 three-way) | 0 of the colliding sides won by it |
+| Two wolf-side players claim the same role (collision) | 6/9 (S, K1, P1, P2, G2, and P1 three-way) | the colliding side still won 2 (K7#1, P7#1) by later lies; never by the collision itself |
 | Mover lies about its move's parameters | 4/9 (S Spooker, P1 Ember, P2 Lure as "Pickpocket", X2 Cutpurse) | 1 (P1) |
 | A dealt wolf confesses after (truly or falsely) believing his card moved | 3/9 (S false, P1 false, G1 true) | the confessor's NEW belief was wrong in S and P1, and the confession decided all three |
 | False confession "I'm a Werewolf" by a wolf-team non-wolf or Phoenix holder to draw the vote | 2/9 (K1 Moonsage, P2 Phoenix) | 1 (K1) |
@@ -210,3 +210,26 @@ the Spooker had put a wolf on Fen); the judges called those wins partly luck.
   predicted. Lesson L13: a distortion matters only when an honest look lands on it; at 7 with one honest player-look
   role that is about 1 in 6. Recommend the Mirage over the Glamour only together with a second honest player-look role
   (an Echo or Rustler, as in M7), and expect frames to be a minority weapon.
+
+## 13:35 Batch 3 (5 fixed replays + 4 natural games; ~$49). Games stop here: $296 of the ~$320 budget spent (57 games).
+
+| Test | Predicted | Result | c values | Judges ToM / dec / path / noise |
+| --- | --- | --- | --- | --- |
+| A3 F-P7-inversion-abo (census "allButOne": the moved wolf does not learn the Pickpocket is in the centre) | C 3, W 1, P 1; ToM >= 2; noise <= 1.5 | **Centaurs 4, Pyre 1** (from 5-0) | .5 .67 .5 .5 .5 | **2.2** / 2.9 / 2.8 / 1.5 (from 1.4 / 2.1 / 2.5 / 1.5) |
+| P7 natural #3-4 | (roster-level) | Centaurs+Pyre 1, Pyre 1 | **.33 .33 (scattered)** | 0.8 / 1.5 / 3.3 / 2.3 |
+| K7 natural #3-4 | (roster-level) | Centaurs 2 | .83 .83 | 1.3 / 2.3 / 1.3 / 0.8 |
+
+- **A3: supported in direction, not in size.** With the census incomplete, the moved wolf Dov could no longer prove to
+  himself that the ember moved him. In #2 he did not confess; he fake-claimed Pickpocket to explain the Sentry's
+  "moved" ("I swapped with Bryn") and invited the vote; the table burned him (he held the Phoenix): a Pyre win. ToM rose
+  from 1.4 to 2.2 and deception from 2.1 to 2.9 on the same night. Still 4 Centaur wins: the true Sage read + the
+  Sentry + the Ember-Carrier's own admission (#3) usually suffice. The scenario moved from "swept" to "talk-live" by the
+  charter's test. This is the hub's CR-8 confirmed at 7 players on a scenario of a different family (Pyre, not twins).
+- **P7 natural deals are noisy.** 2 of 4 natural P7 games ended in scattered votes (c 0.33: the top seat got 2 of 6) and
+  three-seat eliminations by ties, judged noise 2-3 ("unseen night movement": an Ember swap and a Pickpocket swap chained
+  a wolf card through two seats; a confessed wolf "unaware he stayed wolf"). Over all 19 P7 games, median c is 0.5 and 12
+  are plurality: below the owner's consensus target. The three-way fixed scenario that was the best of the study
+  (F-P7-ember) sits next to natural deals that are not. Lesson L14: with three teams of 2-3 voters each at 7 seats, no
+  side can make a majority alone; the vote concentrates only when two sides agree on a target, and they rarely do.
+- **K7 natural #3-4** were ordinary Centaur wins on a true Sage read (judges path 1.3): K7 has talk-dead deals too
+  (Sage reads the lone wolf and no twin duel arises).
