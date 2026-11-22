@@ -27,10 +27,11 @@ It states the game exactly as built. Design history: docs/design/synthesis.md an
 | Rule | Title | Default | Values | Meaning (at the default) |
 | --- | --- | --- | --- | --- |
 | `bloodPrice` | Blood Price | true | on / off | The Centaurs win only if more Werewolves than Centaurs are eliminated: a tie that takes down a Centaur along with a Werewolf is a loss for the Centaurs. |
-| `census` | Den Census | "all" | all / three / off | Every card of the pack (Werewolves and the cards that wake with them) learns which roles were dealt to the centre: the roles, not their positions. |
+| `census` | Den Census | "all" | all / three / allButOne / off | Every card of the pack (Werewolves and the cards that wake with them) learns which roles were dealt to the centre: the roles, not their positions. |
 | `dawnProclamations` | Proclamations at dawn | true | on / off | Every proclamation (the Herald's, and a Forger's) is published together at dawn, in random order, each marked "Herald's turn" and true at that moment of the night. |
 | `biteNamesBiter` | The bitten know the Biter | true | on / off | A bitten player is told which seat bit them. |
 | `eavesdropGhost` | Eavesdropper's own result | true | on / off | If nobody was dealt the role the Eavesdropper names, it secretly gets a real result of its own as if it held that role (looks only, never moves), and is not told which case happened. |
+| `packCovers` | Pack covers | false | on / off | The pack gets no cover roles: each pack member chooses its own claim. |
 | `daySwap` | Moon-Thief's day swap | false | on / off | The Moon-Thief has no day swap: it is a Werewolf of the pack and nothing more. (Off by default: a swap after the talking makes the talking irrelevant.) |
 | `thiefMinPlayers` | Moon-Thief table size | 7 | 3 to 12 | With the day swap on, the Moon-Thief may be in the deck only with 7 or more players. |
 | `eliminationVotes` | Votes to eliminate | 2 | 2 to 4 | The player or players with the most votes are eliminated, if that is at least 2 votes; otherwise nobody is. |

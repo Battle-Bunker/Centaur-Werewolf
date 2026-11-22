@@ -169,6 +169,21 @@ describe("night", () => {
     expect(p.done).toBe(true);
     expect(forced.every(e => e.via === "forced")).toBe(true);
   });
+  it("census allButOne leaves one centre role out; pack covers give each pack seat a different centre Centaur role", () => {
+    const s = state(["werewolf", "sage", "werewolf", "centaur"], ["rustler", "centaur", "sentry"], { census: "allButOne", packCovers: true });
+    const a = act(s, 0, {}), b = act(s, 2, {});
+    const ca = a.find(e => e.ev.kind === "census")!.ev as { roles: string[]; of: number; covers: { seat: number; role: string | null }[] };
+    const cb = b.find(e => e.ev.kind === "census")!.ev as typeof ca;
+    expect(ca.roles).toHaveLength(2);
+    expect(ca.of).toBe(3);
+    expect(ca.covers).toEqual(cb.covers);
+    expect(ca.covers.map(c => c.seat)).toEqual([0, 2]);
+    expect(new Set(ca.covers.map(c => c.role)).size).toBe(2);
+    expect(ca.covers.every(c => ["centaur", "rustler", "sentry"].includes(c.role!))).toBe(true);
+    expect(say(a.find(e => e.ev.kind === "census")!, names, 0)).toMatch(/2 of the 3 roles .* Pack covers .*you: /);
+    const off = act(state(["werewolf", "sage", "werewolf"], ["rustler", "centaur", "sentry"]), 0, {});
+    expect(off.find(e => e.ev.kind === "census")!.ev).not.toHaveProperty("covers");
+  });
   it("lets a lone pack card scent a team; in a pack the step does not happen, and a queued scent says so", () => {
     const lone = state(["werewolf", "sage", "centaur"], ["werewolf", "centaur", "herald"]);
     const log = act(lone, 0, { scent: always(P(1)) });

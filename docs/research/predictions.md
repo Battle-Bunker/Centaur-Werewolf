@@ -202,3 +202,15 @@ intended). 5 replays each (X1' 3). "Talk-live?" is my prediction of the charter'
   can safely claim a centre role (Herder/Sentry per census); the table will converge on Bryn; Cass swaps Bryn's card
   away at the vote's end. **Predict: wolves 3-0, judges' path < 2: DEGENERATE.** Falsified if the table targets Cass
   (reasoning that a consensus on Bryn is what the Thief wants).
+
+## Pre-registration 2026-11-22: two new rule OPTIONS (defaults unchanged)
+
+- **CR-8 `census: "allButOne"`**: each pack card learns all but one (random, seeded) of the roles dealt to the centre.
+  Prediction on S3 (B5 Moonsage duel): from Centaurs 5-0 to about 3-2; the census backward-induction argument
+  ("a wolf would know the Sage is held") loses its force; path stays about 3; noise rises slightly (<= 1.2). Elsewhere:
+  wolves collide with honest claims a little more often (a census-"safe" claim may hit the unknown role).
+- **CR-7 `packCovers: true`**: the census also hands each pack member a DIFFERENT cover role from the Centaur-team roles
+  in the centre (told privately, and each learns the others' covers). Prediction: wolf-wolf claim collisions (4 of 14
+  coarse games, 1-2 per 5 replays in S1/X1') go to about zero; in two-wolf deals the wolves' share rises by about a
+  quarter; deception scores unchanged or higher. Risk: a cover is "the safe claim", hence a tell (heuristic 8): the
+  table may learn "the wolves always claim centre roles"; combined with allButOne this risk falls.
