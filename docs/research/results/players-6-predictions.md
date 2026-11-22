@@ -237,3 +237,13 @@ wolf-team still 3).
   **Centaurs 2, Pyre 2, wolves 1** (talk-live; path >= 2.5), against the control's Centaurs 3-0. Falsified if the
   Centaurs still win 5-0 (then two honest looks beat any unverifiable late-swap story, and the fix must be a mover the
   table KNOWS was held, or a detector the liar can cite).
+
+## Fine pass 6 (written 13:33, before these games; opening statements ON, bloodPriceCondemned ON)
+
+- **PY6-S5-twinheld** (5 replays). All four PY6 scenarios so far had a LONE wolf (its partner and the Moonsage in the
+  centre), which is why the wolves won 1 of 18; this scenario gives the wolf its twin. Sage reads the real wolf (Dov);
+  the Moonsage (Esme, wolf team, not pack) reads the Phoenix and, being a Werewolf-team look, sees through the dress:
+  "Phoenix"; the Rustler peeks the Phoenix and sees "Werewolf" (dressed). Two Centaurs, two wolf-side, two Pyre. The
+  Moonsage can contest the Sage claim and, alone at the table, KNOWS which "Werewolf" is the dressed Phoenix.
+  Prediction: **wolves 2, Pyre 2, Centaurs 1**; path >= 2.5. Falsified if the Centaurs win 3+ (then the Moonsage
+  cannot use a true Phoenix read without exposing itself, and the wolf side needs a Werewolf-counting twin).

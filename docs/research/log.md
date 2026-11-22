@@ -345,3 +345,52 @@ collided or claimed a read it could not have had). In my S5 it was the wolf defe
 reading that defence, while the Pyre's story (the Lure "corroborating" the dressed read) needed no one else's claim.
 Its first-message ranks without openings (honest 2.2-2.3, Phoenix 4.7, Lure 4.8, Werewolf 5.3) match my 0.29 vs 0.72.
 So the effect is scenario-specific: predict it by asking, per team, "does my plan need to see claims first?"
+
+## 2026-11-22 Lure fix `lureSparesPhoenix` on S5 (8 games, ~$33) and the packCovers defect fix
+
+| Scenario | Before (S5, no rule) | Predicted | Result | Judges ToM / dec / path / noise |
+| --- | --- | --- | --- | --- |
+| S5c rule on, openings off (5) | C 4 (1 + side burn), Pyre 1 | C 4, Pyre 1 | **wolves 4, Centaurs 1, Pyre 0** | 2.1 / 2.5 / 2.9 / 1.0 (talk-live) |
+| S5d rule on, openings on (3) | (S5b: Pyre 4, C 1) | C 2-3 of 3 | **Centaurs 3-0** | 2.8 / 2.7 / **4.0** / 1.0 (swept by argument) |
+
+The fix did what it was for (the Pyre's burning through an honest seer's testimony is gone: Pyre 0 of 8, the Sage now
+truly reads "Phoenix"), but I mispredicted who gains. Without openings the exposed Lure became the WOLVES' decoy: the
+Pyre's fake claims made the Lure the most suspicious seat; eliminating a non-Phoenix Pyre card with the Phoenix held is
+neither a burning nor a wolf death, so the wolves won 4 of 5 ("Lure decoy drew votes; wolf posed as Centaur"). With
+openings the lone wolf had to commit blind and the Centaurs reasoned it out 3-0 ("Fen's opening-timing reasoning
+unmasked the Lure and Werewolf"). *Heuristic 16 (generalising 4): any seat whose elimination is a non-event for the main
+result is a free decoy for whichever team gains from "nothing happened"; at a table with a Pyre, that includes every
+Kindler while the Phoenix is held.* Consequence for design: the Lure fix should come with a reason for the wolves not to
+want the Kindlers eliminated, or the Centaurs need a way to see that eliminating a Kindler wins nothing. One cheap
+option for the owner to consider: `pyreFallback`-like "a Kindler's elimination counts as a Centaur loss in the Blood
+Price comparison" is too strong; better leave it and present the Lure fix as "moves Pyre power into talk" only with
+openings on.
+
+**packCovers defect fixed (from the 8-player session):** covers were drawn from Centaur-team roles in the centre, so with
+a duplicated role (one Centaur in the centre, one held) the pack was handed a claim an honest player would contest
+(5-0 in their test). Now a cover must be a role with no copy in any hand; test added (105 green). Any 8-player
+packCovers result before this is affected.
+
+## Cross-session lessons integrated (afternoon)
+
+- **Evidence principle, refined (6-player session, sealed pair reports 5-0, path 1.0):** making the public ARTEFACT
+  ambiguous is not enough if its holder privately has the unambiguous fact and can simply say it. The Notary saw both
+  cards, sealed the ambiguous pair statement, and then said in its opening exactly which card was which. *Heuristic 17:
+  ambiguity must exist in the holder's own knowledge, not only in the artefact.* Requested variant: a Notary that learns
+  only the pair statement it seals (the engine picks; it never sees the individual cards). Same test for the Herald:
+  under the amendment the Herald proclaims "at least one of two cards is X" and learns no more than the table: passes.
+  The Herder's private count fails the same test (an uncontestable private fact): CR-6.
+- **Ember at 6 v. 7.** 6 players: the ember-carried Phoenix scenario swept 5-0 for the Centaurs (path 1.6) because the
+  player DEALT the Phoenix, left holding a Centaur card, honestly said "I was dealt Phoenix", and with the Sage and the
+  Sentry that decoded the swap. 7 players (the most balanced scenario of the night: Pyre 2, wolves 2, Centaurs 1): the
+  deck also had a Pickpocket (a Centaur mover), so a moved card had a second, innocent explanation, and the Sentry did
+  not watch both swapped seats. *Heuristic 18: a hidden swap stays hidden only if the deck offers another plausible
+  mover and no single honest witness sees both ends.* Requested variant (triage: build if cheap): an Ember-Carrier
+  swap after which the dealt Phoenix holder stays on the Pyre (it wins if the carried card burns), so it has no reason to
+  out the swap.
+- **8 players (first session, 58 games): no roster meets the target**: of 9 fixed scenarios, 1 talk-live, 1 borderline,
+  7 swept; Centaurs 48, wolves 5, Pyre 5; claim counting decided 57 of 58 and the latency tell 53 of 58 (opening
+  statements untested there). With 7 honest claims the claim space fills in 30 s. Its Hollow Sage (a twin that counts as
+  a Werewolf) turned a 5-0 duel into 4-1, which matches heuristic 15.
+- **Lone-wolf scenarios starve the wolves** (6-player session: 1 wolf win in 18 replays, all four of its scenarios had
+  a lone wolf). Scenario choice matters as much as the roster: report per scenario class, not per roster.

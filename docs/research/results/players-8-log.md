@@ -110,3 +110,17 @@ other. Concentration therefore sits at 0.71 (5 of 7) in duel scenarios and 0.86 
   hold 3 or more wolf-team cards; a deal with 4 (N-M1HS#1) lets the bloc force a 4-4 tie whatever is said (judge:
   "nothing they said would have changed the result"). Keep wolf-team cards at 4 of 12 or fewer, or Blood Price ties
   become arithmetic.
+
+## 2026-11-22 Fine pass 5 and diagnostics (~$22; budget now spent: $317 games + $17 judging/tagging)
+
+- **H1o** (H1 with opening statements ON): Centaurs 4, wolves 1 (predicted 3-2), path 1.9, noise 0.9. Same result
+  distribution as H1 (opening statements OFF). The tell went (no seat could claim last), but the wolf's blind opening
+  claim had to name a centre slot without hearing the Dun Centaur, and in the one wolf win the guess happened to match
+  it and was sold as "a wolf couldn't guess the exact slot" (judges noise 2 and 3). Lesson (H8-8): simultaneous
+  commitment converts the latency tell into a lucky-collision lottery for liars who must name specifics; it is not the
+  binding constraint at 8 seats in this scenario (claim count and the Sage read are).
+- **Latency** (all 58 games before H1o): first message median 15.4 s (Centaur-dealt) against 25.4 s (wolf-team); the last
+  first-speaker was wolf-team in 49 of 58.
+- **Parity:** 2 parity games, both wolf wins by a 4-4 tie; non-parity wolves 4 of 61.
+- **Corrections:** M3#2 did contain one seal (the real Signet, pre-empting forgery); my earlier "seals never used"
+  checked the wrong field. M3's Hush random vote is the known harness artefact (fixed upstream after my games).

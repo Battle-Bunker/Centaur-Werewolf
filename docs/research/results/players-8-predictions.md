@@ -218,3 +218,15 @@ by the Spooker's invisible movement, framed the real Sage.
   sees both). Two independent counter-stories are open to the wolves: "Alder is the Hollow Sage" (now a winning vote if
   true) and "the Spooker moved Dov's card after the read". **Predict: Centaurs 3, wolves 2; minority 2; path >= 2.5.**
   Compared with H1 (4-1, path 2.3): falsified if the Spooker adds nothing (4-1 or 5-0 again with path < 2.3).
+
+## Fine pass 4 outcome, and fine pass 5 prediction (2026-11-22, before any replay)
+
+S3 (duel + Spooker): Centaurs 5-0 (predicted 3-2; wrong). The Spooker's own rotation claim self-incriminated.
+
+- **H1o-M1H-duel-opening** = H1 (the one talk-live scenario, C4 W1) with `openingStatements: true` (everyone's first
+  message is held and revealed together); `bloodPriceCondemned` left off so that the only change is the opening
+  (H1 had no tie in any replay, so that rule could not have changed an H1 result). The opening removes the latency
+  tell and Alder's first-mover advantage, but it forces Dov to commit to a claim BEFORE hearing Esme's true "centre 2 =
+  Werewolf" (the hook of the H1#3 frame) and before Bryn's Sage claim, so Dov's and Bryn's stories may collide.
+  **Predict: Centaurs 3, wolves 2; minority >= 1.** Falsified toward the Centaurs if 5-0 with the judges citing the
+  wolves' blind opening claims colliding.
