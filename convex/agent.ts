@@ -96,7 +96,7 @@ export function caveats(deck: RoleId[]): string[] {
   const dups = [...new Set(deck)].filter(r => deck.filter(x => x === r).length > 1);
   if (dups.length) out.push(`Several copies of ${dups.map(r => ROLE[r].name).join(", ")}: two honest players can hold the same role and act in the same turn.`);
   const twins = [...new Set(deck)].filter(r => ROLE[r]?.twinOf);
-  if (twins.length) out.push(`Shadow twins in this deck: ${twins.map(r => `${ROLE[r].name} (acts in the ${ROLE[ROLE[r].twinOf!].name}'s turn, on the Werewolf team${ROLE[r].looksAs ? `, looks like a ${ROLE[ROLE[r].looksAs!].name}` : ""})`).join("; ")}. A true description of a role's night does not prove its team.`);
+  if (twins.length) out.push(`Shadow twins in this deck: ${twins.map(r => `${ROLE[r].name} (acts in the ${ROLE[ROLE[r].twinOf!].name}'s turn, on the ${TEAM_NAME[ROLE[r].team]}${ROLE[r].looksAs ? `, looks like a ${ROLE[ROLE[r].looksAs!].name}` : ""})`).join("; ")}. A true description of a role's night does not prove its team.`);
   if (has(deck, r => ROLE[r]?.steps?.some(s => s.effects.some(e => e.kind === "distort")) ?? false)) out.push("Distortion is in this deck (Glamour, Will-o'-Wisp, Mistweaver, Fogbank): a look may have shown a wrong role, and its viewer is never told. Werewolf-team looks and the Herder's count see the truth.");
   if (any("forger")) out.push("A Forger is in this deck: one proclamation at dawn may be forged, and it looks exactly like the Herald's.");
   if (any("counterfeiter") || any("falsewitness")) out.push("A seal forger (Counterfeiter, False Witness) is in this deck: any sealed message (Signet, Notary) may be forged, identical to a real one until the game ends. Seals name a role, never a player.");

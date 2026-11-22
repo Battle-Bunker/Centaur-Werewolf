@@ -445,6 +445,19 @@ for (const t of TWINS) {
   });
 }
 
+/**
+ * Research additions (players-5 session): Centaur-team twins of Werewolf-team originals. Same steps, same public turn,
+ * so a true description of the original's night no longer proves its team.
+ */
+{
+  const sp = ROLES.find(r => r.id === "spooker")!;
+  ROLES.push({
+    id: "drover", name: "Drover", team: "centaur", tags: [], max: 12, wake: sp.wake, steps: sp.steps, twinOf: "spooker",
+    blurb: "A Centaur who stampedes three cards in the Spooker's turn, exactly as the Spooker does.",
+    rules: "You act in the Spooker's turn and do exactly what the Spooker does: choose three cards other than your own, from players or the centre. The first goes to the second's place, the second to the third's, the third to the first's. You look at none of them. But you are on the Centaur team. A look at your card shows the Drover.",
+  });
+}
+
 export const ROLE: Record<RoleId, RoleDef> = Object.fromEntries(ROLES.map(r => [r.id, r]));
 export const roleName = (id: RoleId) => ROLE[id]?.name ?? id;
 /** "a Sage", "an Eavesdropper": a role name with its article, for the texts the game composes. */
