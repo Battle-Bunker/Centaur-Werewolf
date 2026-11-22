@@ -40,6 +40,7 @@ export function Table() {
     legal: v.players.filter(p => p.seat !== mine.seat).map(p => ({ k: "p" as const, i: p.seat })),
     chosen: mine.vote !== null ? [{ k: "p", i: mine.vote }] : [],
     hint: mine.vote === null ? "Click a player to vote for them." : `You voted for ${v.players[mine.vote]?.name}. Click someone else to change it.`,
+    done: mine.vote !== null,
     onPick: s => { if (s.i !== mine.vote) void exec("day.vote", { seat: s.i }).catch(() => {}); },
   } : null;
   const pick = v.phase === "night" ? picker : ballot;
@@ -60,7 +61,7 @@ export function Table() {
   }, [L, final, v.phase, mine]);
 
   return (
-    <div className={`table${awake ? " is-awake" : ""}${pick ? " is-picking" : ""}`} ref={box} aria-label="The table">
+    <div className={`table${awake ? " is-awake" : ""}${pick ? (pick.done ? " is-settled" : " is-picking") : ""}`} ref={box} aria-label="The table">
       {L && (
         <>
           <div className="felt" style={{ left: L.cx, top: L.cy, width: Math.max(160, (size.w - L.tw * 0.9)), height: Math.max(120, (size.h - L.th * 0.9)) }} aria-hidden />
@@ -73,21 +74,20 @@ export function Table() {
             const pos = L.seats[p.seat] ?? L.seats[idx];
             return (
               <Seat key={p.id} v={v} p={p} pos={pos} L={L} legal={legal(s)} order={order(s)} onPick={() => pick?.onPick(s)} marks={markers[slotKey(s)] ?? []}
-                bubble={bubbles[p.seat]} awake={awake && p.me} fresh={fresh} dealIndex={((p.seat - viewer) % n + n) % n} />
+                bubble={bubbles[p.seat]} awake={awake && p.me} fresh={fresh} dealIndex={((p.seat - viewer) % n + n) % n} ordered={!!pick?.ordered} />
             );
           })}
         </>
       )}
-      {pick && pick.hint && <p className="table-hint" aria-live="polite">{pick.hint}</p>}
     </div>
   );
 }
 
 type Player = View["players"][number];
 
-function Seat({ v, p, pos, L, legal, order, onPick, marks, bubble, awake, fresh, dealIndex }: {
+function Seat({ v, p, pos, L, legal, order, onPick, marks, bubble, awake, fresh, dealIndex, ordered }: {
   v: View; p: Player; pos: { x: number; y: number }; L: TableLayout; legal: boolean; order: number; onPick(): void; marks: Marker[];
-  bubble?: { id: string; text: string }; awake: boolean; fresh: boolean; dealIndex: number;
+  bubble?: { id: string; text: string }; awake: boolean; fresh: boolean; dealIndex: number; ordered: boolean;
 }) {
   const game = v.game, mine = game?.mine ?? null, final = game?.final ?? null;
   const role: RoleId | null = final ? final.cards[p.seat] : game && mine?.seat === p.seat ? mine.dealt : null;
@@ -95,7 +95,7 @@ function Seat({ v, p, pos, L, legal, order, onPick, marks, bubble, awake, fresh,
   const voted = v.phase === "day" && !!game?.voted[p.seat];
   const myVote = v.phase === "day" && mine?.vote === p.seat;
   const chosen = order >= 0;
-  const cls = ["seat", p.me && "is-me", legal && "is-legal", chosen && "is-chosen", dead && "is-dead", won && "is-winner", bubble && "is-speaking", awake && "is-awake", pos.y < L.cy - 4 && "is-top"].filter(Boolean).join(" ");
+  const cls = ["seat", p.me && "is-me", legal && "is-legal", chosen && "is-chosen", dead && "is-dead", won && "is-winner", bubble && "is-speaking", awake && "is-awake", pos.y < L.cy - 4 && "is-top", L.tw < 120 && "is-small"].filter(Boolean).join(" ");
   const cardSize = Math.round(L.tw * (final ? 0.36 : 0.3));
   const style = { left: pos.x, top: pos.y, width: L.tw, ["--tw" as string]: `${L.tw}px`, ["--th" as string]: `${L.th}px`, ["--csz" as string]: `${cardSize}px`, ["--name-h" as string]: `${L.nameH}px`,
     ["--from-x" as string]: `${L.cx - pos.x}px`, ["--from-y" as string]: `${L.cy - pos.y}px`, ["--deal" as string]: `${dealIndex * 110}ms` } as CSSProperties;
@@ -119,9 +119,10 @@ function Seat({ v, p, pos, L, legal, order, onPick, marks, bubble, awake, fresh,
         )}
         {voted && <span className="seat-voted" title="Has voted (not for whom)"><IconCheck size={12} strokeWidth={2.6} /> voted</span>}
         {myVote && <span className="seat-myvote">Your vote</span>}
-        {chosen && <span className="pick-badge">{order + 1}</span>}
+        {chosen && <span className="pick-badge">{ordered ? order + 1 : <IconCheck size={14} strokeWidth={3} />}</span>}
         {dead && <span className="seat-stamp">Eliminated</span>}
-        {final && <span className="seat-tally" title={`${final.outcome.tally[p.seat]} vote${final.outcome.tally[p.seat] === 1 ? "" : "s"}`}>{final.outcome.tally[p.seat]}</span>}
+        {bubble && <span key={bubble.id} className="caption" role="presentation">{bubble.text.length > 120 ? `${bubble.text.slice(0, 118)}…` : bubble.text}</span>}
+        {final && final.outcome.tally[p.seat] > 0 && <span className="seat-tally" title={`${final.outcome.tally[p.seat]} vote${final.outcome.tally[p.seat] === 1 ? "" : "s"}`}>{final.outcome.tally[p.seat]}</span>}
       </span>
       <span className="seat-bar">
         {p.host && <IconCrown size={13} className="seat-host" aria-label="host" />}
@@ -131,7 +132,6 @@ function Seat({ v, p, pos, L, legal, order, onPick, marks, bubble, awake, fresh,
         {won && <span className="seat-won">won</span>}
       </span>
       {final && <span className="seat-final">{roleName(final.cards[p.seat])}{final.dealt[p.seat] !== final.cards[p.seat] && <i> · was {roleName(final.dealt[p.seat])}</i>}</span>}
-      {bubble && <span key={bubble.id} className="bubble" role="presentation">{bubble.text.length > 90 ? `${bubble.text.slice(0, 88)}…` : bubble.text}</span>}
     </>
   );
   return legal

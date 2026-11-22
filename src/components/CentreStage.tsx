@@ -8,7 +8,7 @@ import { ROLE, roleName, slotKey, type RoleId, type Slot } from "../../shared/ro
 import type { Marker } from "../app/knowledge";
 import { useApp, useNow, type Picker } from "../app/store";
 import { Card, CommandButton, CountdownRing, ordinal } from "./bits";
-import { IconMoon, IconSun } from "./icons";
+import { IconCheck, IconEye, IconMoon, IconSun } from "./icons";
 import { Pin } from "./Table";
 
 interface Props { w: number; h: number; pick: Picker | null; legal(s: Slot): boolean; order(s: Slot): number; markers: Record<string, Marker[]>; fresh: boolean }
@@ -21,7 +21,9 @@ export function CentreStage({ w, h, pick, legal, order, markers, fresh }: Props)
   const compact = h < 230 || w < 280;
   const stageH = Math.round(Math.min(compact ? 64 : 150, h * (final ? 0.42 : 0.4)));
   // The centre cards: one row if they fit at a decent size, otherwise two.
-  const room = h - stageH - (compact ? 6 : 18);
+  const hintH = pick?.hint ? (compact ? 16 : 30) : 0;
+  const pinRows = final || compact ? 0 : Math.min(2, Math.max(0, ...Array.from({ length: count }, (_, i) => (markers[`c${i}`] ?? []).filter(m => m.tone !== "shown").length)));
+  const room = h - stageH - hintH - pinRows * 21 - (compact ? 6 : 18);
   const capH = compact ? 0 : 20;
   const oneRow = Math.min((w - (count - 1) * 8) / count, room - capH - 18);
   const twoRow = Math.min((w - (Math.ceil(count / 2) - 1) * 8) / Math.ceil(count / 2), (room - 8) / 2 - capH - 18);
@@ -39,6 +41,7 @@ export function CentreStage({ w, h, pick, legal, order, markers, fresh }: Props)
           const s: Slot = { k: "c", i };
           const role: RoleId | null = final ? final.center[i] : null;
           const marks = markers[slotKey(s)] ?? [];
+          const own = marks.filter(m => m.tone !== "shown");
           const shown = game.shown.filter(x => x.slot.k === "c" && x.slot.i === i);
           const o = order(s);
           const inner = (
@@ -46,10 +49,12 @@ export function CentreStage({ w, h, pick, legal, order, markers, fresh }: Props)
               <span className={`centre-card-face${fresh ? " is-dealt" : ""}`} style={{ ["--deal" as string]: `${i * 70}ms` }}>
                 <Card role={role} size={cardSize} label={role ? `Centre ${i + 1}: ${ROLE[role].name}` : `Centre card ${i + 1}, face down`} flipDelay={final ? 200 + i * 180 : 0} />
                 {!final && shown.length > 0 && <span className="shown-ghost" title={`Shown to everyone as ${roleName(shown[shown.length - 1].role)} during the Herald's turn. It may have moved since.`}><img src={`/art/${shown[shown.length - 1].role}.webp`} alt="" /></span>}
-                {o >= 0 && <span className="pick-badge">{o + 1}</span>}
+                {o >= 0 && <span className="pick-badge">{pick?.ordered ? o + 1 : <IconCheck size={14} strokeWidth={3} />}</span>}
               </span>
-              {!compact && <span className="card-caption">{role ? ROLE[role].name : `Centre ${i + 1}`}</span>}
-              {!final && marks.length > 0 && <span className="pins pins-centre">{marks.slice(-2).map((m, k) => <Pin key={k} m={m} />)}</span>}
+              {!compact && (!final && shown.length
+                ? <span className="card-caption is-shown" title={`Shown to everyone as ${roleName(shown[shown.length - 1].role)} during the Herald's turn. It may have moved since.`}><IconEye size={12} /> was {roleName(shown[shown.length - 1].role)}</span>
+                : <span className="card-caption">{role ? ROLE[role].name : `Centre ${i + 1}`}</span>)}
+              {!final && !compact && own.length > 0 && <span className="pins pins-centre">{own.slice(-2).map((m, k) => <Pin key={k} m={m} />)}</span>}
             </>
           );
           const label = `Centre card ${i + 1}${marks.length ? `. ${marks.map(m => m.title).join(" ")}` : ""}`;
@@ -58,6 +63,7 @@ export function CentreStage({ w, h, pick, legal, order, markers, fresh }: Props)
             : <div key={i} className={`centre-card${o >= 0 ? " is-chosen" : ""}`} role="group" aria-label={label}>{inner}</div>;
         })}
       </div>
+      {pick?.hint && <p className={`stage-hint${compact ? " is-compact" : ""}`} aria-live="polite">{pick.hint}</p>}
     </div>
   );
 }
@@ -67,7 +73,7 @@ function NightNow({ size, compact }: { size: number; compact: boolean }) {
   const now = useNow(500);
   const game = view!.game!, mine = game.mine;
   const turn = game.turns[game.turn];
-  const ring = Math.max(48, Math.min(size - (compact ? 8 : 44), 112));
+  const ring = compact ? Math.max(44, Math.min(size - 6, 64)) : Math.max(56, Math.min(size - 8, 128));
   if (!turn) return <div className="now"><div className="now-text"><h3>Dawn is coming</h3></div></div>;
   const myIndex = mine ? game.turns.findIndex(t => t.role === mine.dealt) : -1;
   const isMine = turn.role !== null && turn.role === mine?.dealt;
@@ -98,7 +104,7 @@ function DayNow({ size, compact }: { size: number; compact: boolean }) {
   const now = useNow(500);
   const game = view!.game!, mine = game.mine;
   const voted = game.voted.filter(Boolean).length;
-  const ring = Math.max(48, Math.min(size - (compact ? 8 : 44), 104));
+  const ring = compact ? Math.max(44, Math.min(size - 6, 64)) : Math.max(56, Math.min(size - 8, 116));
   const ends = game.dayEndsAt ?? now;
   const left = Math.max(0, Math.ceil((ends - now) / 1000));
   return (
@@ -142,12 +148,13 @@ function LobbyCentre({ w, h }: { w: number; h: number }) {
   const v = view!;
   const need = v.players.length + v.settings.centerCount;
   const problem = deckProblem(v.settings.deck, v.players.length, v.settings.centerCount);
-  const fan = useMemo(() => v.settings.deck.slice(0, 12), [v.settings.deck]);
+  const fan = useMemo(() => v.settings.deck.slice(0, 10), [v.settings.deck]);
   const small = h < 230 || w < 280;
-  const c = Math.max(34, Math.min(84, h * 0.3, (w * 0.9) / Math.max(4, fan.length * 0.55)));
+  const c = Math.max(30, Math.min(84, h * (small ? 0.36 : 0.3), (w * 0.9) / Math.max(4, fan.length * 0.55)));
+  const spread = Math.min(0.42, fan.length > 1 ? ((w * 0.86) / c - 1) / (fan.length - 1) : 0.42);
   return (
     <div className={`lobby-centre${small ? " is-compact" : ""}`}>
-      <div className="lobby-fan" style={{ ["--csz" as string]: `${c}px`, ["--n" as string]: fan.length }} aria-label={`The deck: ${v.settings.deck.map(roleName).join(", ")}`}>
+      <div className="lobby-fan" style={{ ["--csz" as string]: `${c}px`, ["--n" as string]: fan.length, ["--spread" as string]: spread }} aria-label={`The deck: ${v.settings.deck.map(roleName).join(", ")}`}>
         {fan.map((r, i) => <img key={`${r}${i}`} src={`/art/${r}.webp`} alt="" style={{ ["--i" as string]: i - (fan.length - 1) / 2 }} />)}
         {!fan.length && <img src="/art/back.webp" alt="" style={{ ["--i" as string]: 0 }} />}
       </div>

@@ -192,7 +192,7 @@ kbd { font: 500 11px/1 var(--mono); border: 1px solid var(--line-strong); border
 
 /* ── countdown ring ── */
 .ring { position: relative; display: inline-grid; place-items: center; flex: none; }
-.ring svg { position: absolute; inset: 0; }
+.ring > svg { position: absolute; inset: 0; }
 .ring-track { fill: none; stroke: color-mix(in srgb, var(--ink) 12%, transparent); stroke-width: 3; }
 .ring-fill { fill: none; stroke: var(--amber); stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset .25s linear; }
 .ring.is-low .ring-fill { stroke: var(--danger); }

@@ -16,7 +16,7 @@ export type View = NonNullable<FunctionReturnType<typeof api.rooms.view>>;
 export type Message = View["messages"][number];
 
 /** Targets on the table that can be clicked right now, and what clicking one does. `chosen` is in pick order. */
-export interface Picker { legal: Slot[]; chosen: Slot[]; hint: string; ordered?: boolean; onPick(slot: Slot): void }
+export interface Picker { legal: Slot[]; chosen: Slot[]; hint: string; ordered?: boolean; /** Everything is chosen already: the targets stay clickable, but quietly. */ done?: boolean; onPick(slot: Slot): void }
 export interface Ui { assistant: boolean; sidebar: boolean; dock: number }
 export interface PaletteInit { page?: string }
 export type Tab = "mine" | "chat";

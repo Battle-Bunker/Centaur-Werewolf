@@ -3,7 +3,7 @@
  * MCP server with that player's own key, exactly as a person would connect their assistant.
  *
  *   npx tsx sim/arena.ts <tournament.json> [--out sim/runs/<name>] [--concurrency 2] [--only A-information#1,B-movement]
- *                        [--model sonnet] [--effort medium] [--timers dusk,turn,day] [--dry]
+ *                        [--model sonnet] [--effort medium] [--timers dusk,turn,day] [--direct] [--dry]
  *
  * The tournament file is the one tables.ts reads, plus optional `agents` (at top level, or per table to override):
  *   "agents": { "model": "sonnet", "effort": "medium",
@@ -17,6 +17,11 @@
  * from an empty working directory and an empty HOME outside the repo, with an environment scrubbed to what the API
  * connection needs. The tool list each agent was given is recorded from its init event and checked.
  *
+ * Transport: by default agents reach the server through sim/mcp-shim.ts, a pass-through that forwards every call with
+ * the agent's own key and serves only `room_wait` itself (by polling the server's room_view), because the server's
+ * room_wait holds one of the local backend's ~4 HTTP action slots for up to 25 s and a table of waiting agents starves
+ * every other call. --direct connects agents to the server's /mcp with no shim.
+ *
  * Writes, per table, under <out>/<label>/: table.json (room, keys), timeline.json (phase times, when each seat's
  * night steps were all queued, votes), result.json (the host's view after the game: result, chat, log), and per seat
  * <name>.jsonl (full stream transcript), <name>.debrief.json, plus agents.json (model, cost, tokens, turns, wall time).
@@ -28,6 +33,7 @@ import { basename, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import { nightTurns } from "../shared/engine";
 import { MCP_URL, run, setupTable, tool, type Table, type TableConfig } from "./lib";
+import { startShim } from "./mcp-shim";
 
 // ── configuration ──
 interface AgentSpec { model?: string; effort?: string }
@@ -95,7 +101,7 @@ function launch(dir: string, sr: SeatRun, key: string, prompt: string, deadline:
   mkdirSync(`${box}/home`, { recursive: true }); mkdirSync(`${box}/work`, { recursive: true });
   const env: Record<string, string> = { HOME: `${box}/home` };
   for (const k of ENV_KEEP) if (process.env[k]) env[k] = process.env[k]!;
-  const mcp = JSON.stringify({ mcpServers: { werewolf: { type: "http", url: MCP_URL, headers: { Authorization: `Bearer ${key}` } } } });
+  const mcp = JSON.stringify({ mcpServers: { werewolf: { type: "http", url: AGENT_MCP_URL, headers: { Authorization: `Bearer ${key}` } } } });
   const args = ["-p", prompt, "--model", sr.model, "--effort", sr.effort, "--output-format", "stream-json", "--verbose",
     "--system-prompt", SYSTEM, "--json-schema", JSON.stringify(DEBRIEF_SCHEMA), "--tools", "", "--strict-mcp-config", "--mcp-config", mcp,
     "--allowedTools", ALLOWED, "--disallowedTools", ...DENIED, "--setting-sources", "", "--disable-slash-commands",
@@ -106,11 +112,12 @@ function launch(dir: string, sr: SeatRun, key: string, prompt: string, deadline:
   const out = createWriteStream(`${dir}/${sr.name}.jsonl`, { flags: "a" }), err = createWriteStream(`${dir}/${sr.name}.stderr`, { flags: "a" });
   let buf = "";
   child.stdout!.on("data", (d: Buffer) => {
-    out.write(d); buf += d.toString();
+    buf += d.toString();
     let nl;
     while ((nl = buf.indexOf("\n")) >= 0) {
       const line = buf.slice(0, nl); buf = buf.slice(nl + 1);
-      let ev: any; try { ev = JSON.parse(line); } catch { continue; }
+      let ev: any; try { ev = JSON.parse(line); } catch { out.write(line + "\n"); continue; }
+      out.write(JSON.stringify({ _t: now(), ...ev }) + "\n"); // arrival time, for measuring pace
       if (ev.type === "system" && ev.subtype === "init") {
         sr.sessionId = ev.session_id; sr.tools = ev.tools;
         sr.isolationOk = ev.tools.every((t: string) => t === "StructuredOutput" || t.startsWith("mcp__werewolf__")) && (ev.mcp_servers ?? []).every((m: { name: string }) => m.name === "werewolf");
@@ -224,12 +231,16 @@ const opened: Table[] = existsSync(`${OUT}/tables.json`) ? JSON.parse(readFileSy
 function registerTable(t: Table) { const i = opened.findIndex(o => o.config.label === t.config.label); if (i >= 0) opened[i] = t; else opened.push(t); writeFileSync(`${OUT}/tables.json`, JSON.stringify(opened, null, 1)); }
 
 mkdirSync(OUT, { recursive: true });
+// Agents reach the server through the room_wait shim (see mcp-shim.ts) unless --direct.
+const DIRECT = argv.includes("--direct");
+const shim = DIRECT ? null : await startShim(MCP_URL);
+const AGENT_MCP_URL = shim?.url ?? MCP_URL;
 const queue = spec.tables.filter(t => !ONLY || ONLY.some(o => t.label === o || t.label.replace(/#\d+$/, "") === o));
-console.log(`${queue.length} table(s) → ${OUT}, ${CONCURRENCY} at a time, default agent ${DEFAULT.model}/${DEFAULT.effort}, MCP ${MCP_URL}`);
+console.log(`${queue.length} table(s) → ${OUT}, ${CONCURRENCY} at a time, default agent ${DEFAULT.model}/${DEFAULT.effort}, MCP ${MCP_URL}${shim ? ` via room_wait shim ${shim.url}` : " (direct)"}`);
 if (argv.includes("--dry")) process.exit(0);
 let next = 0;
 await Promise.all(Array.from({ length: Math.min(CONCURRENCY, queue.length) }, async () => {
   while (next < queue.length) { const t = queue[next++]; try { await playTable(t); } catch (e) { log(t.label, `FAILED: ${(e as Error).stack}`); } }
 }));
-console.log("all tables done");
+console.log(`all tables done${shim ? ` (shim: ${shim.stats.waits} room_waits served, ${shim.stats.forwarded} calls forwarded)` : ""}`);
 process.exit(0);

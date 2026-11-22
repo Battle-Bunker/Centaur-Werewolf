@@ -124,7 +124,7 @@ function Day({ v }: { v: View }) {
         {game.shown.length > 0 && (
           <div className="shown-list">
             <span className="eyebrow">Shown to everyone by the Herald</span>
-            {game.shown.map((s, i) => <p key={i}><img src={`/art/${s.role}.webp`} alt="" /> Centre {s.slot.i + 1} was <b>{ROLE[s.role].name}</b> during the Herald's turn. It may have moved since.</p>)}
+            {game.shown.map((s, i) => <p key={i}><img src={`/art/${s.role}.webp`} alt="" /><span>Centre {s.slot.i + 1} was <b>{ROLE[s.role].name}</b> during the Herald's turn. It may have moved since.</span></p>)}
           </div>
         )}
       </section>

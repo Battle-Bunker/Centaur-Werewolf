@@ -11,7 +11,7 @@ const spow = (v: number, e: number) => Math.sign(v) * Math.pow(Math.abs(v), e);
 export function layoutTable(W: number, H: number, n: number, viewer: number, opts: { nameH?: number; minCentre?: [number, number] } = {}): TableLayout {
   const nameH = opts.nameH ?? 26, pad = 8, gap = 10;
   const [minCW, minCH] = opts.minCentre ?? [Math.min(300, W * 0.42), Math.min(230, H * 0.36)];
-  const p = n <= 4 ? 2 : 2.7;
+  const p = n <= 3 ? 4 : n === 4 ? 2 : 2.7;
   const cx = W / 2, cy = H / 2;
   const maxTw = Math.max(64, Math.min(280, W * 0.25, (H * 0.3) / 0.75));
   let fallback: TableLayout | null = null;

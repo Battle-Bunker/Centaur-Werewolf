@@ -71,12 +71,11 @@ export function PlanBuilder() {
         const plan = mine.plan[step.id] as StepPlan | undefined;
         const live = open && awake && i === firstOpen;
         const state = done ? "done" : !open ? "auto" : live ? "live" : plan && !uncovered(plan, outcomes).length ? "queued" : plan ? "partial" : "open";
-        const n = pickCount(step, shape);
-        return (
+                return (
           <section key={step.id} className={`step is-${state}`} aria-label={`Step ${i + 1}: ${step.title}`}>
             <header className="step-head">
               <span className="step-n">{done ? <IconCheck size={14} strokeWidth={2.4} /> : i + 1}</span>
-              <h3>{step.title}{n > 1 && <span className="step-count"> · {n} cards, in order</span>}</h3>
+              <h3>{step.title}</h3>
               <span className={`step-pill pill-${state}`}>{{ done: "Done", auto: "Automatic", live: "Decide now", queued: "Queued", partial: "Partly queued", open: "Not decided" }[state]}</span>
             </header>
             {step.onlyIfAlone && !done && <p className="step-note">Only happens if you turn out to be the only Werewolf at the table.</p>}
@@ -180,7 +179,8 @@ function StepEditor({ v, role, step, outcomes, shape, publish, live }: { v: View
       legal: targets,
       chosen: focusedPicks,
       ordered: count > 1,
-      hint: `${rowName ? `${rowName}: ` : ""}${count > 1 ? (left > 0 && left < count ? `pick ${left} more, in order` : `click ${count} cards in order`) : `click ${what}`} on the table, or choose in your panel.`,
+      done: left === 0,
+      hint: `${rowName ? `${rowName}: ` : ""}${count > 1 ? (left > 0 && left < count ? `pick ${left} more, in order` : `click ${count} cards in order`) : `click ${what}`} here or in your panel.`.replace(/^./, c => c.toUpperCase()),
       onPick: (s: Slot) => pickTarget(at, s),
     });
     return () => setPicker(null);

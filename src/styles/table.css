@@ -91,15 +91,8 @@ button.seat { cursor: pointer; }
 .pin-more { padding: 2px 7px; }
 @keyframes pin-in { from { transform: translateY(6px) scale(.8); opacity: 0; } }
 
-/* ── speech bubbles ── */
-.bubble { position: absolute; left: 50%; bottom: calc(100% + 12px); transform: translateX(-50%); z-index: 8; width: max-content; max-width: min(230px, 70vw); padding: 7px 11px; font-size: 13.5px; line-height: 1.35; background: var(--card); color: var(--ink); border: 1px solid var(--line-strong); border-radius: 12px; box-shadow: var(--shadow-2); animation: bubble 6.5s var(--ease) both; pointer-events: none; }
-.bubble::after { content: ""; position: absolute; left: 50%; top: 100%; width: 10px; height: 10px; background: var(--card); border: 1px solid var(--line-strong); border-top: 0; border-left: 0; transform: translate(-50%, -5px) rotate(45deg); }
-.seat.is-top .bubble { bottom: auto; top: calc(var(--th) + var(--name-h) + 8px); }
-.seat.is-top .bubble::after { top: auto; bottom: 100%; transform: translate(-50%, 5px) rotate(-135deg); }
-@keyframes bubble { 0% { opacity: 0; transform: translateX(-50%) translateY(8px) scale(.9); } 6% { opacity: 1; transform: translateX(-50%); } 88% { opacity: 1; } 100% { opacity: 0; } }
-
 /* ── vote arrows ── */
-.arrows { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; overflow: visible; }
+.arrows { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: visible; }
 .arrow { fill: none; stroke: var(--secondary); stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw .8s var(--ease-out) forwards; opacity: .85; }
 .arrow.is-mine { stroke: var(--secondary); stroke-width: 3; opacity: 1; }
 .arrow.is-forced { stroke-dasharray: .02 .025; stroke-dashoffset: 0; animation: fade-in .6s both; opacity: 0; }
@@ -108,7 +101,7 @@ button.seat { cursor: pointer; }
 @keyframes draw { to { stroke-dashoffset: 0; } }
 
 /* ── the centre ── */
-.centre { position: absolute; z-index: 1; display: flex; align-items: center; justify-content: center; }
+.centre { position: absolute; z-index: 2; display: flex; align-items: center; justify-content: center; }
 .stage-col { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
 .stage-col.is-compact { gap: 4px; }
 .stage-now { display: flex; align-items: center; justify-content: center; width: 100%; flex: none; }
@@ -159,7 +152,7 @@ button.centre-card { cursor: pointer; }
 .lobby-centre { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
 .lobby-centre.is-compact { gap: 6px; }
 .lobby-fan { position: relative; width: 100%; height: calc(var(--csz) * 1.25); }
-.lobby-fan img { position: absolute; left: calc(50% - var(--csz) / 2 + var(--i) * var(--csz) * .42); top: 0; width: var(--csz); height: var(--csz); border-radius: var(--r2); box-shadow: var(--shadow-2); transform: rotate(calc(var(--i) * 4deg)) translateY(calc(var(--i) * var(--i) * 1.4px)); transform-origin: 50% 160%; transition: left var(--t) var(--ease-out), transform var(--t) var(--ease-out); animation: fan-in .6s var(--ease-out) both; }
+.lobby-fan img { position: absolute; left: calc(50% - var(--csz) / 2 + var(--i) * var(--csz) * var(--spread, .42)); top: 0; width: var(--csz); height: var(--csz); border-radius: var(--r2); box-shadow: var(--shadow-2); transform: rotate(calc(var(--i) * 4deg)) translateY(calc(var(--i) * var(--i) * 1.4px)); transform-origin: 50% 160%; transition: left var(--t) var(--ease-out), transform var(--t) var(--ease-out); animation: fan-in .6s var(--ease-out) both; }
 .lobby-status { display: flex; flex-direction: column; align-items: center; gap: 3px; max-width: 360px; }
 .lobby-status h3 { font-size: clamp(18px, 2vw, 26px); font-weight: 500; font-style: italic; }
 .lobby-status p { font-size: 14px; color: var(--ink-2); }
@@ -175,3 +168,24 @@ button.centre-card { cursor: pointer; }
   .seat-myvote { font-size: 9.5px; padding: 2px 5px; }
   .table-hint { font-size: 12px; white-space: normal; text-align: center; width: max-content; }
 }
+
+/* ── captions: what a player just said, over their tile (where their video will be) ── */
+.caption { position: absolute; left: 6px; right: 6px; bottom: 6px; z-index: 4; padding: 5px 9px; font: 500 calc(min(14px, var(--tw) * .06 + 4px)) / 1.3 var(--font); color: #fbf6e8; background: rgb(12 20 16 / .82); border-radius: var(--r2); backdrop-filter: blur(3px); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; animation: caption 6.5s var(--ease) both; pointer-events: none; }
+.caption::before { content: "“"; font: 600 1.4em/0 var(--display); color: var(--amber); margin-right: 2px; vertical-align: -.25em; }
+@keyframes caption { 0% { opacity: 0; transform: translateY(6px); } 5% { opacity: 1; transform: none; } 90% { opacity: 1; } 100% { opacity: 0; } }
+.stage-hint { margin: 0; font-size: 13.5px; color: var(--ink-2); text-align: center; padding: 3px 12px; border-radius: 13px; background: color-mix(in srgb, var(--amber) 16%, transparent); border: 1px dashed color-mix(in srgb, var(--amber) 60%, transparent); max-width: 100%; animation: fade-in .3s both; }
+.stage-hint.is-compact { font-size: 11.5px; padding: 1px 8px; line-height: 1.3; }
+.now-verdict .now-text, .now-night .now-text, .now-day .now-text { position: relative; }
+.now-verdict { padding: 10px 22px; background: radial-gradient(closest-side, color-mix(in srgb, var(--felt-1) 92%, transparent), color-mix(in srgb, var(--felt-1) 70%, transparent) 70%, transparent); border-radius: 50%; }
+
+.table.is-settled .seat.is-legal:not(.is-chosen) .seat-media { box-shadow: var(--shadow-2), 0 0 0 1px color-mix(in srgb, var(--amber) 70%, transparent); }
+.table.is-settled .centre-card.is-legal:not(.is-chosen) .centre-card-face { box-shadow: 0 0 0 1px color-mix(in srgb, var(--amber) 70%, transparent); }
+.card-caption { max-width: calc(var(--csz) + 12px); overflow: hidden; text-overflow: ellipsis; }
+.card-caption.is-shown { color: var(--secondary); font-weight: 700; font-style: italic; display: inline-flex; gap: 3px; align-items: center; }
+.card-caption.is-shown svg { flex: none; }
+.pins-centre .pin { max-width: calc(var(--csz) + 16px); }
+.now-day .ring-body { background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--amber) 30%, var(--card)), var(--card) 70%); color: var(--amber-text); }
+.now-night .ring-body { background: radial-gradient(circle at 60% 40%, #2a2244, #0f1a15 75%); color: #e4b452; }
+.seat.is-small .seat-you, .seat.is-small .seat-host, .seat.is-small .seat-bot { display: none; }
+.seat.is-small.is-me .seat-name { color: var(--primary); }
+.seat.is-small .seat-bar { justify-content: center; }
