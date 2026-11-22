@@ -1,0 +1,999 @@
+{
+ "players": 8,
+ "note": "Counts, not rates: no group has 10 games. All seats Opus (medium), vote timer 60 s.",
+ "rosters": {
+  "M1": {
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "moonsage",
+    "duncentaur",
+    "sage",
+    "sage",
+    "centaur",
+    "centaur",
+    "rustler",
+    "sentry",
+    "pickpocket",
+    "drifter"
+   ],
+   "centre": 4,
+   "rules": "defaults",
+   "games": 12,
+   "naturalGames": 2,
+   "fixedScenarios": [
+    "F1-M1-duel x5",
+    "F2-M1-pair x5"
+   ],
+   "winners": {
+    "centaur": 11,
+    "werewolf": 1
+   },
+   "c": [
+    1,
+    0.57,
+    0.71,
+    0.71,
+    0.71,
+    0.71,
+    0.71,
+    0.86,
+    0.86,
+    0.86,
+    0.86,
+    0.86
+   ],
+   "cMedian": 0.7849999999999999,
+   "bands": {
+    "unanimous": 1,
+    "plurality": 1,
+    "majority": 10
+   },
+   "judges": {
+    "verdicts": 24,
+    "tom": 1.83,
+    "deception": 2.08,
+    "path": 1.79,
+    "noise": 0.38,
+    "agreementMeanAbsDiff": {
+     "tomRequired": 0.33,
+     "deceptionCleverness": 0.17,
+     "pathDependence": 0.08,
+     "noise": 0.25,
+     "howWonExact": "11/12"
+    }
+   },
+   "scenarios": [
+    {
+     "label": "F1-M1-duel",
+     "replays": 5,
+     "fingerprintsIdentical": true,
+     "winners": {
+      "centaur": 5
+     },
+     "minority": 0,
+     "talkLive": false,
+     "c": [
+      0.71,
+      0.71,
+      0.71,
+      0.71,
+      0.71
+     ],
+     "judges": {
+      "verdicts": 10,
+      "tom": 2,
+      "deception": 2.1,
+      "path": 1.9,
+      "noise": 0.4,
+      "agreementMeanAbsDiff": {
+       "tomRequired": 0,
+       "deceptionCleverness": 0.2,
+       "pathDependence": 0.2,
+       "noise": 0.4,
+       "howWonExact": "5/5"
+      }
+     }
+    },
+    {
+     "label": "F2-M1-pair",
+     "replays": 5,
+     "fingerprintsIdentical": true,
+     "winners": {
+      "centaur": 5
+     },
+     "minority": 0,
+     "talkLive": false,
+     "c": [
+      0.86,
+      0.86,
+      0.86,
+      0.86,
+      0.86
+     ],
+     "judges": {
+      "verdicts": 10,
+      "tom": 1.6,
+      "deception": 1.9,
+      "path": 1.4,
+      "noise": 0.3,
+      "agreementMeanAbsDiff": {
+       "tomRequired": 0.4,
+       "deceptionCleverness": 0.2,
+       "pathDependence": 0,
+       "noise": 0.2,
+       "howWonExact": "4/5"
+      }
+     }
+    }
+   ]
+  },
+  "M1H": {
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "hollowsage",
+    "duncentaur",
+    "sage",
+    "sage",
+    "centaur",
+    "centaur",
+    "rustler",
+    "sentry",
+    "pickpocket",
+    "drifter"
+   ],
+   "centre": 4,
+   "rules": "defaults",
+   "games": 15,
+   "naturalGames": 0,
+   "fixedScenarios": [
+    "H1-M1H-duel x5",
+    "H2-M1H-pair x5",
+    "H2c-M1H-pair-covers x5"
+   ],
+   "winners": {
+    "centaur": 14,
+    "werewolf": 1
+   },
+   "c": [
+    0.71,
+    0.71,
+    1,
+    0.71,
+    0.71,
+    0.86,
+    0.86,
+    0.86,
+    0.86,
+    0.86,
+    0.86,
+    0.86,
+    0.71,
+    0.86,
+    0.86
+   ],
+   "cMedian": 0.86,
+   "bands": {
+    "majority": 14,
+    "unanimous": 1
+   },
+   "judges": {
+    "verdicts": 30,
+    "tom": 1.8,
+    "deception": 2.07,
+    "path": 1.8,
+    "noise": 0.47,
+    "agreementMeanAbsDiff": {
+     "tomRequired": 0,
+     "deceptionCleverness": 0.13,
+     "pathDependence": 0.13,
+     "noise": 0.13,
+     "howWonExact": "15/15"
+    }
+   },
+   "scenarios": [
+    {
+     "label": "H1-M1H-duel",
+     "replays": 5,
+     "fingerprintsIdentical": true,
+     "winners": {
+      "centaur": 4,
+      "werewolf": 1
+     },
+     "minority": 1,
+     "talkLive": true,
+     "c": [
+      0.71,
+      0.71,
+      1,
+      0.71,
+      0.71
+     ],
+     "judges": {
+      "verdicts": 10,
+      "tom": 2.2,
+      "deception": 2.3,
+      "path": 2.3,
+      "noise": 0.5,
+      "agreementMeanAbsDiff": {
+       "tomRequired": 0,
+       "deceptionCleverness": 0.2,
+       "pathDependence": 0.2,
+       "noise": 0.2,
+       "howWonExact": "5/5"
+      }
+     }
+    },
+    {
+     "label": "H2-M1H-pair",
+     "replays": 5,
+     "fingerprintsIdentical": true,
+     "winners": {
+      "centaur": 5
+     },
+     "minority": 0,
+     "talkLive": false,
+     "c": [
+      0.86,
+      0.86,
+      0.86,
+      0.86,
+      0.86
+     ],
+     "judges": {
+      "verdicts": 10,
+      "tom": 1.6,
+      "deception": 1.8,
+      "path": 1.6,
+      "noise": 0.4,
+      "agreementMeanAbsDiff": {
+       "tomRequired": 0,
+       "deceptionCleverness": 0,
+       "pathDependence": 0,
+       "noise": 0,
+       "howWonExact": "5/5"
+      }
+     }
+    },
+    {
+     "label": "H2c-M1H-pair-covers",
+     "replays": 5,
+     "fingerprintsIdentical": true,
+     "winners": {
+      "centaur": 5
+     },
+     "minority": 0,
+     "talkLive": false,
+     "c": [
+      0.86,
+      0.86,
+      0.71,
+      0.86,
+      0.86
+     ],
+     "judges": {
+      "verdicts": 10,
+      "tom": 1.6,
+      "deception": 2.1,
+      "path": 1.5,
+      "noise": 0.5,
+      "agreementMeanAbsDiff": {
+       "tomRequired": 0,
+       "deceptionCleverness": 0.2,
+       "pathDependence": 0.2,
+       "noise": 0.2,
+       "howWonExact": "5/5"
+      }
+     }
+    }
+   ]
+  },
+  "M1HS": {
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "hollowsage",
+    "duncentaur",
+    "sage",
+    "sage",
+    "centaur",
+    "centaur",
+    "rustler",
+    "sentry",
+    "pickpocket",
+    "spooker"
+   ],
+   "centre": 4,
+   "rules": "defaults",
+   "games": 12,
+   "naturalGames": 0,
+   "fixedScenarios": [
+    "N-M1HS x2",
+    "S2-M1HS-pair-spooker x5",
+    "S3-M1HS-duel-spooker x5"
+   ],
+   "winners": {
+    "werewolf": 2,
+    "centaur": 10
+   },
+   "c": [
+    0.57,
+    0.86,
+    0.71,
+    1,
+    0.57,
+    0.71,
+    0.71,
+    0.71,
+    0.71,
+    0.71,
+    0.71,
+    0.71
+   ],
+   "cMedian": 0.71,
+   "bands": {
+    "plurality": 2,
+    "majority": 9,
+    "unanimous": 1
+   },
+   "judges": {
+    "verdicts": 24,
+    "tom": 1.96,
+    "deception": 2.5,
+    "path": 1.75,
+    "noise": 0.58,
+    "agreementMeanAbsDiff": {
+     "tomRequired": 0.08,
+     "deceptionCleverness": 0.17,
+     "pathDependence": 0.17,
+     "noise": 0.17,
+     "howWonExact": "12/12"
+    }
+   },
+   "scenarios": [
+    {
+     "label": "N-M1HS",
+     "replays": 2,
+     "fingerprintsIdentical": false,
+     "winners": {
+      "werewolf": 1,
+      "centaur": 1
+     },
+     "minority": 1,
+     "talkLive": false,
+     "c": [
+      0.57,
+      0.86
+     ],
+     "judges": {
+      "verdicts": 4,
+      "tom": 2.25,
+      "deception": 2.75,
+      "path": 1.75,
+      "noise": 0.75,
+      "agreementMeanAbsDiff": {
+       "tomRequired": 0.5,
+       "deceptionCleverness": 0.5,
+       "pathDependence": 0.5,
+       "noise": 0.5,
+       "howWonExact": "2/2"
+      }
+     }
+    },
+    {
+     "label": "S2-M1HS-pair-spooker",
+     "replays": 5,
+     "fingerprintsIdentical": true,
+     "winners": {
+      "centaur": 4,
+      "werewolf": 1
+     },
+     "minority": 1,
+     "talkLive": false,
+     "c": [
+      0.71,
+      1,
+      0.57,
+      0.71,
+      0.71
+     ],
+     "judges": {
+      "verdicts": 10,
+      "tom": 1.8,
+      "deception": 2.7,
+      "path": 1.9,
+      "noise": 0.7,
+      "agreementMeanAbsDiff": {
+       "tomRequired": 0,
+       "deceptionCleverness": 0.2,
+       "pathDependence": 0.2,
+       "noise": 0.2,
+       "howWonExact": "5/5"
+      }
+     }
+    },
+    {
+     "label": "S3-M1HS-duel-spooker",
+     "replays": 5,
+     "fingerprintsIdentical": true,
+     "winners": {
+      "centaur": 5
+     },
+     "minority": 0,
+     "talkLive": false,
+     "c": [
+      0.71,
+      0.71,
+      0.71,
+      0.71,
+      0.71
+     ],
+     "judges": {
+      "verdicts": 10,
+      "tom": 2,
+      "deception": 2.2,
+      "path": 1.6,
+      "noise": 0.4,
+      "agreementMeanAbsDiff": {
+       "tomRequired": 0,
+       "deceptionCleverness": 0,
+       "pathDependence": 0,
+       "noise": 0,
+       "howWonExact": "5/5"
+      }
+     }
+    }
+   ]
+  },
+  "M2": {
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "embercarrier",
+    "sage",
+    "moonsage",
+    "echo",
+    "sentry",
+    "centaur",
+    "rustler",
+    "pickpocket"
+   ],
+   "centre": 4,
+   "rules": "defaults",
+   "games": 12,
+   "naturalGames": 2,
+   "fixedScenarios": [
+    "F3-M2-lure x5",
+    "F4-M2-ember x5"
+   ],
+   "winners": {
+    "centaur": 6,
+    "werewolf": 1,
+    "nobody": 5
+   },
+   "c": [
+    0.57,
+    0.43,
+    0.71,
+    0.86,
+    0.86,
+    0.86,
+    0.86,
+    0.57,
+    0.86,
+    0.43,
+    0.86,
+    0.57
+   ],
+   "cMedian": 0.7849999999999999,
+   "bands": {
+    "plurality": 5,
+    "majority": 7
+   },
+   "judges": {
+    "verdicts": 24,
+    "tom": 2.21,
+    "deception": 2.88,
+    "path": 2.62,
+    "noise": 1,
+    "agreementMeanAbsDiff": {
+     "tomRequired": 0.08,
+     "deceptionCleverness": 0.08,
+     "pathDependence": 0.08,
+     "noise": 0.17,
+     "howWonExact": "10/12"
+    }
+   },
+   "scenarios": [
+    {
+     "label": "F3-M2-lure",
+     "replays": 5,
+     "fingerprintsIdentical": true,
+     "winners": {
+      "nobody": 5
+     },
+     "minority": 0,
+     "talkLive": false,
+     "c": [
+      0.71,
+      0.86,
+      0.86,
+      0.86,
+      0.86
+     ],
+     "judges": {
+      "verdicts": 10,
+      "tom": 2.9,
+      "deception": 3.8,
+      "path": 3.6,
+      "noise": 1.2,
+      "agreementMeanAbsDiff": {
+       "tomRequired": 0.2,
+       "deceptionCleverness": 0,
+       "pathDependence": 0,
+       "noise": 0,
+       "howWonExact": "4/5"
+      }
+     }
+    },
+    {
+     "label": "F4-M2-ember",
+     "replays": 5,
+     "fingerprintsIdentical": true,
+     "winners": {
+      "centaur": 5
+     },
+     "minority": 0,
+     "talkLive": false,
+     "c": [
+      0.57,
+      0.86,
+      0.43,
+      0.86,
+      0.57
+     ],
+     "judges": {
+      "verdicts": 10,
+      "tom": 1.8,
+      "deception": 2.2,
+      "path": 1.6,
+      "noise": 0.6,
+      "agreementMeanAbsDiff": {
+       "tomRequired": 0,
+       "deceptionCleverness": 0,
+       "pathDependence": 0,
+       "noise": 0,
+       "howWonExact": "5/5"
+      }
+     }
+    }
+   ]
+  },
+  "M3": {
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "counterfeiter",
+    "hush",
+    "signet",
+    "sage",
+    "sage",
+    "centaur",
+    "rustler",
+    "sentry",
+    "pickpocket"
+   ],
+   "centre": 3,
+   "rules": "defaults",
+   "games": 2,
+   "naturalGames": 2,
+   "fixedScenarios": [],
+   "winners": {
+    "centaur": 2
+   },
+   "c": [
+    0.43,
+    0.57
+   ],
+   "cMedian": 0.5,
+   "bands": {
+    "plurality": 2
+   },
+   "judges": {
+    "verdicts": 4,
+    "tom": 2,
+    "deception": 2.5,
+    "path": 2.75,
+    "noise": 1.25,
+    "agreementMeanAbsDiff": {
+     "tomRequired": 0,
+     "deceptionCleverness": 0,
+     "pathDependence": 0.5,
+     "noise": 0.5,
+     "howWonExact": "1/2"
+    }
+   },
+   "scenarios": []
+  },
+  "M4": {
+   "deck": [
+    "werewolf",
+    "glamour",
+    "poacher",
+    "cutpurse",
+    "pickpocket",
+    "latecomer",
+    "sage",
+    "sage",
+    "sentry",
+    "centaur",
+    "rustler"
+   ],
+   "centre": 3,
+   "rules": "defaults",
+   "games": 2,
+   "naturalGames": 2,
+   "fixedScenarios": [],
+   "winners": {
+    "centaur": 2
+   },
+   "c": [
+    0.86,
+    0.86
+   ],
+   "cMedian": 0.86,
+   "bands": {
+    "majority": 2
+   },
+   "judges": {
+    "verdicts": 4,
+    "tom": 1.5,
+    "deception": 1.75,
+    "path": 1,
+    "noise": 0,
+    "agreementMeanAbsDiff": {
+     "tomRequired": 0,
+     "deceptionCleverness": 0.5,
+     "pathDependence": 0,
+     "noise": 0,
+     "howWonExact": "2/2"
+    }
+   },
+   "scenarios": []
+  },
+  "M5": {
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "wisp",
+    "fogbank",
+    "sage",
+    "sage",
+    "centaur",
+    "centaur",
+    "rustler",
+    "sentry",
+    "drifter"
+   ],
+   "centre": 3,
+   "rules": "defaults",
+   "games": 2,
+   "naturalGames": 2,
+   "fixedScenarios": [],
+   "winners": {
+    "centaur": 2
+   },
+   "c": [
+    0.71,
+    0.71
+   ],
+   "cMedian": 0.71,
+   "bands": {
+    "majority": 2
+   },
+   "judges": {
+    "verdicts": 4,
+    "tom": 2,
+    "deception": 2.5,
+    "path": 3,
+    "noise": 1.5,
+    "agreementMeanAbsDiff": {
+     "tomRequired": 0,
+     "deceptionCleverness": 0,
+     "pathDependence": 0,
+     "noise": 0,
+     "howWonExact": "2/2"
+    }
+   },
+   "scenarios": []
+  }
+ },
+ "strategies": {
+  "games": 58,
+  "rows": {
+   "early-seer-accusation": {
+    "games": 53,
+    "byTeam": {
+     "centaur": {
+      "games": 52,
+      "won": 42,
+      "decisive": 47
+     },
+     "werewolf": {
+      "games": 1,
+      "won": 0,
+      "decisive": 1
+     }
+    }
+   },
+   "claim-count": {
+    "games": 57,
+    "byTeam": {
+     "centaur": {
+      "games": 56,
+      "won": 47,
+      "decisive": 42
+     },
+     "werewolf": {
+      "games": 9,
+      "won": 1,
+      "decisive": 0
+     }
+    }
+   },
+   "latency-tell": {
+    "games": 53,
+    "byTeam": {
+     "centaur": {
+      "games": 51,
+      "won": 43,
+      "decisive": 31
+     },
+     "pyre": {
+      "games": 2,
+      "won": 1,
+      "decisive": 1
+     },
+     "werewolf": {
+      "games": 3,
+      "won": 0,
+      "decisive": 0
+     }
+    }
+   },
+   "claim-collision": {
+    "games": 44,
+    "byTeam": {
+     "centaur": {
+      "games": 27,
+      "won": 20,
+      "decisive": 18
+     },
+     "werewolf": {
+      "games": 17,
+      "won": 1,
+      "decisive": 12
+     },
+     "pyre": {
+      "games": 1,
+      "won": 0,
+      "decisive": 0
+     }
+    }
+   },
+   "frame-the-true-seer": {
+    "games": 55,
+    "byTeam": {
+     "werewolf": {
+      "games": 50,
+      "won": 5,
+      "decisive": 4
+     },
+     "pyre": {
+      "games": 8,
+      "won": 4,
+      "decisive": 0
+     }
+    }
+   },
+   "census-safe-claim": {
+    "games": 44,
+    "byTeam": {
+     "werewolf": {
+      "games": 44,
+      "won": 2,
+      "decisive": 3
+     },
+     "pyre": {
+      "games": 1,
+      "won": 0,
+      "decisive": 0
+     }
+    }
+   },
+   "fake-movement-story": {
+    "games": 31,
+    "byTeam": {
+     "werewolf": {
+      "games": 31,
+      "won": 4,
+      "decisive": 5
+     },
+     "pyre": {
+      "games": 1,
+      "won": 0,
+      "decisive": 0
+     }
+    }
+   },
+   "twin-true-description": {
+    "games": 16,
+    "byTeam": {
+     "werewolf": {
+      "games": 15,
+      "won": 3,
+      "decisive": 1
+     },
+     "centaur": {
+      "games": 1,
+      "won": 1,
+      "decisive": 0
+     }
+    }
+   },
+   "confession": {
+    "games": 22,
+    "byTeam": {
+     "centaur": {
+      "games": 4,
+      "won": 2,
+      "decisive": 4
+     },
+     "pyre": {
+      "games": 8,
+      "won": 5,
+      "decisive": 6
+     },
+     "werewolf": {
+      "games": 12,
+      "won": 1,
+      "decisive": 4
+     }
+    }
+   },
+   "decision-theoretic-vote": {
+    "games": 50,
+    "byTeam": {
+     "werewolf": {
+      "games": 16,
+      "won": 5,
+      "decisive": 4
+     },
+     "centaur": {
+      "games": 43,
+      "won": 37,
+      "decisive": 31
+     },
+     "pyre": {
+      "games": 3,
+      "won": 2,
+      "decisive": 1
+     }
+    }
+   },
+   "engineered-tie": {
+    "games": 8,
+    "byTeam": {
+     "werewolf": {
+      "games": 5,
+      "won": 3,
+      "decisive": 3
+     },
+     "pyre": {
+      "games": 3,
+      "won": 0,
+      "decisive": 0
+     }
+    }
+   },
+   "phoenix-exposure": {
+    "games": 12,
+    "byTeam": {
+     "centaur": {
+      "games": 6,
+      "won": 6,
+      "decisive": 6
+     },
+     "werewolf": {
+      "games": 7,
+      "won": 1,
+      "decisive": 0
+     }
+    }
+   },
+   "census-slip": {
+    "games": 10,
+    "byTeam": {
+     "werewolf": {
+      "games": 10,
+      "won": 1,
+      "decisive": 8
+     }
+    }
+   },
+   "pyre-double-bluff": {
+    "games": 6,
+    "byTeam": {
+     "pyre": {
+      "games": 6,
+      "won": 5,
+      "decisive": 5
+     }
+    }
+   },
+   "deliberate-centaur-split": {
+    "games": 2,
+    "byTeam": {
+     "centaur": {
+      "games": 2,
+      "won": 2,
+      "decisive": 1
+     }
+    }
+   },
+   "hush-cut": {
+    "games": 1,
+    "byTeam": {
+     "werewolf": {
+      "games": 1,
+      "won": 0,
+      "decisive": 0
+     }
+    }
+   },
+   "seal-use": {
+    "games": 1,
+    "byTeam": {
+     "centaur": {
+      "games": 1,
+      "won": 1,
+      "decisive": 0
+     }
+    }
+   },
+   "lure-or-glamour-frame": {
+    "games": 8,
+    "byTeam": {
+     "werewolf": {
+      "games": 3,
+      "won": 1,
+      "decisive": 1
+     },
+     "pyre": {
+      "games": 5,
+      "won": 5,
+      "decisive": 5
+     }
+    }
+   },
+   "decoy-sacrifice": {
+    "games": 5,
+    "byTeam": {
+     "werewolf": {
+      "games": 5,
+      "won": 0,
+      "decisive": 1
+     },
+     "pyre": {
+      "games": 1,
+      "won": 1,
+      "decisive": 1
+     }
+    }
+   }
+  }
+ }
+}

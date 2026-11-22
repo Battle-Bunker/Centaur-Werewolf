@@ -278,3 +278,12 @@ Built as a rule option (default off): each seated player's FIRST message is held
   burn, and Pyre 4 in S9); the Pyre's only route is to discredit the Sage's true Phoenix read. S5d = S5c with opening
   statements ON (3 replays): Centaurs 2-3 of 3. Falsified if the Pyre still wins 3+ of 5 (then the reverse bluff does
   not need the dress at all).
+
+## Pre-registration 2026-11-22 (afternoon): packCovers defect fix (from the 8-player session)
+
+Defect: covers are drawn from Centaur-team roles in the centre, so with duplicated roles (two Centaurs: one in the
+centre, one held) a pack member is handed "Centaur" while an honest player holds the other copy: a guaranteed collision
+(8-player session: 5-0). Fix: a cover must be a role with NO copy in any player's hand (every copy of it lies in the
+centre), i.e. a claim no honest player can contest by holding the card; if there are fewer such roles than pack seats,
+the rest get "no cover". Prediction: in decks with duplicated Centaur-team roles, cover-induced collisions go to zero;
+elsewhere no change (unique roles in the centre were already safe).
