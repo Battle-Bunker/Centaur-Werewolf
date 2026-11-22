@@ -1,50 +1,53 @@
 /**
- * The night's timetable, the same for everyone: every turn in wake order, which one is happening now and how long is
- * left. Each turn lasts exactly as long as the others whether or not anyone holds that role, so the clock gives
- * nothing away. During the day it shows the discussion timer instead.
+ * The night's timetable, the same for everyone: every turn in wake order, which one is happening now. Each turn lasts
+ * exactly as long as the others whether or not anyone holds that role, so the clock gives nothing away. In the lobby
+ * it previews the order the deck will wake in.
  */
+import { useEffect, useRef } from "react";
+import { nightTurns } from "../../shared/engine";
 import { ROLE } from "../../shared/roles";
 import { useApp, useNow } from "../app/store";
-import { Countdown, CommandButton, RoleArt } from "./bits";
+import { IconMoon } from "./icons";
 
 export function TurnTrack() {
   const { view } = useApp();
-  const now = useNow();
+  const now = useNow(250);
+  const list = useRef<HTMLOListElement>(null);
   const game = view?.game;
-  if (!view || !game) return <div className="track track-lobby"><span className="eyebrow">Lobby</span><span>{view?.players.length ?? 0} at the table. The deck needs {(view?.players.length ?? 0) + 3} cards.</span></div>;
-  if (view.phase === "night") {
-    const turn = game.turns[game.turn];
+  useEffect(() => { list.current?.querySelector('[aria-current="step"]')?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" }); }, [game?.turn]);
+  if (!view) return null;
+  if (view.phase === "lobby") {
+    const order = nightTurns(view.settings.deck);
+    if (!order.length) return null;
     return (
-      <div className="track" aria-label="Night turns">
-        <ol className="track-turns">
-          {game.turns.map((t, i) => {
-            const state = i < game.turn ? "done" : i === game.turn ? "now" : "next";
-            const mine = game.mine && t.role === game.mine.dealt;
-            return (
-              <li key={i} className={`turn is-${state}${mine ? " is-mine" : ""}`} aria-current={state === "now" ? "step" : undefined} title={t.role ? ROLE[t.role].blurb : "Everyone reads their card and may queue their move."}>
-                {t.role ? <RoleArt role={t.role} size={28} label="" /> : <span className="turn-dusk" aria-hidden>☾</span>}
-                <span className="turn-name">{t.role ? ROLE[t.role].name : "Dusk"}</span>
-                {mine && <span className="turn-you">you</span>}
-                {state === "now" && <span className="turn-fill" style={{ width: `${Math.min(100, Math.max(0, (now - t.startsAt) / (t.endsAt - t.startsAt)) * 100)}%` }} />}
-              </li>
-            );
-          })}
+      <div className="track track-preview" aria-label="The order the night will run in">
+        <span className="track-label">Night order</span>
+        <ol className="track-turns" ref={list}>
+          <li className="turn is-next"><span className="turn-glyph"><IconMoon size={14} /></span><span className="turn-name">Dusk</span></li>
+          {order.map(r => <li key={r} className="turn is-next" title={ROLE[r].blurb}><img src={`/art/${r}.webp`} alt="" /><span className="turn-name">{ROLE[r].name}</span></li>)}
         </ol>
-        {turn && <Countdown from={turn.startsAt} until={turn.endsAt} label="Time left in this turn" />}
       </div>
     );
   }
-  if (view.phase === "day") {
-    const voted = game.voted.filter(Boolean).length;
-    return (
-      <div className="track track-day">
-        <span className="eyebrow">Day</span>
-        <span>Talk it over, then vote. {voted} of {game.voted.length} have voted.</span>
-        <span className="top-space" />
-        <CommandButton id="day.endDiscussion" variant="quiet" />
-        {game.dayEndsAt && <Countdown from={game.dayEndsAt - view.settings.daySeconds * 1000} until={game.dayEndsAt} label="Time left to vote" />}
-      </div>
-    );
-  }
-  return <div className="track track-day"><span className="eyebrow">Game over</span><span>{game.final?.outcome.headline}</span><span className="top-space" /><CommandButton id="game.playAgain" variant="primary" /></div>;
+  if (view.phase !== "night" || !game) return null;
+  return (
+    <div className="track" aria-label="Night turns">
+      <ol className="track-turns" ref={list}>
+        {game.turns.map((t, i) => {
+          const state = i < game.turn ? "done" : i === game.turn ? "now" : "next";
+          const mine = !!game.mine && t.role === game.mine.dealt;
+          const frac = state === "now" ? Math.min(1, Math.max(0, (now - t.startsAt) / (t.endsAt - t.startsAt))) : state === "done" ? 1 : 0;
+          return (
+            <li key={i} className={`turn is-${state}${mine ? " is-mine" : ""}`} aria-current={state === "now" ? "step" : undefined}
+              title={t.role ? `${ROLE[t.role].name}: ${ROLE[t.role].blurb}` : "Dusk: everyone reads their card and may queue their move."}>
+              {t.role ? <img src={`/art/${t.role}.webp`} alt="" /> : <span className="turn-glyph"><IconMoon size={14} /></span>}
+              <span className="turn-name">{t.role ? ROLE[t.role].name : "Dusk"}</span>
+              {mine && <span className="turn-you">you</span>}
+              <span className="turn-fill" style={{ transform: `scaleX(${frac})` }} aria-hidden />
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
 }
