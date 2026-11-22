@@ -1,12 +1,21 @@
 /**
  * What one viewer may see of a room. This is the only place hidden information leaves the server, so the rules of
- * secrecy live here: during the night and the day you get your own dealt role, plan, progress and journal; everything
- * else (other roles, the centre, the full log, who voted for whom) arrives only once the game has ended.
+ * secrecy live here: during the night and the day you get your own dealt role, plan, progress and journal (with dawn
+ * notices: bitten, Imago), the proclamations once they are published, the egg after dawn, and your own queued day swap;
+ * everything else (other roles, the centre, glamours, forgeries, the full log, who voted for whom) arrives only once
+ * the game has ended. At a play-test table the host also sees the deal.
  */
 import { v } from "convex/values";
 import { query } from "./_generated/server";
 import { sha256 } from "./auth";
 import type { Game } from "./game";
+import { publicMarks, visibleShown, type LogEntry } from "../shared/engine";
+import { rulesOf } from "../shared/settings";
+
+/** A log entry as a player may see it during the game: without what only the post-game log shows. */
+export const redact = ({ hidden: _hidden, ...e }: LogEntry): LogEntry => e;
+/** The proclamations a player may see now, without the forgery flag or (for dawn ones) the turn they were really made in. */
+export const publicShown = (game: Game) => visibleShown(game.state).map(({ forged: _f, turn, ...x }) => ({ ...x, turn: x.atDawn ? null : turn }));
 import { site } from "./mcp";
 import { contextOf, loadScope } from "./scope";
 
@@ -28,7 +37,11 @@ export const view = query({
       code: room.code,
       phase: room.phase,
       round: room.round,
-      settings: room.settings,
+      /** The fixed deal is the host's alone: others only learn that one is set. */
+      settings: { ...room.settings, rules: rulesOf(room.settings.rules), fixedDeal: room.settings.fixedDeal && room.host === me?._id ? room.settings.fixedDeal : undefined },
+      fixedDeal: !!room.settings.fixedDeal,
+      /** A play-test table: shown to everyone, because its host may fix the deal and sees every card. */
+      playtest: !!room.playtest,
       context: contextOf(scope),
       me: me ? { id: me._id, name: me.name } : null,
       /** In the lobby: everyone, in joining order. In a game: the seated players, clockwise by seat. */
@@ -48,24 +61,38 @@ export const view = query({
         dayEndsAt: game.dayEndsAt ?? null,
         /** Public: who has voted, never for whom. */
         voted: game.votes.map(x => x !== null),
-        /** What everyone has been shown (the Herald): a card as it was during that turn. */
-        shown: game.state.shown,
+        /** The proclamations published so far (at dawn, under that rule): a card as it was at that moment of the night. */
+        shown: publicShown(game),
+        /** Public marks (the Cuckoo's egg), after dawn. */
+        marks: publicMarks(game.state),
+        dawn: game.state.dawn,
         mine: seat >= 0 ? {
           seat,
           dealt: game.state.dealt[seat],
           plan: game.plans[seat],
           progress: game.progress[seat],
-          journal: game.log.filter(e => e.seat === seat),
+          journal: game.log.filter(e => e.seat === seat).map(e => (ended ? e : redact(e))),
           vote: game.votes[seat],
+          /** Told at dawn. */
+          status: { bitten: game.state.dawn && game.state.bitten?.seat === seat, imago: game.state.imago.includes(seat) },
+          daySwap: game.daySwap?.by === seat ? { a: game.daySwap.a, b: game.daySwap.b } : null,
         } : null,
+        /** Play-test tables: the deal, for the host only. */
+        playtestDeal: room.playtest && room.host === me?._id ? { dealt: game.state.dealt, center: game.state.dealtCenter, fixed: !!game.fixed } : null,
         final: ended ? {
           dealt: game.state.dealt,
           cards: game.state.cards,
           center: game.state.center,
+          dealtCenter: game.state.dealtCenter,
           votes: game.votes,
           forcedVotes: game.forcedVotes,
           outcome: game.outcome!,
-          prophecy: game.state.prophecy,
+          marks: game.state.marks,
+          bitten: game.state.bitten,
+          imago: game.state.imago,
+          shown: game.state.shown,
+          daySwap: game.daySwap ?? null,
+          rules: game.state.rules,
           log: game.log,
         } : null,
       } : null,

@@ -12,6 +12,7 @@
 import { z } from "zod";
 import { deckProblem } from "./engine";
 import { CENTER_DEFAULT, CENTER_MAX, CENTER_MIN, ROLE, ROLES, type RoleId } from "./roles";
+import { DEFAULT_RULES, RULE_DEFS, ruleValueProblem, type Rules } from "./settings";
 
 export type Phase = "home" | "lobby" | "night" | "day" | "ended";
 export type Caller = "anyone" | "member" | "seated" | "host";
@@ -41,8 +42,16 @@ export interface CommandContext {
   voted: boolean;
   /** The unused once-per-game chat power of the card the viewer was dealt, if any. */
   chatPower: "signed" | "unsigned" | null;
+  /** The day power of the card the viewer was dealt, if any (the Moon-Thief's swap). */
+  dayPower: "swap" | null;
+  /** The viewer has a day swap queued. */
+  swapQueued: boolean;
+  /** A play-test table: chosen when the room was created, shown to everyone, and the only kind where the deal can be fixed. */
+  playtest: boolean;
+  /** The table's rule settings. */
+  rules: Rules;
 }
-export const HOME_CONTEXT: CommandContext = { phase: "home", member: false, seated: false, host: false, players: 0, center: CENTER_DEFAULT, deck: [], openSteps: [], voted: false, chatPower: null };
+export const HOME_CONTEXT: CommandContext = { phase: "home", member: false, seated: false, host: false, players: 0, center: CENTER_DEFAULT, deck: [], openSteps: [], voted: false, chatPower: null, dayPower: null, swapQueued: false, playtest: false, rules: DEFAULT_RULES };
 
 export type Availability = { ok: true } | { ok: false; reason: string; hidden?: boolean };
 const OK: Availability = { ok: true };
@@ -73,6 +82,8 @@ export interface CommandDef<P extends z.ZodObject = z.ZodObject> {
   contextReasons?: Partial<Record<Phase, string>>;
   /** Surfaces it is left off, and why. `consent`: authorising an assistant must be a person's own click. */
   surfaces?: { except: Surface[]; because: "consent" | "shown" | "agent" };
+  /** Arguments that are a seat number: the palette and the MCP description pair them with names. */
+  seatArgs?: string[];
   /** Checks beyond phase and caller. Pure. */
   available?(ctx: CommandContext, args?: Record<string, unknown>): Availability;
 }
@@ -81,12 +92,16 @@ const define = <P extends z.ZodObject>(c: CommandDef<P>): CommandDef<P> => c;
 const none = z.object({}).strict();
 const name = z.string().trim().min(1).max(24).describe("A display name, 1 to 24 characters.");
 const roleId = z.enum(ROLES.map(r => r.id) as [string, ...string[]]).describe("A role id, e.g. \"werewolf\".");
-const slot = z.object({ k: z.enum(["p", "c"]).describe("p: a player's seat. c: a centre card."), i: z.number().int().min(0).max(63) }).strict();
+const slot = z.object({ k: z.enum(["p", "c"]).describe("p: a player's seat. c: a centre card."), i: z.number().int().min(0).max(63).describe("The seat number (from 0), or the centre card's index (from 0).") }).strict();
+const seatNo = (what: string) => z.number().int().min(0).max(63).describe(`${what}: a seat number from the room view's players list (seats count from 0).`);
 const decision = z.discriminatedUnion("kind", [
-  z.object({ kind: z.literal("pick"), targets: z.array(slot).min(1).max(4) }).strict(),
+  z.object({ kind: z.literal("pick"), targets: z.array(slot).min(1).max(4).describe("Exactly targetsNeeded slots, copied from legalTargets."), role: roleId.optional().describe("Only at a step that also names a role (legalRoles): the role to name.") }).strict(),
+  z.object({ kind: z.literal("name"), role: roleId.describe("A role from legalRoles.") }).strict(),
   z.object({ kind: z.literal("do") }).strict(),
   z.object({ kind: z.literal("skip") }).strict(),
 ]);
+const DECISION_SHAPES = '{ "kind": "pick", "targets": [{ "k": "p", "i": 2 }] } (a seat), { "kind": "pick", "targets": [{ "k": "c", "i": 0 }] } (a centre card, counted from 0), { "kind": "pick", "targets": [...], "role": "sage" } (a step that also names a role), { "kind": "name", "role": "sage" } (a step that only names a role), { "kind": "do" } or { "kind": "skip" }';
+const ruleValue = z.union([z.boolean(), z.number().int(), z.string()]);
 const stepPlan = z.object({
   branches: z.array(z.object({ roles: z.array(roleId).min(1), decision }).strict()).max(12)
     .describe("Conditional decisions, tried in order: the first whose roles include the card seen at the earlier step applies."),
@@ -103,9 +118,9 @@ export const COMMANDS = [
   // ── room ──
   define({
     id: "room.create", title: "Create a room", group: "room", runs: "server", effect: "write", confirm: "none", caller: "anyone", contexts: ["home"],
-    description: "Creates a new room with the caller as host and returns its four-letter code. Others join with the code.",
+    description: "Creates a new room with the caller as host and returns its four-letter code. Others join with the code. `playtest: true` makes a play-test table (shown to everyone as such): its host can fix the deal and sees every card.",
     tooltip: "Open a new table and invite others with its code.", keywords: ["new", "host", "table", "game"],
-    params: z.object({ name }).strict(),
+    params: z.object({ name, playtest: z.boolean().optional().describe("A play-test table: everyone sees the badge; the host may fix the deal and sees all cards. Default false.") }).strict(),
   }),
   define({
     id: "room.join", title: "Join a room", group: "room", runs: "server", effect: "write", confirm: "none", caller: "anyone", contexts: ["home"],
@@ -137,7 +152,7 @@ export const COMMANDS = [
   // ── setup ──
   define({
     id: "setup.addRole", title: "Add a role to the deck", group: "setup", runs: "server", effect: "write", confirm: "none", caller: "host", contexts: ["lobby"],
-    description: "Adds one copy of a role to the deck. The deck must hold one card per player plus the centre cards.",
+    description: "Adds one copy of a role to the deck. Arguments: { \"role\": <role id> }. The deck must hold one card per player plus the centre cards.",
     tooltip: "Put one more copy of a role in the deck.", keywords: ["card", "include", "deck"],
     params: z.object({ role: roleId }).strict(),
     available: (ctx, args) => {
@@ -148,7 +163,7 @@ export const COMMANDS = [
   }),
   define({
     id: "setup.removeRole", title: "Remove a role from the deck", group: "setup", runs: "server", effect: "write", confirm: "none", caller: "host", contexts: ["lobby"],
-    description: "Removes one copy of a role from the deck.", tooltip: "Take one copy of a role out of the deck.", keywords: ["card", "exclude", "deck"],
+    description: "Removes one copy of a role from the deck. Arguments: { \"role\": <role id> }.", tooltip: "Take one copy of a role out of the deck.", keywords: ["card", "exclude", "deck"],
     params: z.object({ role: roleId }).strict(),
     available: (ctx, args) => {
       const r = args?.role as RoleId | undefined;
@@ -179,10 +194,33 @@ export const COMMANDS = [
     tooltip: "Choose how many cards lie face down in the centre (3 to 6).", keywords: ["middle", "centre", "center", "cards", "extra"],
     params: z.object({ count: z.number().int().min(CENTER_MIN).max(CENTER_MAX) }).strict(),
   }),
+  define({
+    id: "setup.setRule", title: "Change a table rule", group: "setup", runs: "server", effect: "write", confirm: "none", caller: "host", contexts: ["lobby"],
+    description: `Sets one of the table's rule variants, shown to every player. Arguments: { "rule": <id>, "value": <value> }. Rules: ${RULE_DEFS.map(r => `${r.id} (${r.kind === "boolean" ? "true/false" : r.kind === "choice" ? r.options.map(o => JSON.stringify(o.value)).join("/") : `${r.min} to ${r.max}`}, default ${JSON.stringify(DEFAULT_RULES[r.id])}): ${r.tooltip}`).join(" ")}`,
+    tooltip: "Turn one of the table's rule variants on or off, or change its value.", keywords: ["rule", "variant", "blood price", "census", "setting", "option"],
+    params: z.object({ rule: z.enum(RULE_DEFS.map(r => r.id) as [string, ...string[]]).describe("The rule's id."), value: ruleValue.describe("true/false, a choice's value, or a whole number, as the rule takes.") }).strict(),
+    available: (_ctx, args) => (args?.rule !== undefined && args.value !== undefined ? ((p) => (p ? no(p) : OK))(ruleValueProblem(String(args.rule), args.value)) : OK),
+  }),
+  define({
+    id: "setup.fixDeal", title: "Fix the next deal (play-test table)", group: "setup", runs: "server", effect: "write", confirm: "none", caller: "host", contexts: ["lobby"],
+    description: "At a play-test table only: fixes the next deal. `seed` (a whole number) makes the seating and the shuffle repeatable, so different rule arms can be played on the same deal. `seats` (player ids in the order they will sit, seat 0 first) fixes who sits where. `cards` (role ids: one per seat in seat order, then the centre cards) fixes exactly who is dealt what; it must be a rearrangement of the deck. Any of the three may be given; what is not fixed is random. The fixed deal is used by every game until cleared.",
+    tooltip: "Make the next deal repeatable, or choose exactly who gets which card.", keywords: ["seed", "deal", "test", "playtest", "fix", "rig"],
+    params: z.object({
+      seed: z.number().int().min(0).max(2 ** 31).optional().describe("Seeds the seating and the shuffle."),
+      seats: z.array(z.string()).min(3).max(12).optional().describe("Player ids in seat order (seat 0 first): every player in the room exactly once."),
+      cards: z.array(roleId).min(6).max(18).optional().describe("Role ids: the card of seat 0, seat 1, …, then centre card 1, 2, …"),
+    }).strict(),
+    available: ctx => (ctx.playtest ? OK : no("Only at a play-test table (chosen when the room is created).", true)),
+  }),
+  define({
+    id: "setup.clearDeal", title: "Clear the fixed deal", group: "setup", runs: "server", effect: "write", confirm: "none", caller: "host", contexts: ["lobby"],
+    description: "At a play-test table: the next deal is random again.", tooltip: "Go back to random deals.", keywords: ["seed", "deal", "random"], params: none,
+    available: ctx => (ctx.playtest ? OK : no("Only at a play-test table.", true)),
+  }),
   // ── talk ──
   define({
     id: "chat.send", title: "Say something to the table", group: "talk", runs: "server", effect: "write", confirm: "none", caller: "member", contexts: ["lobby", "day", "ended"],
-    description: "Posts a chat message everyone in the room can read. The table is silent at night: chat is open in the lobby, during the day discussion and after the game. Use it to make claims, ask questions and argue for a vote.",
+    description: "Posts a chat message everyone in the room can read. Arguments: { \"text\": <up to 600 characters> }. The table is silent at night: chat is open in the lobby, during the day discussion and after the game. Use it to make claims, ask questions and argue for a vote. Name players with their seat numbers, e.g. \"Bo (seat 1)\".",
     tooltip: "Send a message to everyone at the table.", keywords: ["chat", "message", "talk", "claim", "say", "text"],
     params: z.object({ text: z.string().trim().min(1).max(600).describe("The message, up to 600 characters.") }).strict(),
     contextReasons: { night: "The table is silent at night." },
@@ -193,13 +231,6 @@ export const COMMANDS = [
     tooltip: "Post your one message that the game marks as coming from the player dealt Signet.", keywords: ["signet", "seal", "verified", "prove"],
     params: z.object({ text: z.string().trim().min(1).max(600) }).strict(),
     available: ctx => (ctx.chatPower === "signed" ? OK : no("Only the player dealt Signet can do this, once.", true)),
-  }),
-  define({
-    id: "chat.sendUnsigned", title: "Post your unsigned message", group: "talk", runs: "server", effect: "write", confirm: "inline", caller: "seated", contexts: ["day"],
-    description: "Once per game, the player DEALT Forger may post a message with no name on it. Who sent it is shown only after the game.",
-    tooltip: "Post your one message with no name on it.", keywords: ["forger", "anonymous", "unsigned"],
-    params: z.object({ text: z.string().trim().min(1).max(600) }).strict(),
-    available: ctx => (ctx.chatPower === "unsigned" ? OK : no("Only the player dealt Forger can do this, once.", true)),
   }),
   // ── connect an assistant ──
   define({
@@ -232,33 +263,41 @@ export const COMMANDS = [
   // ── reading, for assistants (the app shows all of this on screen) ──
   define({
     id: "room.view", title: "Look at the table", group: "view", runs: "server", effect: "read", confirm: "none", caller: "member", contexts: ["lobby", "night", "day", "ended"],
-    description: "Returns everything the caller may see right now: phase, players by seat, the deck, timers, the night's timetable and current turn, the caller's dealt card, the steps of their night action with the legal choices for each, what they have learned, what has been shown to everyone, the chat, who has voted, and after the game every card, vote and the full log. Call it first, and again whenever `version` changes.",
-    tooltip: "See the table.", keywords: ["state", "look"], params: none,
+    description: "Returns everything the caller may see right now: phase, players by seat, the table rules, the deck, timers, the night's timetable and the countdown to your own turn, your dealt card and status (bitten, Imago), the steps of your night action with the legal choices for each, what you have learned, the dawn proclamations and the egg, the chat, who has voted, your queued day swap, and after the game every card, vote, why each seat won or lost, and the full log. Every top-level key is always present (null when it does not apply in this phase). Arguments (all optional): { \"compact\": true } leaves out what does not change during a game (deck, rules, role texts, timetable); { \"chatSince\": n } returns only chat messages numbered n and later (each message has `n`; `chatCount` is the total). Call it first, and again whenever `version` changes.",
+    tooltip: "See the table.", keywords: ["state", "look"],
+    params: z.object({
+      compact: z.boolean().optional().describe("Leave out the deck, rules, role texts and timetable."),
+      chatSince: z.number().int().min(0).optional().describe("Only chat messages with n >= this. Use the chatCount you last saw."),
+    }).strict(),
     surfaces: { except: ["palette"], because: "shown" },
   }),
   define({
     id: "room.wait", title: "Wait for something to happen", group: "view", runs: "server", effect: "read", confirm: "none", caller: "member", contexts: ["lobby", "night", "day", "ended"],
-    description: "Waits until the table changes (a new phase or turn, a chat message, a vote, your step resolving) or `seconds` pass, then returns the new `version` and what changed. Pass the `version` from your last room_view or room_wait. Use it instead of polling room_view.",
+    description: "Waits until something you care about changes, or `seconds` pass, then returns the new `version`, `changed`, and what changed. Arguments: { \"version\": <from your last room_view or room_wait>, \"until\": \"any\" | \"phase\" | \"chat\" | \"turn\", \"seconds\": 1-25 }. until \"any\" (default): anything you can see (phase, your night turn, your journal, chat, votes, players, settings); \"phase\": only a new phase; \"chat\": a new chat message or a new phase; \"turn\": your own night turn starting or ending, or a new phase. The version does not tick on the clock or on other players' night turns. Loop: call room_wait with the version it returned until `changed` is true, then room_view. Use it instead of polling room_view.",
     tooltip: "Wait for the table to change.", keywords: ["poll"],
-    params: z.object({ version: z.string().optional().describe("The version you last saw; omit to wait for the next change from now."), seconds: z.number().int().min(1).max(25).default(20) }).strict(),
+    params: z.object({
+      version: z.string().optional().describe("The version you last saw; omit to wait for the next change from now."),
+      until: z.enum(["any", "phase", "chat", "turn"]).default("any").describe("What to wait for."),
+      seconds: z.number().int().min(1).max(25).default(20),
+    }).strict(),
     surfaces: { except: ["palette"], because: "shown" },
   }),
   define({
     id: "rules.read", title: "Read the rules", group: "help", runs: "server", effect: "read", confirm: "none", caller: "member", contexts: ["lobby", "night", "day", "ended"],
-    description: "Returns how the game works, how to win, how plans and timers work, and the rule of every role in this room's deck. Read it once before playing.",
+    description: "Returns how the game works, how to win (the resolution order), how plans and timers work, this table's rule settings with what each means, warnings about the deck (glamour, forgery, curse…), and the rule of every role in this room's deck. Read it once before playing, and again if the host changes the deck or the rules.",
     tooltip: "How the game works.", keywords: ["help", "how to play"], params: none,
     surfaces: { except: ["palette"], because: "shown" },
   }),
   // ── play ──
   define({
     id: "game.start", title: "Start the game", group: "play", runs: "server", effect: "write", confirm: "none", caller: "host", contexts: ["lobby"],
-    description: "Seats the players in a random circle, deals the deck (three cards to the centre) and begins the night.",
+    description: "Seats the players in a random circle, deals the deck (one card each, the rest to the centre) and begins the night.",
     tooltip: "Deal the cards and begin the night.", keywords: ["begin", "deal", "go", "play"], params: none, shortcut: "S",
-    available: ctx => { const p = deckProblem(ctx.deck, ctx.players, ctx.center); return p ? no(p) : OK; },
+    available: ctx => { const p = deckProblem(ctx.deck, ctx.players, ctx.center, ctx.rules); return p ? no(p) : OK; },
   }),
   define({
     id: "night.planStep", title: "Queue a night move", group: "play", runs: "server", effect: "write", confirm: "none", caller: "seated", contexts: ["night"],
-    description: "Sets the caller's decision for one step of their night action, before or during their turn. A plan may be unconditional (only `otherwise`) or branch on the card seen at an earlier step. It runs by itself when the turn comes; during the caller's own turn it runs at once. Steps left undecided when the turn ends get a random legal move.",
+    description: `Sets the caller's decision for one step of their night action, before or during their turn. Arguments: { "step": <step id from yourNightSteps>, "plan": { "branches": [], "otherwise": <decision> } } for an unconditional decision, or with branches [{ "roles": [<role ids>], "decision": <decision> }] tried in order against the card you see at the earlier step (only where the step says canBranchOn). A decision is one of ${DECISION_SHAPES}. It runs by itself when the turn comes; during the caller's own turn it runs at once. Steps left undecided when the turn ends get a random legal move.`,
     tooltip: "Decide a step of your night action now; it plays by itself when your turn comes.", keywords: ["plan", "decide", "move", "action", "target", "swap", "look"],
     params: z.object({ step: z.string().describe("The step id, from your role's steps."), plan: stepPlan }).strict(),
     available: (ctx, args) => {
@@ -269,16 +308,16 @@ export const COMMANDS = [
   }),
   define({
     id: "night.clearStep", title: "Clear a queued move", group: "play", runs: "server", effect: "write", confirm: "none", caller: "seated", contexts: ["night"],
-    description: "Removes the caller's queued decision for a step that has not happened yet.",
+    description: "Removes the caller's queued decision for a step that has not happened yet. Arguments: { \"step\": <step id> }.",
     tooltip: "Undo a queued decision that has not played yet.", keywords: ["undo", "unqueue", "reset", "plan"],
-    params: z.object({ step: z.string() }).strict(),
+    params: z.object({ step: z.string().describe("The step id, from yourNightSteps.") }).strict(),
     available: (ctx, args) => (args?.step && !ctx.openSteps.includes(String(args.step)) ? no("That step is already done.") : ctx.openSteps.length ? OK : no("You have nothing queued.")),
   }),
   define({
     id: "day.vote", title: "Vote to eliminate", group: "play", runs: "server", effect: "write", confirm: "none", caller: "seated", contexts: ["day"],
-    description: "Casts or changes the caller's vote for the seat to eliminate. The day ends when every human has voted or the timer runs out; anyone who has not voted then votes at random.",
+    description: "Casts or changes the caller's vote for the seat to eliminate. Arguments: { \"seat\": <seat number of another player> }. The day ends when every human has voted or the timer runs out; anyone who has not voted then votes at random.",
     tooltip: "Vote for who you think is a Werewolf. You can change it until the day ends.", keywords: ["accuse", "eliminate", "kill", "choose"],
-    params: z.object({ seat: z.number().int().min(0).max(63).describe("The seat number of the player to vote for.") }).strict(),
+    params: z.object({ seat: seatNo("The player to vote for") }).strict(), seatArgs: ["seat"],
   }),
   define({
     id: "day.clearVote", title: "Take back your vote", group: "play", runs: "server", effect: "write", confirm: "none", caller: "seated", contexts: ["day"],
@@ -286,13 +325,31 @@ export const COMMANDS = [
     available: ctx => (ctx.voted ? OK : no("You have not voted.")),
   }),
   define({
+    id: "day.queueSwap", title: "Queue your day swap", group: "play", runs: "server", effect: "write", confirm: "none", caller: "seated", contexts: ["day"],
+    description: "Only for the player DEALT the Moon-Thief: queues a secret swap of two other players' cards, made the instant the votes lock, before anything is counted. Arguments: { \"a\": <seat>, \"b\": <seat> }, two different seats, neither your own. Call again to change it; day_clearSwap to cancel. Nobody else sees it until the game ends.",
+    tooltip: "Secretly swap two other players' cards the moment voting ends.", keywords: ["moon-thief", "thief", "swap", "steal"],
+    params: z.object({ a: seatNo("One player whose card moves"), b: seatNo("The other player whose card moves") }).strict(), seatArgs: ["a", "b"],
+    available: ctx => (ctx.dayPower === "swap" ? OK : no("Only the player dealt the Moon-Thief can do this.", true)),
+  }),
+  define({
+    id: "day.clearSwap", title: "Cancel your day swap", group: "play", runs: "server", effect: "write", confirm: "none", caller: "seated", contexts: ["day"],
+    description: "Only for the player DEALT the Moon-Thief: cancels the queued day swap.", tooltip: "Cancel your queued swap.", keywords: ["moon-thief", "undo", "swap"], params: none,
+    available: ctx => (ctx.dayPower !== "swap" ? no("Only the player dealt the Moon-Thief can do this.", true) : ctx.swapQueued ? OK : no("You have no swap queued.")),
+  }),
+  define({
     id: "day.endDiscussion", title: "End the day now", group: "play", runs: "server", effect: "write", confirm: "inline", caller: "host", contexts: ["day"],
     description: "Counts the votes immediately. Anyone who has not voted votes at random.",
     tooltip: "Count the votes now. Anyone who hasn't voted votes at random.", keywords: ["finish", "count", "skip", "tally"], params: none,
   }),
   define({
+    id: "game.abandon", title: "Abandon this round", group: "play", runs: "server", effect: "destructive", confirm: "inline", caller: "host", contexts: ["night", "day"],
+    description: "At a play-test table only: ends the round with no result and returns everyone to the lobby.",
+    tooltip: "Stop this round without a result and go back to the lobby.", keywords: ["abort", "stop", "cancel", "reset"], params: none,
+    available: ctx => (ctx.playtest ? OK : no("Only at a play-test table.", true)),
+  }),
+  define({
     id: "game.playAgain", title: "Play again", group: "play", runs: "server", effect: "write", confirm: "none", caller: "host", contexts: ["ended"],
-    description: "Returns the room to the lobby with the same players, deck and timers.",
+    description: "Returns the room to the lobby with the same players, deck, rules and timers.",
     tooltip: "Go back to the lobby with the same table.", keywords: ["rematch", "restart", "new round", "lobby"], params: none,
   }),
   // ── view (client only) ──
