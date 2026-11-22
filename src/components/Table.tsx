@@ -14,7 +14,8 @@ import { layoutTable, type TableLayout } from "../app/layout";
 import { useApp, type Picker, type View } from "../app/store";
 import { Avatar, Card } from "./bits";
 import { CentreStage } from "./CentreStage";
-import { IconBot, IconCheck, IconCrown, IconEye } from "./icons";
+import { IconBot, IconCheck, IconCrown } from "./icons";
+import { Pin } from "./Pin";
 
 export function Table() {
   const { view, picker, exec } = useApp();
@@ -120,7 +121,7 @@ function Seat({ v, p, pos, L, legal, order, onPick, marks, bubble, awake, fresh,
         <Avatar name={p.name} bot={p.bot} />
         {game && (
           <span className={`seat-card${fresh ? " is-dealt" : ""}`} title={finalTitle ?? (role ? `You were dealt the ${ROLE[role].name}. Your card may have been moved since.` : "A face-down card")}>
-            <Card role={role} size={cardSize} flipDelay={final ? lead + 400 + dealIndex * 260 : fresh ? lead + 900 + dealIndex * 110 : 0} />
+            <Card role={role} size={cardSize} reveal={fresh} flipDelay={final ? lead + 400 + dealIndex * 260 : fresh ? lead + 900 + dealIndex * 110 : 0} />
             {final && final.dealt[p.seat] !== final.cards[p.seat] && <span className="seat-card-was" title={`Dealt ${roleName(final.dealt[p.seat])}`}><img src={`/art/${final.dealt[p.seat]}.webp`} alt="" /></span>}
           </span>
         )}
@@ -134,7 +135,7 @@ function Seat({ v, p, pos, L, legal, order, onPick, marks, bubble, awake, fresh,
         {myVote && <span className="seat-myvote">Your vote</span>}
         {chosen && <span className="pick-badge">{ordered ? order + 1 : <IconCheck size={14} strokeWidth={3} />}</span>}
         {dead && <span className="seat-stamp">Eliminated</span>}
-        {bubble && <span key={bubble.id} className="caption" role="presentation">{bubble.text.length > 120 ? `${bubble.text.slice(0, 118)}…` : bubble.text}</span>}
+        {bubble && <span key={bubble.id} className={`caption${marks.length ? " is-up" : ""}`} role="presentation">{bubble.text.length > 120 ? `${bubble.text.slice(0, 118)}…` : bubble.text}</span>}
         {final && final.outcome.tally[p.seat] > 0 && <span className="seat-tally" title={`${final.outcome.tally[p.seat]} vote${final.outcome.tally[p.seat] === 1 ? "" : "s"}`}>{final.outcome.tally[p.seat]}</span>}
       </span>
       <span className="seat-bar">
@@ -150,16 +151,6 @@ function Seat({ v, p, pos, L, legal, order, onPick, marks, bubble, awake, fresh,
   return legal
     ? <button type="button" className={cls} style={style} onClick={onPick} aria-pressed={chosen} aria-label={`${chosen ? "Chosen: " : "Choose "}${label}`}>{body}</button>
     : <div className={cls} style={style} role="group" aria-label={label}>{body}</div>;
-}
-
-export function Pin({ m }: { m: Marker }) {
-  return (
-    <span className={`pin pin-${m.tone}${m.team ? ` team-${m.team}` : ""}`} title={m.title}>
-      {m.role ? <img src={`/art/${m.role}.webp`} alt="" /> : m.tone === "shown" ? <IconEye size={11} /> : <span className="pin-dot" />}
-      {m.tone === "shown" && m.role && <IconEye size={11} />}
-      <span>{m.label}</span>
-    </span>
-  );
 }
 
 /** Short speech bubbles by a seat when that player posts in the chat. */

@@ -9,7 +9,7 @@ import type { Marker } from "../app/knowledge";
 import { useApp, useNow, type Picker } from "../app/store";
 import { Card, CommandButton, CountdownRing, ordinal } from "./bits";
 import { IconCheck, IconEye, IconMoon, IconSun } from "./icons";
-import { Pin } from "./Table";
+import { Pin } from "./Pin";
 
 interface Props { w: number; h: number; pick: Picker | null; legal(s: Slot): boolean; order(s: Slot): number; markers: Record<string, Marker[]>; fresh: boolean; lead: number }
 
@@ -28,10 +28,11 @@ export function CentreStage({ w, h, pick, legal, order, markers, fresh, lead }: 
   const needCards = rowsWanted * (60 + capH + 6) + pinRows * 22 + hintH + (compact ? 6 : 18);
   const stageH = Math.round(Math.max(compact ? 48 : 64, Math.min(compact ? 64 : 150, h * (final ? 0.42 : 0.4), h - needCards)));
   const room = h - stageH - hintH - pinRows * 22 - (compact ? 6 : 18);
-  const oneRow = Math.min((w - (perRow1 - 1) * 8) / perRow1, room - capH - 6);
-  const twoRow = Math.min((w - (perRow2 - 1) * 8) / perRow2, (room - 14) / 2 - capH - 6);
-  const rows = count > 3 && twoRow > oneRow * 1.15 ? 2 : 1;
-  const cardSize = Math.max(28, Math.floor(Math.min(final ? 104 : 96, rows === 1 ? oneRow : twoRow)));
+  const gapX = compact ? 6 : 10;
+  const oneRow = Math.min((w - (perRow1 - 1) * gapX) / perRow1, room - capH - 6);
+  const twoRow = Math.min((w - (perRow2 - 1) * gapX) / perRow2, (room - 10) / 2 - capH - 6);
+  const rows = count > 3 && (twoRow > oneRow * 1.15 || (compact && count > 4)) ? 2 : 1;
+  const cardSize = Math.max(22, Math.floor(Math.min(final ? 104 : 96, rows === 1 ? oneRow : twoRow)));
 
   if (!game) return <LobbyCentre w={w} h={h} />;
   return (

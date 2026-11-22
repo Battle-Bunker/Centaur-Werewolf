@@ -199,13 +199,6 @@ kbd { font: 500 11px/1 var(--mono); border: 1px solid var(--line-strong); border
 .ring-body { position: absolute; inset: 7px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; color: var(--amber); background: color-mix(in srgb, var(--card) 70%, transparent); }
 .ring-body img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.18); }
 
-.countdown { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; min-width: 72px; }
-.countdown-time { font: 600 18px var(--mono); font-variant-numeric: tabular-nums; }
-.countdown-bar { width: 72px; height: 3px; background: var(--line); overflow: hidden; }
-.countdown-bar span { display: block; height: 100%; background: var(--primary); transform-origin: left; transition: transform .25s linear; }
-.countdown.is-low .countdown-time { color: var(--danger); }
-.countdown.is-low .countdown-bar span { background: var(--danger); }
-
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }

@@ -1,16 +1,16 @@
 /**
  * Measures the server's deal: opens and starts tables through the app's own commands (no agents), reads each seat's
  * dealt card from that player's own view, and compares where cards land with a uniform shuffle.
- *   npx tsx sim/deal-check.ts [tables = 200] [outFile]
+ *   npx tsx sim/deal-check.ts [tables = 200] [outFile] [--mcp]
  * Half the tables list the deck with the wolves first (as tables.ts does), half with the wolves last, so a bias that
  * follows deck position shows up as a difference between the halves. Also records the seating (join order → seat)
  * and whether whole deals repeat (a fixed seed would repeat them).
  * The rooms are left to finish by themselves (very short timers, forced random play).
  */
 import { writeFileSync } from "node:fs";
-import { run, token, view } from "./lib";
+import { run, token, tool, view } from "./lib";
 
-const N = Number(process.argv[2] ?? 200), outFile = process.argv[3];
+const N = Number(process.argv[2] ?? 200), outFile = process.argv[3], VIA_MCP = process.argv.includes("--mcp"); // --mcp: start through the MCP game_start tool, as agents do
 const DECK = ["werewolf", "werewolf", "sage", "centaur", "centaur", "herald", "herder", "sentry"]; // round1 deck A
 const PLAYERS = 5, NAMES = ["P0", "P1", "P2", "P3", "P4"];
 const rows: { order: string; deckOrder: string[]; dealt: string[]; center: string[]; seating: number[] }[] = [];
@@ -26,7 +26,8 @@ for (let n = 0; n < N; n++) {
   for (const role of deckOrder) await run("setup.addRole", toks[0], code, { role });
   for (const [timer, seconds] of Object.entries({ dusk: 5, turn: 5, day: 30 })) await run("setup.setTimer", toks[0], code, { timer, seconds });
   const stored = (await view(code, toks[0]))!.settings.deck as string[];
-  await run("game.start", toks[0], code);
+  if (VIA_MCP) await tool(((await run("connect.createKey", toks[0], code, { permission: "host", label: "deal-check" })) as { key: string }).key, "game_start");
+  else await run("game.start", toks[0], code);
   const dealt: string[] = Array(PLAYERS), seating: number[] = Array(PLAYERS);
   for (let i = 0; i < PLAYERS; i++) { const v = (await view(code, toks[i]))!; const mine = v.game!.mine!; dealt[mine.seat] = mine.dealt; seating[mine.seat] = i; }
   const center = [...stored]; for (const d of dealt) center.splice(center.indexOf(d), 1);

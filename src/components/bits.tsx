@@ -44,17 +44,17 @@ export function CommandButton({ id, args, children, variant = "plain", icon, sho
 
 export const art = (role: RoleId | null) => `/art/${role ?? "back"}.webp`;
 
-export function RoleArt({ role, size, label, className = "" }: { role: RoleId | null; size?: number; label?: string; className?: string }) {
-  return <img className={`role-art${role ? "" : " is-back"} ${className}`} src={art(role)} width={size} height={size} alt={label ?? (role ? ROLE[role].name : "Face-down card")} draggable={false} loading="lazy" decoding="async" />;
-}
-
 /**
  * A card that can be face down or face up, and turns over (a 3D flip) when its face changes from hidden to shown.
  * `role === null` is face down.
  */
-export function Card({ role, size, className = "", label, style, flipDelay = 0 }: { role: RoleId | null; size?: number | string; className?: string; label?: string; style?: CSSProperties; flipDelay?: number }) {
+export function Card({ role, size, className = "", label, style, flipDelay = 0, reveal = false }: {
+  role: RoleId | null; size?: number | string; className?: string; label?: string; style?: CSSProperties; flipDelay?: number;
+  /** Start face down and turn over once shown, even if the face is already known. */
+  reveal?: boolean;
+}) {
   const [face, setFace] = useState<RoleId | null>(role);
-  const [up, setUp] = useState(!!role);
+  const [up, setUp] = useState(!!role && !reveal);
   useEffect(() => {
     if (role) { setFace(role); const t = setTimeout(() => setUp(true), 30 + flipDelay); return () => clearTimeout(t); }
     setUp(false);
@@ -75,17 +75,12 @@ export function Card({ role, size, className = "", label, style, flipDelay = 0 }
 export function TeamBadge({ team, short }: { team: Team; short?: boolean }) {
   return <span className={`team-badge team-${team}`}><span className="team-pip" aria-hidden />{short ? (team === "lone" ? "Alone" : TEAM_NAME[team].replace(" team", "")) : TEAM_NAME[team]}</span>;
 }
-export function TeamDot({ role }: { role: RoleId }) {
-  const team = ROLE[role].team;
-  return <span className={`team-pip team-${team}`} title={TEAM_NAME[team]} aria-label={TEAM_NAME[team]} />;
-}
-
 /** The full card for a role: art, name, team and rule. */
-export function RoleCard({ role, caption, children, compact }: { role: RoleId; caption?: string; children?: ReactNode; compact?: boolean }) {
+export function RoleCard({ role, caption, children, compact, reveal }: { role: RoleId; caption?: string; children?: ReactNode; compact?: boolean; reveal?: boolean }) {
   const r = ROLE[role];
   return (
     <div className={`role-card${compact ? " is-compact" : ""}`}>
-      <Card role={role} className="role-card-art" />
+      <Card role={role} className="role-card-art" reveal={reveal} flipDelay={reveal ? 1700 : 0} />
       <div className="role-card-text">
         {caption && <div className="eyebrow">{caption}</div>}
         <h3>{r.name}</h3>
@@ -128,21 +123,4 @@ export function CountdownRing({ from, until, size = 64, children, label }: { fro
   );
 }
 
-/** Time left until `until`, as text with a thin draining bar. */
-export function Countdown({ from, until, label }: { from: number; until: number; label?: string }) {
-  const now = useNow();
-  const left = Math.max(0, until - now);
-  const frac = until > from ? left / (until - from) : 0;
-  return (
-    <div className={`countdown${left < 10000 ? " is-low" : ""}`} role="timer" aria-label={label}>
-      <span className="countdown-time">{clock(left)}</span>
-      <span className="countdown-bar"><span style={{ transform: `scaleX(${Math.min(1, frac)})` }} /></span>
-    </div>
-  );
-}
-
-export function Ordinal({ n }: { n: number }) {
-  const s = n % 100 >= 11 && n % 100 <= 13 ? "th" : (["th", "st", "nd", "rd"][n % 10] ?? "th");
-  return <>{n}{s}</>;
-}
 export const ordinal = (n: number) => `${n}${n % 100 >= 11 && n % 100 <= 13 ? "th" : (["th", "st", "nd", "rd"][n % 10] ?? "th")}`;
