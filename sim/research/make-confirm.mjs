@@ -11,15 +11,19 @@ const src = {
   "F6-Q3-two-wolves-lure": ["sim/tournaments/p5/fine1.json", "F6-Q3-two-wolves-lure"],
   "F8-Q3-dressed-phoenix": ["sim/tournaments/p5/fine2.json", "F8-Q3-dressed-phoenix"],
   "F5-Q3-pyre-burn": ["sim/tournaments/p5/fine1.json", "F5-Q3-pyre-burn"],
+  "F-K7-duel": ["sim/tournaments/players-7/fine1.json", "F-K7-duel"],
   "PY6-S1-fakesage": ["sim/tournaments/players-6/fine1.json", "PY6-S1-fakesage"],
   "PY6-S2-twowolfreads": ["sim/tournaments/players-6/fine1.json", "PY6-S2-twowolfreads"],
 };
-const arms = { off: {}, open: { openingStatements: true }, spares: { lureSparesPhoenix: true } };
+const arms = { off: {}, open: { openingStatements: true }, spares: { lureSparesPhoenix: true }, cond: { bloodPriceCondemned: true } };
 // [file, scenario, arm, replays]
 const plan = {
   "c7": [["F-P7-ember", "off", 5], ["F-P7-ember", "open", 10], ["F-P7-ember", "spares", 5]],
   "c5": [["F6-Q3-two-wolves-lure", "open", 10], ["F8-Q3-dressed-phoenix", "off", 5], ["F8-Q3-dressed-phoenix", "open", 10], ["F8-Q3-dressed-phoenix", "spares", 5], ["F6-Q3-two-wolves-lure", "off", 5]],
   "c6": [["PY6-S1-fakesage", "off", 5], ["PY6-S1-fakesage", "open", 5], ["PY6-S2-twowolfreads", "off", 5], ["PY6-S2-twowolfreads", "open", 5], ["PY6-S2-twowolfreads", "spares", 5]],
+  // added after the coordinator's 13:35 message (revised plan): K7 duel, F5, F6 with the condemned rule
+  "c7k": [["F-K7-duel", "off", 5], ["F-K7-duel", "open", 10]],
+  "c5b": [["F5-Q3-pyre-burn", "off", 5], ["F5-Q3-pyre-burn", "open", 10], ["F6-Q3-two-wolves-lure", "cond", 5]],
   "c7b": [["F-P7-inversion", "off", 5], ["F-P7-inversion", "open", 10]],
 };
 for (const [file, rows] of Object.entries(plan)) {

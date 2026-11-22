@@ -15,7 +15,8 @@ const p5 = read("docs/research/results/players-5.json"), p6 = read("docs/researc
 
 const ROSTER: Record<string, { roster: string; players: number; scenarios: string[] }> = {
   P7: { roster: "P7 Pyre (7 players): werewolf x2, phoenix, lure, embercarrier, sage, rustler, sentry, centaur, pickpocket; 3 centre", players: 7, scenarios: ["F-P7-ember", "F-P7-inversion"] },
-  Q3: { roster: "Q3 Little Pyre (5 players): werewolf x2, phoenix, lure, sage, rustler, sentry, centaur; 3 centre", players: 5, scenarios: ["F6-Q3-two-wolves-lure", "F8-Q3-dressed-phoenix"] },
+  K7: { roster: "K7 Shadow Court (7 players, two-team control): werewolf x2, moonsage, strayherder, sage, herder, rustler, sentry, centaur x2; 3 centre", players: 7, scenarios: ["F-K7-duel"] },
+  Q3: { roster: "Q3 Little Pyre (5 players): werewolf x2, phoenix, lure, sage, rustler, sentry, centaur; 3 centre", players: 5, scenarios: ["F6-Q3-two-wolves-lure", "F5-Q3-pyre-burn", "F8-Q3-dressed-phoenix"] },
   PY6: { roster: "PY6 Pyre with a twin (6 players): werewolf x2, phoenix, lure, sage, moonsage, rustler, centaur, pickpocket; 3 centre; bloodPriceCondemned on in this session", players: 6, scenarios: ["PY6-S1-fakesage", "PY6-S2-twowolfreads"] },
 };
 
@@ -30,6 +31,8 @@ const PRIOR: Record<string, Prior> = {
   "F-P7-ember~off": fromGroup("players-7.json", g7("F-P7-ember")),
   "F6-Q3-two-wolves-lure~off": fromP5("F6-Q3-two-wolves-lure", "players-5 session's own n=10 (its fine1 + fine3 extension; it reports 2 fingerprints, tie-decided 2)"),
   "F8-Q3-dressed-phoenix~off": fromP5("F8-Q3-dressed-phoenix"),
+  "F5-Q3-pyre-burn~off": fromP5("F5-Q3-pyre-burn"),
+  "F-K7-duel~off": fromGroup("players-7.json", g7("F-K7-duel")),
   "PY6-S1-fakesage~off": fromGroup("players-6.json", g6("PY6-S1-fakesage"), "bloodPriceCondemned off in the earlier games"),
   "PY6-S1-fakesage~open": fromGroup("players-6.json", g6("PY6-S1-open"), "bloodPriceCondemned off in the earlier games"),
   "PY6-S2-twowolfreads~off": fromGroup("players-6.json", g6("PY6-S2-twowolfreads"), "bloodPriceCondemned off in the earlier games"),
@@ -44,9 +47,15 @@ const count = (xs: string[]) => xs.reduce<Record<string, number>>((m, x) => ((m[
 const minority = (w: Record<string, number>) => { const n = Object.values(w).reduce((a, b) => a + b, 0); return n - Math.max(0, ...Object.values(w)); };
 const entropy = (w: Record<string, number>) => { const n = Object.values(w).reduce((a, b) => a + b, 0); return Math.round(-Object.values(w).reduce((a, k) => a + (k / n) * Math.log2(k / n), 0) * 100) / 100 || 0; };
 
+/** Winning team(s) from the seats that won: centaur / werewolf / pyre (a Pyre burning reports winningTeam "nobody"). */
+function whoWon(g: Game) {
+  const t = (s: string) => (s.startsWith("Centaur") ? "centaur" : s.startsWith("Werewolf") ? "werewolf" : s.startsWith("Pyre") ? "pyre" : s.toLowerCase());
+  const teams = [...new Set(g.seats.filter(s => s.won).map(s => t(s.endedOnTeam)))].sort();
+  return teams.join("+") || "nobody";
+}
 function perGame(g: Game) {
   const n = g.seats.length;
-  const tally = g.seats.map(s => g.seats.filter(v => v.votedFor === s.name).length);
+  const tally = g.seats.map(s => g.seats.filter(v => (v.votedFor ?? "").replace(/ \(seat \d+\)\.?$/, "") === s.name).length);
   const sorted = [...tally].sort((a, b) => b - a);
   const c = Math.round((sorted[0] / (n - 1)) * 100) / 100;
   const elimNames = g.seats.filter(s => s.eliminated).map(s => `${s.name}(${s.endedHolding})`);
@@ -54,7 +63,7 @@ function perGame(g: Game) {
   const strat = existsSync(`${g.dir}/strategies-confirm.json`) ? read(`${g.dir}/strategies-confirm.json`).used ?? [] : null;
   const j = g.judges;
   return {
-    label: g.label, code: g.code, fingerprint: g.fingerprint, winner: g.winningTeam ?? "nobody", eliminated: elimNames.join("+") || "nobody", c, band: band(c, elimNames.length > 0),
+    label: g.label, code: g.code, fingerprint: g.fingerprint, winner: whoWon(g), eliminated: elimNames.join("+") || "nobody", c, band: band(c, elimNames.length > 0),
     tieDecided: tie, randomVotes: g.seats.filter(s => s.voteWasRandom).length, messages: g.chat.filter(m => m.phase !== "vote").length,
     costUsd: Math.round(g.agents.reduce((a, x) => a + (x.costUsd ?? 0), 0) * 100) / 100,
     judges: j.map(x => ({ tom: x.tomRequired, deception: x.deceptionCleverness, path: x.pathDependence, noise: x.noise, howWon: x.howWon, label: x.howWonLabel, pivot: x.pivot })),
@@ -69,11 +78,11 @@ const out: any = { generatedBy: "sim/research/confirm-report.ts", generated: new
 let spend = 0;
 for (const [rk, r] of Object.entries(ROSTER)) {
   const ro: any = { roster: r.roster, scenarios: {} };
-  for (const sc of r.scenarios) for (const arm of ["off", "open", "spares"]) {
+  for (const sc of r.scenarios) for (const arm of ["off", "open", "cond", "spares"]) {
     const key = `${sc}~${arm}`;
     const gs = groups.get(key) ?? [];
     const prior = PRIOR[key];
-    if (!gs.length && !prior) continue;
+    if (!gs.length && (!prior || /F8-|inversion/.test(key))) continue; // deferred scenarios appear once played
     const pg = gs.map(perGame);
     spend += pg.reduce((a, x) => a + x.costUsd, 0);
     const js = pg.flatMap(x => x.judges);
@@ -81,7 +90,7 @@ for (const [rk, r] of Object.entries(ROSTER)) {
     const pairs = pg.filter(x => x.judges.length >= 2);
     const agree = (k: "tom" | "deception" | "path" | "noise") => mean(pairs.map(x => Math.abs(x.judges[0][k] - x.judges[1][k])));
     const strat: Record<string, { games: number; won: number; decisive: number }> = {};
-    for (const x of pg) if (x.strategies) { const seen = new Set<string>(); for (const u of x.strategies) { const k2 = `${u.strategy}|${u.team}`; if (seen.has(k2)) continue; seen.add(k2); const e = (strat[k2] ??= { games: 0, won: 0, decisive: 0 }); e.games++; if (x.winner === u.team) e.won++; if (u.decisive) e.decisive++; } }
+    for (const x of pg) if (x.strategies) { const seen = new Set<string>(); for (const u of x.strategies) { const k2 = `${u.strategy}|${u.team}`; if (seen.has(k2)) continue; seen.add(k2); const e = (strat[k2] ??= { games: 0, won: 0, decisive: 0 }); e.games++; if (x.winner.split("+").includes(u.team)) e.won++; if (u.decisive) e.decisive++; } }
     const newJ = { tom: mean(js.map(x => x.tom)), deception: mean(js.map(x => x.deception)), path: mean(js.map(x => x.path)), noise: mean(js.map(x => x.noise)) };
     const pooledW: Record<string, number> = { ...(prior?.winners ?? {}) };
     for (const [t, k] of Object.entries(winners)) pooledW[t] = (pooledW[t] ?? 0) + k;
