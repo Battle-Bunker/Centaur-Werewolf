@@ -102,3 +102,46 @@ first-order check. Falsified if the wolves win 2 or more of 3 natural games, or 
 - Coarse pass (2-3 natural deals each): Q1, Q2, Q3, Q4 and the control Q5 (2 games). Q6 only if budget allows.
 - Fine pass: Q1 (a Sage/Moonsage duel and a Spooker-through-the-read scenario), and the next best two from the coarse
   pass, 2-3 scenarios each, 5 replays.
+
+## Addendum 1 (12:20, after the coarse pass, BEFORE the fine pass): per-scenario predictions
+
+Coarse pass (12 games) changed two beliefs before the fine pass: (a) at 5 players a wolf-team ally that is not a
+Werewolf (Spooker) is a lightning rod: eliminating it is a wolf win, and the lone wolf's safe census claim plus the
+ally's suspicious look beat the Centaurs twice (verification game and Q1#1); (b) the "Open Book" control was not dead:
+with two Sages in the deck a Sage counter-claim cannot be refuted by counting (Q5#1, wolves, judges path 4). Q4
+(copiers) looked talk-dead (2 Centaur wins, judges path 1.0) and is dropped from the fine pass.
+
+| Scenario | What is fixed | Predicted winners over 5 replays | Talk-live? |
+| --- | --- | --- | --- |
+| F1 Q1 spooker-decoy (= coarse Q1#1) | lone wolf scents a Centaur; Spooker rotates Alder(Centaur)->Cass->centre 1; Sage+Moonsage+Rustler in centre; both Centaurs glanced centre 1 (Sage) | wolves 3, Centaurs 2 | yes (the wolf's centre-role claim is checkable only by a glance at the right slot; the Spooker's confession is the swing) |
+| F2 Q1 twin-duel (constructed) | Sage reads the wolf; Moonsage reads the Sage; Rustler peeks the Moonsage and sees "Sage"; Spooker in centre | Centaurs 2, wolves 3 | yes (the Rustler sincerely vouches for the fake Sage) |
+| F3 Q2 cutpurse-wolf (= coarse Q2#1) | 2 wolves; Cutpurse steals a wolf knowingly; Pickpocket lifts the Cutpurse card off the old wolf | wolves 3, Centaurs 2 | yes |
+| F4 Q2 lone-wolf (= coarse Q2#2) | lone wolf untouched; every Centaur claim consistent | Centaurs 5-0 | no (control) |
+| F5 Q3 pyre-burn (= coarse Q3#3) | Sage reads the lone wolf; Phoenix and a self-dressed Lure held | Centaurs 3, Pyre 2 | yes |
+| F6 Q3 two-wolves-lure (= coarse Q3#2) | 2 wolves held, Lure held (self-dressed), Phoenix and Sage in centre | wolves 3, Centaurs 2 | yes |
+
+Falsifiers: F4 not a 5-0 Centaur sweep means my "consistent honest claims = talk-dead" belief is wrong at 5 players;
+two or more of F1/F2/F3/F5/F6 sweeping 5-0 means P0b (about half sweep) was optimistic for these rosters.
+
+## Addendum 2 (12:50, after fine pass 1, BEFORE fine pass 2)
+
+Fine pass 1 vs Addendum 1: F3 (W3-C2), F5 (C3-Pyre 2, exactly as predicted), F6 (W2-C2-Pyre 1) talk-live; F4 swept
+5-0 Centaurs and is flagged degenerate, as predicted for the control. Misses: F1 swept for the wolves (predicted 3-2),
+F2 swept for the Centaurs (predicted a wolf lean): the wolves gave themselves away by slips (a census-only fact) and
+by pushing to eliminate the real Sage instead of arguing for "eliminate nobody".
+
+**New card (amendment for the F1 sweep): Drover** (`drover`), a Centaur-team shadow twin of the Spooker: the same
+blind 3-rotation in the Spooker's turn; a look shows the Drover. Why: in F1 the Spooker's rotation story marked its
+teller as wolf-side, so the honest Spooker was a free decoy and the wolf's census-safe claim stood unexamined (5-0).
+With a Drover in the deck a rotation confession proves nothing about team, so the decoy no longer collects the vote
+for free, and the Spooker gains a cover claim; both sides now need a model of who would confess what.
+
+| Scenario | What is fixed | Predicted (5 replays) | Talk-live? |
+| --- | --- | --- | --- |
+| D1 (= F1, Rustler replaced by Drover in the centre) | as F1; census now Sage, Moonsage, Drover | wolves 3, Centaurs 2 | yes |
+| D2 two rotators | Sage reads the wolf (Alder); Spooker carries the wolf card Alder -> Esme (Moonsage from the centre to Alder); Drover honestly rotates the centre | wolves 3, Centaurs 2 | yes |
+| F7 Q2 blind carrier | lone wolf; Pickpocket lifts the wolf card blind (old wolf becomes a Pickpocket, untold); Latecomer then swaps with the Centaur | Centaurs 3, wolves 2 | yes (the new holder learns he is a wolf from the table) |
+| F8 Q3 dressed Phoenix | Lure dresses the Phoenix as a Werewolf; Sage reads it; Rustler peeks the real wolf | Centaurs 2, Pyre 2, wolves 1 | yes |
+
+Falsifier for the Drover: D1 still 5-0 wolves with the Spooker eliminated in most replays (the decoy still works),
+or 5-0 Centaurs by mechanical collision (Drover claims refuted by counting).

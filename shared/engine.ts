@@ -419,6 +419,9 @@ function applyEffect(e: Effect, c: Ctx): Applied {
       // A random card distortion picks its wrong role once, when cast, so every look at that card agrees; a random
       // viewer distortion draws afresh at each look.
       if (e.target === "card") {
+        // Rule lureSparesPhoenix: a Lure's dress cannot land on the card DEALT as a Phoenix (wherever it lies now).
+        if (state.rules.lureSparesPhoenix && c.stepId === "lure" && ROLE[state.instRole[instAt(state, slot)]]?.tags.includes("phoenix"))
+          return { ev: { kind: "void", why: "Dress a card for the pyre: did not happen, because at this table the Lure may not dress the card dealt as the Phoenix" } };
         const role = e.value === "chosen" ? c.named! : wrongRole(state, cardAt(state, slot), c.rng);
         state.tokens[slotKey(slot)] = { ...state.tokens[slotKey(slot)], distort: role };
         return { ev: { kind: "distort", slot, role: e.value === "chosen" ? role : null }, hidden: e.value === "random" ? { role } : undefined };

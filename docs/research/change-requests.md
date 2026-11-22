@@ -102,3 +102,16 @@ backward-induction argument becomes stronger (the wolf can no longer wait to see
 From the app session: during a Hush cut the app's WebSocket is not cut server-side, so a browser's devtools can still
 tell a cut from a real drop. Wish: cut the transport for the victim's session for the cut window. Not done; the AI
 harness sees only the MCP 503, which already matches a real drop.
+
+## CR-13. All-day chat latency floor for AI tables [measured; NOT needed]
+Measured from each agent's own stream (65 games: coarse 1, fine 1-2, parity): the thinking time between an agent's
+last tool result and each `chat_send`. Later messages: median 5.3 s (Centaur team), 5.9 s (Werewolf team), 5.8 s
+(Pyre); p90 16.0 / 15.0 / 12.7 s: no meaningful asymmetry. FIRST messages: Centaur 2.7 s, Werewolf 7.1 s, Pyre 7.3 s
+(medians): the whole latency asymmetry is in composing the opening claim (plus deliberate waiting). So no all-day floor
+in the shim; the opening is the only place that needs handling, and `openingStatements` (CR-10) does that, with the
+side effects recorded in log.md (it favours pre-committed stories). A cheaper harness-only alternative for comparison
+runs: the shim holds each agent's FIRST `chat_send` of the day until 15 s after the day starts (not built).
+
+## CR-12. Test the Den Census itself on the S3 duel [proposal]
+S3 swept 5-0 under the full census, a partial census and simultaneous claims: each time decided by "a wolf with the
+census would know the Sage is held". Test `census: "off"` on S3 (5 replays, ~$15). Prediction: Centaurs 3, wolves 2.

@@ -17,6 +17,8 @@ export interface Rules {
   biteNamesBiter: boolean;
   /** When nobody holds the role the Eavesdropper names, it gets a real result of its own as if it held it. Off: nothing. */
   eavesdropGhost: boolean;
+  /** The Lure may not dress the card dealt as a Phoenix (it may still dress any other card). */
+  lureSparesPhoenix: boolean;
   /** The discussion opens with simultaneous opening statements (held, revealed together in seat order). */
   openingStatements: boolean;
   /** How long the opening-statement window lasts, in seconds. */
@@ -53,6 +55,7 @@ export const DEFAULT_RULES: Rules = {
   dawnProclamations: true,
   biteNamesBiter: true,
   eavesdropGhost: true,
+  lureSparesPhoenix: false,
   openingStatements: false,
   openingSeconds: 60,
   bloodPriceCondemned: false,
@@ -109,6 +112,11 @@ export const RULE_DEFS: RuleDef[] = [
     id: "eavesdropGhost", kind: "boolean", title: "Eavesdropper's own result", tooltip: "What the Eavesdropper gets when nobody holds the role it names.",
     on: "If nobody was dealt the role the Eavesdropper names, it secretly gets a real result of its own as if it held that role (looks only, never moves), and is not told which case happened.",
     off: "If nobody was dealt the role the Eavesdropper names, it learns nothing.",
+  },
+  {
+    id: "lureSparesPhoenix", kind: "boolean", title: "The Lure spares the Phoenix", tooltip: "Whether the Lure may dress the card dealt as the Phoenix.",
+    on: "The Lure may not dress the card dealt as a Phoenix (a dress aimed at it does not happen); it may still dress any other card. The Pyre must get its Phoenix burned by talk, not by an honest seer's sincere testimony.",
+    off: "The Lure may dress any card, the Phoenix included.",
   },
   {
     id: "openingStatements", kind: "boolean", title: "Opening statements", tooltip: "Whether the discussion opens with simultaneous opening statements.",
