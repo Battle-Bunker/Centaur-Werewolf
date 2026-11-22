@@ -29,8 +29,8 @@ seals, the vote phase, the Hush and presence). Any card may appear up to 12 time
 | 25 | Cuckoo | Loner | | Looks at a card; lays a public egg on a seat (random at dawn if unheld) | Holder wins if the egged seat falls and they do not |
 | 30 | Sage | Centaur | seer | Reads a player's card | Team |
 | 35 | Centaur (×4) | Centaur | | Looks at a centre card | Team |
-| 40 | Herald | Centaur | seer | Proclaims a centre card (two with 5+ centre), published at dawn | Team |
-| 42 | Forger | Werewolf | | Sees the Herald's proclamation; forges as many, published with it | Needs a Herald and dawn proclamations |
+| 40 | Herald | Centaur | seer | Proclaims "at least one of these two centre cards is a <role>", published at dawn | Needs a Forger |
+| 42 | Forger | Werewolf | | Sees the Herald's proclamation; forges one of the same form, published with it | Needs a Herald and dawn proclamations |
 | 45 | Rustler | Centaur | | Peeks at a player; may trade (conditional) | Team |
 | 50 | Farrier | Centaur | | Peeks at a centre card; may give it to self or clockwise | Team |
 | 55 | Spooker | Werewolf | | Rotates three cards, unseen | Team |
@@ -40,19 +40,19 @@ seals, the vote phase, the Hush and presence). Any card may appear up to 12 time
 | 93 | Eavesdropper | Werewolf | wolf pack | Pack + census; names a non-pack night role and copies its holder's night (or a ghost result) | Team |
 | 96 | Biter | Werewolf | wolf pack | Pack + census; looks at a true card, may bite (conditional): the seat joins the Werewolf team at dawn | Team |
 | – | Chiron | Centaur | | – | Vote counts twice |
-| – | Signet | Centaur | | – | One signed chat message |
+| – | Signet | Centaur | | – | One nameless message sealed "the Signet" |
 | 2 / 3 | Gleaner / Echo | Centaur (until copying) | | Copies a centre card / a player's card (`adopt`), then acts in the copied role's turn | As the copied role |
 | 5 | Phoenix | Pyre | phoenix | (Only under `phoenixKnowsKindlers`: learns the Kindlers) | The Pyre wins if its holder is eliminated |
 | 5 | Kindler, Lure, False Witness, Ember-Carrier, Heavy Hand, Heir | Pyre | kindler | Shared turn "The brood gathers": where the Phoenix was dealt, who the Kindlers are; Lure: a chosen card distortion | Pyre; per kind: Lure (card distortion), False Witness (forged seal), Ember-Carrier (blind night swap of two players' cards), Heavy Hand (double vote), Heir (becomes Phoenix if none is held at dawn) |
 | 14 | Will-o'-Wisp | Werewolf | | Distorts a card: a random wrong role to every look | Team |
 | 16 / 17 | Mistweaver / Fogbank | Werewolf | | Veils a player's centre looks: a chosen / random wrong role | Team |
-| 32 | Notary | Centaur | seer | Reads a player's card | Day: one sealed report composed from that look (`chat: "report"`) |
+| 32 | Notary | Centaur | seer | Reads two players' cards | Day: one nameless sealed report "at least one of A's and B's cards was a <role>" (`chat: "report"`) |
 | 44 | Poacher | Werewolf | | Must swap with a player, then looks at the new card | Team (its card's team goes to the victim) |
 | 46 / 47 / 48 | Cutpurse / Pickpocket / Drifter | Centaur | | Must swap (then look) / swap blind / swap with a centre card (then look) | Team |
 | 88 | Latecomer | Centaur | | Must swap blind with a player, late | Team |
 | (Sage) | Moonsage | Werewolf | | The Sage's action in the Sage's turn | Ally; looks show a Sage |
 | (Centaur) | Dun Centaur | Werewolf | wolf | The Centaur's action in its turn | A Werewolf outside the pack |
-| (Herald) | Pale Herald | Werewolf | | A true proclamation in the Herald's turn | Ally; looks show a Herald |
+| (Herald) | Pale Herald | Werewolf | | A Herald's proclamation in the Herald's turn | Ally; looks show a Herald |
 | (Rustler) | Dusk Rustler | Werewolf | wolf | The Rustler's action in its turn | A Werewolf outside the pack |
 | (Herder) | Stray Herder | Werewolf | | The Herder's count in its turn | Ally; looks show a Herder |
 | – | Counterfeiter | Werewolf | | – | Day: one forged seal (Signet text or Notary report) |
@@ -70,7 +70,7 @@ the lobby, shown in both views and described in the MCP rules text. A game copie
 | --- | --- | --- | --- |
 | `bloodPrice` | true | bool | Centaurs win only if more wolf cards than Centaur-team players are eliminated |
 | `census` | `"all"` | all / three / off | What the pack learns of the roles dealt to the centre |
-| `dawnProclamations` | true | bool | Proclamations published together at dawn in random order (required with a Forger) |
+| `dawnProclamations` | true | bool | Proclamations published together at dawn in random order (required with a Herald or Forger) |
 | `biteNamesBiter` | true | bool | Whether the bitten player is told the Biter's seat |
 | `eavesdropGhost` | true | bool | Unheld named role: a ghost result from the Eavesdropper's seat, or nothing |
 | `daySwap` | false | bool | The Moon-Thief's vote-lock swap (off: abilities should not rewrite the result after the talk) |
@@ -107,7 +107,7 @@ A role's night action is a script of **steps**; a step may ask for targets (`pic
 | `swap`, `rotate` | Cards move, carrying their tokens (glamour) with them |
 | `learnSeats` | Which other seats were dealt a tagged role (all, or a random few) |
 | `learnMoved` | Whether nearby cards moved tonight |
-| `announce` | A public proclamation (at dawn under `dawnProclamations`) |
+| `announce` | A public proclamation "at least one of these two centre cards is a <role>" (at dawn under `dawnProclamations`) |
 | `count` | How many tagged cards lie in the centre (truth) |
 | `census` | The roles dealt to the centre, per the `census` rule |
 | `distort` | target card (a token that travels with it) or viewer (their centre looks), value chosen or random: looks show a wrong role tonight |
@@ -254,6 +254,42 @@ are named parts that do not tick on the clock or others' turns; `versionKey` in 
 - **Video.** Each seat's `.seat-media` is a 4:3 box sized from the table's dimensions and the player count. A video
   element replaces the avatar inside it; the card thumbnail, notes and name bar are overlays and stay. Hovering a seat
   enlarges it; an active-speaker class can reuse that rule. Hiding the side panel gives the table the full width.
+
+### The app's side of the gate (src/app/store.tsx)
+
+The app treats every failure as one thing: *no answer by the deadline*.
+
+- **Heartbeat.** `presence.heartbeat` every `view.presence.heartbeatMs`, one at a time. The connection state comes from
+  this alone: a heartbeat with no answer within 8 s, or refused, counts as trouble; a refusal is held until that same
+  8 s deadline, so it can never arrive sooner than silence would. After a 2 s grace the page shows "Reconnecting…".
+  While reconnecting it probes every second (a refusal then settles at once) and clears on the first answer.
+- **The view.** Read with `useQueries`, so a refused view is a value, not a crash; the last view received stays on
+  screen in both cases, and presence is computed against the server time of that last view (nobody seems to change).
+- **Commands.** Refused locally while reconnecting, with the same words for every cause. A command that gets no answer
+  in 10 s, or is refused as unreachable (held to the same 10 s), reports "Not sent", and the Convex client is replaced,
+  so nothing the page reported as not sent can be delivered on reconnecting. Typed text stays in the box.
+- **Quiet.** The Convex client runs with `logger: false` and no unsaved-changes prompt; the error text never reaches
+  the screen. The only remaining difference is outside the page's reach: during a real drop the browser itself logs
+  WebSocket failures in its developer tools.
+- **Presence on seats.** Each seat tile shows the server's liveness recomputed against the clock: a lost connection
+  dims the tile like a frozen video and says "Offline", the same for every cause; it will carry over to video tiles.
+
+## The app
+
+`src/` is drawn from the data: teams, turns (shared and twin turns), steps, effects, rule settings and the registry.
+Nothing names a card id, so a new or changed card renders without UI changes; an unknown log event still reads as text.
+
+- **Lobby** (`Setup.tsx`): the deck by team with search, the table rules (one `setup.setRule` per control), timers,
+  and at a play-test table the host's fixed-deal editor (seating, cards per seat, deal and night seeds).
+- **Night** (`PlanBuilder.tsx`): one click queues an unconditional choice; a step after a look can branch on sets of
+  cards; steps that name a role show the legal roles. Copiers get "If I become…": a tab per role they might become,
+  the same editor with `as`, and a coverage line across roles; after the copy, the copied role's steps, live in its turn.
+- **Day and vote** (`SidePanel.tsx`, `CentreStage.tsx`): private notices (copy, bite, Heir), the ready toggle, the
+  ballot on the table, once-per-game powers (seals, forged seals, the cut, the day swap), what you know, and warnings
+  derived from the deck (forgeable seals and proclamations, distortion, twins, copiers, movers, the cut).
+- **Result** (`Result.tsx`): the verdict, the resolution in the engine's order, what is revealed now (cuts, forged
+  seals and proclamations), each seat's dealt / became / held and why, random votes, and the night log with what each
+  distorted look showed beside the truth. Which physical card a seat holds is replayed from the log's moves.
 
 ## Known limits
 

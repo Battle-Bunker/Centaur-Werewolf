@@ -56,10 +56,16 @@ It states the game exactly as built. Design history: docs/design/synthesis.md an
   role; Fogbank: a random wrong role at each look). **Werewolf-team looks and the Herder's count always see the truth.**
   Team-only looks show the team of the role seen. Proclamations publish what their maker saw. Conditional plans branch
   on what the actor saw. Distortions last until dawn.
-- **Proclamations** (Herald, Pale Herald) are anonymous; a Forger adds forged ones indistinguishable from them.
-- **Seals**: a sealed chat message reads "The game confirms this was sent by the player DEALT <role>". A Counterfeiter's
-  forgery is identical until the game ends. The seal proves the claimed DEALT role of the sender, nothing about the card
-  held now.
+- **The evidence amendment**: the game never publishes a pure, easy confirmation. Everything it vouches for in public is
+  indirect (a pair, a relation), ambiguous, and fakeable: a defector card in the deck can produce the identical artefact,
+  and the deck rules guarantee one is in the deck (it may lie in the centre). Private looks are unaffected.
+- **Proclamations** (Herald, Pale Herald) say "at least one of these two centre cards is a <role>", published at dawn,
+  anonymous. A deck with a proclamation must hold a Forger, whose forged proclamations are identical (any two centre
+  cards, any role in the deck). Only the results tell them apart.
+- **Seals**: a sealed chat message is signed by a ROLE only ("Sealed: the Signet"), never by a player: no name, seat,
+  avatar or assistant marker until the game ends (the poster sees it is theirs). Real and forged seals are identical;
+  a deck with a sealing card (Signet, Notary) must hold a seal forger (Counterfeiter, False Witness). A Notary's report is
+  indirect: "at least one of <A>'s and <B>'s cards was a <role>".
 - **Presence**: a player shows offline after 16 s without a heartbeat. A Hush's cut makes its victim's connection fail for
   the cut length; others see exactly what a real drop looks like. Nothing a cut player sends goes through; a vote they
   could not cast becomes random. Only the results reveal cuts.
@@ -226,11 +232,11 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 - **Team:** Werewolf team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
 - **Night:** has its own turn, wake 42 (position 18 of the full roster's night order).
   - *See the Herald's proclamation* (automatic): sees what the Herald proclaimed so far tonight (or that nothing was).
-  - *Forge a proclamation* (MANDATORY): chooses a centre card (2 centre cards when the centre holds 5 or more); names any role in the deck; adds a forged proclamation of the named role at the chosen centre card(s), published at dawn exactly as the Herald's, in random order with the real ones.
+  - *Forge a proclamation* (MANDATORY): chooses 2 different cards (each a centre card); names any role in the deck; adds a forged proclamation "at least one of the two chosen centre cards is a <named role>", published at dawn exactly as the Herald's, in random order with the real ones.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
 - **Win:** with the Werewolf team.
-- **Card text:** You are not a Werewolf, but you side with them. You see what the Herald proclaimed tonight, or that nothing was. Then you name centre cards (as many as the Herald proclaims at this table) and a role in the deck for each: at dawn your forgery is published exactly like a Herald's proclamation, and nobody can tell which is which. A deck with a Forger must have a Herald. You win when the Werewolf team wins.
+- **Card text:** You are not a Werewolf, but you side with them. You see what the Herald proclaimed tonight, or that nothing was. Then you choose two centre cards and a role in the deck: at dawn "at least one of these two centre cards is a <role>" is published exactly like a Herald's proclamation, and nobody can tell which is which until the results. A deck with a Forger has a Herald, and a deck with a Herald has a Forger. You win when the Werewolf team wins.
 
 ### Spooker (`spooker`)
 
@@ -312,7 +318,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** once, the player DEALT it posts a forged Signet or Notary seal, identical to a real one until the end (chat_forgeSeal).
 - **Win:** with the Werewolf team.
-- **Card text:** You are not a Werewolf, but you side with them. You do nothing at night. Once during the day you may post one sealed message carrying the seal of a role in the deck that can seal (Signet: free text; Notary: "at night, <player>'s card was <role>" with the player and role of your choosing). Until the game ends it is identical, in every view, to a real one. You win when the Werewolf team wins.
+- **Card text:** You are not a Werewolf, but you side with them. You do nothing at night. Once during the day you may post one sealed message carrying the seal of a role in the deck that can seal (Signet: free text; Notary: "at night, at least one of <A>'s and <B>'s cards was a <role>" with the players and role of your choosing). Seals carry no name, and until the game ends yours is identical, in every view, to a real one. You win when the Werewolf team wins.
 
 ### Hush (`hush`)
 
@@ -347,11 +353,11 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
 - **Night:** acts in the Herald's turn (a shadow twin: one public turn for both), wake 40 (position 17 of the full roster's night order).
-  - *Proclaim a centre card* (MANDATORY): chooses a centre card (2 centre cards when the centre holds 5 or more); publishes to everyone what the chosen card(s) show right now (at dawn under the Proclamations-at-dawn rule), without saying who proclaimed.
+  - *Proclaim two centre cards* (MANDATORY): chooses 2 different cards (each a centre card); publishes to everyone "at least one of these two centre cards is a <role>", the role being what one of the two (chosen at random) shows right now; at dawn, without saying who proclaimed, indistinguishable from a Forger's.
 - **A look at this card shows:** a Herald (it passes for its original), except to Werewolf-team looks.
 - **Day / vote / chat powers:** none.
 - **Win:** with the Werewolf team.
-- **Card text:** You act in the Herald's turn and do exactly what the Herald does: Choose a centre card. Everyone, you included, is shown what it is at that moment, but not who showed it: at dawn, under the table's rule, together with any other proclamation. With five or six centre cards you choose two. The cards stay face down and may still be moved later. But you are on the Werewolf team, and you are not a Werewolf. Any look at your card shows a Herald. You win when the Werewolf team wins.
+- **Card text:** You act in the Herald's turn and do exactly what the Herald does: Choose two centre cards. At dawn everyone, you included, is shown "at least one of these two centre cards is a <role>", the role being what one of the two (chosen at random) showed at that moment. It does not say which of the two, nor who proclaimed it. A deck with a Herald always holds a Forger, whose forged proclamations look exactly the same; only the results tell them apart. The cards stay face down and may still be moved later. But you are on the Werewolf team, and you are not a Werewolf. Any look at your card shows a Herald. You win when the Werewolf team wins.
 
 ### Dusk Rustler (`duskrustler`)
 
@@ -400,21 +406,21 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: seer. Copies allowed: up to 12.
 - **Night:** has its own turn, wake 40 (position 17 of the full roster's night order).
-  - *Proclaim a centre card* (MANDATORY): chooses a centre card (2 centre cards when the centre holds 5 or more); publishes to everyone what the chosen card(s) show right now (at dawn under the Proclamations-at-dawn rule), without saying who proclaimed.
+  - *Proclaim two centre cards* (MANDATORY): chooses 2 different cards (each a centre card); publishes to everyone "at least one of these two centre cards is a <role>", the role being what one of the two (chosen at random) shows right now; at dawn, without saying who proclaimed, indistinguishable from a Forger's.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
 - **Win:** with the Centaur team.
-- **Card text:** Choose a centre card. Everyone, you included, is shown what it is at that moment, but not who showed it: at dawn, under the table's rule, together with any other proclamation. With five or six centre cards you choose two. The cards stay face down and may still be moved later.
+- **Card text:** Choose two centre cards. At dawn everyone, you included, is shown "at least one of these two centre cards is a <role>", the role being what one of the two (chosen at random) showed at that moment. It does not say which of the two, nor who proclaimed it. A deck with a Herald always holds a Forger, whose forged proclamations look exactly the same; only the results tell them apart. The cards stay face down and may still be moved later.
 
 ### Notary (`notary`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: seer. Copies allowed: up to 12.
 - **Night:** has its own turn, wake 32 (position 15 of the full roster's night order).
-  - *Read a player's card* (MANDATORY): chooses another player's card; sees the role of the chosen card.
+  - *Read two players' cards* (MANDATORY): chooses 2 different cards (each another player's card); sees the role of the chosen cards.
 - **A look at this card shows:** this card, unless distorted.
-- **Day / vote / chat powers:** once, the player DEALT it posts a sealed report the game composes from its night look (chat_sendReport).
+- **Day / vote / chat powers:** once, the player DEALT it posts a sealed report the game composes from its night look, "at least one of <A>'s and <B>'s cards was a <role>", with no name on it (chat_sendReport).
 - **Win:** with the Centaur team.
-- **Card text:** Look at one other player's card. Once during the day you may post a sealed report the game composes from what you saw: "at night, <player>'s card was <role>". The game marks it as sent by the player dealt Notary (a Counterfeiter can forge such a seal).
+- **Card text:** Look at two other players' cards. Once during the day you may post a sealed report the game composes from what you saw: "at night, at least one of <A>'s and <B>'s cards was a <role>", naming one of the two roles you saw (your choice). It is sealed "the Notary" and carries no name: nobody learns who posted it until the game ends. A deck with a Notary always holds a seal forger (Counterfeiter or False Witness), whose forged reports look exactly the same.
 
 ### Rustler (`rustler`)
 
@@ -512,9 +518,9 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
 - **Night:** no night action.
 - **A look at this card shows:** this card, unless distorted.
-- **Day / vote / chat powers:** once, the player DEALT it posts a free-text message sealed "sent by the player DEALT Signet" (chat_sendSigned).
+- **Day / vote / chat powers:** once, the player DEALT it posts a free-text message sealed "the Signet", with no name on it (chat_sendSigned).
 - **Win:** with the Centaur team.
-- **Card text:** You do nothing at night. Once during the day you may post a message that the game itself marks as sent by the player who was dealt Signet. It proves the card you were dealt, not the card you hold now.
+- **Card text:** You do nothing at night. Once during the day you may post a message sealed "the Signet". The seal names the role, never you: nobody learns who posted it until the game ends. A deck with a Signet always holds a seal forger (Counterfeiter or False Witness), whose forged Signet messages look exactly the same.
 
 ### Gleaner (`gleaner`)
 
@@ -577,7 +583,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** once, the player DEALT it posts a forged Signet or Notary seal, identical to a real one until the end (chat_forgeSeal).
 - **Win:** with the Pyre: every Pyre card's holder wins when a player holding a Phoenix card is eliminated (see section 5).
-- **Card text:** You are a Kindler of the Pyre. In the early turn "The brood gathers" (shared by every Kindler kind, and by the Phoenix only under the "Phoenix knows its kin" rule) you learn which seats were DEALT a Phoenix and which were dealt Kindler cards. You and every Kindler win exactly when a player holding a Phoenix card is eliminated, whether or not you survive (see the Pyre rules for when no player holds one). Once during the day you may post one forged sealed message (a Signet message, or a Notary's report "at night, <player>'s card was <role>" of your choosing), identical to a real one until the game ends. The sealing role must be in the deck.
+- **Card text:** You are a Kindler of the Pyre. In the early turn "The brood gathers" (shared by every Kindler kind, and by the Phoenix only under the "Phoenix knows its kin" rule) you learn which seats were DEALT a Phoenix and which were dealt Kindler cards. You and every Kindler win exactly when a player holding a Phoenix card is eliminated, whether or not you survive (see the Pyre rules for when no player holds one). Once during the day you may post one forged sealed message (a Signet message, or a Notary's report "at night, at least one of <A>'s and <B>'s cards was a <role>" of your choosing), identical to a real one until the game ends. The sealing role must be in the deck.
 
 ### Ember-Carrier (`embercarrier`)
 

@@ -2,7 +2,7 @@
  * The pure game engine: no Convex, no React, no clock. The server (convex/) calls it inside mutations and the client
  * uses the same functions to show legal targets and plan coverage, so the two can never disagree.
  */
-import { CENTER_MAX, CENTER_MIN, condSource, legalRoles, pickCount, ROLE, roleName, sameSlot, slotKey, type Effect, type Ref, type RoleDef, type RoleId, type Shape, type Slot, type StepDef, type Team, type WinRule } from "./roles";
+import { CENTER_MAX, CENTER_MIN, condSource, legalRoles, pickCount, ROLE, roleName, sameSlot, slotKey, type Effect, type Ref, type RoleDef, type RoleId, type Shape, type Slot, type StepDef, type Team } from "./roles";
 import { DEFAULT_RULES, type Rules } from "./settings";
 
 export type Rng = () => number;
@@ -63,9 +63,15 @@ export function uncovered(plan: StepPlan | undefined, outcomes: RoleId[]): RoleI
 
 // ───────────────────────────── state ─────────────────────────────
 
-/** A proclamation: a card as it was at one moment of the night, shown to everyone (at dawn, under that table rule). */
+/**
+ * A proclamation, shown to everyone (at dawn, under that table rule): "at least one of these two centre cards is a
+ * <role>", as the cards were at one moment of the night. Never a single card's identity (the evidence amendment): a
+ * Forger publishes the same artefact, and a deck with a Herald must hold a Forger.
+ */
 export interface Shown {
-  slot: Slot;
+  /** The two centre cards it names. */
+  slots: Slot[];
+  /** The role it says at least one of them is. */
   role: RoleId;
   /** The role whose turn it is published as ("herald"): a forgery is published as the Herald's. */
   by: RoleId;
@@ -143,12 +149,15 @@ export type LogEvent =
   | { kind: "seats"; label: string; seats: number[] }
   | { kind: "moved"; slots: Slot[]; moved: boolean[] }
   | { kind: "rotate"; slots: Slot[] }
+  /** "At least one of `slots` is `roles[0]`" (one role, two cards). */
   | { kind: "announce"; slots: Slot[]; roles: RoleId[]; atDawn: boolean }
   | { kind: "count"; label: string; n: number }
   | { kind: "census"; roles: RoleId[]; of: number }
   /** A distortion cast: on a card (`slot`) or on a viewer (`viewer`); `role` null means a random wrong role per look. */
   | { kind: "distort"; slot?: Slot; viewer?: number; role: RoleId | null }
+  /** Proclamation k named `slots[2k]` and `slots[2k+1]`, and said at least one of them is `roles[k]`. */
   | { kind: "witness"; by: RoleId; slots: Slot[]; roles: RoleId[] }
+  /** A forged proclamation: "at least one of `slots` is `roles[0]`". */
   | { kind: "forge"; slots: Slot[]; roles: RoleId[]; as: RoleId }
   | { kind: "overhear"; role: RoleId; copied: Overheard[] }
   | { kind: "bite"; seat: number; took: boolean }
@@ -182,7 +191,7 @@ export interface LogEntry {
    * What only the post-game log may show: the true cards behind a glamoured look, where an Eavesdropper's copy came
    * from. Views strip it until the game has ended.
    */
-  hidden?: { truth?: RoleId[]; source?: number | "ghost" | "none"; role?: RoleId };
+  hidden?: { truth?: RoleId[]; cards?: RoleId[]; source?: number | "ghost" | "none"; role?: RoleId };
 }
 
 export function shuffle<T>(xs: readonly T[], rng: Rng): T[] {
@@ -381,10 +390,13 @@ function applyEffect(e: Effect, c: Ctx): Applied {
       return { ev: { kind: "rotate", slots: picks } };
     }
     case "announce": {
+      // The two cards as the Herald's eyes see them (distortion applies); the game names one of the two at random.
       const seen = picks.map(s => seenAt(state, s, seat, c.rng));
+      const role = seen[Math.floor(c.rng() * seen.length)].role;
       const atDawn = state.rules.dawnProclamations;
-      picks.forEach((slot, i) => state.shown.push({ slot, role: seen[i].role, by: state.dealt[seat], turn: c.turn, atDawn }));
-      return { ev: { kind: "announce", slots: picks, roles: seen.map(x => x.role), atDawn }, hidden: seen.some(x => x.role !== x.truth) ? { truth: seen.map(x => x.truth) } : undefined };
+      // Always published as the Herald's, whoever made it (a Pale Herald, a copier): the label must not tell them apart.
+      state.shown.push({ slots: picks, role, by: "herald", turn: c.turn, atDawn });
+      return { ev: { kind: "announce", slots: picks, roles: [role], atDawn }, hidden: { cards: seen.map(x => x.role), ...(seen.some(x => x.role !== x.truth) ? { truth: seen.map(x => x.truth) } : {}) } };
     }
     case "count": return { ev: { kind: "count", label: e.label, n: state.cinst.filter(i => ROLE[effRole(state, i)].tags.includes(e.tag)).length } };
     case "adopt": {
@@ -413,11 +425,11 @@ function applyEffect(e: Effect, c: Ctx): Applied {
     }
     case "witness": {
       const made = state.shown.filter(s => s.by === e.by && !s.forged);
-      return { ev: { kind: "witness", by: e.by, slots: made.map(s => s.slot), roles: made.map(s => s.role) } };
+      return { ev: { kind: "witness", by: e.by, slots: made.flatMap(s => s.slots), roles: made.map(s => s.role) } };
     }
     case "forge": {
-      for (const slot of picks) state.shown.push({ slot, role: c.named!, by: e.as, turn: c.turn, atDawn: true, forged: true });
-      return { ev: { kind: "forge", slots: picks, roles: picks.map(() => c.named!), as: e.as } };
+      state.shown.push({ slots: picks, role: c.named!, by: e.as, turn: c.turn, atDawn: true, forged: true });
+      return { ev: { kind: "forge", slots: picks, roles: [c.named!], as: e.as } };
     }
     case "overhear": {
       const role = c.named!;
@@ -778,9 +790,14 @@ export function deckProblem(deck: RoleId[], players: number, center: number, rul
     if (!ROLE[id]) return `Unknown role ${id}.`;
     if (deck.filter(x => x === id).length > ROLE[id].max) return `Too many copies of ${ROLE[id].name}.`;
   }
-  if (deck.includes("forger") && !deck.includes("herald")) return "A Forger needs a Herald in the deck.";
-  if (deck.includes("forger") && !r.dawnProclamations) return "A Forger needs the \"Proclamations at dawn\" rule: otherwise the timing gives the forgery away.";
+  // The evidence amendment: every public artefact the game vouches for must be one a defector could have made, so each
+  // card that publishes one comes with a card that forges it, and nothing in the timing tells the two apart.
+  const proclaims = deck.some(id => ROLE[id].steps?.some(st => st.effects.some(e => e.kind === "announce")));
+  if (deck.includes("forger") && !proclaims) return "A Forger needs a Herald (or a Pale Herald) in the deck.";
+  if (proclaims && !deck.includes("forger")) return "A Herald needs a Forger in the deck: every proclamation must be one a Forger could have made.";
+  if ((proclaims || deck.includes("forger")) && !r.dawnProclamations) return "Proclamations need the \"Proclamations at dawn\" rule: otherwise the timing tells a forgery from a real one.";
   if (deck.some(id => ROLE[id].chat === "forge" && !["signet", "notary"].some(x => deck.includes(x)))) return "A card that forges seals (Counterfeiter, False Witness) needs a Signet or a Notary in the deck: there must be a seal to forge.";
+  if (deck.some(id => ROLE[id].chat === "signed" || ROLE[id].chat === "report") && !deck.some(id => ROLE[id].chat === "forge")) return "A Signet or a Notary needs a card that forges seals (Counterfeiter or False Witness) in the deck: every seal must be one a defector could have made.";
   if (r.daySwap && deck.some(id => ROLE[id].dayPower === "swap") && players < r.thiefMinPlayers) return `The Moon-Thief needs ${r.thiefMinPlayers} or more players at this table (the "Moon-Thief table size" rule).`;
   return null;
 }

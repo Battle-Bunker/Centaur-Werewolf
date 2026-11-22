@@ -1,0 +1,157 @@
+{
+ "timers": {
+  "dusk": 60,
+  "turn": 8,
+  "day": 240,
+  "vote": 60
+ },
+ "agents": {
+  "model": "opus",
+  "effort": "medium"
+ },
+ "redeal": "wolfDealt",
+ "tables": [
+  {
+   "label": "M1",
+   "replays": 2,
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "moonsage",
+    "duncentaur",
+    "sage",
+    "sage",
+    "centaur",
+    "centaur",
+    "rustler",
+    "sentry",
+    "pickpocket",
+    "drifter"
+   ],
+   "center": 4,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Gale",
+    "Hale"
+   ]
+  },
+  {
+   "label": "M2",
+   "replays": 2,
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "embercarrier",
+    "sage",
+    "moonsage",
+    "echo",
+    "sentry",
+    "centaur",
+    "rustler",
+    "pickpocket"
+   ],
+   "center": 4,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Gale",
+    "Hale"
+   ]
+  },
+  {
+   "label": "M3",
+   "replays": 2,
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "counterfeiter",
+    "hush",
+    "signet",
+    "sage",
+    "sage",
+    "centaur",
+    "rustler",
+    "sentry",
+    "pickpocket"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Gale",
+    "Hale"
+   ]
+  },
+  {
+   "label": "M4",
+   "replays": 2,
+   "deck": [
+    "werewolf",
+    "glamour",
+    "poacher",
+    "cutpurse",
+    "pickpocket",
+    "latecomer",
+    "sage",
+    "sage",
+    "sentry",
+    "centaur",
+    "rustler"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Gale",
+    "Hale"
+   ]
+  },
+  {
+   "label": "M5",
+   "replays": 2,
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "wisp",
+    "fogbank",
+    "sage",
+    "sage",
+    "centaur",
+    "centaur",
+    "rustler",
+    "sentry",
+    "drifter"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Gale",
+    "Hale"
+   ]
+  }
+ ]
+}

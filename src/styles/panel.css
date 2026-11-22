@@ -70,7 +70,7 @@
 .role-chip.is-on { background: var(--team); border-color: var(--team); color: var(--card); font-weight: 700; }
 .role-chip.is-on img { filter: none; opacity: 1; box-shadow: 0 0 0 1.5px var(--card); }
 .role-chip.is-elsewhere { border-style: dashed; color: var(--muted); }
-.role-chip.team-lone.is-on { color: #1d1405; }
+.role-chip.team-loner.is-on { color: #1d1405; }
 
 .decision { display: flex; flex-direction: column; gap: 8px; }
 .targets { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -150,7 +150,7 @@
 .deck-group { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
 .deck-group-head { display: grid; grid-template-columns: auto auto 1fr; align-items: baseline; gap: 4px 8px; padding: 8px 0 4px; border-bottom: 2px solid var(--team); }
 .deck-group-head b { font: 600 15px var(--display); color: var(--team); }
-.deck-group.team-lone .deck-group-head b { color: var(--amber-text); }
+.deck-group.team-loner .deck-group-head b { color: var(--amber-text); }
 .deck-group-head .quiet { grid-column: 1 / -1; }
 .deck { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .deck-role { display: grid; grid-template-columns: 48px 1fr auto; gap: 10px; align-items: center; padding: 6px 0; border-bottom: 1px dashed var(--line); }
@@ -160,7 +160,7 @@
 .deck-role.is-in .deck-role-art img { filter: none; opacity: 1; }
 .deck-role-art:hover img { transform: scale(1.06) rotate(-2deg); }
 .deck-role-count { position: absolute; right: -6px; top: -6px; min-width: 20px; height: 20px; border-radius: 10px; display: grid; place-items: center; background: var(--team); color: var(--card); font: 700 11px var(--font); box-shadow: 0 0 0 2px var(--paper-2); animation: pop .35s var(--spring); }
-.team-lone .deck-role-count { color: #1d1405; }
+.team-loner .deck-role-count { color: #1d1405; }
 .deck-role-text { display: flex; flex-direction: column; min-width: 0; }
 .deck-role-text b { font-size: 15px; }
 .deck-role-text .quiet { font-size: 12.5px; line-height: 1.3; }
@@ -191,7 +191,7 @@
 .verdict h2 { font-size: 30px; font-style: italic; font-weight: 600; }
 .verdict-centaur h2 { color: var(--primary); }
 .verdict-werewolf h2 { color: var(--secondary); }
-.verdict-lone h2 { color: var(--amber-text); }
+.verdict-loner h2 { color: var(--amber-text); }
 .verdict .verdict-you { align-self: flex-start; }
 .reveal-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .reveal-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; padding: 9px 0; border-bottom: 1px dashed var(--line); animation: fade-up .45s var(--ease-out) both; animation-delay: calc(var(--k) * 90ms + .3s); }

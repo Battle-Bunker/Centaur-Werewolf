@@ -242,32 +242,35 @@ export const COMMANDS = [
   }),
   define({
     id: "chat.sendSigned", perceivable: true, title: "Post your signed message", group: "talk", runs: "server", effect: "write", confirm: "inline", caller: "seated", contexts: ["day"],
-    description: "Once per game, the player DEALT Signet may post a message the game itself marks as sent by the player dealt Signet. It proves the dealt card, not the card held now.",
-    tooltip: "Post your one message that the game marks as coming from the player dealt Signet.", keywords: ["signet", "seal", "verified", "prove"],
+    description: "Once per game, the player DEALT Signet may post a message sealed \"the Signet\". The seal names the role, never the player: no name or seat is shown until the game ends, and a forger's Signet seal looks exactly the same.",
+    tooltip: "Post your one nameless message sealed \"the Signet\".", keywords: ["signet", "seal", "verified", "prove"],
     params: z.object({ text: z.string().trim().min(1).max(600) }).strict(),
     available: ctx => (ctx.chatPower === "signed" ? OK : no("Only the player dealt Signet can do this, once.", true)),
   }),
   define({
     id: "chat.sendReport", perceivable: true, title: "Post your sealed report", group: "talk", runs: "server", effect: "write", confirm: "inline", caller: "seated", contexts: ["day"],
-    description: "Once per game, the player DEALT Notary posts a sealed report the game composes from their night look: \"Sealed report: at night, <player> (seat n)'s card was <role>.\" No arguments. The game marks it as sent by the player dealt Notary (a Counterfeiter can forge such a seal).",
-    tooltip: "Post the sealed report of what you saw at night.", keywords: ["notary", "seal", "report", "prove"], params: none,
+    description: "Once per game, the player DEALT Notary posts a sealed report the game composes from their night look at two players: \"Sealed report: at night, at least one of <A> (seat a)'s and <B> (seat b)'s cards was a <role>.\" Arguments: { \"card\": <role id> } naming one of the two roles you saw (optional: one of the two at random). Sealed \"the Notary\", with no name or seat until the game ends; a forger's report looks exactly the same.",
+    tooltip: "Post the sealed report of what you saw at night.", keywords: ["notary", "seal", "report", "prove"],
+    params: z.object({ card: roleId.optional().describe("Which of the two roles you saw the report names.") }).strict(),
     available: ctx => (ctx.chatPower === "report" ? OK : no("Only the player dealt Notary can do this, once.", true)),
   }),
   define({
     id: "chat.forgeSeal", perceivable: true, title: "Post a forged seal", group: "talk", runs: "server", effect: "write", confirm: "inline", caller: "seated", contexts: ["day"],
-    description: "Once per game, the player DEALT Counterfeiter posts a message carrying another role's seal, identical in every view to the real one until the game ends. Arguments: { \"as\": \"signet\", \"text\": <up to 600 characters> } or { \"as\": \"notary\", \"seat\": <seat>, \"card\": <role id> } (published as \"Sealed report: at night, <player> (seat n)'s card was <role>.\"). The sealing role must be in the deck.",
+    description: "Once per game, the player DEALT Counterfeiter posts a message carrying another role's seal, identical in every view to the real one until the game ends. Arguments: { \"as\": \"signet\", \"text\": <up to 600 characters> } or { \"as\": \"notary\", \"seat\": <seat>, \"seat2\": <another seat>, \"card\": <role id> } (published as \"Sealed report: at night, at least one of <A> (seat a)'s and <B> (seat b)'s cards was a <role>.\"). The sealing role must be in the deck. Seals carry no name until the game ends.",
     tooltip: "Post one message under another role's seal.", keywords: ["counterfeit", "forge", "seal", "fake"],
     params: z.object({
       as: z.enum(["signet", "notary"]).describe("The seal to forge."),
       text: z.string().trim().min(1).max(600).optional().describe("With \"signet\": the message."),
-      seat: seatNo("With \"notary\": the player the report names").optional(),
-      card: roleId.optional().describe("With \"notary\": the role the report says that card was."),
-    }).strict(), seatArgs: ["seat"],
+      seat: seatNo("With \"notary\": the first player the report names").optional(),
+      seat2: seatNo("With \"notary\": the second player the report names").optional(),
+      card: roleId.optional().describe("With \"notary\": the role the report says at least one of the two cards was."),
+    }).strict(), seatArgs: ["seat", "seat2"],
     available: (ctx, args) => {
       if (ctx.chatPower !== "forge") return no("Only the player dealt Counterfeiter can do this, once.", true);
       const as = args?.as as "signet" | "notary" | undefined;
       if (as === "signet" && args && args.text === undefined) return no("A Signet seal needs \"text\".");
-      if (as === "notary" && args && (args.seat === undefined || args.card === undefined)) return no("A Notary seal needs \"seat\" and \"card\".");
+      if (as === "notary" && args && (args.seat === undefined || args.seat2 === undefined || args.card === undefined)) return no("A Notary seal needs \"seat\", \"seat2\" and \"card\".");
+      if (as === "notary" && args && args.seat === args.seat2) return no("A Notary report names two different players.");
       if (as && !ctx.deck.includes(as)) return no(`There is no ${ROLE[as].name} in this deck, so its seal would give you away.`);
       return OK;
     },

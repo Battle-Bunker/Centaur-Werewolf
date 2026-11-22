@@ -21,9 +21,9 @@
     "werewolf",
     "werewolf",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "rustler",
     "sentry"
    ],
@@ -43,9 +43,9 @@
     "werewolf",
     "werewolf",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "rustler",
     "sentry"
    ],
@@ -65,9 +65,9 @@
     "werewolf",
     "werewolf",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "rustler",
     "sentry"
    ],
@@ -87,9 +87,9 @@
     "werewolf",
     "werewolf",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "rustler",
     "sentry"
    ],
@@ -111,9 +111,9 @@
     "phoenix",
     "kindler",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 41001
@@ -134,9 +134,9 @@
     "phoenix",
     "kindler",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 41002
@@ -157,9 +157,9 @@
     "phoenix",
     "kindler",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 41003
@@ -180,9 +180,9 @@
     "phoenix",
     "kindler",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 41004
@@ -203,9 +203,9 @@
     "phoenix",
     "lure",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 42001
@@ -226,9 +226,9 @@
     "phoenix",
     "lure",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 42002
@@ -249,9 +249,9 @@
     "phoenix",
     "lure",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 42003
@@ -272,9 +272,9 @@
     "phoenix",
     "lure",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 42004
@@ -297,7 +297,7 @@
     "sage",
     "notary",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 43001
@@ -320,7 +320,7 @@
     "sage",
     "notary",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 43002
@@ -343,7 +343,7 @@
     "sage",
     "notary",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 43003
@@ -366,7 +366,7 @@
     "sage",
     "notary",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 43004
@@ -387,9 +387,9 @@
     "phoenix",
     "embercarrier",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 44001
@@ -410,9 +410,9 @@
     "phoenix",
     "embercarrier",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 44002
@@ -433,9 +433,9 @@
     "phoenix",
     "embercarrier",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 44003
@@ -456,9 +456,9 @@
     "phoenix",
     "embercarrier",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 44004
@@ -479,9 +479,9 @@
     "phoenix",
     "heavyhand",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 45001
@@ -502,9 +502,9 @@
     "phoenix",
     "heavyhand",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 45002
@@ -525,9 +525,9 @@
     "phoenix",
     "heavyhand",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 45003
@@ -548,9 +548,9 @@
     "phoenix",
     "heavyhand",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 45004
@@ -571,9 +571,9 @@
     "phoenix",
     "heir",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 46001
@@ -594,9 +594,9 @@
     "phoenix",
     "heir",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 46002
@@ -617,9 +617,9 @@
     "phoenix",
     "heir",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 46003
@@ -640,9 +640,9 @@
     "phoenix",
     "heir",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 46004
@@ -664,7 +664,7 @@
     "lure",
     "embercarrier",
     "sage",
-    "notary",
+    "herder",
     "centaur",
     "rustler"
    ],
@@ -687,7 +687,7 @@
     "lure",
     "embercarrier",
     "sage",
-    "notary",
+    "herder",
     "centaur",
     "rustler"
    ],
@@ -710,7 +710,7 @@
     "lure",
     "embercarrier",
     "sage",
-    "notary",
+    "herder",
     "centaur",
     "rustler"
    ],
@@ -733,7 +733,7 @@
     "lure",
     "embercarrier",
     "sage",
-    "notary",
+    "herder",
     "centaur",
     "rustler"
    ],
@@ -757,10 +757,10 @@
     "lure",
     "heir",
     "sage",
-    "notary",
+    "herder",
     "centaur",
     "cutpurse",
-    "herald"
+    "farrier"
    ],
    "seed": 48001
   },
@@ -782,10 +782,10 @@
     "lure",
     "heir",
     "sage",
-    "notary",
+    "herder",
     "centaur",
     "cutpurse",
-    "herald"
+    "farrier"
    ],
    "seed": 48002
   },
@@ -807,10 +807,10 @@
     "lure",
     "heir",
     "sage",
-    "notary",
+    "herder",
     "centaur",
     "cutpurse",
-    "herald"
+    "farrier"
    ],
    "seed": 48003
   },
@@ -832,10 +832,10 @@
     "lure",
     "heir",
     "sage",
-    "notary",
+    "herder",
     "centaur",
     "cutpurse",
-    "herald"
+    "farrier"
    ],
    "seed": 48004
   },
@@ -863,7 +863,7 @@
     "notary",
     "centaur",
     "cutpurse",
-    "herald"
+    "farrier"
    ],
    "seed": 49001
   },
@@ -891,7 +891,7 @@
     "notary",
     "centaur",
     "cutpurse",
-    "herald"
+    "farrier"
    ],
    "seed": 49002
   },
@@ -919,7 +919,7 @@
     "notary",
     "centaur",
     "cutpurse",
-    "herald"
+    "farrier"
    ],
    "seed": 49003
   },
@@ -947,7 +947,7 @@
     "notary",
     "centaur",
     "cutpurse",
-    "herald"
+    "farrier"
    ],
    "seed": 49004
   },
@@ -974,10 +974,10 @@
     "embercarrier",
     "heavyhand",
     "sage",
-    "notary",
+    "herder",
     "centaur",
     "cutpurse",
-    "herald"
+    "farrier"
    ],
    "seed": 50001
   },
@@ -1004,10 +1004,10 @@
     "embercarrier",
     "heavyhand",
     "sage",
-    "notary",
+    "herder",
     "centaur",
     "cutpurse",
-    "herald"
+    "farrier"
    ],
    "seed": 50002
   },
@@ -1034,10 +1034,10 @@
     "embercarrier",
     "heavyhand",
     "sage",
-    "notary",
+    "herder",
     "centaur",
     "cutpurse",
-    "herald"
+    "farrier"
    ],
    "seed": 50003
   },
@@ -1064,10 +1064,10 @@
     "embercarrier",
     "heavyhand",
     "sage",
-    "notary",
+    "herder",
     "centaur",
     "cutpurse",
-    "herald"
+    "farrier"
    ],
    "seed": 50004
   },
@@ -1087,9 +1087,9 @@
     "gleaner",
     "echo",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 51001
@@ -1110,9 +1110,9 @@
     "gleaner",
     "echo",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 51002
@@ -1133,9 +1133,9 @@
     "gleaner",
     "echo",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 51003
@@ -1156,9 +1156,9 @@
     "gleaner",
     "echo",
     "sage",
-    "notary",
+    "herder",
     "centaur",
-    "herald",
+    "farrier",
     "sentry"
    ],
    "seed": 51004
@@ -1181,10 +1181,10 @@
     "gleaner",
     "echo",
     "sage",
-    "notary",
+    "herder",
     "centaur",
     "centaur",
-    "herald",
+    "farrier",
     "rustler",
     "sentry"
    ],
@@ -1208,10 +1208,10 @@
     "gleaner",
     "echo",
     "sage",
-    "notary",
+    "herder",
     "centaur",
     "centaur",
-    "herald",
+    "farrier",
     "rustler",
     "sentry"
    ],
@@ -1235,10 +1235,10 @@
     "gleaner",
     "echo",
     "sage",
-    "notary",
+    "herder",
     "centaur",
     "centaur",
-    "herald",
+    "farrier",
     "rustler",
     "sentry"
    ],
@@ -1262,10 +1262,10 @@
     "gleaner",
     "echo",
     "sage",
-    "notary",
+    "herder",
     "centaur",
     "centaur",
-    "herald",
+    "farrier",
     "rustler",
     "sentry"
    ],

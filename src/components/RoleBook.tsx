@@ -1,6 +1,19 @@
 /** The role reference: every role with its art, team, rule and when it wakes, filterable by team or by this deck. */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { NIGHT_ROLES, ROLE, ROLES, TEAM_NAME, type RoleId, type Team } from "../../shared/roles";
+import { turnKey } from "../../shared/engine";
+import { ROLE, ROLES, roleName, TEAM_NAME, type RoleId, type Team } from "../../shared/roles";
+import { actsAtNight, rolesInTurn, ROSTER_TURNS, teamShort, TEAMS } from "../app/teams";
+
+const CHAT_WORDS: Record<string, string> = {
+  signed: "Once, posts a message the game seals as sent by the player dealt this card.",
+  report: "Once, posts a sealed report the game writes from its night look.",
+  forge: "Once, posts a message under another role's seal, identical to a real one until the game ends.",
+  unsigned: "Once, posts a message with no name on it.",
+};
+const DAY_WORDS: Record<string, string> = {
+  cut: "Once, cuts a player off for a while, exactly as if their connection dropped. Only the results reveal it.",
+  swap: "Under the day-swap rule: queues a secret swap of two other players' cards, made as the vote ends.",
+};
 import { useApp } from "../app/store";
 import { ordinal, TeamBadge } from "./bits";
 import { IconMoon, IconX } from "./icons";
@@ -41,11 +54,12 @@ export function RoleBook() {
   const [sel, setSel] = useState<RoleId>(dialog?.kind === "roles" && dialog.role ? dialog.role : ROLES[0].id);
   const list = useMemo(() => ROLES.filter(r => filter === "all" || (filter === "deck" ? deck.includes(r.id) : r.team === filter)), [filter, deck]);
   const r = ROLE[sel];
-  const wakeAt = NIGHT_ROLES.findIndex(x => x.id === sel);
+  const wakeAt = r && actsAtNight(r) ? ROSTER_TURNS.indexOf(turnKey(r.id)) : -1;
   const filters: { id: Filter; label: string }[] = [
-    { id: "all", label: `All ${ROLES.length}` }, { id: "werewolf", label: "Werewolf team" }, { id: "centaur", label: "Centaur team" }, { id: "lone", label: "Alone" },
+    { id: "all", label: `All ${ROLES.length}` }, ...TEAMS.map(t => ({ id: t as Filter, label: teamShort(t) })),
     ...(deck.length ? [{ id: "deck" as Filter, label: "In this deck" }] : []),
   ];
+  const kin = r ? rolesInTurn(turnKey(r.id)).filter(x => x !== r.id) : [];
   return (
     <Modal onClose={() => setDialog(null)} className="rolebook" labelledBy="rolebook-title">
       <header className="modal-head">
@@ -76,11 +90,16 @@ export function RoleBook() {
             <p className="rolebook-rule">{r.rules}</p>
             <dl>
               <dt>At night</dt>
-              <dd>{wakeAt >= 0 ? <><IconMoon size={14} /> Wakes {ordinal(wakeAt + 1)} of the {NIGHT_ROLES.length} night roles{wakeAt > 0 ? `, after the ${NIGHT_ROLES[wakeAt - 1].name}` : ", first"}.</> : "Sleeps through the night."}</dd>
-              {r.steps && <><dt>Steps</dt><dd>{r.steps.map(s => s.title).join(" → ")}</dd></>}
+              <dd>{wakeAt >= 0 ? <><IconMoon size={14} /> Wakes {ordinal(wakeAt + 1)} of the {ROSTER_TURNS.length} night turns{r.twinOf ? `, in the ${roleName(r.twinOf)}'s turn (a shadow twin)` : r.turnOf && r.turnOf !== r.id ? `, in the shared ${roleName(r.turnOf)} turn` : ""}{kin.length ? `. Also in this turn: ${kin.map(roleName).join(", ")}` : ""}.</> : "Sleeps through the night."}</dd>
+              {r.steps && actsAtNight(r) && <><dt>Steps</dt><dd>{r.steps.map(s => `${s.title}${s.optional ? " (may decline)" : ""}`).join(" → ")}</dd></>}
+              {r.looksAs && <><dt>When looked at</dt><dd>Shows as a {roleName(r.looksAs)} (except to the Werewolf team).</dd></>}
               {r.vote && <><dt>At the vote</dt><dd>{r.vote.weight ? `Whoever holds it votes ${r.vote.weight === 2 ? "twice" : `${r.vote.weight} times`}.` : r.vote.takesTargetDown ? "If eliminated, takes their vote target down too." : "Protects whoever they vote for."}</dd></>}
-              {r.chat && <><dt>In the day</dt><dd>{r.chat === "signed" ? "One message the game marks as sent by the player dealt Signet." : "One message with no name on it."}</dd></>}
-              <dt>Copies</dt><dd>Up to {r.max} in a deck.</dd>
+              {r.chat && <><dt>In the day</dt><dd>{CHAT_WORDS[r.chat] ?? r.chat}</dd></>}
+              {r.dayPower && <><dt>In the day</dt><dd>{DAY_WORDS[r.dayPower] ?? r.dayPower}</dd></>}
+              {r.decoy && <><dt>If eliminated</dt><dd>Its team wins the main result outright.</dd></>}
+              {r.heir && <><dt>At dawn</dt><dd>Becomes a Phoenix if no player holds one.</dd></>}
+              {r.win && <><dt>Wins</dt><dd>{r.win === "markEliminated" ? "If the seat it marked is eliminated and its holder is not." : "Exactly when the seat it bonded to wins."}</dd></>}
+              {r.max < 12 && <><dt>Copies</dt><dd>Up to {r.max} in a deck.</dd></>}
             </dl>
           </div>
         </article>

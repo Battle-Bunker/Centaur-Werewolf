@@ -168,7 +168,7 @@ await tool(host.key, "game_abandon");
 check("the host of a play-test table can abandon a round", (await tool<V>(host.key, "room_view")).phase === "lobby");
 
 console.log("\nseals, forgery, the Hush's cut and presence");
-const DECK2 = ["notary", "counterfeiter", "hush", "signet", "werewolf", "centaur", "sage", "rustler", "herald", "sentry"];
+const DECK2 = ["notary", "counterfeiter", "hush", "signet", "werewolf", "centaur", "sage", "rustler", "farrier", "sentry"];
 for (const role of (await view(table.code, host.token))!.settings.deck) await run("setup.removeRole", host.token, table.code, { role });
 for (const role of DECK2) await run("setup.addRole", host.token, table.code, { role });
 await run("setup.setTimer", host.token, table.code, { timer: "dusk", seconds: 5 });
@@ -179,10 +179,15 @@ v = await tool<V>(host.key, "room_view", { compact: true });
 for (let i = 0; i < 12 && v.phase === "night"; i++) { await tool(host.key, "room_wait", { version: v.version, until: "phase" }); v = await tool<V>(host.key, "room_view", { compact: true }); }
 check("the second game reaches the day", v.phase === "day");
 await tool(ada.key, "chat_sendReport");
-await tool(bo.key, "chat_forgeSeal", { as: "notary", seat: 4, card: "sage" });
-const sealed = (await tool<V>(di.key, "room_view")).chat.slice(-2) as unknown as { from: string; text: string; verified?: string; FORGED?: string }[];
-console.log(`       ${sealed.map(m => `${m.from}: ${m.text} [${m.verified}]`).join("\n       ")}`);
-check("a real and a forged seal look the same to everyone during the game", sealed.length === 2 && sealed.every(m => /^Sealed report: at night, .+ \(seat \d\)'s card was \w+\.$/.test(m.text) && m.verified === sealed[0].verified && !m.FORGED) && Object.keys(sealed[0]).sort().join() === Object.keys(sealed[1]).sort().join());
+await tool(bo.key, "chat_forgeSeal", { as: "notary", seat: 4, seat2: 3, card: "sage" });
+type Sealed = { from: string; seat: number | null; text: string; sealed?: string; yours?: boolean; FORGED?: string };
+const sealed = (await tool<V>(di.key, "room_view")).chat.slice(-2) as unknown as Sealed[];
+console.log(`       ${sealed.map(m => `${m.from}: ${m.text} [${m.sealed}]`).join("\n       ")}`);
+check("a real and a forged seal look the same to everyone during the game", sealed.length === 2 && sealed.every(m => /^Sealed report: at night, at least one of .+ \(seat \d\)'s and .+ \(seat \d\)'s cards was an? [\w -]+\.$/.test(m.text) && m.sealed === sealed[0].sealed && m.from === sealed[0].from && !m.FORGED) && Object.keys(sealed[0]).sort().join() === Object.keys(sealed[1]).sort().join());
+check("a seal names a role, never a player: no name or seat over MCP", sealed.every(m => m.from === "sealed: the Notary" && m.seat === null && !m.yours));
+const appSealed = (await view(table.code, di.token))!.messages.slice(-2);
+check("nor in the app view: no name, seat, assistant marker or ownership", appSealed.every(m => m.name === null && m.seat === null && m.via === null && m.mine === false && /^Sealed: the Notary\./.test(m.sealNote ?? "")));
+check("the poster alone sees that a seal is theirs", ((await tool<V>(ada.key, "room_view")).chat.slice(-2) as unknown as Sealed[]).map(m => !!m.yours).join() === "true,false" && (await view(table.code, ada.token))!.messages.slice(-2).map(m => m.mine).join() === "true,false");
 const seenBo = async () => (await tool<{ players: { connection: string }[] }>(ada.key, "room_view", { compact: true })).players[1].connection;
 check("Bo shows online while connected", (await seenBo()) === "online");
 const adaBefore = Object.keys(await tool(ada.key, "room_view")).sort().join();
@@ -203,7 +208,7 @@ check("the results reveal the forged seal", ((await tool<V>(di.key, "room_view")
 
 console.log("\na copier, the brood and the ember, replayed");
 await tool(host.key, "game_playAgain");
-const DECK3 = ["echo", "phoenix", "embercarrier", "kindler", "werewolf", "lure", "sage", "centaur", "herald", "sentry"];
+const DECK3 = ["echo", "phoenix", "embercarrier", "kindler", "werewolf", "lure", "sage", "centaur", "farrier", "sentry"];
 for (const role of (await view(table.code, host.token))!.settings.deck) await run("setup.removeRole", host.token, table.code, { role });
 for (const role of DECK3) await run("setup.addRole", host.token, table.code, { role });
 await run("setup.fixDeal", host.token, table.code, { seats: table.seats.map(s => s.id), cards: DECK3, nightSeed: 12345 });

@@ -3,7 +3,7 @@
  * goes through `exec(commandId, args)`, which is the registry's `run` mutation for server commands and a local
  * handler for `ui.*` commands; components never call a mutation directly.
  */
-import { useConvex, useMutation, useQuery } from "convex/react";
+import { useMutation, useQueries } from "convex/react";
 import type { FunctionReturnType } from "convex/server";
 import { ConvexError } from "convex/values";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
@@ -13,6 +13,13 @@ import type { RoleId, Slot } from "../../shared/roles";
 import { readNumber, routeFromHash, saveNumber, TOKEN, type Route } from "./session";
 
 export type View = NonNullable<FunctionReturnType<typeof api.rooms.view>>;
+/** The connection as this person experiences it. One state for every cause: a lost network and a server that will not answer look the same. */
+export type Link = "ok" | "reconnecting";
+/** The words for anything not sent while the connection is down, whatever the cause. */
+export const NOT_CONNECTED = "Not sent: you are not connected. Reconnecting to the table…";
+/** How long a heartbeat, and any command, may go without an answer before it counts as lost. */
+const BEAT_DEADLINE_MS = 8000, SEND_DEADLINE_MS = 10000, GRACE_MS = 2000;
+const isUnreachable = (e: unknown) => e instanceof ConvexError && typeof e.data === "string" && e.data.startsWith("UNREACHABLE");
 export type Message = View["messages"][number];
 
 /** Targets on the table that can be clicked right now, and what clicking one does. `chosen` is in pick order. */
@@ -53,21 +60,33 @@ interface App {
   setTab(t: Tab): void;
   toasts: { id: number; text: string; tone?: "error" | "ok" }[];
   toast(text: string, tone?: "error" | "ok"): void;
-  online: boolean;
+  /** The connection: ok, or reconnecting (showing the last data received). */
+  link: Link;
+  /** The server's clock, as best known (for presence). Frozen while reconnecting, so nothing seems to change. */
+  serverNow(): number;
 }
 
 const Ctx = createContext<App | null>(null);
 export const useApp = () => useContext(Ctx)!;
 
-export function AppProvider({ children }: { children: ReactNode }) {
+export function AppProvider({ children, resetConnection }: { children: ReactNode; resetConnection?: () => void }) {
   const [route, setRoute] = useState(routeFromHash);
   useEffect(() => { const on = () => setRoute(routeFromHash()); addEventListener("hashchange", on); return () => removeEventListener("hashchange", on); }, []);
   const go = useCallback((c: string | null) => { location.hash = c ? `#/${c}` : ""; setRoute(c ? { kind: "room", code: c } : { kind: "home" }); }, []);
   const code = route.kind === "room" ? route.code : null;
 
-  const view = useQuery(api.rooms.view, code ? { code, token: TOKEN } : "skip");
+  // The room view. A failing view (the server refuses to serve this player, or anything else) is never shown as an
+  // error: the last view received stays on screen and the page says it is reconnecting, exactly as on a lost network.
+  const queries = useMemo((): Parameters<typeof useQueries>[0] => (code ? { view: { query: api.rooms.view, args: { code, token: TOKEN } } } : {}), [code]);
+  const res = useQueries(queries) as { view?: View | null | Error };
+  const raw = res.view;
+  const last = useRef<{ code: string | null; view: View | null | undefined; at: number; offset: number }>({ code: null, view: undefined, at: 0, offset: 0 });
+  if (last.current.code !== code) last.current = { code, view: undefined, at: 0, offset: 0 };
+  // A failing view keeps the last one on screen; it is not itself a signal (the heartbeat's deadline is).
+  const viewFailing = raw instanceof Error;
+  if (!viewFailing && raw !== undefined && raw !== last.current.view) last.current = { code, view: raw, at: Date.now(), offset: raw ? raw.serverNow - Date.now() : 0 };
+  const view = last.current.view;
   const mutate = useMutation(api.commands.run);
-
   const [ui, setUiState] = useState<Ui>(() => ({ assistant: false, sidebar: true, dock: readNumber("cw.dock", 220) }));
   const setUi = useCallback((patch: Partial<Ui>) => setUiState(u => { if (patch.dock) saveNumber("cw.dock", patch.dock); return { ...u, ...patch }; }), []);
   const [picker, setPicker] = useState<Picker | null>(null);
@@ -85,19 +104,57 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setTimeout(() => setToasts(t => t.filter(x => x.id !== id)), 4500);
   }, []);
 
-  // The connection to the server, for the "reconnecting" banner. Checked gently; a short blip shows nothing.
-  const convex = useConvex();
-  const [online, setOnline] = useState(true);
+  // The connection, as one state, from one signal: does the heartbeat get an answer before its deadline? A refusal
+  // from the server is held until that same deadline, so a server that will not answer and a network that cannot
+  // carry the answer look alike in every way, timing included. Then the same short grace before it shows.
+  const hbFailing = useRef(false);
+  const [link, setLink] = useState<Link>("ok");
+  const troubleSince = useRef<number | null>(null);
+  const frozenAt = useRef<number | null>(null);
   useEffect(() => {
-    let down = 0;
-    const t = setInterval(() => {
-      const s = convex.connectionState();
-      down = s.isWebSocketConnected ? 0 : down + 1;
-      setOnline(down < 3);
-    }, 1000);
+    const tick = () => {
+      const bad = hbFailing.current;
+      if (!bad) troubleSince.current = null;
+      else troubleSince.current ??= Date.now();
+      const next: Link = troubleSince.current !== null && Date.now() - troubleSince.current >= GRACE_MS ? "reconnecting" : "ok";
+      setLink(l => (l === next ? l : next));
+    };
+    const t = setInterval(tick, 500);
     return () => clearInterval(t);
-  }, [convex]);
+  }, []);
+  // While reconnecting, the clock for presence stops where the last data was received: nobody seems to change.
+  if (link === "reconnecting") frozenAt.current ??= last.current.view ? last.current.view.serverNow : Date.now() + last.current.offset;
+  else frozenAt.current = null;
+  const serverNow = useCallback(() => frozenAt.current ?? Date.now() + last.current.offset, []);
 
+  // The heartbeat the server expects (presence.heartbeat, every view.presence.heartbeatMs). One at a time; one that
+  // fails or does not come back within a few seconds counts as trouble. Never a toast, never a log.
+  const member = !!view?.me;
+  const beatMs = view?.presence.heartbeatMs ?? 5000;
+  useEffect(() => {
+    if (!code || !member) return;
+    let pending = false, stopped = false;
+    const beat = () => {
+      if (pending || stopped) return;
+      pending = true;
+      // No answer by the deadline is trouble. A refusal waits for the deadline too, so it cannot arrive sooner than
+      // silence would; the next heartbeat goes once this one has settled, so a lost network does not pile them up.
+      const sentAt = Date.now();
+      const late = setTimeout(() => { hbFailing.current = true; }, BEAT_DEADLINE_MS);
+      mutate({ id: "presence.heartbeat", token: TOKEN, code, args: {} }).then(
+        () => { clearTimeout(late); hbFailing.current = false; pending = false; },
+        // Once already reconnecting, a refusal settles at once and the next probe follows within a second.
+        () => { setTimeout(() => { hbFailing.current = true; pending = false; }, hbFailing.current ? 0 : Math.max(0, BEAT_DEADLINE_MS - (Date.now() - sentAt))); },
+      );
+    };
+    beat();
+    let since = Date.now();
+    const t = setInterval(() => { if (Date.now() - since >= (hbFailing.current ? 1000 : beatMs)) { since = Date.now(); beat(); } }, 250);
+    return () => { stopped = true; clearInterval(t); };
+  }, [code, member, beatMs, mutate]);
+
+  const linkRef = useRef(link);
+  linkRef.current = link;
   const ctx = view?.context ?? HOME_CONTEXT;
   const exec = useCallback(async (id: CommandId, args: Record<string, unknown> = {}, opts: ExecOptions = {}) => {
     const cmd = COMMAND[id];
@@ -112,19 +169,32 @@ export function AppProvider({ children }: { children: ReactNode }) {
       }
       return null;
     }
+    // Nothing is sent, and nothing is queued for later, while the connection is down: the same refusal for every cause.
+    if (linkRef.current === "reconnecting" && cmd.contexts[0] !== "home") {
+      if (!opts.quiet) toast(NOT_CONNECTED, "error");
+      throw new ConvexError(NOT_CONNECTED);
+    }
+    const sentAt = Date.now();
     try {
-      const result = await mutate({ id, token: TOKEN, code: opts.code ?? code ?? undefined, args });
+      const timeout = new Promise<never>((_, no) => setTimeout(() => no(new ConvexError(NOT_CONNECTED)), SEND_DEADLINE_MS));
+      const result = await Promise.race([mutate({ id, token: TOKEN, code: opts.code ?? code ?? undefined, args }), timeout]);
       if ((id === "room.create" || id === "room.join") && !opts.stay) go((result as { code: string }).code);
       if (id === "room.leave") go(null);
       return result;
     } catch (e) {
-      if (!opts.quiet) toast(e instanceof ConvexError ? String(e.data) : "That did not go through. Try again.", "error");
-      throw e;
+      const unreachable = isUnreachable(e) || (e instanceof ConvexError && e.data === NOT_CONNECTED);
+      // It may still sit in the client's queue (no answer at all). Replace the client, so "not sent" stays true; the
+      // same whatever the cause, so the two cases cannot differ even in how the page reconnects.
+      if (unreachable) resetConnection?.();
+      // A refusal for being unreachable is reported when silence would have been: at the deadline.
+      if (unreachable) await new Promise(ok => setTimeout(ok, Math.max(0, SEND_DEADLINE_MS - (Date.now() - sentAt))));
+      if (!opts.quiet) toast(unreachable ? NOT_CONNECTED : e instanceof ConvexError ? String(e.data) : "That did not go through. Try again.", "error");
+      throw unreachable ? new ConvexError(NOT_CONNECTED) : e;
     }
-  }, [mutate, code, go, toast, closePalette]);
+  }, [mutate, code, go, toast, closePalette, resetConnection]);
 
-  const app = useMemo<App>(() => ({ route, code, view, ctx, exec, go, ui, setUi, picker, setPicker, palette, openPalette, closePalette, dialog, setDialog, tab, setTab, toasts, toast, online }),
-    [route, code, view, ctx, exec, go, ui, setUi, picker, palette, openPalette, closePalette, dialog, tab, toasts, toast, online]);
+  const app = useMemo<App>(() => ({ route, code, view, ctx, exec, go, ui, setUi, picker, setPicker, palette, openPalette, closePalette, dialog, setDialog, tab, setTab, toasts, toast, link, serverNow }),
+    [route, code, view, ctx, exec, go, ui, setUi, picker, palette, openPalette, closePalette, dialog, tab, toasts, toast, link, serverNow]);
   return <Ctx.Provider value={app}>{children}</Ctx.Provider>;
 }
 
