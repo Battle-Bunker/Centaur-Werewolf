@@ -254,3 +254,26 @@ Pyre-heavy; D6's balance depends on whether the Phoenix is read as a wolf.
 - `settings.rules` may carry `bloodPriceCondemned`, `packCovers` (booleans) and `census: "allButOne"`.
 - `game.final.inst` (instance per seat) and `game.final.cinst` (instance per centre slot) in the app view.
 - A census journal line may end with "Pack covers (...)"; a result's `notes` may carry the condemned-Blood-Price note.
+
+## 2026-11-22 CR-9 parity test (P6: 3 wolf-team hands of 6; ~$30)
+
+| Arm | Predicted | Result | c | Judges ToM / dec / path / noise | I4 |
+| --- | --- | --- | --- | --- | --- |
+| rule off (control, 3 replays) | wolves 2-3 of 3 | **wolves 3-0** (2 framed the Rustler, 1 forced a 3-3 Blood Price tie) | .8 .6 .8 | 2.2 / 2.5 / **1.5** / 1.0 | **DEGENERATE** |
+| `bloodPriceCondemned` (5 replays) | Centaurs 3-4 of 5; path >= 2.5 | **Centaurs 4, wolves 1**; path 3.3 | .6 x5 | 1.9 / 2.7 / 3.3 / 1.3 | talk-live |
+
+Prediction held in both arms. With the rule, the three honest players held their two true reads against a three-voice
+wolf story, and the 3-3 tie that used to be a wolf win became a Centaur win; the one wolf win (#4) came from talk: a
+late "Dov may secretly have taken Cass's wolf" argument split the Centaurs' votes. The rule turns the parity scenario
+from degenerate to talk-live. What it does not change: the vote shape. Every game was a 3-3 bloc-vs-bloc tie (c = 0.6
+every time), and ToM stayed under 2: once both sides vote as blocs the game is decided by whether the honest bloc
+stays together. Recommendation: make `bloodPriceCondemned` the default at 6 and 8 players (where parity deals are
+common) and keep deck composition limiting wolf-team hands (the 6-player session's rule of thumb).
+*Heuristic 13 (with the 6p session's P6-1): under Blood Price, any configuration where one side can force a tie with
+its own votes is decided by arithmetic. Check every roster for "can a team reach half the hands?" and, if so, whether a
+tie it forces counts.*
+Note on instruments (from the 8-player session): judges can score high path dependence in every replay of a scenario
+that sweeps (8p Lure-Phoenix 5-0 with path 3.6; my S3 5-0 with path 3.0). Per-game path dependence measures "the talk
+was pivotal in this game", not "a different talk would have changed this scenario". The charter's talk-live test
+already requires a minority outcome, so a sweep is never talk-live; report "path high but swept" separately as
+"decided by a reliable argument" (heuristic 9).
