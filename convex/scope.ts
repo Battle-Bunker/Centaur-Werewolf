@@ -1,6 +1,6 @@
 /** Who is calling, in which room: loaded once and used by both the command dispatcher and the room view. */
 import type { QueryCtx } from "./_generated/server";
-import type { Doc } from "./_generated/dataModel";
+import type { Doc, Id } from "./_generated/dataModel";
 import type { CommandContext } from "../shared/commands";
 import { HOME_CONTEXT } from "../shared/commands";
 import { isAuto } from "../shared/engine";
@@ -16,12 +16,12 @@ export interface Scope {
   seat: number;
 }
 
-export async function loadScope(ctx: QueryCtx, token: string, code: string | undefined): Promise<Scope | null> {
+export async function loadScope(ctx: QueryCtx, caller: { token: string } | { player: Id<"players"> }, code: string | undefined): Promise<Scope | null> {
   if (!code) return null;
   const room = await ctx.db.query("rooms").withIndex("code", q => q.eq("code", code.toUpperCase())).unique();
   if (!room) return null;
   const players = await ctx.db.query("players").withIndex("room", q => q.eq("room", room._id)).collect();
-  const me = players.find(p => p.token === token) ?? null;
+  const me = players.find(p => ("player" in caller ? p._id === caller.player : p.token === caller.token)) ?? null;
   const game = room.game as Game | undefined;
   return { room, players, me, seat: me && game ? game.seats.indexOf(me._id) : -1 };
 }
@@ -43,8 +43,10 @@ export function contextOf(scope: Scope | null): CommandContext {
     seated: seat >= 0,
     host: !!me && room.host === me._id,
     players: players.length,
+    center: room.settings.centerCount,
     deck: room.settings.deck,
     openSteps: room.phase === "night" && game && seat >= 0 ? openSteps(game, seat) : [],
     voted: !!game && seat >= 0 && game.votes[seat] !== null,
+    chatPower: game && seat >= 0 && !game.chatUsed[seat] ? (ROLE[game.state.dealt[seat]].chat ?? null) : null,
   };
 }

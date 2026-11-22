@@ -8,8 +8,12 @@
  * @module
  */
 
+import type * as agent from "../agent.js";
+import type * as auth from "../auth.js";
 import type * as commands from "../commands.js";
 import type * as game from "../game.js";
+import type * as http from "../http.js";
+import type * as mcp from "../mcp.js";
 import type * as rooms from "../rooms.js";
 import type * as scope from "../scope.js";
 import type * as timers from "../timers.js";
@@ -21,8 +25,12 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  agent: typeof agent;
+  auth: typeof auth;
   commands: typeof commands;
   game: typeof game;
+  http: typeof http;
+  mcp: typeof mcp;
   rooms: typeof rooms;
   scope: typeof scope;
   timers: typeof timers;

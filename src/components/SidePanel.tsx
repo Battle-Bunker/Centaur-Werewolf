@@ -4,7 +4,7 @@ import { availability, COMMAND, TIMERS } from "../../shared/commands";
 import { deckProblem, type LogEntry } from "../../shared/engine";
 import { ROLE, ROLES, TEAM_NAME } from "../../shared/roles";
 import { useApp, type View } from "../app/store";
-import { describe, viaLabel } from "../app/text";
+import { describe, viaLabel } from "../../shared/text";
 import { CommandButton, RoleArt, RoleCard, TeamDot } from "./bits";
 import { PlanBuilder } from "./PlanBuilder";
 

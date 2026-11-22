@@ -2,7 +2,7 @@
  * The pure game engine: no Convex, no React, no clock. The server (convex/) calls it inside mutations and the client
  * uses the same functions to show legal targets and plan coverage, so the two can never disagree.
  */
-import { CENTER_CARDS, ROLE, condSource, sameSlot, slotKey, type Effect, type Ref, type RoleDef, type RoleId, type Slot, type StepDef, type Team } from "./roles";
+import { CENTER_MAX, CENTER_MIN, pickCount, ROLE, condSource, sameSlot, slotKey, type Effect, type Ref, type RoleDef, type RoleId, type Shape, type Slot, type StepDef, type Team } from "./roles";
 
 export type Rng = () => number;
 
@@ -46,6 +46,10 @@ export interface GameState {
   center: RoleId[];
   /** Keys of the slots whose card has changed tonight. */
   moved: string[];
+  /** What everyone has been shown: a card as it was at one moment, which later movement can make stale. */
+  shown: { slot: Slot; role: RoleId; turn: number }[];
+  /** Prophecies bound to cards (by role id): the seat named, or -1 for "nobody". */
+  prophecy: Record<RoleId, number>;
 }
 
 /** One actor's place in their night script. */
@@ -56,6 +60,7 @@ export interface Progress {
   seen: Record<string, RoleId[]>;
   done: boolean;
 }
+export const shapeOf = (state: GameState): Shape => ({ players: state.dealt.length, center: state.center.length });
 export const freshProgress = (): Progress => ({ step: 0, picks: {}, seen: {}, done: false });
 
 export type LogEvent =
@@ -63,6 +68,10 @@ export type LogEvent =
   | { kind: "swap"; a: Slot; b: Slot }
   | { kind: "seats"; label: string; seats: number[] }
   | { kind: "moved"; slots: Slot[]; moved: boolean[] }
+  | { kind: "rotate"; slots: Slot[] }
+  | { kind: "announce"; slots: Slot[]; roles: RoleId[] }
+  | { kind: "count"; label: string; n: number }
+  | { kind: "predict"; seat: number }
   | { kind: "skip" };
 
 export interface LogEntry {
@@ -82,10 +91,10 @@ export function shuffle<T>(xs: readonly T[], rng: Rng): T[] {
 }
 
 export function deal(deck: RoleId[], players: number, rng: Rng): GameState {
-  if (deck.length !== players + CENTER_CARDS) throw new Error(`The deck needs ${players + CENTER_CARDS} cards for ${players} players.`);
+  if (deck.length < players + CENTER_MIN) throw new Error("The deck is too small for this table.");
   const cards = shuffle(deck, rng);
   const dealt = cards.slice(0, players);
-  return { dealt, cards: [...dealt], center: cards.slice(players), moved: [] };
+  return { dealt, cards: [...dealt], center: cards.slice(players), moved: [], shown: [], prophecy: {} };
 }
 
 /** The roles in the deck that take a night turn, in wake order: one turn each, whether dealt or in the centre. */
@@ -95,13 +104,14 @@ export function nightTurns(deck: RoleId[]): RoleId[] {
 
 // ───────────────────────────── steps ─────────────────────────────
 
-export function legalTargets(step: StepDef, seat: number, players: number): Slot[] {
+export function legalTargets(step: StepDef, seat: number, { players, center }: Shape): Slot[] {
   if (!step.pick) return [];
   const out: Slot[] = [];
   for (const pool of step.pick.pools) {
     if (pool === "self") out.push({ k: "p", i: seat });
     if (pool === "others") for (let i = 0; i < players; i++) if (i !== seat) out.push({ k: "p", i });
-    if (pool === "center") for (let i = 0; i < CENTER_CARDS; i++) out.push({ k: "c", i });
+    if (pool === "cw") out.push({ k: "p", i: (seat + 1) % players });
+    if (pool === "center") for (let i = 0; i < center; i++) out.push({ k: "c", i });
   }
   return out;
 }
@@ -115,12 +125,13 @@ export function stepApplies(step: StepDef, seat: number, state: GameState): bool
 /** A step with nothing to decide: it just happens when the actor's turn comes. */
 export const isAuto = (step: StepDef) => !step.pick && !step.optional;
 
-export function validDecision(step: StepDef, seat: number, players: number, d: Decision): string | null {
+export function validDecision(step: StepDef, seat: number, shape: Shape, d: Decision): string | null {
   if (d.kind === "skip") return step.optional ? null : "This step cannot be skipped.";
   if (d.kind === "do") return step.pick ? "Choose a target." : null;
   if (!step.pick) return "This step takes no target.";
-  if (d.targets.length !== step.pick.count) return `Choose ${step.pick.count} target${step.pick.count === 1 ? "" : "s"}.`;
-  const legal = legalTargets(step, seat, players);
+  const count = pickCount(step, shape);
+  if (d.targets.length !== count) return `Choose ${count} target${count === 1 ? "" : "s"}.`;
+  const legal = legalTargets(step, seat, shape);
   for (const [n, t] of d.targets.entries()) {
     if (!legal.some(l => sameSlot(l, t))) return "That target is not allowed.";
     if (d.targets.findIndex(o => sameSlot(o, t)) !== n) return "Choose different targets.";
@@ -128,25 +139,26 @@ export function validDecision(step: StepDef, seat: number, players: number, d: D
   return null;
 }
 
-export function validPlan(role: RoleDef, stepId: string, seat: number, players: number, plan: StepPlan): string | null {
+export function validPlan(role: RoleDef, stepId: string, seat: number, shape: Shape, plan: StepPlan): string | null {
   const step = role.steps?.find(s => s.id === stepId);
   if (!step) return "No such step.";
   if (isAuto(step)) return "Nothing to decide at this step.";
   if (plan.branches.length && !condSource(role, stepId)) return "This step has nothing to be conditional on.";
   for (const d of [...plan.branches.map(b => b.decision), ...(plan.otherwise ? [plan.otherwise] : [])]) {
-    const err = validDecision(step, seat, players, d);
+    const err = validDecision(step, seat, shape, d);
     if (err) return err;
   }
   return null;
 }
 
-export function randomDecision(step: StepDef, seat: number, players: number, rng: Rng): Decision {
+export function randomDecision(step: StepDef, seat: number, shape: Shape, rng: Rng): Decision {
   const options: Decision[] = [];
   if (step.pick) {
-    const legal = legalTargets(step, seat, players);
-    if (step.pick.count === 1) for (const t of legal) options.push({ kind: "pick", targets: [t] });
-    else options.push({ kind: "pick", targets: shuffle(legal, rng).slice(0, step.pick.count) });
+    const legal = legalTargets(step, seat, shape), count = pickCount(step, shape);
+    if (count === 1) for (const t of legal) options.push({ kind: "pick", targets: [t] });
+    else options.push({ kind: "pick", targets: shuffle(legal, rng).slice(0, count) });
   } else options.push({ kind: "do" });
+  // A step with several targets has too many combinations to list; declining gets the weight of one target.
   if (step.optional) options.push({ kind: "skip" });
   return options[Math.floor(rng() * options.length)];
 }
@@ -165,11 +177,12 @@ function resolveRef(ref: Ref, seat: number, players: number, picks: Slot[], prog
 const cardAt = (state: GameState, s: Slot) => (s.k === "p" ? state.cards[s.i] : state.center[s.i]);
 const setCard = (state: GameState, s: Slot, r: RoleId) => { if (s.k === "p") state.cards[s.i] = r; else state.center[s.i] = r; };
 
-function applyEffect(e: Effect, state: GameState, seat: number, picks: Slot[], progress: Progress, stepId: string, rng: Rng): LogEvent | null {
+function applyEffect(e: Effect, state: GameState, seat: number, picks: Slot[], progress: Progress, stepId: string, turn: number, rng: Rng): LogEvent | null {
+  const touch = (s: Slot) => { if (!state.moved.includes(slotKey(s))) state.moved.push(slotKey(s)); };
   const players = state.dealt.length;
   switch (e.kind) {
     case "look": {
-      const slots = e.targets.map(t => resolveRef(t, seat, players, picks, progress));
+      const slots = e.targets === "picks" ? picks : e.targets.map(t => resolveRef(t, seat, players, picks, progress));
       const roles = slots.map(s => cardAt(state, s));
       if (e.reveal === "role") { progress.seen[stepId] = roles; return { kind: "look", slots, roles }; }
       return { kind: "look", slots, teams: roles.map(r => ROLE[r].team) };
@@ -179,8 +192,23 @@ function applyEffect(e: Effect, state: GameState, seat: number, picks: Slot[], p
       if (sameSlot(a, b)) return null;
       const ca = cardAt(state, a);
       setCard(state, a, cardAt(state, b)); setCard(state, b, ca);
-      for (const s of [a, b]) if (!state.moved.includes(slotKey(s))) state.moved.push(slotKey(s));
+      touch(a); touch(b);
       return { kind: "swap", a, b };
+    }
+    case "rotate": {
+      const held = picks.map(s => cardAt(state, s));
+      picks.forEach((s, i) => { setCard(state, picks[(i + 1) % picks.length], held[i]); touch(s); });
+      return { kind: "rotate", slots: picks };
+    }
+    case "announce": {
+      const roles = picks.map(s => cardAt(state, s));
+      picks.forEach((slot, i) => state.shown.push({ slot, role: roles[i], turn }));
+      return { kind: "announce", slots: picks, roles };
+    }
+    case "count": return { kind: "count", label: e.label, n: state.center.filter(r => ROLE[r].tags.includes(e.tag)).length };
+    case "predict": {
+      state.prophecy[state.dealt[seat]] = picks[0].i;
+      return { kind: "predict", seat: picks[0].i };
     }
     case "learnSeats": {
       let seats = state.dealt.flatMap((r, i) => (i !== seat && ROLE[r].tags.includes(e.tag) ? [i] : []));
@@ -202,7 +230,7 @@ function applyEffect(e: Effect, state: GameState, seat: number, picks: Slot[], p
 export function advance(state: GameState, seat: number, plan: Plan, progress: Progress, turn: number, rng: Rng, opts: { force?: boolean; live?: string } = {}): LogEntry[] {
   const role = ROLE[state.dealt[seat]];
   const steps = role.steps ?? [];
-  const players = state.dealt.length;
+  const shape = shapeOf(state);
   const log: LogEntry[] = [];
   while (!progress.done) {
     const step = steps[progress.step];
@@ -214,18 +242,22 @@ export function advance(state: GameState, seat: number, plan: Plan, progress: Pr
       const src = condSource(role, step.id);
       decision = resolvePlan(plan[step.id], src ? progress.seen[src.id] : undefined);
       via = opts.live === step.id ? "live" : "queued";
-      if (decision && validDecision(step, seat, players, decision)) decision = undefined;
+      if (decision && validDecision(step, seat, shape, decision)) decision = undefined;
       if (!decision) {
         if (!opts.force) break;
-        decision = randomDecision(step, seat, players, rng); via = "forced";
+        decision = randomDecision(step, seat, shape, rng); via = "forced";
       }
     }
     const entry = (ev: LogEvent): LogEntry => ({ turn, seat, role: role.id, step: step.id, via, ev });
-    if (decision.kind === "skip") log.push(entry({ kind: "skip" }));
+    if (decision.kind === "skip") {
+      // Declining to name anyone is itself a prophecy: nobody will be eliminated.
+      if (step.effects.some(e => e.kind === "predict")) { state.prophecy[role.id] = -1; log.push(entry({ kind: "predict", seat: -1 })); }
+      else log.push(entry({ kind: "skip" }));
+    }
     else {
       const picks = decision.kind === "pick" ? decision.targets : [];
       progress.picks[step.id] = picks;
-      for (const e of step.effects) { const ev = applyEffect(e, state, seat, picks, progress, step.id, rng); if (ev) log.push(entry(ev)); }
+      for (const e of step.effects) { const ev = applyEffect(e, state, seat, picks, progress, step.id, turn, rng); if (ev) log.push(entry(ev)); }
     }
     progress.step++;
   }
@@ -241,14 +273,19 @@ export interface Outcome {
   winners: number[];
   winningTeam: Team | "nobody";
   headline: string;
+  /** Wins and turns of fate beyond the team result, one sentence each. */
+  notes: string[];
+  /** The team each seat ended on, after rules that change it. */
+  teams: Team[];
 }
 
 /**
  * Counts the vote and decides the winners, by the cards players HOLD at the end. The seat(s) with the most votes are
- * eliminated, unless nobody received more than one. Then: an eliminated Glitch wins alone; otherwise the village wins
- * if a Werewolf was eliminated (or, with no Werewolf at the table, if nobody was), and the wolves' side wins if not.
+ * eliminated, unless nobody received more than one. Then the Centaurs win if a Werewolf was eliminated (or, with no
+ * Werewolf at the table, if nobody was), and the wolves' side wins if not. On top of that, the holder of a card with
+ * a prophecy wins if it came true.
  */
-export function resolveVote(cards: RoleId[], votes: (number | null)[]): Outcome {
+export function resolveVote(cards: RoleId[], votes: (number | null)[], prophecy: Record<RoleId, number> = {}): Outcome {
   const n = cards.length;
   const tally = Array<number>(n).fill(0);
   votes.forEach((v, i) => { if (v !== null) tally[v] += ROLE[cards[i]].vote?.weight ?? 1; });
@@ -256,31 +293,47 @@ export function resolveVote(cards: RoleId[], votes: (number | null)[]): Outcome 
   let deaths = top >= 2 ? tally.flatMap((t, i) => (t === top ? [i] : [])) : [];
   const protectedSeats = new Set(votes.flatMap((v, i) => (v !== null && ROLE[cards[i]].vote?.protectsTarget ? [v] : [])));
   deaths = deaths.filter(d => !protectedSeats.has(d));
+  const notes: string[] = [];
   for (let i = 0; i < deaths.length; i++) {
     const d = deaths[i], v = votes[d];
-    if (ROLE[cards[d]].vote?.takesTargetDown && v !== null && !deaths.includes(v) && !protectedSeats.has(v)) deaths.push(v);
+    if (ROLE[cards[d]].vote?.takesTargetDown && v !== null && !deaths.includes(v) && !protectedSeats.has(v)) { deaths.push(v); notes.push(`${ROLE[cards[d]].name} fell and took their target down too.`); }
   }
   const dead = (i: number) => deaths.includes(i);
-  const seatsOf = (team: Team) => cards.flatMap((r, i) => (ROLE[r].team === team ? [i] : []));
+  // A card that takes its neighbour's side: the team of the card held clockwise, or Centaur if that card wins alone.
+  const teams: Team[] = cards.map((r, i) => {
+    if (ROLE[r].win !== "neighbour") return ROLE[r].team;
+    const next = ROLE[cards[(i + 1) % n]];
+    return next.team === "lone" || next.win === "neighbour" ? "centaur" : next.team;
+  });
+  const seatsOf = (team: Team) => teams.flatMap((t, i) => (t === team ? [i] : []));
   const wolves = cards.flatMap((r, i) => (ROLE[r].tags.includes("wolf") ? [i] : []));
+  const done = (winners: number[], winningTeam: Outcome["winningTeam"], headline: string): Outcome => {
+    cards.forEach((r, i) => {
+      if (ROLE[r].win !== "prophecy" || !(r in prophecy)) return;
+      const came = prophecy[r] === -1 ? deaths.length === 0 : dead(prophecy[r]);
+      if (came) { if (!winners.includes(i)) winners.push(i); notes.push(`The ${ROLE[r].name}'s prophecy came true.`); }
+    });
+    return { tally, deaths, winners: winners.sort((a, b) => a - b), winningTeam, headline, notes, teams };
+  };
 
   const martyrs = cards.flatMap((r, i) => (ROLE[r].win === "dies" && dead(i) ? [i] : []));
-  if (martyrs.length) return { tally, deaths, winners: martyrs, winningTeam: "lone", headline: "The Glitch was eliminated and wins alone." };
+  if (martyrs.length) return done(martyrs, "lone", `The ${ROLE[cards[martyrs[0]]].name} was eliminated and wins alone.`);
   if (wolves.length) {
-    if (wolves.some(dead)) return { tally, deaths, winners: seatsOf("village"), winningTeam: "village", headline: "A Werewolf was eliminated. The village wins." };
-    return { tally, deaths, winners: seatsOf("werewolf"), winningTeam: "werewolf", headline: deaths.length ? "No Werewolf was eliminated. The Werewolves win." : "Nobody was eliminated. The Werewolves win." };
+    if (wolves.some(dead)) return done(seatsOf("centaur"), "centaur", "A Werewolf was eliminated. The Centaurs win.");
+    return done(seatsOf("werewolf"), "werewolf", deaths.length ? "No Werewolf was eliminated. The Werewolves win." : "Nobody was eliminated. The Werewolves win.");
   }
-  if (!deaths.length) return { tally, deaths, winners: seatsOf("village"), winningTeam: "village", headline: "There was no Werewolf at the table and nobody was eliminated. The village wins." };
+  if (!deaths.length) return done(seatsOf("centaur"), "centaur", "There was no Werewolf at the table and nobody was eliminated. The Centaurs win.");
   const allies = seatsOf("werewolf").filter(i => !dead(i));
-  if (allies.length) return { tally, deaths, winners: allies, winningTeam: "werewolf", headline: "There was no Werewolf at the table, but the village turned on itself. The wolves' ally wins." };
-  return { tally, deaths, winners: [], winningTeam: "nobody", headline: "There was no Werewolf at the table, and someone was eliminated anyway. Nobody wins." };
+  if (allies.length) return done(allies, "werewolf", "There was no Werewolf at the table, but the herd turned on itself. The wolves' allies win.");
+  return done([], "nobody", "There was no Werewolf at the table, and someone was eliminated anyway. Nobody wins.");
 }
 
 /** Deck checks for the lobby: the count, and each role's copy limit. */
-export function deckProblem(deck: RoleId[], players: number): string | null {
+export function deckProblem(deck: RoleId[], players: number, center: number): string | null {
   if (players < 3) return `Needs 3 players (${players} seated).`;
-  const need = players + CENTER_CARDS;
-  if (deck.length !== need) return `The deck needs ${need} cards for ${players} players (it has ${deck.length}).`;
+  if (center < CENTER_MIN || center > CENTER_MAX) return `The centre holds ${CENTER_MIN} to ${CENTER_MAX} cards.`;
+  const need = players + center;
+  if (deck.length !== need) return `The deck needs ${need} cards: ${players} players and ${center} in the centre (it has ${deck.length}).`;
   for (const id of new Set(deck)) {
     if (!ROLE[id]) return `Unknown role ${id}.`;
     if (deck.filter(r => r === id).length > ROLE[id].max) return `Too many copies of ${ROLE[id].name}.`;

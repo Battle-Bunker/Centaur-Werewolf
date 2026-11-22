@@ -8,7 +8,7 @@ import { legalTargets, type Decision } from "../../shared/engine";
 import { ROLE, ROLES, TEAM_NAME, type StepDef } from "../../shared/roles";
 import { savedName, saveName } from "../app/session";
 import type { View } from "../app/store";
-import { decisionLabel } from "../app/text";
+import { decisionLabel } from "../../shared/text";
 
 export interface PickOption { id: string; label: string; detail?: string; unavailable?: string }
 export type Page =

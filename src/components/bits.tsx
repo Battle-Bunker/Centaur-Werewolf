@@ -4,7 +4,7 @@ import type { CommandId } from "../../shared/commands";
 import { ROLE, TEAM_NAME, type RoleId } from "../../shared/roles";
 import { useApp, useCommand, useNow } from "../app/store";
 import { PAGES } from "../palette/pages";
-import { clock } from "../app/text";
+import { clock } from "../../shared/text";
 
 /**
  * A button for one registry command. It is enabled exactly when the registry says the command can run, shows the

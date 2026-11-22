@@ -15,7 +15,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { legalTargets, uncovered, type Decision, type StepPlan } from "../../shared/engine";
 import { condSource, ROLE, roleName, sameSlot, TEAM_NAME, type RoleDef, type RoleId, type Slot, type StepDef, type Team } from "../../shared/roles";
 import { useApp, type View } from "../app/store";
-import { decisionLabel, describe, viaLabel } from "../app/text";
+import { decisionLabel, describe, viaLabel } from "../../shared/text";
 import { TeamDot } from "./bits";
 
 interface Row { roles: RoleId[]; decision?: Decision }

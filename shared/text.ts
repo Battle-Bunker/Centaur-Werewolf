@@ -1,9 +1,9 @@
 /** Words for slots, decisions and log entries, in the second person for your own journal and the third for the log. */
-import type { Decision, LogEntry } from "../../shared/engine";
-import { ROLE, roleName, TEAM_NAME, type Slot, type StepDef } from "../../shared/roles";
-import type { View } from "./store";
+import type { Decision, LogEntry } from "./engine";
+import { ROLE, roleName, TEAM_NAME, type Slot, type StepDef } from "./roles";
 
-type Names = Pick<View, "players">;
+/** All the wording needs of a table: its players' names by seat. */
+export interface Names { players: { name: string }[] }
 
 /** "you", "Alice", "centre card 2". */
 export function slotLabel(s: Slot, v: Names, viewer: number): string {
@@ -33,7 +33,7 @@ export function describe(e: LogEntry, v: Names, viewer: number): string {
   const ev = e.ev;
   switch (ev.kind) {
     case "look": {
-      const parts = ev.slots.map((s, i) => `${own(s)}: ${ev.roles ? roleName(ev.roles[i]) : `on the ${TEAM_NAME[ev.teams![i]]} side`}`);
+      const parts = ev.slots.map((s, i) => `${own(s)}: ${ev.roles ? roleName(ev.roles[i]) : (ev.teams![i] === "lone" ? "on no team (it wins alone)" : `on the ${TEAM_NAME[ev.teams![i]]}`)}`);
       return `${who} ${ev.roles ? "looked at" : "learned the team of"} ${parts.join("; ")}.`;
     }
     case "swap": return `${who} swapped ${own(ev.a)} and ${own(ev.b)}.`;
@@ -43,6 +43,10 @@ export function describe(e: LogEntry, v: Names, viewer: number): string {
       return mine ? `${ev.label}: ${names.join(", ")}.` : `${who} learned who is a Werewolf: ${names.join(", ")}.`;
     }
     case "moved": return `${who} checked the watch: ${ev.slots.map((s, i) => `${own(s)} ${ev.moved[i] ? "was moved" : "was not moved"}`).join("; ")}.`;
+    case "rotate": return `${who} stampeded three cards: ${ev.slots.map(s => own(s)).join(" → ")} → back to the first.`;
+    case "announce": return `${who} proclaimed ${ev.slots.map((s, i) => `${own(s)}: ${roleName(ev.roles[i])}`).join("; ")}. Everyone was shown this.`;
+    case "count": return mine ? `${ev.label}: ${ev.n}.` : `${who} counted ${ev.n} ${ev.label.toLowerCase()}.`;
+    case "predict": return `${who} foretold that ${ev.seat === -1 ? "nobody" : ev.seat === viewer ? "you" : v.players[ev.seat]?.name ?? `seat ${ev.seat + 1}`} would be eliminated.`;
     case "skip": {
       const step = ROLE[e.role].steps?.find(s => s.id === e.step);
       return `${who} chose: ${step?.skipLabel ?? "skip"} (${step?.title ?? e.step}).`;

@@ -21,6 +21,8 @@ export interface Game {
   votes: (number | null)[];
   /** Seats whose vote was cast for them at random. */
   forcedVotes: number[];
+  /** Seats that have spent their dealt card's once-per-game chat power. */
+  chatUsed: boolean[];
   outcome?: Outcome;
 }
 
@@ -62,6 +64,6 @@ export async function endDay(ctx: MutationCtx, room: Doc<"rooms">) {
     game.votes[seat] = others[Math.floor(Math.random() * others.length)];
     game.forcedVotes.push(seat);
   });
-  game.outcome = resolveVote(game.state.cards, game.votes);
+  game.outcome = resolveVote(game.state.cards, game.votes, game.state.prophecy);
   await ctx.db.patch(room._id, { phase: "ended", game });
 }
