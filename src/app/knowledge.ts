@@ -5,7 +5,7 @@
  * nothing and still reads as a sentence in the journal (shared/text.ts).
  */
 import type { LogEntry, LogEvent } from "../../shared/engine";
-import { ROLE, roleName, slotKey, type RoleId, type Slot, type Team } from "../../shared/roles";
+import { ROLE, ROLES, roleName, slotKey, type RoleId, type Slot, type Team } from "../../shared/roles";
 import type { View } from "./store";
 import { teamShort } from "./teams";
 
@@ -39,9 +39,14 @@ function eventMarkers(ev: LogEvent, e: LogEntry, v: View, viewer: number, add: (
         else if (ev.teams) add(s, { label: `${pre}${teamShort(ev.teams[i])}`, team: ev.teams[i], tone: tone("team"), title: `${heard ? "Overheard" : "You learned"}: ${where(s, v, viewer)} is on the ${teamShort(ev.teams[i])} side.` });
       });
       return;
-    case "seats":
-      ev.seats.forEach(i => add({ k: "p", i }, { label: `${pre}${pinWord(ev.label)}`, tone: tone("kin"), title: `${ev.label}: ${v.players[i]?.name ?? `seat ${i}`} (as dealt; the card may have moved since).` }));
+    case "seats": {
+      // Coloured by team when the label names a card ("Phoenix") or a tag of the learner's own card ("pack").
+      const word = pinWord(ev.label);
+      const named = ROLES.find(r => r.name.toLowerCase() === word.toLowerCase());
+      const team = named?.team ?? (ROLE[e.role]?.tags.includes(word.toLowerCase()) ? ROLE[e.role].team : undefined);
+      ev.seats.forEach(i => add({ k: "p", i }, { label: `${pre}${word}`, team, tone: tone("kin"), title: `${ev.label}: ${v.players[i]?.name ?? `seat ${i}`} (as dealt; the card may have moved since).` }));
       return;
+    }
     case "swap":
       for (const s of [ev.a, ev.b]) add(s, { label: `${pre}Swapped`, tone: tone("swap"), title: `${heard ? "Overheard: swapped" : "You swapped"} ${where(ev.a, v, viewer)} and ${where(ev.b, v, viewer)}.` });
       return;

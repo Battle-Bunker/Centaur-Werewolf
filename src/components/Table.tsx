@@ -143,7 +143,7 @@ function Seat({ v, p, pos, L, legal, order, onPick, marks, bubble, awake, fresh,
         {offline && <span className="seat-offline" title="No word from this player for a while: their connection may have dropped."><IconWifiOff size={16} /><span>Offline</span></span>}
         {voted && <span className="seat-voted" title="Has voted (not for whom)"><IconCheck size={12} strokeWidth={2.6} /> voted</span>}
         {ready && <span className="seat-voted seat-ready" title="Ready to vote"><IconHand size={12} strokeWidth={2.2} /> ready</span>}
-        {randomVote && <span className="seat-random" title="Did not vote in time: the game voted at random for them.">random vote</span>}
+        {randomVote && <span className="seat-random" title="Did not vote in time: the game voted at random for them.">{L.tw < 120 ? "random" : "random vote"}</span>}
         {dealtHere && <span className="seat-dealt" title={`Play-test: dealt ${roleName(dealtHere)}`}><img src={`/art/${dealtHere}.webp`} alt="" />{roleName(dealtHere)}</span>}
         {myVote && <span className="seat-myvote">Your vote</span>}
         {chosen && <span className="pick-badge">{ordered ? order + 1 : <IconCheck size={14} strokeWidth={3} />}</span>}
@@ -155,7 +155,7 @@ function Seat({ v, p, pos, L, legal, order, onPick, marks, bubble, awake, fresh,
         {p.host && <IconCrown size={13} className="seat-host" aria-label="host" />}
         <span className="seat-name">{p.name}</span>
         {p.me && <span className="seat-you">you</span>}
-        {p.bot ? <IconBot size={13} className="seat-bot" aria-label="bot" /> : <Presence p={p} compact />}
+        {p.bot ? <IconBot size={13} className="seat-bot" aria-label="bot" /> : !p.me && !final && <Presence p={p} compact />}
         {won && <span className="seat-won">won</span>}
       </span>
       {final && <span className="seat-final">{roleName(final.cards[p.seat])}{plays && plays !== final.cards[p.seat] && <i> (copy of {roleName(plays)})</i>}{final.dealt[p.seat] !== final.cards[p.seat] && <i> · was {roleName(final.dealt[p.seat])}</i>}</span>}

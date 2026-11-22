@@ -60,7 +60,8 @@ details.deck-group[open] > summary::after { transform: rotate(90deg); }
 .fixdeal-name { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .fixdeal-move { display: inline-flex; gap: 2px; }
 .fixdeal-card { min-height: 32px; padding: 2px 6px; }
-.fixdeal-seeds { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fixdeal-seeds { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.fixdeal-seeds .input { width: 100%; }
 .home-playtest { align-items: flex-start; font-size: 13.5px; } .home-playtest input { margin-top: 2px; } .home-playtest .quiet { display: block; }
 
 /* ── the copier's plans ── */
@@ -189,3 +190,9 @@ details.deck-group[open] > summary::after { transform: rotate(90deg); }
 .seen-side i { font-style: normal; font: 700 9.5px var(--font); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-right: 3px; }
 .seen-pair.is-false .seen-side:first-child { background: var(--danger-soft); text-decoration: line-through; text-decoration-color: var(--danger); }
 .seen-side.is-true { background: var(--primary-soft); border-left: 1px solid var(--line-strong); }
+.seat.is-small .seat-random { font-size: 8.5px; padding: 1px 4px; right: 3px; bottom: 3px; letter-spacing: .04em; }
+.role-rules summary { list-style: none; cursor: pointer; }
+.role-rules summary::-webkit-details-marker { display: none; }
+.role-rules-more { font-size: 12.5px; font-weight: 700; color: var(--secondary); text-decoration: underline dotted; }
+.role-rules[open] .role-rules-more { display: none; }
+.role-rules > p { margin-top: 6px; }

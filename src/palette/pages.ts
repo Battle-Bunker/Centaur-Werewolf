@@ -123,7 +123,7 @@ export const PAGES: Partial<Record<CommandId, (env: PageEnv) => Page>> = {
     const v = env.view!;
     return {
       kind: "pick", title: "Change a table rule",
-      options: describeRules(v.settings.rules).map(r => ({ id: r.rule, label: r.title, detail: `Now ${JSON.stringify(r.value)}${r.isDefault ? "" : " (changed)"}: ${r.means}` })),
+      options: describeRules(v.settings.rules).map(r => ({ id: r.rule, label: r.title, detail: `Now ${typeof r.value === "boolean" ? (r.value ? "on" : "off") : String(r.value)}${r.isDefault ? "" : " (changed)"}: ${r.means}` })),
       onPick: id => {
         const def = RULE_DEF[id as RuleId];
         const set = async (value: unknown) => { await env.exec("setup.setRule", { rule: id, value }); };

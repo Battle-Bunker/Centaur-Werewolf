@@ -20,7 +20,7 @@ import { isAuto, legalTargets, uncovered, type Decision, type LogEntry, type Pla
 import { condSource, legalRoles, pickCount, ROLE, roleName, sameSlot, TEAM_NAME, type RoleDef, type RoleId, type Shape, type Slot, type StepDef } from "../../shared/roles";
 import { describe, slotLabel, viaLabel } from "../../shared/text";
 import { myNight } from "../app/night";
-import { useApp, useNow, type View } from "../app/store";
+import { reducedMotion, useApp, useNow, type View } from "../app/store";
 import { actsAtNight, isCopier, teamShort, TEAMS } from "../app/teams";
 import { Avatar, Card } from "./bits";
 import { IconCheck, IconClock, IconMirror, IconPlus, IconX } from "./icons";
@@ -34,6 +34,13 @@ const sameDecision = (a: Decision | undefined, b: Decision) =>
 const toPlan = (d: Draft): StepPlan => ({ branches: d.branches.flatMap(b => (b.roles.length && b.decision ? [{ roles: b.roles, decision: b.decision }] : [])), ...(d.otherwise ? { otherwise: d.otherwise } : {}) });
 const isEmpty = (p: StepPlan) => !p.branches.length && !p.otherwise;
 const FRESH: Progress = { step: 0, picks: {}, seen: {}, done: false };
+
+/** Bring the step being decided live into view, once. */
+const scrollToLive = (el: HTMLElement | null) => {
+  if (!el || el.dataset.shown) return;
+  el.dataset.shown = "1";
+  el.scrollIntoView({ block: "nearest", behavior: reducedMotion() ? "auto" : "smooth" });
+};
 
 /** The table's shape as the engine's legality checks want it. */
 export function useShape(v: View): Shape {
@@ -107,7 +114,7 @@ function Steps({ v, role, as, plan, progress, open, turn, outcomes, shape, publi
         const state = done ? "done" : !editable ? "auto" : live ? "live" : p && !uncovered(p, outcomes).length ? "queued" : p ? "partial" : "open";
         const mandatoryHere = step.optional && shape.mandatory;
         return (
-          <section key={`${as ?? ""}:${step.id}`} className={`step is-${state}`} aria-label={`Step ${i + 1}: ${step.title}`}>
+          <section key={`${as ?? ""}:${step.id}`} ref={live ? scrollToLive : undefined} className={`step is-${state}`} aria-label={`Step ${i + 1}: ${step.title}`}>
             <header className="step-head">
               <span className="step-n">{done ? <IconCheck size={14} strokeWidth={2.4} /> : i + 1}</span>
               <h3>{step.title}</h3>

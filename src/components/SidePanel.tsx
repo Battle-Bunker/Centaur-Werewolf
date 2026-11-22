@@ -119,7 +119,8 @@ function Day({ v }: { v: View }) {
   const target = mine.vote !== null ? v.players[mine.vote] : null;
   const warnings = deckWarnings(v.settings.deck);
   const meReady = !!game.ready[mine.seat];
-  const readyCount = game.ready.filter(Boolean).length;
+  const humans = v.players.filter(p => !p.bot);
+  const readyCount = humans.filter(p => game.ready[p.seat]).length;
   const marks = game.marks ?? [];
   return (
     <div className="panel">
@@ -130,10 +131,10 @@ function Day({ v }: { v: View }) {
           <p className="quiet small">Voting opens when every player is ready, when the host ends the talk, or when the timer runs out. Then everyone has {v.settings.voteSeconds ?? 20} seconds to vote{v.settings.rules.chatDuringVote ? "" : ", and the chat closes"}.</p>
           <div className={`ready-box${meReady ? " is-on" : ""}`}>
             <CommandButton id="day.ready" args={{ ready: !meReady }} variant={meReady ? "plain" : "primary"} icon={<IconHand size={16} />}>{meReady ? "Not ready after all" : "I am ready to vote"}</CommandButton>
-            <span className="ready-count"><b>{readyCount}</b> of {game.ready.length} ready</span>
+            <span className="ready-count"><b>{readyCount}</b> of {humans.length} ready</span>
           </div>
           <ul className="ready-list" aria-label="Who is ready">
-            {v.players.map(p => <li key={p.id} className={game.ready[p.seat] ? "is-on" : ""} title={game.ready[p.seat] ? `${p.name} is ready to vote` : `${p.name} is still talking`}><Avatar name={p.name} bot={p.bot} size="sm" /><span>{p.me ? "you" : p.name}</span>{game.ready[p.seat] && <IconCheck size={12} strokeWidth={2.6} />}</li>)}
+            {humans.map(p => <li key={p.id} className={game.ready[p.seat] ? "is-on" : ""} title={game.ready[p.seat] ? `${p.name} is ready to vote` : `${p.name} is still talking`}><Avatar name={p.name} bot={p.bot} size="sm" /><span>{p.me ? "you" : p.name}</span>{game.ready[p.seat] && <IconCheck size={12} strokeWidth={2.6} />}</li>)}
           </ul>
           {v.context.host && <div className="row"><CommandButton id="day.endDiscussion" variant="quiet" /></div>}
         </section>

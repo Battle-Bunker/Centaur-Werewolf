@@ -86,7 +86,9 @@ export function RoleCard({ role, caption, children, compact, reveal }: { role: R
         {caption && <div className="eyebrow">{caption}</div>}
         <h3>{r.name}</h3>
         <TeamBadge team={r.team} />
-        <p>{compact ? r.blurb : r.rules}</p>
+        {compact || r.rules.length < 260 ? <p>{compact ? r.blurb : r.rules}</p> : (
+          <details className="role-rules"><summary><p>{r.blurb}</p><span className="role-rules-more">The full rule</span></summary><p>{r.rules}</p></details>
+        )}
         {children}
       </div>
     </div>

@@ -114,7 +114,8 @@ function DayNow({ size, compact }: { size: number; compact: boolean }) {
   const { view } = useApp();
   const now = useNow(500);
   const v = view!, game = v.game!, mine = game.mine;
-  const ready = game.ready.filter(Boolean).length;
+  const humans = v.players.filter(p => !p.bot);
+  const ready = humans.filter(p => game.ready[p.seat]).length;
   const ring = compact ? Math.max(44, Math.min(size - 6, 64)) : Math.max(56, Math.min(size - 8, 116));
   const ends = game.dayEndsAt ?? now;
   const left = Math.max(0, Math.ceil((ends - now) / 1000));
@@ -126,7 +127,7 @@ function DayNow({ size, compact }: { size: number; compact: boolean }) {
       </CountdownRing>
       <div className="now-text">
         <span className="eyebrow">Discussion · <span className="mono">{clock(left * 1000)}</span> left</span>
-        <h3>{ready} of {game.ready.length} ready to vote</h3>
+        <h3>{ready} of {humans.length} ready to vote</h3>
         {!compact && !mine && <p>You are watching this round.</p>}
         {mine && !compact && <div className="now-actions" title={meReady ? "You are ready. The vote opens when everyone is, or when time is up." : "Talk it over. The vote opens when everyone is ready, or when time is up."}><CommandButton id="day.ready" args={{ ready: !meReady }} variant={meReady ? "quiet" : "primary"} icon={<IconHand size={16} />}>{meReady ? "Not ready yet" : "I am ready to vote"}</CommandButton></div>}
       </div>
@@ -138,7 +139,8 @@ function VoteNow({ size, compact }: { size: number; compact: boolean }) {
   const { view } = useApp();
   const now = useNow(250);
   const v = view!, game = v.game!, mine = game.mine;
-  const voted = game.voted.filter(Boolean).length;
+  const humans = v.players.filter(p => !p.bot);
+  const voted = humans.filter(p => game.voted[p.seat]).length;
   const ring = compact ? Math.max(44, Math.min(size - 6, 64)) : Math.max(56, Math.min(size - 8, 116));
   const ends = game.voteEndsAt ?? now;
   const left = Math.max(0, ends - now);
@@ -149,7 +151,7 @@ function VoteNow({ size, compact }: { size: number; compact: boolean }) {
       </CountdownRing>
       <div className="now-text">
         <span className="eyebrow">The vote · <span className="mono">{clock(left)}</span></span>
-        <h3>{voted} of {game.voted.length} have voted</h3>
+        <h3>{voted} of {humans.length} {humans.length === 1 ? "has" : "have"} voted</h3>
         {!compact && <p>{!mine ? "You are watching this round." : mine.vote === null ? "Click a player to vote. Anyone who has not voted when time runs out votes at random." : `You vote for ${v.players[mine.vote]?.name}. Click someone else to change it.`}</p>}
       </div>
     </div>

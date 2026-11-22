@@ -202,7 +202,7 @@ function RuleRow({ def, value, means, isDefault }: { def: RuleDef; value: unknow
     <li className={`rule-row${isDefault ? "" : " is-changed"}`}>
       <div className="rule-row-head">
         <b id={`rule-${def.id}`}>{def.title}</b>
-        {!isDefault && <span className="rule-changed" title={`Usually ${JSON.stringify(DEFAULT_RULES[def.id as RuleId])}`}>changed</span>}
+        {!isDefault && <span className="rule-changed" title={`Usually ${((d: unknown) => (typeof d === "boolean" ? (d ? "on" : "off") : String(d)))(DEFAULT_RULES[def.id as RuleId])}`}>changed</span>}
         <span className="top-space" />
         {def.kind === "boolean" && (
           <button type="button" role="switch" aria-checked={!!value} aria-labelledby={`rule-${def.id}`} className={`switch${value ? " is-on" : ""}`} disabled={!set.can.ok} title={why} onClick={() => go(!value)}>
