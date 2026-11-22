@@ -36,6 +36,9 @@
   --amber-soft: #f3e2b9;
   --danger: #962a2a;
   --danger-soft: #f3dcd5;
+  --ember: #b1461b;
+  --ember-text: #9a3a12;
+  --ember-soft: #f6dccb;
   --felt-1: #e7dec7;
   --felt-2: #ddd2b5;
   --shadow-1: 0 1px 0 rgb(80 60 20 / .05), 0 1px 3px rgb(80 60 20 / .14);
@@ -67,6 +70,9 @@
   --amber-soft: #3a2d10;
   --danger: #ef9191;
   --danger-soft: #3b1a1a;
+  --ember: #f08a5d;
+  --ember-text: #f5a17b;
+  --ember-soft: #3d1d10;
   --felt-1: #13271d;
   --felt-2: #0d1d15;
   --shadow-1: 0 1px 0 rgb(0 0 0 / .3), 0 1px 3px rgb(0 0 0 / .4);
@@ -155,10 +161,12 @@ kbd { font: 500 11px/1 var(--mono); border: 1px solid var(--line-strong); border
 .count { font: 600 12px var(--mono); color: var(--muted); border: 1px solid var(--line); padding: 1px 6px; border-radius: 9px; vertical-align: 2px; margin-left: 4px; }
 .team-centaur { --team: var(--primary); --team-soft: var(--primary-soft); }
 .team-werewolf { --team: var(--secondary); --team-soft: var(--secondary-soft); }
-.team-lone { --team: var(--amber); --team-soft: var(--amber-soft); }
+.team-loner { --team: var(--amber); --team-soft: var(--amber-soft); }
+.team-pyre { --team: var(--ember); --team-soft: var(--ember-soft); }
 .team-pip { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--team, var(--muted)); flex: none; box-shadow: 0 0 0 2px color-mix(in srgb, var(--team, var(--muted)) 22%, transparent); }
 .team-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--team); }
-.team-badge.team-lone { color: var(--amber-text); }
+.team-badge.team-loner { color: var(--amber-text); }
+.team-badge.team-pyre { color: var(--ember-text); }
 
 /* ── avatars: stand-ins for video ── */
 .avatar { position: relative; display: grid; place-items: center; overflow: hidden; color: var(--av-ink); background: var(--av-bg); }

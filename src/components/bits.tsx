@@ -4,6 +4,7 @@ import type { CommandId } from "../../shared/commands";
 import { ROLE, TEAM_NAME, type RoleId, type Team } from "../../shared/roles";
 import { clock } from "../../shared/text";
 import { useApp, useCommand, useNow } from "../app/store";
+import { teamShort } from "../app/teams";
 import { PAGES } from "../palette/pages";
 
 /**
@@ -12,7 +13,7 @@ import { PAGES } from "../palette/pages";
  * that were not supplied. A command the registry marks `confirm: "inline"` asks for a second click, as the palette
  * asks for a second Enter.
  */
-export function CommandButton({ id, args, children, variant = "plain", icon, showReason, className = "", ...rest }: {
+export function CommandButton({ id, args, children, variant = "plain", icon, showReason, className = "", disabled, ...rest }: {
   id: CommandId; args?: Record<string, unknown>; children?: ReactNode; variant?: "primary" | "plain" | "quiet" | "danger" | "secondary"; icon?: ReactNode;
   /** Show the reason it cannot run under the button, not only in its tooltip. */
   showReason?: boolean;
@@ -32,7 +33,7 @@ export function CommandButton({ id, args, children, variant = "plain", icon, sho
     setBusy(false);
   };
   const button = (
-    <button type="button" className={`btn btn-${armed ? "danger" : variant}${busy ? " is-busy" : ""} ${className}`} disabled={!can.ok || busy} title={can.ok ? def.tooltip : can.reason} data-command={id} onClick={() => void click()} {...rest}>
+    <button type="button" className={`btn btn-${armed ? "danger" : variant}${busy ? " is-busy" : ""} ${className}`} disabled={!can.ok || busy || disabled} title={can.ok ? def.tooltip : can.reason} data-command={id} onClick={() => void click()} {...rest}>
       {icon}
       <span>{armed ? "Click again to confirm" : (children ?? def.title)}</span>
       {def.shortcut && variant === "primary" && !armed && <kbd>{def.shortcut}</kbd>}
@@ -73,7 +74,7 @@ export function Card({ role, size, className = "", label, style, flipDelay = 0, 
 }
 
 export function TeamBadge({ team, short }: { team: Team; short?: boolean }) {
-  return <span className={`team-badge team-${team}`}><span className="team-pip" aria-hidden />{short ? (team === "lone" ? "Alone" : TEAM_NAME[team].replace(" team", "")) : TEAM_NAME[team]}</span>;
+  return <span className={`team-badge team-${team}`}><span className="team-pip" aria-hidden />{short ? teamShort(team) : TEAM_NAME[team]}</span>;
 }
 /** The full card for a role: art, name, team and rule. */
 export function RoleCard({ role, caption, children, compact, reveal }: { role: RoleId; caption?: string; children?: ReactNode; compact?: boolean; reveal?: boolean }) {

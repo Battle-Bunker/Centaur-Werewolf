@@ -14,7 +14,10 @@ import { layoutTable, type TableLayout } from "../app/layout";
 import { useApp, type Picker, type View } from "../app/store";
 import { Avatar, Card } from "./bits";
 import { CentreStage } from "./CentreStage";
-import { IconBot, IconCheck, IconCrown } from "./icons";
+import { IconBot, IconCheck, IconCrown, IconHand, IconWifiOff } from "./icons";
+import { myNight } from "../app/night";
+import { heldInstances } from "./Result";
+import { Presence, usePresence } from "./Setup";
 import { Pin } from "./Pin";
 
 export function Table() {
@@ -36,8 +39,8 @@ export function Table() {
 
   const markers = useMemo(() => markersFor(v, mine?.journal ?? [], mine?.seat ?? -1), [v, mine?.journal, mine?.seat]);
 
-  // During the day the table itself is the ballot.
-  const ballot: Picker | null = v.phase === "day" && mine ? {
+  // During the vote the table itself is the ballot.
+  const ballot: Picker | null = v.phase === "vote" && mine ? {
     legal: v.players.filter(p => p.seat !== mine.seat).map(p => ({ k: "p" as const, i: p.seat })),
     chosen: mine.vote !== null ? [{ k: "p", i: mine.vote }] : [],
     hint: "",
@@ -49,14 +52,13 @@ export function Table() {
   const order = (s: Slot) => pick ? pick.chosen.findIndex(l => sameSlot(l, s)) : -1;
 
   const bubbles = useBubbles(v);
-  const myTurnRole = mine ? mine.dealt : null;
-  const awake = v.phase === "night" && !!game && game.turn > 0 && game.turns[game.turn]?.role === myTurnRole && !!mine && !mine.progress.done;
+  const awake = !!myNight(v)?.awake;
   // The deal: cards fly from the middle to each seat when a round has just begun.
   // Your turn: say so, even if the panel is hidden or showing the chat.
   const { toast, setTab } = useApp();
   const wasAwake = useRef(false);
   useEffect(() => {
-    if (awake && !wasAwake.current && v.context.openSteps.length) { toast("You are awake. Decide now, or it is chosen at random.", "ok"); setTab("mine"); }
+    if (awake && !wasAwake.current && (v.context.openSteps.length || v.context.adoptOpen.length)) { toast("You are awake. Decide now, or it is chosen at random.", "ok"); setTab("mine"); }
     wasAwake.current = awake;
   }, [awake]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -70,7 +72,7 @@ export function Table() {
   const arrows = useMemo(() => {
     if (!L) return [];
     if (final) return final.votes.flatMap((t, i) => (t === null ? [] : [{ from: i, to: t, mine: i === mine?.seat, forced: final.forcedVotes.includes(i) }]));
-    if (v.phase === "day" && mine && mine.vote !== null) return [{ from: mine.seat, to: mine.vote, mine: true, forced: false }];
+    if (v.phase === "vote" && mine && mine.vote !== null) return [{ from: mine.seat, to: mine.vote, mine: true, forced: false }];
     return [];
   }, [L, final, v.phase, mine]);
 
@@ -105,15 +107,22 @@ function Seat({ v, p, pos, L, legal, order, onPick, marks, bubble, awake, fresh,
 }) {
   const game = v.game, mine = game?.mine ?? null, final = game?.final ?? null;
   const role: RoleId | null = final ? final.cards[p.seat] : game && mine?.seat === p.seat ? mine.dealt : null;
+  const randomVote = !!final?.forcedVotes.includes(p.seat);
+  const plays = final ? (final.adopted[String(heldInstances(final)[p.seat])] ?? null) : null;
   const dead = !!final?.outcome.deaths.includes(p.seat), won = !!final?.outcome.winners.includes(p.seat);
-  const voted = v.phase === "day" && !!game?.voted[p.seat];
-  const myVote = v.phase === "day" && mine?.vote === p.seat;
+  const voted = v.phase === "vote" && !!game?.voted[p.seat];
+  const ready = v.phase === "day" && !!game?.ready?.[p.seat];
+  const myVote = v.phase === "vote" && mine?.vote === p.seat;
+  const presence = usePresence(p);
+  const offline = presence === "offline" && !final;
+  // A play-test table's host sees the deal.
+  const dealtHere = game?.playtestDeal && !final && !(mine?.seat === p.seat) ? game.playtestDeal.dealt[p.seat] : null;
   const chosen = order >= 0;
-  const cls = ["seat", p.me && "is-me", legal && "is-legal", chosen && "is-chosen", dead && "is-dead", won && "is-winner", bubble && "is-speaking", awake && "is-awake", pos.y < L.cy - 4 && "is-top", L.tw < 120 && "is-small"].filter(Boolean).join(" ");
+  const cls = ["seat", p.me && "is-me", legal && "is-legal", chosen && "is-chosen", dead && "is-dead", won && "is-winner", bubble && "is-speaking", awake && "is-awake", offline && "is-offline", ready && "is-ready", pos.y < L.cy - 4 && "is-top", L.tw < 120 && "is-small"].filter(Boolean).join(" ");
   const cardSize = Math.round(L.tw * (final ? 0.36 : 0.3));
   const style = { left: pos.x, top: pos.y, width: L.tw, ["--tw" as string]: `${L.tw}px`, ["--th" as string]: `${L.th}px`, ["--csz" as string]: `${cardSize}px`, ["--name-h" as string]: `${L.nameH}px`,
     ["--from-x" as string]: `${L.cx - pos.x}px`, ["--from-y" as string]: `${L.cy - pos.y}px`, ["--deal" as string]: `${dealIndex * 110}ms` } as CSSProperties;
-  const label = `${p.name}${p.me ? " (you)" : ""}${p.bot ? ", practice bot" : ""}${voted ? ", has voted" : ""}${myVote ? ", your vote" : ""}${dead ? ", eliminated" : ""}${won ? ", won" : ""}${marks.length ? `. ${marks.map(m => m.title).join(" ")}` : ""}`;
+  const label = `${p.name}${p.me ? " (you)" : ""}${p.bot ? ", practice bot" : ""}${offline ? ", offline" : ""}${ready ? ", ready to vote" : ""}${voted ? ", has voted" : ""}${randomVote ? ", did not vote in time (voted at random)" : ""}${myVote ? ", your vote" : ""}${dead ? ", eliminated" : ""}${won ? ", won" : ""}${marks.length ? `. ${marks.map(m => m.title).join(" ")}` : ""}`;
   const finalTitle = final ? `${p.name} ended holding ${roleName(final.cards[p.seat])}${final.dealt[p.seat] !== final.cards[p.seat] ? ` (dealt ${roleName(final.dealt[p.seat])})` : ""}.` : undefined;
   const body = (
     <>
@@ -131,7 +140,11 @@ function Seat({ v, p, pos, L, legal, order, onPick, marks, bubble, awake, fresh,
             {marks.length > 3 && <span className="pin pin-more" title={marks.slice(0, -3).map(m => m.title).join(" ")}>+{marks.length - 3}</span>}
           </span>
         )}
+        {offline && <span className="seat-offline" title="No word from this player for a while: their connection may have dropped."><IconWifiOff size={16} /><span>Offline</span></span>}
         {voted && <span className="seat-voted" title="Has voted (not for whom)"><IconCheck size={12} strokeWidth={2.6} /> voted</span>}
+        {ready && <span className="seat-voted seat-ready" title="Ready to vote"><IconHand size={12} strokeWidth={2.2} /> ready</span>}
+        {randomVote && <span className="seat-random" title="Did not vote in time: the game voted at random for them.">random vote</span>}
+        {dealtHere && <span className="seat-dealt" title={`Play-test: dealt ${roleName(dealtHere)}`}><img src={`/art/${dealtHere}.webp`} alt="" />{roleName(dealtHere)}</span>}
         {myVote && <span className="seat-myvote">Your vote</span>}
         {chosen && <span className="pick-badge">{ordered ? order + 1 : <IconCheck size={14} strokeWidth={3} />}</span>}
         {dead && <span className="seat-stamp">Eliminated</span>}
@@ -142,10 +155,10 @@ function Seat({ v, p, pos, L, legal, order, onPick, marks, bubble, awake, fresh,
         {p.host && <IconCrown size={13} className="seat-host" aria-label="host" />}
         <span className="seat-name">{p.name}</span>
         {p.me && <span className="seat-you">you</span>}
-        {p.bot && <IconBot size={13} className="seat-bot" aria-label="bot" />}
+        {p.bot ? <IconBot size={13} className="seat-bot" aria-label="bot" /> : <Presence p={p} compact />}
         {won && <span className="seat-won">won</span>}
       </span>
-      {final && <span className="seat-final">{roleName(final.cards[p.seat])}{final.dealt[p.seat] !== final.cards[p.seat] && <i> · was {roleName(final.dealt[p.seat])}</i>}</span>}
+      {final && <span className="seat-final">{roleName(final.cards[p.seat])}{plays && plays !== final.cards[p.seat] && <i> (copy of {roleName(plays)})</i>}{final.dealt[p.seat] !== final.cards[p.seat] && <i> · was {roleName(final.dealt[p.seat])}</i>}</span>}
     </>
   );
   return legal

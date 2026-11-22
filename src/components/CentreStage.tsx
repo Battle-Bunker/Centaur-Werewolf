@@ -7,8 +7,11 @@ import { deckProblem } from "../../shared/engine";
 import { ROLE, roleName, slotKey, type RoleId, type Slot } from "../../shared/roles";
 import type { Marker } from "../app/knowledge";
 import { useApp, useNow, type Picker } from "../app/store";
+import { clock } from "../../shared/text";
+import { myNight } from "../app/night";
+import { rolesInTurn, teamShort } from "../app/teams";
 import { Card, CommandButton, CountdownRing, ordinal } from "./bits";
-import { IconCheck, IconEye, IconMoon, IconSun } from "./icons";
+import { IconCheck, IconEye, IconHand, IconMoon, IconSun, IconVote } from "./icons";
 import { Pin } from "./Pin";
 
 interface Props { w: number; h: number; pick: Picker | null; legal(s: Slot): boolean; order(s: Slot): number; markers: Record<string, Marker[]>; fresh: boolean; lead: number }
@@ -38,7 +41,7 @@ export function CentreStage({ w, h, pick, legal, order, markers, fresh, lead }: 
   return (
     <div className={`stage-col${compact ? " is-compact" : ""}`} style={{ ["--stage-h" as string]: `${stageH}px` }}>
       <div className="stage-now" style={{ height: stageH }}>
-        {final ? <Verdict compact={compact} /> : v.phase === "day" ? <DayNow size={stageH} compact={compact} /> : <NightNow size={stageH} compact={compact} />}
+        {final ? <Verdict compact={compact} /> : v.phase === "day" ? <DayNow size={stageH} compact={compact} /> : v.phase === "vote" ? <VoteNow size={stageH} compact={compact} /> : <NightNow size={stageH} compact={compact} />}
       </div>
       <div className={`centre-cards rows-${rows}`} style={{ ["--csz" as string]: `${cardSize}px`, ["--per-row" as string]: rows === 2 ? Math.ceil(count / 2) : count }}>
         {Array.from({ length: count }, (_, i) => {
@@ -52,11 +55,11 @@ export function CentreStage({ w, h, pick, legal, order, markers, fresh, lead }: 
             <>
               <span className={`centre-card-face${fresh ? " is-dealt" : ""}`} style={{ ["--deal" as string]: `${i * 70}ms` }}>
                 <Card role={role} size={cardSize} label={role ? `Centre ${i + 1}: ${ROLE[role].name}` : `Centre card ${i + 1}, face down`} flipDelay={final ? lead + 200 + i * 180 : 0} />
-                {!final && shown.length > 0 && <span className="shown-ghost" title={`Shown to everyone as ${roleName(shown[shown.length - 1].role)} during the Herald's turn. It may have moved since.`}><img src={`/art/${shown[shown.length - 1].role}.webp`} alt="" /></span>}
+                {!final && shown.length > 0 && <span className="shown-ghost" title={shownTitle(shown[shown.length - 1])}><img src={`/art/${shown[shown.length - 1].role}.webp`} alt="" /></span>}
                 {o >= 0 && <span className="pick-badge">{pick?.ordered ? o + 1 : <IconCheck size={14} strokeWidth={3} />}</span>}
               </span>
               {!compact && cardSize >= 50 && (!final && shown.length
-                ? <span className="card-caption is-shown" title={`Shown to everyone as ${roleName(shown[shown.length - 1].role)} during the Herald's turn. It may have moved since.`}><IconEye size={12} /> was {roleName(shown[shown.length - 1].role)}</span>
+                ? <span className="card-caption is-shown" title={shownTitle(shown[shown.length - 1])}><IconEye size={12} /> {shown.length > 1 ? `${shown.length} proclaimed` : `was ${roleName(shown[shown.length - 1].role)}`}</span>
                 : <span className="card-caption">{role ? ROLE[role].name : `Centre ${i + 1}`}</span>)}
               {!final && !compact && own.length > 0 && <span className="pins pins-centre">{own.slice(-1).map((m, k) => <Pin key={k} m={{ ...m, title: own.map(x => x.title).join(" ") }} />)}</span>}
             </>
@@ -72,22 +75,26 @@ export function CentreStage({ w, h, pick, legal, order, markers, fresh, lead }: 
   );
 }
 
+const shownTitle = (x: { role: RoleId; by: RoleId; atDawn: boolean }) => `Proclaimed to everyone${x.atDawn ? " at dawn" : ""} as ${roleName(x.role)}, in the ${roleName(x.by)}'s turn. True at that moment unless forged or distorted; it may have moved since.`;
+
 function NightNow({ size, compact }: { size: number; compact: boolean }) {
   const { view } = useApp();
   const now = useNow(500);
-  const game = view!.game!, mine = game.mine;
+  const v = view!, game = v.game!, mine = game.mine;
+  const n = myNight(v);
   const turn = game.turns[game.turn];
   const ring = compact ? Math.max(44, Math.min(size - 6, 64)) : Math.max(56, Math.min(size - 8, 128));
   if (!turn) return <div className="now"><div className="now-text"><h3>Dawn is coming</h3></div></div>;
-  const myIndex = mine ? game.turns.findIndex(t => t.role === mine.dealt) : -1;
-  const isMine = turn.role !== null && turn.role === mine?.dealt;
-  const ahead = myIndex > game.turn ? myIndex - game.turn : 0;
+  const isMine = !!n && game.turn > 0 && (game.turn === n.ownTurn || game.turn === n.copyTurn);
   const nightTurns = game.turns.length - 1;
-  const title = turn.role ? <>The <em>{ROLE[turn.role].name}</em> wakes</> : <>Dusk</>;
+  const kin = turn.role ? rolesInTurn(turn.role, v.settings.deck).filter(r => r !== turn.role) : [];
+  const title = turn.role ? <>The <em>{ROLE[turn.role]?.name ?? turn.role}</em> wakes{kin.length ? <span className="now-kin"> (and {kin.map(roleName).join(", ")})</span> : null}</> : <>Dusk</>;
+  const ahead = n && n.next > 0 ? n.next : -1;
+  const asCopy = n && ahead === n.copyTurn && n.became ? ` as the ${roleName(n.became)}` : "";
   const sub = !mine ? "You are watching this round."
-    : turn.role === null ? (myIndex > 0 ? `Read your card. You wake ${ordinal(myIndex)} of ${nightTurns}: queue your move now.` : "Read your card. You sleep through the night.")
-    : isMine ? (mine.progress.done ? "Your move has played." : "Your turn. Decide now.")
-    : ahead ? `Your turn ${ahead === 1 ? "is next" : `comes in ${ahead} turns`}, at about ${Math.max(0, Math.ceil((game.turns[myIndex].startsAt - now) / 1000))}s.`
+    : turn.role === null ? (ahead > 0 ? `Read your card. You wake ${ordinal(ahead)} of ${nightTurns}${asCopy}: queue your move now.` : "Read your card. You sleep through the night.")
+    : isMine ? (n!.awake ? "Your turn. Decide now." : "Your move has played.")
+    : ahead > 0 ? `Your turn${asCopy} ${ahead - game.turn === 1 ? "is next" : `comes in ${ahead - game.turn} turns`}, in about ${Math.max(0, Math.ceil((game.turns[ahead].startsAt - now) / 1000))}s.`
     : "Every role in the deck takes a turn, held or not.";
   return (
     <div key={game.turn} className={`now now-night${isMine ? " is-mine" : ""}${compact ? " is-compact" : ""}`}>
@@ -106,20 +113,44 @@ function NightNow({ size, compact }: { size: number; compact: boolean }) {
 function DayNow({ size, compact }: { size: number; compact: boolean }) {
   const { view } = useApp();
   const now = useNow(500);
-  const game = view!.game!, mine = game.mine;
-  const voted = game.voted.filter(Boolean).length;
+  const v = view!, game = v.game!, mine = game.mine;
+  const ready = game.ready.filter(Boolean).length;
   const ring = compact ? Math.max(44, Math.min(size - 6, 64)) : Math.max(56, Math.min(size - 8, 116));
   const ends = game.dayEndsAt ?? now;
   const left = Math.max(0, Math.ceil((ends - now) / 1000));
+  const meReady = !!mine && !!game.ready[mine.seat];
   return (
     <div className={`now now-day${compact ? " is-compact" : ""}`}>
-      <CountdownRing from={ends - view!.settings.daySeconds * 1000} until={ends} size={ring} label="Time left to talk and vote">
+      <CountdownRing from={ends - v.settings.daySeconds * 1000} until={ends} size={ring} label="Time left to talk">
         <IconSun size={ring * 0.42} strokeWidth={1.3} />
       </CountdownRing>
       <div className="now-text">
-        <span className="eyebrow">Day · <span className="mono">{left >= 60 ? `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}` : `${left}s`}</span> left</span>
+        <span className="eyebrow">Discussion · <span className="mono">{clock(left * 1000)}</span> left</span>
+        <h3>{ready} of {game.ready.length} ready to vote</h3>
+        {!compact && !mine && <p>You are watching this round.</p>}
+        {mine && !compact && <div className="now-actions" title={meReady ? "You are ready. The vote opens when everyone is, or when time is up." : "Talk it over. The vote opens when everyone is ready, or when time is up."}><CommandButton id="day.ready" args={{ ready: !meReady }} variant={meReady ? "quiet" : "primary"} icon={<IconHand size={16} />}>{meReady ? "Not ready yet" : "I am ready to vote"}</CommandButton></div>}
+      </div>
+    </div>
+  );
+}
+
+function VoteNow({ size, compact }: { size: number; compact: boolean }) {
+  const { view } = useApp();
+  const now = useNow(250);
+  const v = view!, game = v.game!, mine = game.mine;
+  const voted = game.voted.filter(Boolean).length;
+  const ring = compact ? Math.max(44, Math.min(size - 6, 64)) : Math.max(56, Math.min(size - 8, 116));
+  const ends = game.voteEndsAt ?? now;
+  const left = Math.max(0, ends - now);
+  return (
+    <div className={`now now-vote${compact ? " is-compact" : ""}${left < 6000 ? " is-urgent" : ""}`}>
+      <CountdownRing from={ends - (v.settings.voteSeconds ?? 20) * 1000} until={ends} size={ring} label="Time left to vote">
+        <IconVote size={ring * 0.42} strokeWidth={1.3} />
+      </CountdownRing>
+      <div className="now-text">
+        <span className="eyebrow">The vote · <span className="mono">{clock(left)}</span></span>
         <h3>{voted} of {game.voted.length} have voted</h3>
-        {!compact && <p>{!mine ? "You are watching this round." : mine.vote === null ? "Talk it over, then click a player to vote." : "You can change your vote until the day ends."}</p>}
+        {!compact && <p>{!mine ? "You are watching this round." : mine.vote === null ? "Click a player to vote. Anyone who has not voted when time runs out votes at random." : `You vote for ${v.players[mine.vote]?.name}. Click someone else to change it.`}</p>}
       </div>
     </div>
   );
@@ -131,9 +162,9 @@ function Verdict({ compact }: { compact: boolean }) {
   const o = final.outcome;
   const won = mine ? o.winners.includes(mine.seat) : null;
   const team = o.winningTeam;
-  const title = verdictTitle(team, o.winners.length ? roleName(final.cards[o.winners[0]]) : "");
+  const title = verdictTitle(o);
   return (
-    <div className={`now now-verdict verdict-${team}${compact ? " is-compact" : ""}`}>
+    <div className={`now now-verdict verdict-${o.burned && team === "nobody" ? "pyre" : team}${compact ? " is-compact" : ""}`}>
       <div className="now-text">
         {won !== null && <span className={`verdict-you ${won ? "is-won" : "is-lost"}`}>{won ? "You won" : "You lost"}</span>}
         <h3>{title}</h3>
@@ -144,14 +175,16 @@ function Verdict({ compact }: { compact: boolean }) {
   );
 }
 
-export const verdictTitle = (team: string, loneName: string) =>
-  team === "nobody" ? "Nobody wins" : team === "lone" ? `The ${loneName} wins alone` : team === "werewolf" ? "The Werewolves win" : "The Centaurs win";
+/** The headline of a result: the main team, and the Pyre's burning. */
+export const verdictTitle = (o: { winningTeam: string; burned: boolean }) =>
+  o.burned ? (o.winningTeam === "centaur" ? "The Centaurs win, and the Phoenix burns" : o.winningTeam === "werewolf" ? "The Werewolves win, and the Phoenix burns" : "The Phoenix burns: the Pyre wins")
+  : o.winningTeam === "nobody" ? "Nobody wins" : o.winningTeam === "werewolf" ? "The Werewolves win" : o.winningTeam === "centaur" ? "The Centaurs win" : `The ${teamShort(o.winningTeam as never)} wins`;
 
 function LobbyCentre({ w, h }: { w: number; h: number }) {
   const { view, ctx } = useApp();
   const v = view!;
   const need = v.players.length + v.settings.centerCount;
-  const problem = deckProblem(v.settings.deck, v.players.length, v.settings.centerCount);
+  const problem = deckProblem(v.settings.deck, v.players.length, v.settings.centerCount, v.settings.rules);
   const fan = useMemo(() => v.settings.deck.slice(0, 10), [v.settings.deck]);
   const small = h < 230 || w < 280;
   const c = Math.max(30, Math.min(84, h * (small ? 0.36 : 0.3), (w * 0.9) / Math.max(4, fan.length * 0.55)));

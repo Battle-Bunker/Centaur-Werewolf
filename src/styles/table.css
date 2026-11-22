@@ -121,7 +121,7 @@ button.seat { cursor: pointer; }
 .now-verdict h3 { font-size: clamp(22px, 3vw, 38px); font-weight: 600; font-style: italic; animation: verdict-in .9s var(--ease-out) both; animation-delay: calc(var(--lead, 0ms) + .2s); }
 .now-verdict.verdict-centaur h3 { color: var(--primary); }
 .now-verdict.verdict-werewolf h3 { color: var(--secondary); }
-.now-verdict.verdict-lone h3 { color: var(--amber-text); }
+.now-verdict.verdict-loner h3 { color: var(--amber-text); }
 .now-verdict p { animation: fade-in .6s both; animation-delay: calc(var(--lead, 0ms) + 1s); opacity: 0; }
 @keyframes verdict-in { from { opacity: 0; transform: scale(.85); letter-spacing: .08em; } }
 .verdict-note { font-size: 13.5px; color: var(--amber-text) !important; font-weight: 700; }
