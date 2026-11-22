@@ -220,3 +220,20 @@ because the rules are part of the fingerprint).
   reports naming Cass; which is real; does the Notary reveal itself. The pair report makes the Notary's own truth point
   at both the wolf and the Phoenix. Prediction: **Pyre 2, Centaurs 2, wolves 1**, path 2.8, ToM 2.5, deception 2.5.
   Falsified if 5-0 for one team, or if the False Witness never forges (then the forger card is dead weight at 6).
+
+## Fine pass 5: amendment test (written 13:25, before these games; opening statements ON)
+
+Why S3 swept: two independent honest looks (Sage, Rustler) at an UNMOVED wolf card, and no card in play could have
+moved it after both looks (the only movers act before the Rustler or are honest Centaurs who report their swap). The
+smallest change that leaves a credible counter-story is not a new card but one more card in the deck: a **late blind
+mover** (the Latecomer, wake 88, after every look) whose presence makes "my card was taken after your looks" claimable,
+since a blind swapper cannot be contradicted by its victim. Roster PY6L = PY6 + latecomer, 4 centre cards (10 cards;
+wolf-team still 3).
+
+- **PY6L-S3-latecomer** (5 replays): the S3 deal and night, the Latecomer lying in the centre (the wolf's census shows
+  it, so the wolf knows no player can deny being the Latecomer); the Phoenix is in the centre, so the Lure wants to be
+  eliminated itself (Kindler fallback). Expected counter-stories: the wolf says "a Latecomer must have taken my card";
+  or the Lure (a Tanner here) claims Latecomer "and took Bryn's wolf" to draw the votes onto itself. Prediction:
+  **Centaurs 2, Pyre 2, wolves 1** (talk-live; path >= 2.5), against the control's Centaurs 3-0. Falsified if the
+  Centaurs still win 5-0 (then two honest looks beat any unverifiable late-swap story, and the fix must be a mover the
+  table KNOWS was held, or a detector the liar can cite).

@@ -95,3 +95,46 @@ unless some card in play can explain BOTH looks away (a late mover, or a dress).
   were honest-info-converged. Dropped; the hub is testing these options within scenario.
 - Recurrent harness issue: in coarse games with dusk 60 s / turn 8 s, the Pyre's early-turn plan (wake 5) is often not
   queued in time and becomes a forced random move (PY6#1, PY6#2, PE6#1). Coarse pass 3 uses dusk 90 s / turn 10 s.
+
+## Fine pass 2 + coarse pass 3 (12:43-12:53, ~$27)
+
+- **PY6-S4-sagehits** (real Sage reads the only held wolf; dressed Phoenix unread): Centaurs 4, Pyre 1 (predicted C3
+  P2: direction right, Pyre one short). c .8 .8 .8 .6 .6; judges 2.2 / 2.6 / path 1.9 / noise 0.7: NOT talk-live by
+  the charter (path < 2) although one replay flipped. The wolf claimed to be the dressed Phoenix in all five replays and
+  lost four times, every time on "a real Phoenix wants the votes": the wolf cannot WANT the vote, so its Phoenix claim
+  is self-refuting. The one Pyre win (S4#2) came from the Lure's second Sage claim backing the dress and the table
+  explaining the two Sages as "one must be the Moonsage, whose look is true either way".
+- **GL6 Glamour** (2 coarse): Centaurs 2; judges path 1.25, deception 1.25. Self-glamour as a Centaur role did not
+  survive five other looks/claims. Rejected.
+- **Timing tell (opening statements off), measured on the 18 PY6 fixed replays:** mean rank of first message (1 = first
+  of 6): Centaur 2.2, Rustler 2.2, Pickpocket 2.3, Sage 2.3; Phoenix 4.7, Lure 4.8, Werewolf 5.3. Every honest player
+  spoke before every defector in most replays. The wolf's only S1 win (S1#3) used claiming last.
+
+## Fine pass 3 (12:55-13:20, 15 replays, ~$52): opening statements and a Pyre calibration
+
+| Scenario (same deal and night) | Opening statements OFF (fine1) | ON (fine3) | Judges ON: ToM / dec / path / noise |
+| --- | --- | --- | --- |
+| S1 fake Sage | Pyre 4, wolves 1 | **Centaurs 3, Pyre 1, wolves 1** | 2.4 / 2.8 / 3.0 / 0.8 |
+| S2 two wolf reads | Pyre 3, Centaurs 2 | Centaurs 3, Pyre 2 | 2.9 / 2.8 / 3.4 / 1.1 |
+| S2, ON + `burningDeniesWolves` off | — | Pyre 3, Centaurs 2 | 2.4 / 3.0 / 3.3 / 1.1 |
+
+c (ON): S1 .8 .6 1 .6 .8; S2 .6 1 .6 .6 1; S2-nodenial .8 .6 .8 1 .6.
+
+- **Prediction for S1-open falsified** (I predicted Pyre 4-5): the Centaurs went from 0 to 3 wins. Mechanism, in every
+  Centaur win: the lone wolf had to commit its claim BLIND in the opening round and chose a census-safe Sage claim with a
+  read it could not have ("Fenn is a Centaur", when its scent showed only Fenn's TEAM; Fenn truthfully claimed Rustler),
+  or a Centaur claim that collided with the real Centaur. Without openings the wolf waited, heard every claim, and
+  either stayed hidden or claimed Phoenix last. So in S1 the Pyre's edge was partly the WOLF's timing advantage: the
+  Lure's fake Sage read only worked while the wolf could not be located. With openings, S1 has the widest outcome
+  spread of any scenario (3 winners in 5 replays, H = 1.37 bits) and stays talk-live.
+- S2-open: within one replay of OFF (prediction held). The Centaur wins came from the real Sage's second-order step:
+  "a Moonsage would never expose a real wolf, so the second Sage claimant backing my read must be the Lure, so the
+  accused is the dressed Phoenix" (S2-open #1, #3, #4).
+- **Pyre calibration (burningDeniesWolves off):** my prediction (Pyre stronger, 4-5) was not confirmed: Pyre 3,
+  Centaurs 2, the same split as with the denial on. The wolf did join the burn when it could (S2-nodenial #1, #2, #4),
+  but in S2 the wolf is also the alternative suspect, so its push on the Phoenix reads as self-defence either way.
+  The hub's alternative (Pyre weaker without kingmaking wolves) is not supported either. Conclusion: in this scenario
+  the denial rule is not what makes the Pyre strong; the dress read by an honest seer is.
+- **Heuristic P6-5: simultaneous opening claims transfer power to the side whose truthful claims cross-check (the
+  Centaurs) by making liars commit before they know what is safe. Expect defector win shares to drop wherever a
+  defector's best lie depended on hearing the others first (wolves claiming last; claims that copy another's read).**
