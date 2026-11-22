@@ -3,8 +3,8 @@
 Each request: the change, the evidence (all-Opus games), the predicted effect. Evidence details in players-6-log.md.
 
 ## R6-1. Rule: `bloodPriceCondemned` on at 6 players (or keep wolf-team cards at most 3 of 9)
-- Evidence: every parity deal in my coarse games (5 of 5: TW6#2, TW6#3, SE6#1-3) was a wolf win whatever was said,
-  4 of them a 3-3 Blood Price tie forced by the wolf team (judges path 1-2). The hub then confirmed the rule option on
+- Evidence: 6 of the 7 parity deals in my coarse games (TW6#2-3, SE6#1-3, TW6c#1) were wolf wins, 5 of them a
+  3-3 Blood Price tie forced by the wolf team (judges path 1-2); the exception (TW6c#3) was a twin that did not join. The hub then confirmed the rule option on
   a 6-player parity scenario (off: wolves 3-0; on: Centaurs 4, wolves 1, talk-live).
 - Predicted effect: removes the guaranteed parity win; decks with twins and seals (4 wolf-team cards in 9, 65% parity
   deals) become playable.
@@ -41,6 +41,14 @@ Each request: the change, the evidence (all-Opus games), the predicted effect. E
 - Evidence: with dusk 60 s and turn 8 s, the Pyre's wake-5 step (Lure dress, Ember carry) was a forced random move in
   PY6#1, PY6#2 and PE6#1 (the agents did not queue in time). Dusk 90 s / turn 10 s fixed it in coarse pass 3.
 - Request: default AI-table dusk 90 s in the README's coarse template.
+
+## R6-7. A wolf-side late mover (e.g. a Werewolf-team twin of the Latecomer) [new card]
+- Evidence: S3 control (3-0) and PY6L-S3 (Latecomer in the deck, 5-0, path 0.9): two honest looks at an unmoved wolf
+  are never answered. With a Centaur Latecomer in the deck the wolf told the late-swap story about its OWN card, which
+  the looks refute; nobody else had a motive to tell it.
+- Change: a wolf-team card that, late in the night (after every look), must swap its own card blind with another
+  player's, so a wolf-side player can truthfully say "I took X's card after your looks" (or lie it).
+- Predicted effect: "two honest looks" scenarios become talk-live (Centaurs 3 of 5) wherever the twin is in the deck.
 
 ## Not requested (tested and found not to matter here)
 - `burningDeniesWolves` off as a Pyre calibration: PY6-S2 went Pyre 3 / Centaurs 2 with it off, the same as on.
