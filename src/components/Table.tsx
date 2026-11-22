@@ -39,7 +39,7 @@ export function Table() {
   const ballot: Picker | null = v.phase === "day" && mine ? {
     legal: v.players.filter(p => p.seat !== mine.seat).map(p => ({ k: "p" as const, i: p.seat })),
     chosen: mine.vote !== null ? [{ k: "p", i: mine.vote }] : [],
-    hint: mine.vote === null ? "Click a player to vote for them." : `You voted for ${v.players[mine.vote]?.name}. Click someone else to change it.`,
+    hint: "",
     done: mine.vote !== null,
     onPick: s => { if (s.i !== mine.vote) void exec("day.vote", { seat: s.i }).catch(() => {}); },
   } : null;
@@ -51,7 +51,12 @@ export function Table() {
   const myTurnRole = mine ? mine.dealt : null;
   const awake = v.phase === "night" && !!game && game.turn > 0 && game.turns[game.turn]?.role === myTurnRole && !!mine && !mine.progress.done;
   // The deal: cards fly from the middle to each seat when a round has just begun.
-  const fresh = v.phase === "night" && !!game && game.turn === 0 && Date.now() - game.turns[0].startsAt < 2500;
+  // While the phase curtain is up (the phase changed with this page open), the deal and the reveal wait for it.
+  const changed = useRef<{ key: string; at: number; live: boolean } | null>(null);
+  const phaseKey = `${v.round}:${v.phase}`;
+  if (changed.current?.key !== phaseKey) changed.current = { key: phaseKey, at: Date.now(), live: !!changed.current };
+  const lead = changed.current.live ? 1500 : 0;
+  const fresh = v.phase === "night" && !!game && game.turn === 0 && (changed.current.live ? Date.now() - changed.current.at < 6000 : Date.now() - game.turns[0].startsAt < 2500);
 
   const arrows = useMemo(() => {
     if (!L) return [];
@@ -61,12 +66,12 @@ export function Table() {
   }, [L, final, v.phase, mine]);
 
   return (
-    <div className={`table${awake ? " is-awake" : ""}${pick ? (pick.done ? " is-settled" : " is-picking") : ""}`} ref={box} aria-label="The table">
+    <div className={`table${awake ? " is-awake" : ""}${pick ? (pick.done ? " is-settled" : " is-picking") : ""}`} ref={box} aria-label="The table" style={{ ["--lead" as string]: `${lead}ms` }}>
       {L && (
         <>
           <div className="felt" style={{ left: L.cx, top: L.cy, width: Math.max(160, (size.w - L.tw * 0.9)), height: Math.max(120, (size.h - L.th * 0.9)) }} aria-hidden />
           <div className="centre" style={{ left: L.cx - L.cw / 2, top: L.cy - L.ch / 2, width: L.cw, height: L.ch }}>
-            <CentreStage w={L.cw} h={L.ch} pick={pick} legal={legal} order={order} markers={markers} fresh={fresh} />
+            <CentreStage w={L.cw} h={L.ch} pick={pick} legal={legal} order={order} markers={markers} fresh={fresh} lead={lead} />
           </div>
           {arrows.length > 0 && <VoteArrows L={L} arrows={arrows} reveal={!!final} />}
           {v.players.map((p, idx) => {
@@ -74,7 +79,7 @@ export function Table() {
             const pos = L.seats[p.seat] ?? L.seats[idx];
             return (
               <Seat key={p.id} v={v} p={p} pos={pos} L={L} legal={legal(s)} order={order(s)} onPick={() => pick?.onPick(s)} marks={markers[slotKey(s)] ?? []}
-                bubble={bubbles[p.seat]} awake={awake && p.me} fresh={fresh} dealIndex={((p.seat - viewer) % n + n) % n} ordered={!!pick?.ordered} />
+                bubble={bubbles[p.seat]} awake={awake && p.me} fresh={fresh} lead={lead} dealIndex={((p.seat - viewer) % n + n) % n} ordered={!!pick?.ordered} />
             );
           })}
         </>
@@ -85,9 +90,9 @@ export function Table() {
 
 type Player = View["players"][number];
 
-function Seat({ v, p, pos, L, legal, order, onPick, marks, bubble, awake, fresh, dealIndex, ordered }: {
+function Seat({ v, p, pos, L, legal, order, onPick, marks, bubble, awake, fresh, lead, dealIndex, ordered }: {
   v: View; p: Player; pos: { x: number; y: number }; L: TableLayout; legal: boolean; order: number; onPick(): void; marks: Marker[];
-  bubble?: { id: string; text: string }; awake: boolean; fresh: boolean; dealIndex: number; ordered: boolean;
+  bubble?: { id: string; text: string }; awake: boolean; fresh: boolean; lead: number; dealIndex: number; ordered: boolean;
 }) {
   const game = v.game, mine = game?.mine ?? null, final = game?.final ?? null;
   const role: RoleId | null = final ? final.cards[p.seat] : game && mine?.seat === p.seat ? mine.dealt : null;
@@ -107,7 +112,7 @@ function Seat({ v, p, pos, L, legal, order, onPick, marks, bubble, awake, fresh,
         <Avatar name={p.name} bot={p.bot} />
         {game && (
           <span className={`seat-card${fresh ? " is-dealt" : ""}`} title={finalTitle ?? (role ? `You were dealt the ${ROLE[role].name}. Your card may have been moved since.` : "A face-down card")}>
-            <Card role={role} size={cardSize} flipDelay={final ? 400 + dealIndex * 260 : fresh ? 900 + dealIndex * 110 : 0} />
+            <Card role={role} size={cardSize} flipDelay={final ? lead + 400 + dealIndex * 260 : fresh ? lead + 900 + dealIndex * 110 : 0} />
             {final && final.dealt[p.seat] !== final.cards[p.seat] && <span className="seat-card-was" title={`Dealt ${roleName(final.dealt[p.seat])}`}><img src={`/art/${final.dealt[p.seat]}.webp`} alt="" /></span>}
           </span>
         )}

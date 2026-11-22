@@ -20,9 +20,8 @@ export function Setup() {
   const need = players + center, have = v.settings.deck.length;
   const problem = deckProblem(v.settings.deck, players, center);
   const gap = need - have;
-  return (
-    <div className="panel setup">
-      <section>
+  const people = (
+      <section key="people">
         <h2 className="section-title">At the table <span className="count">{players}</span></h2>
         <ul className="people">
           {v.players.map(p => (
@@ -42,7 +41,10 @@ export function Setup() {
         </div>
         {players < 3 && <p className="hint">You need at least 3 players. Invite friends with the link, or add practice bots to try it alone.</p>}
       </section>
-
+  );
+  return (
+    <div className="panel setup">
+      {players < 3 && people}
       <section>
         <h2 className="section-title">Centre cards</h2>
         <p className="quiet small">Cards that lie face down in the middle, held by nobody. More of them means more roles that might not be at the table, so claims are harder to check.</p>
@@ -77,6 +79,7 @@ export function Setup() {
         <p className="quiet small">Every night turn lasts exactly the turn time, whether or not anyone holds that role. A player who has not decided when their turn ends gets a random move.</p>
       </section>
 
+      {players >= 3 && people}
       <section className="panel-foot">
         {problem ? <p className="foot-problem"><b>Before you can start:</b> {problem}</p> : <p className="foot-ready">Everything is ready.</p>}
         <CommandButton id="game.start" variant="primary" className="btn-block">{ctx.host ? "Deal the cards and begin" : "Waiting for the host to start"}</CommandButton>

@@ -96,7 +96,7 @@ function Composer() {
       {power && (
         <div className={`power${armed === power.id ? " is-armed" : ""}`}>
           <span className="power-text">{power.icon}<span><b>Once per game:</b> {power.cmd.def.tooltip}</span></span>
-          <button type="button" className={`btn ${armed === power.id ? "btn-danger" : "btn-secondary"}`} disabled={!text.trim() || busy} title={text.trim() ? power.cmd.def.tooltip : "Write the message first."}
+          <button type="button" className={`btn btn-secondary${armed === power.id ? " is-armed" : ""}`} disabled={!text.trim() || busy} title={text.trim() ? power.cmd.def.tooltip : "Write the message first."}
             onClick={() => { if (armed !== power.id) setArmed(power.id); else void go(power.id); }}>
             {armed === power.id ? "Click again to post it" : power.label}
           </button>

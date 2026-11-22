@@ -34,4 +34,5 @@
 .power { display: flex; flex-direction: column; gap: 6px; padding: 8px 10px; background: var(--card); border: 1px solid var(--line-strong); border-radius: var(--r2); }
 .power-text { display: flex; gap: 7px; align-items: flex-start; font-size: 13px; color: var(--ink-2); }
 .power-text svg { flex: none; margin-top: 1px; color: var(--secondary); }
-.power.is-armed { border-color: var(--danger); }
+.power.is-armed { border-color: var(--secondary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--secondary) 20%, transparent); }
+.power .btn.is-armed { animation: pulse-pill 1.2s ease-in-out infinite; }

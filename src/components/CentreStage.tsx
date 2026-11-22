@@ -11,22 +11,25 @@ import { Card, CommandButton, CountdownRing, ordinal } from "./bits";
 import { IconCheck, IconEye, IconMoon, IconSun } from "./icons";
 import { Pin } from "./Table";
 
-interface Props { w: number; h: number; pick: Picker | null; legal(s: Slot): boolean; order(s: Slot): number; markers: Record<string, Marker[]>; fresh: boolean }
+interface Props { w: number; h: number; pick: Picker | null; legal(s: Slot): boolean; order(s: Slot): number; markers: Record<string, Marker[]>; fresh: boolean; lead: number }
 
-export function CentreStage({ w, h, pick, legal, order, markers, fresh }: Props) {
+export function CentreStage({ w, h, pick, legal, order, markers, fresh, lead }: Props) {
   const { view } = useApp();
   const v = view!;
   const game = v.game, final = game?.final ?? null;
   const count = final ? final.center.length : v.settings.centerCount;
   const compact = h < 230 || w < 280;
-  const stageH = Math.round(Math.min(compact ? 64 : 150, h * (final ? 0.42 : 0.4)));
-  // The centre cards: one row if they fit at a decent size, otherwise two.
   const hintH = pick?.hint ? (compact ? 16 : 30) : 0;
-  const pinRows = final || compact ? 0 : Math.min(2, Math.max(0, ...Array.from({ length: count }, (_, i) => (markers[`c${i}`] ?? []).filter(m => m.tone !== "shown").length)));
-  const room = h - stageH - hintH - pinRows * 21 - (compact ? 6 : 18);
+  const pinRows = final || compact ? 0 : (Array.from({ length: count }, (_, i) => (markers[`c${i}`] ?? []).some(m => m.tone !== "shown")).some(Boolean) ? 1 : 0);
   const capH = compact ? 0 : 20;
-  const oneRow = Math.min((w - (count - 1) * 8) / count, room - capH - 18);
-  const twoRow = Math.min((w - (Math.ceil(count / 2) - 1) * 8) / Math.ceil(count / 2), (room - 8) / 2 - capH - 18);
+  // The stage gets what it can after the cards have a decent size (60px), between a compact strip and 150px.
+  const perRow1 = count, perRow2 = Math.ceil(count / 2);
+  const rowsWanted = count > 3 && (w - (perRow1 - 1) * 8) / perRow1 < 58 ? 2 : 1;
+  const needCards = rowsWanted * (60 + capH + 6) + pinRows * 22 + hintH + (compact ? 6 : 18);
+  const stageH = Math.round(Math.max(compact ? 48 : 64, Math.min(compact ? 64 : 150, h * (final ? 0.42 : 0.4), h - needCards)));
+  const room = h - stageH - hintH - pinRows * 22 - (compact ? 6 : 18);
+  const oneRow = Math.min((w - (perRow1 - 1) * 8) / perRow1, room - capH - 6);
+  const twoRow = Math.min((w - (perRow2 - 1) * 8) / perRow2, (room - 14) / 2 - capH - 6);
   const rows = count > 3 && twoRow > oneRow * 1.15 ? 2 : 1;
   const cardSize = Math.max(28, Math.floor(Math.min(final ? 104 : 96, rows === 1 ? oneRow : twoRow)));
 
@@ -47,14 +50,14 @@ export function CentreStage({ w, h, pick, legal, order, markers, fresh }: Props)
           const inner = (
             <>
               <span className={`centre-card-face${fresh ? " is-dealt" : ""}`} style={{ ["--deal" as string]: `${i * 70}ms` }}>
-                <Card role={role} size={cardSize} label={role ? `Centre ${i + 1}: ${ROLE[role].name}` : `Centre card ${i + 1}, face down`} flipDelay={final ? 200 + i * 180 : 0} />
+                <Card role={role} size={cardSize} label={role ? `Centre ${i + 1}: ${ROLE[role].name}` : `Centre card ${i + 1}, face down`} flipDelay={final ? lead + 200 + i * 180 : 0} />
                 {!final && shown.length > 0 && <span className="shown-ghost" title={`Shown to everyone as ${roleName(shown[shown.length - 1].role)} during the Herald's turn. It may have moved since.`}><img src={`/art/${shown[shown.length - 1].role}.webp`} alt="" /></span>}
                 {o >= 0 && <span className="pick-badge">{pick?.ordered ? o + 1 : <IconCheck size={14} strokeWidth={3} />}</span>}
               </span>
-              {!compact && (!final && shown.length
+              {!compact && cardSize >= 50 && (!final && shown.length
                 ? <span className="card-caption is-shown" title={`Shown to everyone as ${roleName(shown[shown.length - 1].role)} during the Herald's turn. It may have moved since.`}><IconEye size={12} /> was {roleName(shown[shown.length - 1].role)}</span>
                 : <span className="card-caption">{role ? ROLE[role].name : `Centre ${i + 1}`}</span>)}
-              {!final && !compact && own.length > 0 && <span className="pins pins-centre">{own.slice(-2).map((m, k) => <Pin key={k} m={m} />)}</span>}
+              {!final && !compact && own.length > 0 && <span className="pins pins-centre">{own.slice(-1).map((m, k) => <Pin key={k} m={{ ...m, title: own.map(x => x.title).join(" ") }} />)}</span>}
             </>
           );
           const label = `Centre card ${i + 1}${marks.length ? `. ${marks.map(m => m.title).join(" ")}` : ""}`;

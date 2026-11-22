@@ -13,7 +13,7 @@ export function layoutTable(W: number, H: number, n: number, viewer: number, opt
   const [minCW, minCH] = opts.minCentre ?? [Math.min(300, W * 0.42), Math.min(230, H * 0.36)];
   const p = n <= 3 ? 4 : n === 4 ? 2 : 2.7;
   const cx = W / 2, cy = H / 2;
-  const maxTw = Math.max(64, Math.min(280, W * 0.25, (H * 0.3) / 0.75));
+  const maxTw = Math.max(64, Math.min(280, W * (n <= 3 ? 0.38 : n <= 5 ? 0.3 : 0.25), (H * 0.32) / 0.75));
   let fallback: TableLayout | null = null;
   for (let tw = maxTw; tw >= 56; tw -= 4) {
     const th = tw * 0.75, bw = tw, bh = th + nameH;

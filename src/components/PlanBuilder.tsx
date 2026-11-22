@@ -180,7 +180,8 @@ function StepEditor({ v, role, step, outcomes, shape, publish, live }: { v: View
       chosen: focusedPicks,
       ordered: count > 1,
       done: left === 0,
-      hint: `${rowName ? `${rowName}: ` : ""}${count > 1 ? (left > 0 && left < count ? `pick ${left} more, in order` : `click ${count} cards in order`) : `click ${what}`} here or in your panel.`.replace(/^./, c => c.toUpperCase()),
+      hint: (left === 0 ? `${rowName ? `${rowName}: ` : ""}queued. Click another to change it.`
+        : `${rowName ? `${rowName}: ` : ""}${count > 1 ? (left < count ? `pick ${left} more, in order` : `click ${count} cards in order`) : `click ${what}`} here or in your panel.`).replace(/^./, c => c.toUpperCase()),
       onPick: (s: Slot) => pickTarget(at, s),
     });
     return () => setPicker(null);

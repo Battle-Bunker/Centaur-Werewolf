@@ -124,6 +124,31 @@ for (const g of games) {
   say(`  night: ${g.nightLog.join(" / ")}`);
   for (const s of g.seats) { const d = g.debriefs[s.name]; if (d) say(`  ${s.name} (${s.dealt}): decided by: ${d.decidedBy} | vote: ${d.vote.reasoning}`); }
 }
+say("\n## What decided games (roles named in the debriefs' decidedBy; a game counts once per role)");
+const named: Record<string, number> = {};
+for (const g of games) {
+  const text = Object.values(g.debriefs).map(d => d.decidedBy).join(" ").toLowerCase();
+  for (const id of new Set(g.cards)) if (text.includes(ROLE[id].name.toLowerCase())) named[ROLE[id].name] = (named[ROLE[id].name] ?? 0) + 1;
+}
+say("  " + Object.entries(named).sort((a, b) => b[1] - a[1]).map(([r, n]) => `${r} ${n}`).join(" · "));
+
+say("\n## Results by DEALT team");
+const byTeam: Record<string, { seats: number; won: number; eliminated: number; votesReceived: number }> = {};
+for (const g of games) for (const s of g.seats) { const t = teamOf(s.dealt), b = (byTeam[t] ??= { seats: 0, won: 0, eliminated: 0, votesReceived: 0 }); b.seats++; if (s.won) b.won++; if (s.eliminated) b.eliminated++; b.votesReceived += s.votesReceived; }
+for (const [t, b] of Object.entries(byTeam)) say(`  ${t}: ${b.seats} seats, won ${pct(b.won, b.seats)}, eliminated ${pct(b.eliminated, b.seats)}, votes received/seat ${(b.votesReceived / b.seats).toFixed(2)}`);
+
+// Every game's day, readable, for quoting.
+const chats: string[] = [];
+for (const g of games) {
+  chats.push(`\n=== ${g.label} (${g.code}): ${g.headline}${g.notes.length ? " " + g.notes.join(" ") : ""}`);
+  chats.push(`seats: ${g.seats.map(s => `${s.seat}:${s.name} ${s.dealt}${s.dealt !== s.endedHolding ? "→" + s.endedHolding : ""}${s.eliminated ? " [OUT]" : ""} →${s.votedFor}${s.voteWasRandom ? "(random)" : ""}`).join(" | ")}`);
+  chats.push(`centre: ${g.centre.join(", ")}`);
+  for (const l of g.nightLog) chats.push(`  night: ${l}`);
+  for (const m of g.chat.filter(m => m.phase === "day")) { const s = g.seats.find(x => x.name === m.from); chats.push(`  ${m.from}${s ? ` (${s.dealt})` : ""}: ${m.text}`); }
+  for (const [n, d] of Object.entries(g.debriefs)) chats.push(`  [debrief ${n}] claims: ${d.claims.map(c => `${c.wasTrue ? "T" : "F"}:${c.claim}`).join(" ; ")} | decided by: ${d.decidedBy}`);
+}
+writeFileSync(`${out}/chats.txt`, chats.join("\n"));
+
 say("\n## Interface / rules confusions reported");
 for (const g of games) for (const [n, d] of Object.entries(g.debriefs)) for (const c of d.confusions) say(`  ${g.label} ${n}: ${c}`);
 say("\n## Tension and fun");
