@@ -31,6 +31,7 @@ It states the game exactly as built. Design history: docs/design/synthesis.md an
 | `dawnProclamations` | Proclamations at dawn | true | on / off | Every proclamation (the Herald's, and a Forger's) is published together at dawn, in random order, each marked "Herald's turn" and true at that moment of the night. |
 | `biteNamesBiter` | The bitten know the Biter | true | on / off | A bitten player is told which seat bit them. |
 | `eavesdropGhost` | Eavesdropper's own result | true | on / off | If nobody was dealt the role the Eavesdropper names, it secretly gets a real result of its own as if it held that role (looks only, never moves), and is not told which case happened. |
+| `kindlerDeathVoids` | A Kindler's fall voids the day | false | on / off | Eliminating a Kindler while a Phoenix is held is, like any elimination without a Werewolf, a Werewolf-team win. |
 | `lureSparesPhoenix` | The Lure spares the Phoenix | false | on / off | The Lure may dress any card, the Phoenix included. |
 | `openingStatements` | Opening statements | false | on / off | The discussion opens straight into free chat. |
 | `openingSeconds` | Opening window | 60 | 20 to 180 | With opening statements, the window for them lasts 60 seconds (it ends early once every player has posted). |

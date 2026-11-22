@@ -185,6 +185,17 @@ describe("night", () => {
     expect(hedge.deaths).toEqual([0, 3]);
     expect(hedge.winningTeam).toBe("werewolf");
   });
+  it("kindlerDeathVoids: a Kindler's elimination with the Phoenix held voids the main result instead of a wolf win", () => {
+    const cards = ["werewolf", "lure", "phoenix", "sage", "centaur"] as RoleId[];
+    const votes = [1, 0, 1, 1, 1]; // seat 1 (Lure) eliminated
+    expect(resolveVote(cards, votes).winningTeam).toBe("werewolf");
+    const ruled = resolveVote(cards, votes, { rules: { kindlerDeathVoids: true } });
+    expect(ruled.winningTeam).toBe("nobody");
+    expect(ruled.winners).toEqual([]);
+    expect(ruled.headline).toMatch(/Kindler of the Pyre was eliminated/);
+    // A Werewolf eliminated alongside: Blood Price as usual (Centaurs win).
+    expect(resolveVote(cards, [1, 0, 0, 0, 1], { rules: { kindlerDeathVoids: true } }).winningTeam).toBe("centaur");
+  });
   it("a copier's pre-copy options come from the deck, never the deal", () => {
     const deck = ["gleaner", "werewolf", "werewolf", "sage", "rustler", "centaur", "sentry", "herder"] as RoleId[];
     expect(copierOptions(deck, "gleaner")).toEqual(["werewolf", "sage", "rustler", "centaur", "sentry", "herder"]);

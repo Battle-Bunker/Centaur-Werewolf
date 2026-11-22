@@ -749,6 +749,13 @@ export function resolveVote(cards: RoleId[], votes: (number | null)[], input: Re
     headline = `${headline.replace(/ (The )?(Werewolf team|Centaurs) wins?( [^.]*)?\.$/, "")} A Phoenix burned, so the Pyre wins and ${winningTeam === "werewolf" ? "the Werewolf team is denied" : "no main team wins"}.`;
     winningTeam = "nobody";
   } else if (burned) headline = `${headline} A Phoenix burned: the Pyre wins too.`;
+  // Rule kindlerDeathVoids: with a Phoenix held, eliminating a non-Phoenix Pyre card (and no Werewolf) is not a free
+  // wolf win: no main team wins (and the Pyre does not either: there was no burning).
+  if (rules.kindlerDeathVoids && !burned && phoenixHeld && winningTeam === "werewolf" && W === 0 && deaths.some(i => teams[i] === "pyre" && !phoenix[i])) {
+    reason = `${reason}, but a Kindler of the Pyre fell, which under this table's rule voids the result`;
+    headline = `${headline.replace(/ (The )?Werewolf team wins?( [^.]*)?\.$/, "")} A Kindler of the Pyre was eliminated: under this table's rule no main team wins.`;
+    winningTeam = "nobody";
+  }
   if (winningTeam === "centaur" || winningTeam === "werewolf") {
     if (reason.includes("surviving members")) seatsOf("werewolf").filter(i => !dead(i)).forEach(i => winners.add(i));
     else seatsOf(winningTeam).forEach(i => winners.add(i));

@@ -432,3 +432,10 @@ identical answer; nothing names a cause. sim/arena-player.md tells players conne
 The runner already resumes an agent that stops early. Verified without AI players (sim/research/hush-check.mts, 7
 checks: before / during (tools/call, room_wait, tools/list) / identical to a genuine outage / no cause named / recovers
 ~15 s after a 15 s cut). Not yet verified with a full Opus table.
+
+## 2026-11-22 CR-15 built: `kindlerDeathVoids` (default off), not yet tested in play
+With a Phoenix held, eliminating a non-Phoenix Pyre card with no Werewolf down now (rule on) voids the main result: no
+main team wins, the Pyre neither. Test added (106 green); tsc, smoke green; rules reference regenerated. Pre-registered
+prediction (change-requests.md CR-15): S5c (Lure fix, openings off) from wolves 4 / Centaurs 1 to Centaurs 3-4 /
+wolves 1-2. For the UI: one more boolean in `settings.rules`; a result headline may end "A Kindler of the Pyre was
+eliminated: under this table's rule no main team wins."
