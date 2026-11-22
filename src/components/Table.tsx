@@ -51,6 +51,14 @@ export function Table() {
   const myTurnRole = mine ? mine.dealt : null;
   const awake = v.phase === "night" && !!game && game.turn > 0 && game.turns[game.turn]?.role === myTurnRole && !!mine && !mine.progress.done;
   // The deal: cards fly from the middle to each seat when a round has just begun.
+  // Your turn: say so, even if the panel is hidden or showing the chat.
+  const { toast, setTab } = useApp();
+  const wasAwake = useRef(false);
+  useEffect(() => {
+    if (awake && !wasAwake.current && v.context.openSteps.length) { toast("You are awake. Decide now, or it is chosen at random.", "ok"); setTab("mine"); }
+    wasAwake.current = awake;
+  }, [awake]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // While the phase curtain is up (the phase changed with this page open), the deal and the reveal wait for it.
   const changed = useRef<{ key: string; at: number; live: boolean } | null>(null);
   const phaseKey = `${v.round}:${v.phase}`;

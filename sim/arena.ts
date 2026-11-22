@@ -28,6 +28,7 @@
  * <out>/tables.json lists every table, so `npx tsx sim/collect.ts <out>` works too. Then `npx tsx sim/analyze.ts <out>`.
  */
 import { spawn, type ChildProcess } from "node:child_process";
+import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync, createWriteStream } from "node:fs";
 import { basename, resolve } from "node:path";
 import { tmpdir } from "node:os";
@@ -55,6 +56,7 @@ const LOBBY_MAX = 100; // seconds before the runner starts a game the host agent
 const DEBRIEF_MAX = 180; // seconds after the game ends for agents to finish their debrief
 const RELAUNCHES = 2; // times an agent that stops before the game ends is resumed
 const SYSTEM = readFileSync(new URL("./arena-player.md", import.meta.url), "utf8");
+const PROMPT_VERSION = createHash("sha256").update(SYSTEM).digest("hex").slice(0, 12); // recorded per table in run.json
 const SANDBOX = resolve(tmpdir(), "cw-arena", basename(OUT)); // working dirs and HOMEs of the agents: outside the repo
 const ALLOWED = "mcp__werewolf__*";
 const DENIED = ["room_create", "room_join", "room_leave"].map(t => `mcp__werewolf__${t}`);
@@ -147,6 +149,7 @@ async function playTable(t: TableSpec) {
   const timers = TIMERS ?? t.timers ?? spec.timers, cfg = t.agents ?? spec.agents;
   const table: Table = await setupTable({ label, deck: t.deck, center: t.center, players: t.players, timers });
   writeFileSync(`${dir}/table.json`, JSON.stringify(table, null, 1));
+  writeFileSync(`${dir}/run.json`, JSON.stringify({ tournament: file, prompt: PROMPT_VERSION, timers, transport: DIRECT ? "direct" : "shim", agents: cfg ?? null, default: DEFAULT, cli: argv.join(" "), at: new Date().toISOString() }, null, 1));
   registerTable(table);
   const host = table.seats[0];
   const turns = nightTurns(t.deck).length;

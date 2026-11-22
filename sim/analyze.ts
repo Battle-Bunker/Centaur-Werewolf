@@ -17,13 +17,15 @@ const fp = (x: number) => (Number.isFinite(x) ? `${Math.round(100 * x)}%` : "n/a
 const roleId = (name: string) => Object.values(ROLE).find(r => r.name === name)?.id ?? name.toLowerCase();
 const isWolf = (name: string) => ROLE[roleId(name)]?.tags.includes("wolf") ?? false;
 const teamOf = (name: string) => ROLE[roleId(name)]?.team ?? "?";
+const isWolfId = (id: string) => ROLE[id]?.tags.includes("wolf") ?? false;
+const choose = (n: number, k: number): number => (k < 0 || k > n ? 0 : k === 0 ? 1 : (choose(n - 1, k - 1) * n) / k);
 
 interface Seat { seat: number; name: string; dealt: string; endedHolding: string; endedOnTeam: string; votedFor: string; voteWasRandom: boolean; votesReceived: number; eliminated: boolean; won: boolean }
 interface Debrief { dealt: string; believedFinalCard: string; finalCard: string; won: boolean; nightPlan: string; planRanAsIntended: boolean; claims: { claim: string; wasTrue: boolean }[]; vote: { seat: number | null; name: string; reasoning: string }; changedVote: boolean; decidedBy: string; tension: number; tensionWhy: string; fun: number; funWhy: string; confusions: string[] }
 interface Game {
   label: string; deck: string; code: string; players: number; center: number; cards: string[];
   headline: string; notes: string[]; winningTeam: string; eliminated: string[]; seats: Seat[]; centre: string[]; nightLog: string[];
-  chat: { from: string; text: string; phase: string }[]; timeline: any; agents: any[]; debriefs: Record<string, Debrief>;
+  chat: { from: string; text: string; phase: string }[]; timeline: any; agents: any[]; debriefs: Record<string, Debrief>; run?: any; timers: unknown;
 }
 
 const games: Game[] = [];
@@ -36,6 +38,7 @@ for (const d of readdirSync(out, { withFileTypes: true }).filter(d => d.isDirect
   games.push({
     label: table.config.label, deck: table.config.label.replace(/#\d+$/, ""), code: table.code, players: table.seats.length, center: table.config.center, cards: table.config.deck,
     ...v.result, chat: v.chat, timeline: existsSync(`${dir}/timeline.json`) ? read(`${dir}/timeline.json`) : {}, agents: existsSync(`${dir}/agents.json`) ? read(`${dir}/agents.json`) : [], debriefs,
+    run: existsSync(`${dir}/run.json`) ? read(`${dir}/run.json`) : undefined, timers: table.config.timers,
   });
 }
 
@@ -81,6 +84,18 @@ say(`  winners: Centaur ${all.win.centaur} · Werewolf ${all.win.werewolf} · no
 const bAvg = (k: (b: Baseline) => number) => games.reduce((a, g) => a + k(baselines.get(g.deck)!), 0) / (games.length || 1);
 say(`  random play, same mix of decks: Centaur ${fp(bAvg(b => b.win.centaur))} · Werewolf ${fp(bAvg(b => b.win.werewolf))} · nobody ${fp(bAvg(b => b.win.nobody))}`);
 say(`  wolf eliminated when present: ${all.wolfEliminated}/${all.wolfAtTable} (random ≈ ${fp(bAvg(b => b.wolfDeadWhenPresent))}) · eliminated held a moved card ${all.eliminatedHeldMoved}/${all.games} · forced moves ${all.forcedMoves} · random votes ${all.randomVotes} · messages/game ${all.messagesPerGame.toFixed(1)}`);
+
+// ── split: was any wolf card DEALT to a player? (the server's deal is under suspicion; see sim/deal-check.ts) ──
+say("\n## Games with and without a wolf dealt to a player");
+for (const [name, gs] of [["wolf dealt to a player", games.filter(g => g.seats.some(s => isWolf(s.dealt)))], ["NO wolf dealt (all wolves in the centre)", games.filter(g => !g.seats.some(s => isWolf(s.dealt)))]] as const) {
+  const m = measures(gs);
+  say(`  ${name}: ${m.games} games · Centaur ${m.win.centaur} · Werewolf ${m.win.werewolf} · nobody ${m.win.nobody} · wolf eliminated when held at end ${m.wolfEliminated}/${m.wolfAtTable} · nobody eliminated ${m.nobodyEliminated} · messages/game ${m.messagesPerGame.toFixed(1)}`);
+  for (const g of gs) say(`    ${g.label}: ${g.headline}`);
+}
+say(`  uniform deal would give 'no wolf dealt' in: ${decks.map(d => { const g = games.find(x => x.deck === d)!; const w = g.cards.filter(isWolfId).length, n = g.cards.length, p = g.players; return `${d} ${fp(choose(n - w, p) / choose(n, p))}`; }).join(" · ")}`);
+
+say("\n## Provenance (deck, prompt version, timers, transport) per game");
+for (const g of games) say(`  ${g.label} ${g.code}: deck ${g.cards.join(",")} · center ${g.center} · prompt ${g.run?.prompt ?? "(before run.json)"} · timers ${JSON.stringify(g.run?.timers ?? g.timers)} · ${g.run?.transport ?? "?"}`);
 
 // ── claims, by DEALT team ──
 say("\n## Claim honesty by dealt team (from debriefs)");
