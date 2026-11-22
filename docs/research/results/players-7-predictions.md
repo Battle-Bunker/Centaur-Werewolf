@@ -114,3 +114,69 @@ Deck: werewolf, werewolf, cutpurse, pickpocket, drifter, latecomer, poacher, sag
 
 ## Fine-pass scenario predictions
 Written in this file, dated, before each fine batch (scenarios are constructed after the coarse pass).
+
+### S7 "Stampede seven" (added 11:50, after the setup-check game, before any replay of it), centre 3
+Deck: werewolf, werewolf, spooker, sage, rustler, sentry, centaur, herder, pickpocket, centaur.
+The setup-check game turned out to be a rich game (see players-7-log.md), so this roster joins the study. It carries a
+lone Herder, which breaks my evidence rule whenever the Herder is held (70%); the scenario below has the Herder in the
+centre, and the roster recommendation, if any, will replace it (candidate: strayherder+herder, or drop it).
+- Thesis: the Spooker's rotation direction and targets are uncheckable (Sentry sees only "moved"); a wolf that believes
+  a false rotation story may conclude it lost its wolf card and switch sides in talk.
+
+## Fine-pass scenario predictions
+
+### F-S7-confession (replay of the setup-check game; written before any replay)
+Seats 0 Dov Centaur, 1 Fen Werewolf, 2 Cass Centaur, 3 Bryn Sage, 4 Esme Spooker, 5 Gale Werewolf, 6 Alder Sentry;
+centre Herder, Rustler, Pickpocket. Night: Sage Bryn read Esme = Spooker; both Centaurs glanced centre 1 = Herder;
+Spooker rotated Fen -> Bryn -> Gale -> Fen, so Fen now holds Gale's Werewolf, Bryn (the Sage, unaware) holds Fen's
+Werewolf, Gale holds the Sage card (Centaur team, unaware); Sentry Alder saw only Gale's card moved.
+- Crux: the Spooker is exposed by the Sage at once, so its only weapon is its rotation story; the two dealt wolves
+  must pick census covers (Rustler and Pickpocket are the only safe ones; collision likely); whether either dealt wolf
+  comes to believe it lost its card. The truly winning vote for the Centaurs is Fen or Bryn (Bryn is the Sage: almost
+  nobody will vote the confirmed-looking Sage), so Fen.
+- The coarse original: Spooker lied (claimed centre 2 -> Gale -> centre 3), Gale believed it, confessed "dealt
+  Werewolf, Fen is my packmate", the table flipped to Fen: Centaurs won.
+- **Prediction: talk-live, Centaurs 3, wolves 2 of 5.** Wolves win when the Spooker's story keeps Gale lying (or
+  names a rotation that makes Fen look clean) and the table eliminates Gale (holding the Sage card, a Centaur) on the
+  Sentry's "moved" plus a Rustler collision. Judges path >= 3, ToM >= 2.5. Vote c 0.67-0.83.
+- Falsifier: 5-0 either way with path < 2 (e.g. the Rustler collision always dooms whichever wolf claimed second,
+  regardless of the Spooker's story).
+
+### Constructed fine-pass scenarios (written 11:58, during the coarse pass, before any replay; checked with scenario-check)
+Context read just before writing: the hub's fine pass 1 (log.md) found the 5-player Moonsage duel swept 5-0 Centaurs
+by a census-backwards argument ("a wolf would never claim a role its census says is held"). I keep my roster-level
+predictions above unchanged (they were registered first) and state the scenario predictions in its light.
+
+**F-K7-duel.** Seats 0 Alder Sage, 1 Bryn Werewolf, 2 Cass Rustler, 3 Dov Moonsage, 4 Esme Herder, 5 Fen Centaur,
+6 Gale Stray Herder; centre Werewolf, Sentry, Centaur. Night: lone wolf Bryn scented Dov (wolf team) and his census
+says Werewolf/Sentry/Centaur are in the centre (so the Sage, Herder and Rustler are held); Sage Alder read Bryn =
+Werewolf; Moonsage Dov read Cass = Rustler (true); Rustler Cass peeked Dov and saw "Sage" (the twin passes), kept;
+Centaur Fen glanced centre 3 = Centaur; both Herders counted 1 wolf in the centre.
+- Crux: two Sage claims; the fake one is corroborated by an honest Rustler; two Herder claims (the Stray may state a
+  false count, e.g. 0, making "two wolves held" and so a second accused seat plausible). Bryn knows Dov is his ally.
+- Prediction: **Centaurs 3, wolves 2; talk-live** (more wolf chances than the hub's S3 because the Stray Herder can
+  muddy the count and Bryn has a known ally to coordinate a story with). Judges path >= 2.5, ToM >= 2.5.
+- Falsifier: 5-0 Centaurs by the census-backwards argument (as in the hub's S3): then twins alone do not make a
+  talk-live duel at 7 either, and the census is the problem (test CR-8 via centre 4 + census "three").
+
+**F-P7-ember.** Seats 0 Alder Sage, 1 Bryn Phoenix, 2 Cass Lure, 3 Dov Werewolf, 4 Esme Ember-Carrier, 5 Fen Centaur,
+6 Gale Sentry; centre Werewolf, Rustler, Pickpocket. Night: the Lure dressed the Phoenix card as a Werewolf; the
+Ember-Carrier swapped Bryn's and Fen's cards (Fen now holds the dressed Phoenix, unaware; Bryn holds a Centaur);
+lone wolf Dov scented Fen: "of the Pyre" (he knows Fen holds a Pyre card); Sage Alder read Fen = "Werewolf"
+(truly Phoenix); Fen glanced centre 2 = Rustler; Sentry Gale saw Fen's card moved.
+- Crux: a sincere "Fen is a Werewolf" read plus the Sentry's "Fen moved" (fits "a mover gave Fen a wolf"); Fen
+  protests Centaur; Bryn (dealt Phoenix, now Centaur) may reveal "I was dealt Phoenix" or hide it; Dov knows Fen is
+  Pyre and must stop the burning without revealing his scent; the Pyre (Cass, Esme) pushes Fen.
+- Prediction: **Pyre 2, Centaurs 2, wolves 1; talk-live**. c 0.5-0.83. Judges ToM >= 2.5, noise <= 1.5.
+- Falsifier: Pyre 5-0 (a sincere Sage read + a Sentry move is unanswerable: Lure+Ember too strong together) or
+  Pyre 0 with the table reasoning the same way every time ("a lone Werewolf read in a Lure deck is a dressed Phoenix").
+
+**F-G7-glamour.** Seats 0 Alder Sage, 1 Bryn Glamour, 2 Cass Centaur, 3 Dov Echo, 4 Esme Werewolf, 5 Fen Hush,
+6 Gale Sentry; centre Rustler, Centaur, Cutpurse. Night: the Echo copied the Sentry; the Glamour dressed Cass as a
+Werewolf; the Sage read Cass = "Werewolf" (truly Centaur); Cass glanced centre 2 = Centaur; both Sentries saw no
+movement near them (seats 2-6 and 0 unmoved).
+- Crux: a sincere frame of an honest Centaur; nothing moved, so "Cass was swapped" is not available: the only
+  defences are "Glamour is in the deck" and claim-counting (two Centaur claims plus a Centaur in the centre? only if
+  someone saw it: Cass did, centre 2; two Centaur cards in the deck). The Hush (Fen) can cut Cass or the Sage.
+- Prediction: **wolves 3, Centaurs 2; talk-live**. Judges deception >= 2.5.
+- Falsifier: 5-0 either way with path < 2 (the Glamour frame always or never works).

@@ -152,7 +152,7 @@ export type LogEvent =
   /** "At least one of `slots` is `roles[0]`" (one role, two cards). */
   | { kind: "announce"; slots: Slot[]; roles: RoleId[]; atDawn: boolean }
   | { kind: "count"; label: string; n: number }
-  | { kind: "census"; roles: RoleId[]; of: number }
+  | { kind: "census"; roles: RoleId[]; of: number; covers?: { seat: number; role: RoleId | null }[] }
   /** A distortion cast: on a card (`slot`) or on a viewer (`viewer`); `role` null means a random wrong role per look. */
   | { kind: "distort"; slot?: Slot; viewer?: number; role: RoleId | null }
   /** Proclamation k named `slots[2k]` and `slots[2k+1]`, and said at least one of them is `roles[k]`. */
@@ -408,7 +408,11 @@ function applyEffect(e: Effect, c: Ctx): Applied {
       if (state.rules.census === "off") return null;
       let roles = [...state.dealtCenter];
       if (state.rules.census === "three") roles = shuffle(roles, c.rng).slice(0, 3);
-      return { ev: { kind: "census", roles: roles.sort(), of: state.dealtCenter.length } };
+      if (state.rules.census === "allButOne") roles = shuffle(roles, c.rng).slice(0, Math.max(0, roles.length - 1));
+      // Pack covers: each pack seat (by DEALT card) gets a different Centaur-team role from the centre to claim, the same
+      // assignment for every pack member (it depends only on the deal), so their claims cannot collide with each other.
+      const covers = state.rules.packCovers ? packCovers(state) : undefined;
+      return { ev: { kind: "census", roles: roles.sort(), of: state.dealtCenter.length, ...(covers ? { covers } : {}) } };
     }
     case "distort": {
       const slot = picks[0];
@@ -800,4 +804,12 @@ export function deckProblem(deck: RoleId[], players: number, center: number, rul
   if (deck.some(id => ROLE[id].chat === "signed" || ROLE[id].chat === "report") && !deck.some(id => ROLE[id].chat === "forge")) return "A Signet or a Notary needs a card that forges seals (Counterfeiter or False Witness) in the deck: every seal must be one a defector could have made.";
   if (r.daySwap && deck.some(id => ROLE[id].dayPower === "swap") && players < r.thiefMinPlayers) return `The Moon-Thief needs ${r.thiefMinPlayers} or more players at this table (the "Moon-Thief table size" rule).`;
   return null;
+}
+
+/** The pack-covers assignment (rule packCovers): pack seats in seat order, each given a distinct Centaur-team role dealt to the centre, or null when there are fewer such roles than pack seats. Deterministic in the deal. */
+export function packCovers(state: GameState): { seat: number; role: RoleId | null }[] {
+  const pack = state.dealt.flatMap((r, i) => (ROLE[r].tags.includes("pack") ? [i] : []));
+  const pool = [...new Set(state.dealtCenter.filter(r => ROLE[r].team === "centaur"))].sort();
+  const offset = pool.length ? pack.reduce((a, i) => a + i, 0) % pool.length : 0;
+  return pack.map((seat, k) => ({ seat, role: k < pool.length ? pool[(offset + k) % pool.length] : null }));
 }

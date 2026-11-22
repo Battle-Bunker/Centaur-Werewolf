@@ -7,11 +7,11 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 export interface Seat { seat: number; name: string; dealt: string; endedHolding: string; endedOnTeam: string; won: boolean; why?: string; votedFor: string; voteWasRandom: boolean; votesReceived: number; eliminated: boolean; bitten?: boolean; imago?: boolean; cursed?: boolean; cutOff?: { by: string; forSeconds: number }[] }
-export interface Msg { n?: number; from: string; seat: number | null; phase: string; text: string; verified?: string; FORGED?: string }
+export interface Msg { n?: number; from: string; seat: number | null; phase: string; text: string; verified?: string; sealed?: string; FORGED?: string }
 export interface Game {
   dir: string; label: string; group: string; code: string; players: number; center: number; deck: string[]; rules: Record<string, unknown>;
   headline: string; notes: string[]; winningTeam: string; eliminated: string[]; seats: Seat[]; centre: string[]; dealtCentre: string[]; nightLog: string[];
-  votes: string[]; daySwap: unknown; proclamations: { card: string; was: string; madeDuring: string; FORGED?: string }[]; marks: { what: string; on: string }[];
+  votes: string[]; daySwap: unknown; proclamations: { card?: string; was?: string; cards?: string[]; atLeastOneIs?: string; says?: string; madeDuring: string; FORGED?: string }[]; marks: { what: string; on: string }[];
   chat: Msg[]; timeline: Record<string, any>; agents: { name: string; costUsd: number; debrief?: unknown }[]; run: Record<string, any>; table: Record<string, any>;
   fingerprint: string | null; judges: Judgement[];
 }
@@ -55,14 +55,15 @@ export function publicTranscript(g: Game): string {
   const nonDefault = Object.entries(g.rules).map(([k, x]) => `${k}=${x}`).join(", ");
   L.push(`Table rules: the defaults${nonDefault ? `, except ${nonDefault}` : ""} (Blood Price on unless stated: the Centaurs win only if more Werewolves than Centaur-team players are eliminated; at least 2 votes to eliminate; ties eliminate everyone tied).`);
   L.push(`Seats: ${g.seats.map(s => `${s.seat}: ${s.name}`).join(", ")} (clockwise).`);
-  if (g.proclamations.length) L.push(`Proclamations published at dawn: ${g.proclamations.map(p => `"${p.card} was ${p.was}" (${p.madeDuring})`).join("; ")}.`);
+  if (g.proclamations.length) L.push(`Proclamations published at dawn: ${g.proclamations.map(p => `"${p.says ?? `${p.card} was ${p.was}`}" (${p.madeDuring})`).join("; ")}.`);
   if (g.marks.length) L.push(`Public marks at dawn: ${g.marks.map(m => `${m.what} on ${m.on}`).join("; ")}.`);
   const t0 = g.timeline.phases?.day;
   L.push("", "DISCUSSION (chat, in order):");
   const day = g.chat.filter(m => m.phase === "day" || m.phase === "vote");
   day.forEach((m, i) => {
     const at = g.timeline.messagesAt?.[i] !== undefined && t0 !== undefined ? ` [+${secs(g.timeline.messagesAt[i] - t0)}]` : "";
-    L.push(`${m.from}${at}: ${m.text}${m.verified ? `  {${m.verified}}` : ""}`);
+    const seal = m.sealed ?? m.verified;
+    L.push(`${m.sealed ? `[SEALED message; during the game the table saw no poster; revealed after the game as ${m.from}]` : m.from}${at}: ${m.text}${seal ? `  {${seal}}` : ""}`);
   });
   for (const r of g.timeline.ready ?? []) if (t0 !== undefined) L.push(`(at +${secs(r.at - t0)}: ready to vote: ${r.who.join(", ") || "nobody"})`);
   if (g.timeline.phases?.vote !== undefined && t0 !== undefined) L.push(`VOTE PHASE opened at +${secs(g.timeline.phases.vote - t0)} (chat closed; ballots secret until the end).`);
@@ -80,7 +81,7 @@ export function truth(g: Game): string {
   for (const l of g.nightLog) L.push(`  ${l}`);
   const forged = g.chat.filter(m => m.FORGED).map(m => `${m.from}: ${m.text}`);
   if (forged.length) L.push(`Forged seals: ${forged.join(" | ")}`);
-  const forgedP = g.proclamations.filter(p => p.FORGED).map(p => `${p.card} was ${p.was}`);
+  const forgedP = g.proclamations.filter(p => p.FORGED).map(p => p.says ?? `${p.card} was ${p.was}`);
   if (forgedP.length) L.push(`Forged proclamations: ${forgedP.join(" | ")}`);
   return L.join("\n");
 }

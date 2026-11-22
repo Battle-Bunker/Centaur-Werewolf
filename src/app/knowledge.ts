@@ -61,10 +61,11 @@ function eventMarkers(ev: LogEvent, e: LogEntry, v: View, viewer: number, add: (
       else if (ev.viewer !== undefined) add({ k: "p", i: ev.viewer }, { label: "Veiled", tone: "veil", title: `You veiled ${v.players[ev.viewer]?.name ?? "this player"}'s eyes: tonight every centre card they look at shows ${ev.role ? roleName(ev.role) : "a random wrong role"}.` });
       return;
     case "witness":
-      ev.slots.forEach((s, i) => add(s, { label: `Proclaimed ${roleName(ev.roles[i])}`, role: ev.roles[i], tone: "shown", title: `You saw the ${roleName(ev.by)}'s proclamation: ${where(s, v, viewer)} was ${roleName(ev.roles[i])}.` }));
+      // Pairs: slots[2k] and slots[2k+1] are one proclamation about roles[k].
+      ev.roles.forEach((r, k) => [ev.slots[2 * k], ev.slots[2 * k + 1]].filter(Boolean).forEach(s => add(s, { label: `1 of 2: ${roleName(r)}?`, role: r, tone: "shown", title: `You saw the ${roleName(ev.by)}'s proclamation: at least one of ${where(ev.slots[2 * k], v, viewer)} and ${where(ev.slots[2 * k + 1], v, viewer)} is ${roleName(r)}.` })));
       return;
     case "forge":
-      ev.slots.forEach((s, i) => add(s, { label: `Forged ${roleName(ev.roles[i])}`, role: ev.roles[i], tone: "veil", title: `Your forgery: published at dawn as the ${roleName(ev.as)}'s, saying ${where(s, v, viewer)} is ${roleName(ev.roles[i])}.` }));
+      ev.slots.forEach(s => add(s, { label: `Forged: ${roleName(ev.roles[0])}`, role: ev.roles[0], tone: "veil", title: `Your forgery, published at dawn as the ${roleName(ev.as)}'s: at least one of ${ev.slots.map(x => where(x, v, viewer)).join(" and ")} is ${roleName(ev.roles[0])}.` }));
       return;
     case "overhear":
       for (const c of ev.copied) eventMarkers(c.ev, e, v, viewer, add, true);
@@ -85,12 +86,24 @@ export function markersFor(v: View, journal: LogEntry[], viewer: number): Record
   const add = (s: Slot, m: Marker) => { (out[slotKey(s)] ??= []).push(m); };
   for (const e of journal) eventMarkers(e.ev, e, v, viewer, add);
   for (const sh of v.game?.shown ?? []) {
-    add(sh.slot, { label: `Said ${roleName(sh.role)}`, role: sh.role, team: ROLE[sh.role]?.team, tone: "shown", title: `Proclaimed to everyone${sh.atDawn ? " at dawn" : ""} as ${roleName(sh.role)} (the ${roleName(sh.by)}'s turn). A public statement, not proof: it may be forged or distorted, and the card may have moved since.` });
+    const slots = shownSlots(sh);
+    for (const s of slots) add(s, { label: slots.length > 1 ? `1 of ${slots.length}: ${roleName(sh.role)}?` : `Said ${roleName(sh.role)}`, role: sh.role, team: ROLE[sh.role]?.team, tone: "shown", title: shownSentence(sh, v, viewer) });
   }
   for (const m of v.game?.marks ?? []) {
     add({ k: "p", i: m.seat }, { label: pinWord(m.label), tone: "mark", title: `${m.label} lies on ${v.players[m.seat]?.name ?? `seat ${m.seat}`}: everyone sees it, nobody knows who laid it.` });
   }
   return out;
+}
+
+type ShownLike = { slots?: Slot[]; slot?: Slot; role: RoleId; by: RoleId; atDawn: boolean };
+/** The cards a proclamation names (pairs now; a single slot from older data). */
+export const shownSlots = (sh: ShownLike): Slot[] => sh.slots ?? (sh.slot ? [sh.slot] : []);
+/** A proclamation as a sentence that never claims certainty. */
+export function shownSentence(sh: ShownLike, v: View, viewer: number): string {
+  const slots = shownSlots(sh);
+  const names = slots.map(s => where(s, v, viewer));
+  const what = slots.length > 1 ? `at least one of ${names.join(" and ")} is ${roleName(sh.role)}` : `${names[0]} is ${roleName(sh.role)}`;
+  return `Proclaimed${sh.atDawn ? " at dawn" : ""} as the ${roleName(sh.by)}'s: ${what}. Not proof: a forger may have made it, a look may have been distorted, and cards may have moved since.`;
 }
 
 /** Facts that are not about one card: counts, the census, what was heard of nobody. */
