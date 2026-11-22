@@ -8,7 +8,7 @@
 import { v } from "convex/values";
 import { internalQuery, type QueryCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
-import { actingRole, freshProgress, isAuto, isPhoenix, legalTargets, publicMarks, seededRng, shapeOf, shuffle, turnKey, visibleShown, type Progress, type StepPlan } from "../shared/engine";
+import { actingRole, copierOptions, freshProgress, isAuto, isPhoenix, legalTargets, publicMarks, seededRng, shapeOf, shuffle, turnKey, visibleShown, type Progress, type StepPlan } from "../shared/engine";
 import { aRole, condSource, legalRoles, pickCount, ROLE, ROLES, TEAM_NAME, type RoleId, type Slot } from "../shared/roles";
 import { describeRules, rulesOf } from "../shared/settings";
 import { cardOf, describe, revealHidden, seatName, voteLine, type Names } from "../shared/text";
@@ -220,7 +220,8 @@ export const view = internalQuery({
             (out.yourNightSteps as unknown[]).push(...render(ROLE[became], game.adoptProgress?.[seat] ?? freshProgress(), plans[became] ?? {}, became));
             out.copier = { became: ROLE[became].name, note: `You are now a copy of the ${ROLE[became].name}. Its steps (marked "as") run in its own turn.` };
           } else {
-            const mayBecome = [...new Set(role.steps.some(st => st.pick?.pools.includes("center")) ? game.state.dealtCenter : shape.deck!)].filter(r => r !== role.id);
+            // Every role in the DECK, never the actual deal: listing the dealt centre would tell a Gleaner what lies there.
+            const mayBecome = copierOptions(shape.deck!, role.id);
             out.copier = {
               became: null,
               note: "You may queue, for each role you might become, what that role will do: night_planStep with \"as\": <role id>. Undecided steps of the role you become are asked live in its turn, else random.",
@@ -303,6 +304,7 @@ export const view = internalQuery({
         marks: Object.entries(s.marks).map(([inst, i]) => ({ card: ROLE[s.instRole[Number(inst)]]?.name ?? inst, seat: i, on: who(i) })),
         daySwap: game.daySwap ? { by: who(game.daySwap.by), swapped: [who(game.daySwap.a), who(game.daySwap.b)] } : null,
         dealSeed: game.dealSeed ?? null,
+        heldInstances: { seats: s.inst, centre: s.cinst, note: "The physical card each seat (and centre slot) holds at the end: instance i < players was dealt to seat i, instance players + n to centre card n + 1." },
         scenario: { fingerprint: game.fingerprint ?? null, dealSeed: game.dealSeed ?? null, nightSeed: game.nightSeed ?? null, dealt: s.dealt.map(r => ROLE[r].name), dealtCentre: s.dealtCenter.map(r => ROLE[r].name), note: "Runs with the same fingerprint had the same deal, night seed and night (every action and result): only the day differed." },
         nightLog: game.log.map(e => `[${e.turn >= game.turns.length ? (e.step === "day" ? "Day" : "Dawn") : game.turns[e.turn]?.role ? ROLE[game.turns[e.turn].role!].name : "Dusk"}] ${describe(e, names, -1)}${revealHidden(e, names)}${e.via === "forced" ? " (random: out of time)" : ""}`),
       };
