@@ -444,6 +444,23 @@ for (const t of TWINS) {
     rules: `You act in the ${o.name}'s turn and do exactly what the ${o.name} does: ${o.rules} But you are on the Werewolf team${t.wolf ? " and you count as a Werewolf (you do not wake with the pack, and the pack does not know you)" : ", and you are not a Werewolf"}. ${t.passes ? `Any look at your card shows a ${o.name}.` : `A look at your card shows the ${t.name}.`} You win when the Werewolf team wins.`,
   });
 }
+// Research variants (players-7 study, docs/research/results/players-7-log.md): additive, the originals are unchanged.
+{
+  const herder = ROLES.find(r => r.id === "herder")!;
+  ROLES.push(
+    {
+      id: "mirage", name: "Mirage", team: "werewolf", tags: ["wolf", "pack"], max: 12, wake: 18,
+      blurb: "A Werewolf who must disguise ANOTHER card (never its own) as any role until dawn.",
+      rules: `You are a Werewolf. ${PACK_RULE} Then choose one card that is not yours (another player's, or a centre card) and any role in the deck: until dawn, every look at that card shows the role you chose and its team, wherever the card moves. You cannot disguise your own card. The Werewolf team's own looks and the Herder's count see the truth.`,
+      steps: [pack, { id: "mirage", title: "Cast a mirage", names: "deck", pick: { pools: ["others", "center"], count: 1 }, effects: [{ kind: "distort", target: "card", value: "chosen" }] }],
+    },
+    {
+      id: "greyherder", name: "Grey Herder", team: "werewolf", tags: ["pack"], max: 12, wake: herder.wake, steps: [pack, ...herder.steps!], twinOf: "herder", looksAs: "herder",
+      blurb: "A Stray Herder that wakes with the pack: it knows the pack and the census, and the pack knows it.",
+      rules: `You act in the Herder's turn and do exactly what the Herder does: ${herder.rules} You also wake with the pack: you learn which players were dealt cards of the pack and, under the Den Census rule, which roles lie in the centre (not where), and the pack learns your seat. You are on the Werewolf team, and you are not a Werewolf. Any look at your card shows a Herder. You win when the Werewolf team wins.`,
+    },
+  );
+}
 
 export const ROLE: Record<RoleId, RoleDef> = Object.fromEntries(ROLES.map(r => [r.id, r]));
 export const roleName = (id: RoleId) => ROLE[id]?.name ?? id;

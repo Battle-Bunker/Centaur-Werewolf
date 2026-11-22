@@ -185,3 +185,56 @@ movement near them (seats 2-6 and 0 unmoved).
 Centaur, glancing centre 1 = Rustler; Cass now sees centre 2 = Hush), because a Hush cut currently removes an AI player for good (harness bug reported
 to the hub: the client drops the MCP server after the 503s). The rest of the night is unchanged. Prediction unchanged:
 wolves 3, Centaurs 2, talk-live.
+
+## Batch 2 (written 12:45, after fine pass 1, before any of these games; scenarios checked with scenario-check)
+
+### Amendment A1: Grey Herder (new variant card `greyherder`), test F-K7g-duel
+Card: a Stray Herder that also wakes with the pack (knows the pack seats and the census; the pack knows its seat).
+Why (from F-K7-duel, Centaurs 4-1): in 4 of 5 replays the wolf side lost by uncoordinated claims between the lone
+Werewolf and the Stray Herder, who did not know each other (#4: both claimed Sentry; #1: the Werewolf claimed Stray
+Herder against the real Herder's count; #3: the Stray Herder's fake retraction). Judges labelled 3 of 10 verdicts
+"blunder". The smallest change that leaves the wolves a credible counter-story: let the twin know its pack, so it can
+predict its partner's census-safe claim and pick a complementary one (it still cannot talk to it).
+Scenario: F-K7-duel with the Stray Herder replaced by a Grey Herder (Gale); Bryn is therefore not alone and does not
+scent (he learns Gale instead of scenting Dov). Everything else identical.
+- Prediction: **wolves 2, Centaurs 3** (from 1-4); fewer wolf-wolf collisions (at most 1 of 5 replays, from 3);
+  judges' "blunder" verdicts at most 1 of 10; path >= 3; deception >= 3.
+- Falsifier: wolves still lose 4-5 of 5 with collisions in 2+ replays (knowing the pack is not enough without
+  communication: covers would have to be assigned, as the hub's packCovers rule does).
+
+### Amendment A2: Mirage (new variant card `mirage`), natural-deal games M7#1-4
+Card: a Glamour that cannot disguise its own card (another player's or a centre card only).
+Why (from coarse G7): both natural Glamours dressed their own card as "Centaur" (the dominant safe use), so
+distortion never framed anyone in natural play, while the constructed frame scenario (F-G7-glamour) was talk-live 3-2
+with deception 2.7. Forcing the disguise outward should bring frames (or centre-card decoys) into natural play.
+Deck M7: werewolf, mirage, whisperer, sage, echo, rustler, sentry, centaur, centaur, cutpurse (G7 with Glamour -> Mirage
+and Hush -> Whisperer, because a Hush cut currently removes an AI player for good; harness bug reported).
+Redeal until the Mirage is held by a player. 4 games.
+- Prediction: the Mirage frames a player (dresses a Centaur-team card as Werewolf or another wolf-incriminating role)
+  in at least 2 of 4 games, and dresses a centre card (to create a false "X is in the centre" fact) in the rest;
+  a frame becomes the decisive deception in at least 1 game; judges' deception mean >= 2.5 (G7 coarse: 2.3).
+  Winners: wolves 2, Centaurs 2 (G7 coarse: Centaurs 2).
+- Falsifier: the Mirage dresses a centre card harmlessly or a random seat in 3+ games with no effect on the talk.
+
+### F-P7-inversion (second Pyre scenario)
+Seats 0 Cass Lure, 1 Bryn Phoenix, 2 Gale Sentry, 3 Dov Werewolf, 4 Esme Ember-Carrier, 5 Alder Sage, 6 Fen Centaur;
+centre Werewolf, Rustler, Pickpocket. Night: the Lure dressed the Phoenix card as a Werewolf; the Ember-Carrier swapped
+Bryn's and Dov's cards: Bryn (dealt Phoenix) now holds the real Werewolf, Dov (dealt Werewolf, lone wolf, census) now
+holds the dressed Phoenix; Dov scented Fen = Centaur team; the Sage read Bryn = Werewolf (TRUE); Fen glanced centre 2 =
+Rustler; the Sentry Gale saw Bryn and Dov both moved.
+- The inversion: the dealt Phoenix holds a wolf (he should now hide: eliminating him is a Centaur win), the dealt wolf
+  holds the Phoenix (eliminating him is a burning: the Pyre wins, wolves denied, Centaurs lose). Both may infer the
+  swap from the Sentry's "1 and 3 moved". The Pyre knows; the Sage's true read points at Bryn.
+- Prediction: **talk-live, three-way: Centaurs 2, Pyre 2, wolves 1.** Judges ToM >= 2.7, path >= 3, noise <= 1.5.
+- Falsifier: 5-0 for one side, e.g. Centaurs every time because a true Sage read + the Sentry is unanswerable.
+
+### F-K7-solo (second K7 scenario: the uncontested Moonsage)
+Seats 0 Alder Moonsage, 1 Bryn Werewolf, 2 Cass Rustler, 3 Dov Centaur, 4 Esme Herder, 5 Fen Stray Herder, 6 Gale
+Sentry; centre Sage, Werewolf, Centaur. Night: the lone wolf Bryn (census: the Sage is in the centre) scented Dov =
+Centaur team; the Moonsage read Esme = Herder; Dov glanced centre 3 = Centaur; the Rustler Cass peeked Alder = "Sage"
+(the twin passes), kept; both Herders counted 1; the Sentry saw nothing moved.
+- Only the wolves know the Sage is in the centre. The Moonsage's Sage claim is uncontested and corroborated by an honest
+  Rustler; the Werewolf knows Alder must be the Moonsage (an ally) and can back him or frame through him.
+- Prediction (my roster-level prediction for this class): **wolves 4, Centaurs 1.** Path around 2.5, deception >= 2.5.
+- Falsifier: Centaurs 3+ (the table finds the wolf without exposing the fake Sage, e.g. by claim counting: Bryn's claim
+  must collide with someone since only Sage, Werewolf and Centaur are in the centre and the Sage is "claimed").
