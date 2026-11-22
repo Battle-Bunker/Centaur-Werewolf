@@ -4,10 +4,11 @@
  */
 import { useEffect, useState } from "react";
 import { ROLE } from "../../shared/roles";
+import { notices } from "../app/knowledge";
 import { usePrevious, useApp } from "../app/store";
 import { IconMoon, IconSun, IconVote } from "./icons";
 
-interface Show { key: number; kind: "night" | "day" | "ended"; title: string; sub: string }
+interface Show { key: number; kind: "night" | "day" | "vote" | "ended"; title: string; sub: string }
 
 export function Curtain() {
   const { view } = useApp();
@@ -22,8 +23,10 @@ export function Curtain() {
     if (phase === "night" && pp !== "night") {
       setShow({ key: Date.now(), kind: "night", title: "Night falls", sub: mine ? `You were dealt the ${ROLE[mine.dealt].name}. Read your card and queue your move.` : "You are watching this round." });
     } else if (phase === "day" && pp === "night") {
-      setShow({ key: Date.now(), kind: "day", title: "Dawn", sub: "The cards lie where the night left them. Talk it over, then vote." });
-    } else if (phase === "ended" && pp === "day") {
+      setShow({ key: Date.now(), kind: "day", title: "Dawn", sub: notices(view).length ? `${notices(view).map(n => n.title).join(". ")}. Look at your panel.` : "The cards lie where the night left them. Talk it over; when everyone is ready, the vote opens." });
+    } else if (phase === "vote" && pp === "day") {
+      setShow({ key: Date.now(), kind: "vote", title: "The vote", sub: `The talking is over. ${view.settings.voteSeconds ?? 20} seconds: click the player you would eliminate.` });
+    } else if (phase === "ended" && (pp === "vote" || pp === "day")) {
       setShow({ key: Date.now(), kind: "ended", title: "The votes are in", sub: view.game?.final?.outcome.headline ?? "" });
     }
   }, [phase, round]); // eslint-disable-line react-hooks/exhaustive-deps

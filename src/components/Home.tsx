@@ -4,6 +4,7 @@ import { useState } from "react";
 import { api } from "../../convex/_generated/api";
 import { savedName, saveName, TOKEN } from "../app/session";
 import { useApp } from "../app/store";
+import { ROLES } from "../../shared/roles";
 import { CommandButton } from "./bits";
 import { IconArrowRight, IconBook, IconChat, IconMoon, IconSun, IconVote } from "./icons";
 import { SHORTCUT } from "../palette/Palette";
@@ -19,19 +20,20 @@ function NameInput({ value, onChange, onEnter, autoFocus }: { value: string; onC
 }
 
 const FAN = ["sage", "herald", "werewolf", "centaur", "spooker"];
-const PHASE_LABEL: Record<string, string> = { lobby: "in the lobby", night: "night", day: "day", ended: "game over" };
+const PHASE_LABEL: Record<string, string> = { lobby: "in the lobby", night: "night", day: "day", vote: "voting", ended: "game over" };
 
 export function Home() {
   const { exec, go } = useApp();
   const [name, setName] = useState(savedName);
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState<"create" | "join" | null>(null);
+  const [playtest, setPlaytest] = useState(false);
   const mine = useQuery(api.rooms.mine, { token: TOKEN });
   const ready = name.trim().length > 0;
   const run = async (kind: "create" | "join") => {
     if (!ready || (kind === "join" && code.length !== 4) || busy) return;
     saveName(name.trim()); setBusy(kind);
-    await (kind === "create" ? exec("room.create", { name: name.trim() }) : exec("room.join", { code, name: name.trim() })).catch(() => {});
+    await (kind === "create" ? exec("room.create", { name: name.trim(), ...(playtest ? { playtest: true } : {}) }) : exec("room.join", { code, name: name.trim() })).catch(() => {});
     setBusy(null);
   };
   return (
@@ -53,6 +55,9 @@ export function Home() {
           <button className="btn btn-primary btn-lg" disabled={!ready || !!busy} onClick={() => void run("create")} title={ready ? "Open a new table and invite others with its code." : "Enter a name first."}>
             {busy === "create" ? "Opening a table…" : "Open a new table"}
           </button>
+          <label className="check home-playtest" title="Everyone at the table will see that it is a play-test table. Its host may fix the deal and sees every card.">
+            <input type="checkbox" checked={playtest} onChange={e => setPlaytest(e.target.checked)} /> A play-test table <span className="quiet small">(the host may fix the deal and sees every card; shown to everyone)</span>
+          </label>
           <div className="home-or"><span>or join one</span></div>
           <div className="home-join">
             <input className="input input-lg code-input" value={code} maxLength={4} placeholder="CODE" aria-label="Room code, four letters" autoCapitalize="characters" spellCheck={false}
@@ -83,11 +88,11 @@ export function Home() {
         <ol>
           <li><IconMoon /><b>Dusk</b><span>Look at your card. Queue your night move before your turn comes, so it plays by itself.</span></li>
           <li><img src="/art/back.webp" alt="" width={22} height={22} /><b>Night</b><span>Every role in the deck takes a turn on one clock, held or not, so the timing gives nothing away.</span></li>
-          <li><IconSun /><b>Day</b><span>Talk it through. Claim, accuse, bluff. Then everyone votes at once.</span></li>
-          <li><IconVote /><b>Reveal</b><span>The most-voted player is out. Every card turns over, and you win by the card you hold.</span></li>
+          <li><IconSun /><b>Day</b><span>Talk it through. Claim, accuse, bluff. When everyone is ready, or time is up, the talking stops.</span></li>
+          <li><IconVote /><b>Vote</b><span>A short timed vote. The most-voted player is out; every card turns over, and you win by the card you hold.</span></li>
         </ol>
         <div className="home-foot">
-          <CommandButton id="ui.showRoles" variant="quiet" icon={<IconBook />}>Browse the 17 roles</CommandButton>
+          <CommandButton id="ui.showRoles" variant="quiet" icon={<IconBook />}>Browse the {ROLES.length} cards</CommandButton>
           <span className="quiet"><IconChat size={14} /> Press <kbd>{SHORTCUT}</kbd> anywhere to search or do anything.</span>
         </div>
       </section>

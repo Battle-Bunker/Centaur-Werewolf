@@ -18,26 +18,26 @@ import { Curtain } from "./Curtain";
 import { ConnectDialog } from "./ConnectDialog";
 import { ConnectPage } from "./ConnectPage";
 import { Home, JoinGate } from "./Home";
-import { IconPanel, IconPlug, IconSpark, IconWarn } from "./icons";
+import { IconFlask, IconPanel, IconPlug, IconSpark, IconWarn } from "./icons";
 import { RoleBook } from "./RoleBook";
 import { SidePanel } from "./SidePanel";
 import { Table } from "./Table";
 import { TurnTrack } from "./TurnTrack";
 
 export function Shell() {
-  const { route, code, view, ui, toasts, go, online, dialog } = useApp();
+  const { route, code, view, ui, toasts, go, link, dialog } = useApp();
   const phase = view?.phase;
   const dusk = phase === "night" && view?.game?.turn === 0;
   const theme = phase === "night" ? "night" : "day";
   const inRoom = route.kind === "room" && !!view?.me;
   useEffect(() => { document.documentElement.dataset.theme = theme; document.querySelector('meta[name="theme-color"]')?.setAttribute("content", theme === "night" ? "#0b1712" : "#efe6d1"); }, [theme]);
-  useEffect(() => { document.title = view ? `${view.code} · ${phase === "lobby" ? "Lobby" : phase === "night" ? "Night" : phase === "day" ? "Day" : "Result"} · Centaur Werewolf` : "Centaur Werewolf"; }, [view?.code, phase]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { document.title = view ? `${view.code} · ${phase === "lobby" ? "Lobby" : phase === "night" ? "Night" : phase === "day" ? "Day" : phase === "vote" ? "Vote" : "Result"} · Centaur Werewolf` : "Centaur Werewolf"; }, [view?.code, phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="app" data-theme={theme} data-phase={dusk ? "dusk" : (phase ?? route.kind)}>
+    <div className={`app${link === "reconnecting" ? " is-reconnecting" : ""}`} data-theme={theme} data-phase={dusk ? "dusk" : (phase ?? route.kind)}>
       <a className="skip" href="#main">Skip to the table</a>
       <Header />
-      {!online && <div className="offline" role="status"><IconWarn size={16} /> Reconnecting to the table… Your moves will go through once it is back.</div>}
+      {link === "reconnecting" && code && <div className="offline" role="status"><span className="offline-spin" aria-hidden /><IconWarn size={16} /> Reconnecting to the table… Nothing you do is sent until the connection is back.</div>}
 
       {route.kind === "connect" ? <ConnectPage request={route.request} />
         : !code ? <Home />
@@ -89,7 +89,7 @@ function Header() {
   const phaseWords = !view ? null
     : view.phase === "lobby" ? "Lobby"
     : view.phase === "night" ? (game?.turn === 0 ? "Dusk" : turn?.role ? `Night · ${ROLE[turn.role].name}` : "Night")
-    : view.phase === "day" ? "Day" : "Result";
+    : view.phase === "day" ? "Day · discussion" : view.phase === "vote" ? "The vote" : "Result";
   const inRoom = route.kind === "room" && !!view?.me;
   return (
     <header className="top">
@@ -103,6 +103,7 @@ function Header() {
         </button>
       )}
       {phaseWords && <span className={`phase-chip phase-${view!.phase}`}>{phaseWords}</span>}
+      {view?.playtest && <span className="playtest-badge" title="A play-test table, chosen when the room was created. Its host may fix the deal and sees every card. Everyone at the table sees this badge."><IconFlask size={14} /> Play-test table</span>}
       <span className="top-space" />
       {inRoom && (
         <button type="button" className={`btn btn-quiet top-connect${view!.connections.length ? " is-on" : ""}`} onClick={() => setDialog({ kind: "connect" })} title="Let an AI assistant look at or play your seat">

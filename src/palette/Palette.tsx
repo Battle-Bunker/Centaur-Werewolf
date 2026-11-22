@@ -53,7 +53,8 @@ function suggestedIds(phase: string, host: boolean, players: number, openSteps: 
   if (phase === "home") return ["room.create", "room.join"];
   if (phase === "lobby") return host ? (players < 3 ? ["room.addBot", "ui.copyInvite"] : ["game.start", "setup.useRecommended"]) : ["ui.copyInvite", "ui.showRoles"];
   if (phase === "night") return openSteps ? ["night.planStep"] : ["ui.showRoles"];
-  if (phase === "day") return ["day.vote", "chat.send", "chat.sendSigned", "chat.sendUnsigned"];
+  if (phase === "day") return ["day.ready", "chat.send", "chat.sendSigned", "chat.sendReport", "chat.forgeSeal", "day.cutLine", "day.queueSwap"];
+  if (phase === "vote") return ["day.vote", "day.clearVote", "day.cutLine", "day.queueSwap"];
   return host ? ["game.playAgain"] : [];
 }
 
@@ -101,7 +102,7 @@ export function Palette() {
       .filter(x => x.s > 0 && !(x.can.ok === false && x.can.hidden) && (query.trim() || x.can.ok || x.c.group === "play" || x.c.group === "setup"));
     const toRow = (x: (typeof scored)[number], section: string): Row => ({ id: x.c.id, label: x.c.title, detail: x.c.tooltip, can: x.can, shortcut: x.c.shortcut, section, command: x.c });
     if (query.trim()) return scored.sort((a, b) => Number(b.can.ok) - Number(a.can.ok) || b.s - a.s).map(x => toRow(x, "Results"));
-    const suggested = suggestedIds(ctx.phase, ctx.host, ctx.players, ctx.openSteps.length).flatMap(id => scored.filter(x => x.c.id === id && x.can.ok));
+    const suggested = suggestedIds(ctx.phase, ctx.host, ctx.players, ctx.openSteps.length + (ctx.adoptOpen === "any" ? 1 : ctx.adoptOpen.length)).flatMap(id => scored.filter(x => x.c.id === id && x.can.ok));
     const shown = new Set(suggested.map(x => x.c.id));
     const out: Row[] = [];
     for (const { group, title } of SECTIONS) {
