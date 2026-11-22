@@ -265,3 +265,16 @@ Built as a rule option (default off): each seated player's FIRST message is held
   Centaurs 3, Pyre 1-2; path >= 3; ToM >= 2.5.
 - **Strategy tagger:** "claim-timing-tell" (used by the Centaurs in 37 of 43 earlier games) appears in at most 4 of
   these 10 games and is never decisive.
+
+## Pre-registration 2026-11-22 (afternoon): CR-12 and the Lure fix (before any replay)
+
+- **S3d = S3 + `census: "off"`** (the lone wolf learns nothing of the centre): "a wolf would know the Sage is held"
+  cannot be argued. Prediction: Centaurs 3, wolves 2; path >= 3; the wolf's claim collides with an honest claim in at
+  most 2 of 5 (it no longer knows which roles are safe).
+- **New rule option `lureSparesPhoenix`** (default off): a Lure's dress aimed at the card dealt as the Phoenix does not
+  happen (the Lure is told); any other card may be dressed. Scenario S5c = S5 with the rule; the Lure, knowing the rule,
+  dresses its own card as a Rustler (cover) instead; so the Sage's look at the Phoenix now shows "Phoenix", truly.
+  Prediction (opening statements OFF, 5 replays): Centaurs 4, Pyre 1, wolves 0 (was Pyre 1 / Centaurs 4 with the side
+  burn, and Pyre 4 in S9); the Pyre's only route is to discredit the Sage's true Phoenix read. S5d = S5c with opening
+  statements ON (3 replays): Centaurs 2-3 of 3. Falsified if the Pyre still wins 3+ of 5 (then the reverse bluff does
+  not need the dress at all).
