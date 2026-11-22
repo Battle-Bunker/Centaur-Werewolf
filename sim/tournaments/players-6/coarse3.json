@@ -1,0 +1,62 @@
+{
+ "about": "players-6 coarse pass 3: GL6 distortion",
+ "timers": {
+  "dusk": 90,
+  "turn": 10,
+  "day": 240,
+  "vote": 60
+ },
+ "agents": {
+  "model": "opus",
+  "effort": "medium"
+ },
+ "redeal": "wolfDealt",
+ "tables": [
+  {
+   "label": "GL6#1",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "glamour",
+    "werewolf",
+    "sage",
+    "rustler",
+    "centaur",
+    "sentry",
+    "pickpocket",
+    "drifter",
+    "cutpurse"
+   ]
+  },
+  {
+   "label": "GL6#2",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "glamour",
+    "werewolf",
+    "sage",
+    "rustler",
+    "centaur",
+    "sentry",
+    "pickpocket",
+    "drifter",
+    "cutpurse"
+   ]
+  }
+ ]
+}
