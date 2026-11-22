@@ -1,5 +1,5 @@
 {
- "about": "One defector mechanic (or the Wildwood) per deck, default rules. T5 lowers the Moon-Thief table size to 5.",
+ "about": "One defector mechanic (or the Wildwood) per deck, default rules. T5 turns the Moon-Thief's day swap on and lowers its table size to 5.",
  "timers": {
   "dusk": 120,
   "turn": 12,
@@ -422,6 +422,7 @@
     "sentry"
    ],
    "rules": {
+    "daySwap": true,
     "thiefMinPlayers": 5
    },
    "seed": 14001
@@ -449,6 +450,7 @@
     "sentry"
    ],
    "rules": {
+    "daySwap": true,
     "thiefMinPlayers": 5
    },
    "seed": 14002
@@ -476,6 +478,7 @@
     "sentry"
    ],
    "rules": {
+    "daySwap": true,
     "thiefMinPlayers": 5
    },
    "seed": 14003
@@ -503,6 +506,7 @@
     "sentry"
    ],
    "rules": {
+    "daySwap": true,
     "thiefMinPlayers": 5
    },
    "seed": 14004

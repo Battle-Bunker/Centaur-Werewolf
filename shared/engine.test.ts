@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { availability, COMMAND, COMMANDS, grantAllows, HOME_CONTEXT, toolDefinitions } from "./commands";
-import { actingRole, advance, dawn, daySwap, deal, dealFixed, decisionCount, deckProblem, emberSwap, freshProgress, heldRoles, isPhoenix, legalTargets, nightTurns, publicMarks, randomDecision, resolvePlan, resolveVote, runTurn, secureRng, seededRng, shapeOf, shuffle, turnKey, uncovered, validDecision, validPlan, visibleShown, type GameState, type LogEntry, type NightSeat, type Plan, type StepPlan } from "./engine";
+import { actingRole, advance, dawn, daySwap, deal, dealFixed, decisionCount, deckProblem, freshProgress, heldRoles, isPhoenix, legalTargets, nightTurns, publicMarks, randomDecision, resolvePlan, resolveVote, runTurn, secureRng, seededRng, shapeOf, shuffle, turnKey, uncovered, validDecision, validPlan, visibleShown, type GameState, type LogEntry, type NightSeat, type Plan, type StepPlan } from "./engine";
 import { CENTER_MAX, CENTER_MIN, legalRoles, recommendedDeck, ROLE, ROLES, type RoleId, type Slot } from "./roles";
 import { DEFAULT_RULES, describeRules, LEGACY_RULES, RULE_DEFS, ruleValueProblem, rulesOf, type Rules } from "./settings";
 import { describe as say, revealHidden } from "./text";
@@ -63,8 +63,9 @@ describe("deal", () => {
     expect(deckProblem([...base, "forger"], 5, 3)).toMatch(/Forger needs a Herald/);
     expect(deckProblem([...base.slice(1), "forger", "herald"], 5, 3)).toBeNull();
     expect(deckProblem([...base.slice(1), "forger", "herald"], 5, 3, { dawnProclamations: false })).toMatch(/Proclamations at dawn/);
-    expect(deckProblem([...base, "moonthief"], 5, 3)).toMatch(/Moon-Thief needs 7 or more/);
-    expect(deckProblem([...base, "moonthief"], 5, 3, { thiefMinPlayers: 5 })).toBeNull();
+    expect(deckProblem([...base, "moonthief"], 5, 3)).toBeNull(); // the day swap is off by default
+    expect(deckProblem([...base, "moonthief"], 5, 3, { daySwap: true })).toMatch(/Moon-Thief needs 7 or more/);
+    expect(deckProblem([...base, "moonthief"], 5, 3, { daySwap: true, thiefMinPlayers: 5 })).toBeNull();
     expect(deckProblem(["glamour", "glamour", "glamour", "sage", "sage", "sage", "centaur", "centaur"], 5, 3)).toBeNull();
   });
   it("seeds deals repeatably, and the secure generator stays in [0, 1)", () => {
@@ -364,14 +365,13 @@ describe("creatures at night", () => {
     const held = state(["heir", "phoenix", "werewolf"], ["sage", "centaur", "sentry"]);
     expect(dawn(held, [], 9, rng())).toEqual([]);
   });
-  it("carries the ember: a Phoenix card (held, else from the centre) swaps with the target seat's card", () => {
+  it("carries the ember at night: the Ember-Carrier blindly swaps two other players' cards in the brood's turn, before any talk", () => {
     const s = state(["embercarrier", "phoenix", "werewolf", "sage"], ["centaur", "herald", "sentry"]);
-    expect(emberSwap(s, 2)).toEqual({ kind: "ember", seat: 2, from: P(1) });
-    expect(s.cards).toEqual(["embercarrier", "werewolf", "phoenix", "sage"]);
-    const c = state(["embercarrier", "sage", "werewolf"], ["centaur", "phoenix", "sentry"]);
-    expect(emberSwap(c, 2)).toEqual({ kind: "ember", seat: 2, from: C(1) });
-    expect(c.cards[2]).toBe("phoenix");
-    expect(c.center[1]).toBe("werewolf");
+    const log = act(s, 0, { carry: always(P(1), P(3)) });
+    expect(log.map(e => e.ev.kind)).toEqual(["seats", "seats", "swap"]);
+    expect(s.cards).toEqual(["embercarrier", "sage", "werewolf", "phoenix"]);
+    expect(ROLE.embercarrier.steps![1].optional).toBeUndefined();
+    expect(turnKey("embercarrier")).toBe("kindler");
   });
   it("lays the Cuckoo's egg (public at dawn) and the Oxpecker's bond (private); an unheld Cuckoo's egg is laid at random", () => {
     const s = state(["cuckoo", "oxpecker", "sage", "werewolf"], ["herald", "centaur", "sentry"]);
@@ -665,9 +665,9 @@ describe("vote", () => {
     it("an Heir's card turned Phoenix burns like one (passed as phoenix seats)", () => {
       expect(resolveVote(["heir", "werewolf", "centaur"], [1, 0, 0], { phoenix: [true, false, false] })).toMatchObject({ burned: true, winners: [0] });
     });
-    it("the Heavy Hand's vote counts double only against a Phoenix holder", () => {
+    it("the Heavy Hand's vote counts double, whoever it goes to", () => {
       expect(resolveVote(["heavyhand", "phoenix", "werewolf", "centaur"], [1, 2, 1, 2]).tally).toEqual([0, 3, 2, 0]);
-      expect(resolveVote(["heavyhand", "phoenix", "werewolf", "centaur"], [2, 2, 1, 1]).tally).toEqual([0, 2, 2, 0]);
+      expect(resolveVote(["heavyhand", "phoenix", "werewolf", "centaur"], [2, 2, 1, 1]).tally).toEqual([0, 2, 3, 0]);
     });
     it("a bitten Pyre card's holder plays for the wolves; the card still burns", () => {
       const o = resolveVote(["phoenix", "werewolf", "kindler", "centaur"], [3, 0, 0, 0], { bitten: { seat: 0, by: 1 } });
@@ -715,8 +715,8 @@ describe("commands", () => {
   });
   it("checks the deck against the table's rules before starting", () => {
     const deck = ["werewolf", "moonthief", "sage", "centaur", "centaur", "rustler", "sentry", "herald"];
-    expect(availability(COMMAND["game.start"], { ...lobby, players: 5, deck })).toMatchObject({ ok: false, reason: expect.stringMatching(/Moon-Thief needs 7/) });
-    expect(availability(COMMAND["game.start"], { ...lobby, players: 5, deck, rules: { ...DEFAULT_RULES, thiefMinPlayers: 5 } })).toEqual({ ok: true });
+    expect(availability(COMMAND["game.start"], { ...lobby, players: 5, deck, rules: { ...DEFAULT_RULES, daySwap: true } })).toMatchObject({ ok: false, reason: expect.stringMatching(/Moon-Thief needs 7/) });
+    expect(availability(COMMAND["game.start"], { ...lobby, players: 5, deck, rules: { ...DEFAULT_RULES, daySwap: true, thiefMinPlayers: 5 } })).toEqual({ ok: true });
   });
   it("validates rule values before setting them", () => {
     expect(availability(COMMAND["setup.setRule"], lobby, { rule: "census", value: "three" })).toEqual({ ok: true });

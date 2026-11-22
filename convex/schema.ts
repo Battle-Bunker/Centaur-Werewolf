@@ -17,7 +17,7 @@ export default defineSchema({
       /** Rule variants (shared/settings.ts); missing ones take their defaults. */
       rules: v.optional(v.record(v.string(), v.union(v.boolean(), v.number(), v.string()))),
       /** Play-test tables only: a fixed seed, seating and/or cards for the next deal. */
-      fixedDeal: v.optional(v.object({ seed: v.optional(v.number()), seats: v.optional(v.array(v.id("players"))), cards: v.optional(v.array(v.string())) })),
+      fixedDeal: v.optional(v.object({ seed: v.optional(v.number()), seats: v.optional(v.array(v.id("players"))), cards: v.optional(v.array(v.string())), nightSeed: v.optional(v.number()) })),
     }),
     /** A play-test table: chosen at creation, shown to everyone; its host may fix the deal and sees every card. */
     playtest: v.optional(v.boolean()),

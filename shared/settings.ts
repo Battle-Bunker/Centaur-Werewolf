@@ -17,7 +17,9 @@ export interface Rules {
   biteNamesBiter: boolean;
   /** When nobody holds the role the Eavesdropper names, it gets a real result of its own as if it held it. Off: nothing. */
   eavesdropGhost: boolean;
-  /** The Moon-Thief may be in the deck only at tables of at least this many players. */
+  /** The Moon-Thief has its day swap (a vote-lock swap). Off by default: it rewrites the outcome after the talking. */
+  daySwap: boolean;
+  /** The Moon-Thief may be in the deck only at tables of at least this many players (with the day swap on). */
   thiefMinPlayers: number;
   /** A seat is eliminated only with at least this many votes (and the most votes). */
   eliminationVotes: number;
@@ -43,6 +45,7 @@ export const DEFAULT_RULES: Rules = {
   dawnProclamations: true,
   biteNamesBiter: true,
   eavesdropGhost: true,
+  daySwap: false,
   thiefMinPlayers: 7,
   eliminationVotes: 2,
   mandatorySteps: false,
@@ -95,8 +98,13 @@ export const RULE_DEFS: RuleDef[] = [
     off: "If nobody was dealt the role the Eavesdropper names, it learns nothing.",
   },
   {
+    id: "daySwap", kind: "boolean", title: "Moon-Thief's day swap", tooltip: "Whether the Moon-Thief may swap two players' cards as the votes lock.",
+    on: "The player dealt the Moon-Thief may queue a swap of two other players' cards, made as the vote ends, before counting.",
+    off: "The Moon-Thief has no day swap: it is a Werewolf of the pack and nothing more. (Off by default: a swap after the talking makes the talking irrelevant.)",
+  },
+  {
     id: "thiefMinPlayers", kind: "number", title: "Moon-Thief table size", tooltip: "The smallest table at which the Moon-Thief may be in the deck.", min: 3, max: 12,
-    means: n => `The Moon-Thief may be in the deck only with ${n} or more players.`,
+    means: n => `With the day swap on, the Moon-Thief may be in the deck only with ${n} or more players.`,
   },
   {
     id: "eliminationVotes", kind: "number", title: "Votes to eliminate", tooltip: "How many votes a player needs to be eliminated.", min: 2, max: 4,

@@ -73,7 +73,6 @@ function sentence(ev: LogEvent, role: RoleId, step: string, who: string, self: n
     case "bitten": return mine ? `At dawn: you were bitten${ev.by === null ? "" : ` by ${seatWord(ev.by, v, viewer)}`}. You now win only with the Werewolf team. You are not a Werewolf, and you lose any creature rules.` : `${who} ${who === "You" ? "were" : "was"} bitten${ev.by === null ? "" : ` by ${seatWord(ev.by, v, viewer)}`} and joined the Werewolf team.`;
     case "heir": return mine ? "At dawn: no player held a Phoenix, so the card you hold (an Heir's) has become a Phoenix. If you are eliminated, the Pyre wins." : `${who} held an Heir's card, which became a Phoenix at dawn (no player held one).`;
     case "adopt": return `${who} became a copy of the ${roleName(ev.role)}${mine ? ": from now on you are that role (team, win, powers) and act in its turn" : ""}.`;
-    case "ember": return `${who} carried the ember: a Phoenix card went to ${seatWord(ev.seat, v, viewer)}${ev.from ? ` from ${ev.from.k === "c" ? `centre card ${ev.from.i + 1}` : seatWord(ev.from.i, v, viewer)}` : " (nothing moved)"} as the vote ended.`;
     case "void": return mine ? ev.why : `${who}: ${ev.why.replace(/\byou were\b/g, "they were").replace(/\byou\b/g, "they")}`;
     case "daySwap": return `${who} swapped the cards of ${seatWord(ev.a, v, viewer)} and ${seatWord(ev.b, v, viewer)} as the vote phase ended.`;
     case "skip": {

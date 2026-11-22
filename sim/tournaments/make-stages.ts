@@ -40,10 +40,10 @@ const stage2: Arm[] = [
   { label: "T2-glamour5x4", center: 4, players: FIVE, deck: ["glamour", "werewolf", "sage", "centaur", "centaur", "herald", "rustler", "farrier", "sentry"] },
   { label: "T3-eavesdropper7x4", center: 4, players: SEVEN, deck: ["werewolf", "eavesdropper", "tracker", "sage", "centaur", "centaur", "herald", "rustler", "farrier", "herder", "sentry"] },
   { label: "T4-biter7x3", center: 3, players: SEVEN, deck: ["werewolf", "biter", "sage", "herald", "centaur", "centaur", "rustler", "farrier", "herder", "sentry"] },
-  { label: "T5-thief-forger5x5", center: 5, players: FIVE, deck: ["werewolf", "moonthief", "forger", "herald", "sage", "centaur", "centaur", "rustler", "farrier", "sentry"], rules: { thiefMinPlayers: 5 } },
+  { label: "T5-thief-forger5x5", center: 5, players: FIVE, deck: ["werewolf", "moonthief", "forger", "herald", "sage", "centaur", "centaur", "rustler", "farrier", "sentry"], rules: { daySwap: true, thiefMinPlayers: 5 } },
   { label: "T6-loners5x4", center: 4, players: FIVE, deck: ["werewolf", "werewolf", "sage", "centaur", "rustler", "sentry", "herald", "cuckoo", "oxpecker"] },
 ];
-write("stage2-mechanics", "One defector mechanic (or the Wildwood) per deck, default rules. T5 lowers the Moon-Thief table size to 5.", tables(stage2, a => 10 + stage2.indexOf(a)));
+write("stage2-mechanics", "One defector mechanic (or the Wildwood) per deck, default rules. T5 turns the Moon-Thief's day swap on and lowers its table size to 5.", tables(stage2, a => 10 + stage2.indexOf(a)));
 
 // ── stage 3: combinations ──
 const stage3: Arm[] = [

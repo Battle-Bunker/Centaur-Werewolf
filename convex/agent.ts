@@ -101,9 +101,9 @@ export function caveats(deck: RoleId[]): string[] {
   if (any("eavesdropper")) out.push("An Eavesdropper is in this deck: a Werewolf may hold an exact copy of one role's true night results, so two players can make the same true claim.");
   if (any("biter")) out.push("A Biter is in this deck: a player may have been bitten onto the Werewolf team. They keep their true night results and may know a wolf's seat.");
   if (any("stalkinghorse")) out.push("A Stalking Horse is in this deck: it wakes with the pack and knows what they know. If whoever holds it is eliminated, the Werewolf team wins, even if a Werewolf falls too.");
-  if (any("moonthief")) out.push("A Moon-Thief is in this deck: the player dealt it may swap two other players' cards the instant the vote phase ends, before anything is counted.");
+  if (any("moonthief")) out.push("A Moon-Thief is in this deck: a Werewolf of the pack (its vote-lock swap exists only under the table's day-swap rule, off by default).");
   if (any("hush")) out.push("A Hush is in this deck: once, it can cut one player off for a while, exactly as if their connection dropped. A player going offline may be a real drop or a cut; only the results say.");
-  if (has(deck, r => ROLE[r]?.team === "pyre")) out.push(`The Pyre is in this deck: its Kindlers win when a player holding a Phoenix is eliminated, and know where the Phoenix was dealt. A player eager to be voted out, or pushing hard on one seat, may be Pyre.${any("lure") ? " A Lure may have dressed a card (the Phoenix?) as another role tonight." : ""}${any("falsewitness") ? " A False Witness may post a forged seal." : ""}${any("embercarrier") ? " An Ember-Carrier may send the Phoenix card to any seat as the vote ends." : ""}${any("heavyhand") ? " A Heavy Hand's vote counts double against the Phoenix's holder." : ""}${any("heir") ? " If no player holds a Phoenix at dawn, an Heir's card becomes one." : ""}`);
+  if (has(deck, r => ROLE[r]?.team === "pyre")) out.push(`The Pyre is in this deck: its Kindlers win when a player holding a Phoenix is eliminated, and know where the Phoenix was dealt. A player eager to be voted out, or pushing hard on one seat, may be Pyre.${any("lure") ? " A Lure may have dressed a card (the Phoenix?) as another role tonight." : ""}${any("falsewitness") ? " A False Witness may post a forged seal." : ""}${any("embercarrier") ? " An Ember-Carrier blindly swapped two players' cards in the brood's turn: the Phoenix may have moved to someone who does not know." : ""}${any("heavyhand") ? " A Heavy Hand's vote counts double." : ""}${any("heir") ? " If no player holds a Phoenix at dawn, an Heir's card becomes one." : ""}`);
   if (any("gleaner", "echo")) out.push("A copier is in this deck (Gleaner: from the centre; Echo: from a player): it may have become any role, with that role's team and powers, and acts in that role's turn. Two players can truthfully claim the same role. A look at a copier's card shows Gleaner or Echo.");
   if (any("cuckoo")) out.push("A Cuckoo is in this deck: whoever holds it wins if the egged seat is eliminated and they are not. Pressure on the egged seat may come from them.");
   if (any("oxpecker")) out.push("An Oxpecker is in this deck: whoever holds it wins exactly when the seat it bonded to wins, whatever side that is.");
@@ -250,7 +250,7 @@ export const view = internalQuery({
     }
     const actingOf = (i: number) => actingRole(game.state, i);
     const dayPower = mine && !game.powerUsed?.[seat] ? ROLE[actingOf(seat)].dayPower : undefined;
-    const swapInfo = mine && ROLE[actingOf(seat)].dayPower === "swap" ? (game.daySwap?.by === seat ? { a: who(game.daySwap.a), b: who(game.daySwap.b), note: "Made the instant the vote phase ends. Change it with day_queueSwap, cancel with day_clearSwap." } : { none: "You may queue a swap with day_queueSwap { a, b } (two other players' seats)." }) : null;
+    const swapInfo = mine && ROLE[actingOf(seat)].dayPower === "swap" && rules.daySwap ? (game.daySwap?.by === seat ? { a: who(game.daySwap.a), b: who(game.daySwap.b), note: "Made the instant the vote phase ends. Change it with day_queueSwap, cancel with day_clearSwap." } : { none: "You may queue a swap with day_queueSwap { a, b } (two other players' seats)." }) : null;
     if (room.phase === "day") {
       out.day = {
         discussionEnds: timer(game.dayEndsAt),
@@ -259,7 +259,6 @@ export const view = internalQuery({
         youAreReady: seat >= 0 ? !!game.ready?.[seat] : null,
         yourSwap: swapInfo,
         yourCut: dayPower === "cut" ? `You may cut one player off for ${rules.cutSeconds} s with day_cutLine { "seat": n } (once).` : null,
-        yourEmber: mine && ROLE[actingOf(seat)].dayPower === "ember" ? { queued: game.embers?.[String(seat)] !== undefined ? who(game.embers[String(seat)]) : null, how: "day_queueEmber { \"seat\": n } (change it any time until the vote ends; day_clearEmber to cancel)" } : null,
         warning: deckIds.includes("sporeling") ? "If you vote for whoever holds the Sporeling and they are eliminated, you lose." : null,
         note: `Discussion. Voting is NOT open yet. The vote phase (${room.settings.voteSeconds ?? 20} s) starts when this timer runs out, when the host ends the discussion, or as soon as every seated human is ready (day_ready { "ready": true }).`,
       };
@@ -301,6 +300,7 @@ export const view = internalQuery({
         marks: Object.entries(s.marks).map(([inst, i]) => ({ card: ROLE[s.instRole[Number(inst)]]?.name ?? inst, seat: i, on: who(i) })),
         daySwap: game.daySwap ? { by: who(game.daySwap.by), swapped: [who(game.daySwap.a), who(game.daySwap.b)] } : null,
         dealSeed: game.dealSeed ?? null,
+        scenario: { fingerprint: game.fingerprint ?? null, dealSeed: game.dealSeed ?? null, nightSeed: game.nightSeed ?? null, dealt: s.dealt.map(r => ROLE[r].name), dealtCentre: s.dealtCenter.map(r => ROLE[r].name), note: "Runs with the same fingerprint had the same deal, night seed and night (every action and result): only the day differed." },
         nightLog: game.log.map(e => `[${e.turn >= game.turns.length ? (e.step === "day" ? "Day" : "Dawn") : game.turns[e.turn]?.role ? ROLE[game.turns[e.turn].role!].name : "Dusk"}] ${describe(e, names, -1)}${revealHidden(e, names)}${e.via === "forced" ? " (random: out of time)" : ""}`),
       };
     }
@@ -330,8 +330,8 @@ Cards, looks and what you know
 - What "blind" roles do not learn: the Spooker, Pickpocket and Latecomer see none of the cards they move or take; the Sentry learns only WHETHER nearby cards moved, not what they are; the Herder learns only HOW MANY Werewolf cards lie in the centre, not which; the Whisperer is told one Werewolf's seat, and that Werewolf does not know the Whisperer; the census tells the pack which roles were dealt to the centre, not where; the Elderbark learns which seats were DEALT creatures, not what they hold now; a bitten player is not told what the Biter holds.
 
 How the game is decided (in this order)
-1. Swaps: the Moon-Thief's queued swap; then each Ember-Carrier's ember (a Phoenix card, held by a player if any, else from the centre, swaps with the chosen seat's card), in seat order.
-2. Tally: votes, weighted by the card each voter holds (Chiron counts twice; a Heavy Hand counts twice when it votes for a Phoenix holder). Every seat tied on the most votes is eliminated, if that is enough votes.
+1. Swap: the Moon-Thief's queued swap, only if the table's day-swap rule is on (off by default).
+2. Tally: votes, weighted by the card each voter holds (Chiron and Heavy Hand count twice). Every seat tied on the most votes is eliminated, if that is enough votes.
 3. Teams: a bitten seat is on the Werewolf team; everyone else is on the team of the card they hold (a copier's card: the team of what it copied).
 4. Main result (Centaurs v. Werewolves):
    a. If an eliminated player holds a Stalking Horse, the Werewolf team wins.

@@ -158,8 +158,7 @@ export type LogEvent =
   | { kind: "heir" }
   /** A copier became this role (the card's true identity). */
   | { kind: "adopt"; role: RoleId }
-  /** An Ember-Carrier's move as the vote ended: a Phoenix card went to `seat` (from a player's seat or the centre). */
-  | { kind: "ember"; seat: number; from: Slot | null }
+
   /** A step the actor had queued that turned out not to happen. */
   | { kind: "void"; why: string }
   /** The Moon-Thief's swap, made as the vote phase ended. */
@@ -605,21 +604,6 @@ export function publicMarks(state: GameState): { role: RoleId; seat: number; lab
   });
 }
 
-/**
- * The Ember-Carrier's move, as the vote ends: a Phoenix card (one a player holds, else one in the centre) swaps places
- * with the target seat's card. Nothing happens if the target already holds one, or there is none.
- */
-export function emberSwap(state: GameState, target: number): LogEvent {
-  if (isPhoenix(state, state.inst[target])) return { kind: "ember", seat: target, from: null };
-  const p = state.inst.findIndex(i => isPhoenix(state, i));
-  if (p >= 0) { daySwap(state, p, target); return { kind: "ember", seat: target, from: { k: "p", i: p } }; }
-  const c = state.cinst.findIndex(i => isPhoenix(state, i));
-  if (c < 0) return { kind: "ember", seat: target, from: null };
-  [state.center[c], state.cards[target]] = [state.cards[target], state.center[c]];
-  [state.cinst[c], state.inst[target]] = [state.inst[target], state.cinst[c]];
-  return { kind: "ember", seat: target, from: { k: "c", i: c } };
-}
-
 /** The Moon-Thief's swap, as the votes lock: two seats' cards change places. */
 export function daySwap(state: GameState, a: number, b: number): LogEvent {
   [state.cards[a], state.cards[b]] = [state.cards[b], state.cards[a]];
@@ -797,6 +781,6 @@ export function deckProblem(deck: RoleId[], players: number, center: number, rul
   if (deck.includes("forger") && !deck.includes("herald")) return "A Forger needs a Herald in the deck.";
   if (deck.includes("forger") && !r.dawnProclamations) return "A Forger needs the \"Proclamations at dawn\" rule: otherwise the timing gives the forgery away.";
   if (deck.some(id => ROLE[id].chat === "forge" && !["signet", "notary"].some(x => deck.includes(x)))) return "A card that forges seals (Counterfeiter, False Witness) needs a Signet or a Notary in the deck: there must be a seal to forge.";
-  if (deck.some(id => ROLE[id].dayPower === "swap") && players < r.thiefMinPlayers) return `The Moon-Thief needs ${r.thiefMinPlayers} or more players at this table (the "Moon-Thief table size" rule).`;
+  if (r.daySwap && deck.some(id => ROLE[id].dayPower === "swap") && players < r.thiefMinPlayers) return `The Moon-Thief needs ${r.thiefMinPlayers} or more players at this table (the "Moon-Thief table size" rule).`;
   return null;
 }

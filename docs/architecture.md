@@ -23,7 +23,7 @@ seals, the vote phase, the Hush and presence). Any card may appear up to 12 time
 | 10 | Werewolf (×3) | Werewolf | wolf pack | Pack + census; alone: scents a team | Team |
 | 11 | Stalking Horse | Werewolf | pack | Pack + census; alone: scents a team | Not a Werewolf. Eliminated: the Werewolf team wins (`decoy`) |
 | 12 | Glamour | Werewolf | wolf pack | Pack + census; one card shows a chosen deck role to every look until dawn | Team |
-| 13 | Moon-Thief | Werewolf | wolf pack | Pack + census | Day: queues a swap of two other players' cards, made as the votes lock (`dayPower`) |
+| 13 | Moon-Thief | Werewolf | wolf pack | Pack + census | Under the `daySwap` rule (off by default): queues a swap of two other players' cards, made as the vote ends |
 | 15 | Tracker | Werewolf | wolf pack | Pack + census; one information role's seat | Team |
 | 20 | Whisperer | Werewolf | | Told one Werewolf's seat | Team |
 | 25 | Cuckoo | Loner | | Looks at a card; lays a public egg on a seat (random at dawn if unheld) | Holder wins if the egged seat falls and they do not |
@@ -43,7 +43,7 @@ seals, the vote phase, the Hush and presence). Any card may appear up to 12 time
 | – | Signet | Centaur | | – | One signed chat message |
 | 2 / 3 | Gleaner / Echo | Centaur (until copying) | | Copies a centre card / a player's card (`adopt`), then acts in the copied role's turn | As the copied role |
 | 5 | Phoenix | Pyre | phoenix | (Only under `phoenixKnowsKindlers`: learns the Kindlers) | The Pyre wins if its holder is eliminated |
-| 5 | Kindler, Lure, False Witness, Ember-Carrier, Heavy Hand, Heir | Pyre | kindler | Shared turn "The brood gathers": where the Phoenix was dealt, who the Kindlers are; Lure: a chosen card distortion | Pyre; day/vote powers per kind (forge, ember, double vote against the Phoenix, Heir becomes Phoenix) |
+| 5 | Kindler, Lure, False Witness, Ember-Carrier, Heavy Hand, Heir | Pyre | kindler | Shared turn "The brood gathers": where the Phoenix was dealt, who the Kindlers are; Lure: a chosen card distortion | Pyre; per kind: Lure (card distortion), False Witness (forged seal), Ember-Carrier (blind night swap of two players' cards), Heavy Hand (double vote), Heir (becomes Phoenix if none is held at dawn) |
 | 14 | Will-o'-Wisp | Werewolf | | Distorts a card: a random wrong role to every look | Team |
 | 16 / 17 | Mistweaver / Fogbank | Werewolf | | Veils a player's centre looks: a chosen / random wrong role | Team |
 | 32 | Notary | Centaur | seer | Reads a player's card | Day: one sealed report composed from that look (`chat: "report"`) |
@@ -73,7 +73,8 @@ the lobby, shown in both views and described in the MCP rules text. A game copie
 | `dawnProclamations` | true | bool | Proclamations published together at dawn in random order (required with a Forger) |
 | `biteNamesBiter` | true | bool | Whether the bitten player is told the Biter's seat |
 | `eavesdropGhost` | true | bool | Unheld named role: a ghost result from the Eavesdropper's seat, or nothing |
-| `thiefMinPlayers` | 7 | 3–12 | Smallest table that may hold a Moon-Thief |
+| `daySwap` | false | bool | The Moon-Thief's vote-lock swap (off: abilities should not rewrite the result after the talk) |
+| `thiefMinPlayers` | 7 | 3–12 | Smallest table that may hold a Moon-Thief (with the day swap on) |
 | `eliminationVotes` | 2 | 2–4 | Votes needed (with the most votes) to be eliminated |
 | `mandatorySteps` | false | bool | Optional night steps may not be declined |
 | `chatDuringVote` | false | bool | Chat stays open during the vote phase |
@@ -90,7 +91,7 @@ Timers (`setup.setTimer`): dusk, each night turn, discussion, vote (default 20 s
 ### How a game is decided (`resolveVote`)
 
 The exact, current order and every card's entry are in [docs/rules-reference.md](rules-reference.md) (generated from
-the engine). In short: swaps (Moon-Thief, then Ember-Carriers) → tally (held-card weights, Heavy Hand) → teams (bitten
+the engine). In short: the Moon-Thief's swap (day-swap rule only) → tally (held-card weights) → teams (bitten
 → Werewolf) → main result (decoy; no Werewolf held; Blood Price) → the burning (a Phoenix holder eliminated: the Pyre
 wins; by default it denies the Werewolf team, and the Centaurs keep only a Blood-Price win) → loners (Cuckoo, then
 Oxpecker) → one "why" sentence per seat. Copies are applied first: `resolveVote(heldRoles(state), …)`.
