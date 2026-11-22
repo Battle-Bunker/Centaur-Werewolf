@@ -1,0 +1,215 @@
+{
+ "timers": {
+  "dusk": 60,
+  "turn": 8,
+  "day": 240,
+  "vote": 60
+ },
+ "agents": {
+  "model": "opus",
+  "effort": "medium"
+ },
+ "redeal": "wolfDealt",
+ "tables": [
+  {
+   "label": "K7#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "moonsage",
+    "strayherder",
+    "sage",
+    "herder",
+    "rustler",
+    "sentry",
+    "centaur",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Gale"
+   ]
+  },
+  {
+   "label": "P7#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "embercarrier",
+    "sage",
+    "rustler",
+    "sentry",
+    "centaur",
+    "pickpocket"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Gale"
+   ]
+  },
+  {
+   "label": "G7#1",
+   "deck": [
+    "werewolf",
+    "glamour",
+    "hush",
+    "sage",
+    "echo",
+    "rustler",
+    "sentry",
+    "centaur",
+    "centaur",
+    "cutpurse"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Gale"
+   ]
+  },
+  {
+   "label": "X7#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "cutpurse",
+    "pickpocket",
+    "drifter",
+    "latecomer",
+    "poacher",
+    "sage",
+    "sentry",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Gale"
+   ]
+  },
+  {
+   "label": "K7#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "moonsage",
+    "strayherder",
+    "sage",
+    "herder",
+    "rustler",
+    "sentry",
+    "centaur",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Gale"
+   ]
+  },
+  {
+   "label": "P7#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "embercarrier",
+    "sage",
+    "rustler",
+    "sentry",
+    "centaur",
+    "pickpocket"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Gale"
+   ]
+  },
+  {
+   "label": "G7#2",
+   "deck": [
+    "werewolf",
+    "glamour",
+    "hush",
+    "sage",
+    "echo",
+    "rustler",
+    "sentry",
+    "centaur",
+    "centaur",
+    "cutpurse"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Gale"
+   ]
+  },
+  {
+   "label": "X7#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "cutpurse",
+    "pickpocket",
+    "drifter",
+    "latecomer",
+    "poacher",
+    "sage",
+    "sentry",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Gale"
+   ]
+  }
+ ]
+}
