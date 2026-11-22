@@ -102,3 +102,23 @@ first-order check. Falsified if the wolves win 2 or more of 3 natural games, or 
 - Coarse pass (2-3 natural deals each): Q1, Q2, Q3, Q4 and the control Q5 (2 games). Q6 only if budget allows.
 - Fine pass: Q1 (a Sage/Moonsage duel and a Spooker-through-the-read scenario), and the next best two from the coarse
   pass, 2-3 scenarios each, 5 replays.
+
+## Addendum 1 (12:20, after the coarse pass, BEFORE the fine pass): per-scenario predictions
+
+Coarse pass (12 games) changed two beliefs before the fine pass: (a) at 5 players a wolf-team ally that is not a
+Werewolf (Spooker) is a lightning rod: eliminating it is a wolf win, and the lone wolf's safe census claim plus the
+ally's suspicious look beat the Centaurs twice (verification game and Q1#1); (b) the "Open Book" control was not dead:
+with two Sages in the deck a Sage counter-claim cannot be refuted by counting (Q5#1, wolves, judges path 4). Q4
+(copiers) looked talk-dead (2 Centaur wins, judges path 1.0) and is dropped from the fine pass.
+
+| Scenario | What is fixed | Predicted winners over 5 replays | Talk-live? |
+| --- | --- | --- | --- |
+| F1 Q1 spooker-decoy (= coarse Q1#1) | lone wolf scents a Centaur; Spooker rotates Alder(Centaur)->Cass->centre 1; Sage+Moonsage+Rustler in centre; both Centaurs glanced centre 1 (Sage) | wolves 3, Centaurs 2 | yes (the wolf's centre-role claim is checkable only by a glance at the right slot; the Spooker's confession is the swing) |
+| F2 Q1 twin-duel (constructed) | Sage reads the wolf; Moonsage reads the Sage; Rustler peeks the Moonsage and sees "Sage"; Spooker in centre | Centaurs 2, wolves 3 | yes (the Rustler sincerely vouches for the fake Sage) |
+| F3 Q2 cutpurse-wolf (= coarse Q2#1) | 2 wolves; Cutpurse steals a wolf knowingly; Pickpocket lifts the Cutpurse card off the old wolf | wolves 3, Centaurs 2 | yes |
+| F4 Q2 lone-wolf (= coarse Q2#2) | lone wolf untouched; every Centaur claim consistent | Centaurs 5-0 | no (control) |
+| F5 Q3 pyre-burn (= coarse Q3#3) | Sage reads the lone wolf; Phoenix and a self-dressed Lure held | Centaurs 3, Pyre 2 | yes |
+| F6 Q3 two-wolves-lure (= coarse Q3#2) | 2 wolves held, Lure held (self-dressed), Phoenix and Sage in centre | wolves 3, Centaurs 2 | yes |
+
+Falsifiers: F4 not a 5-0 Centaur sweep means my "consistent honest claims = talk-dead" belief is wrong at 5 players;
+two or more of F1/F2/F3/F5/F6 sweeping 5-0 means P0b (about half sweep) was optimistic for these rosters.
