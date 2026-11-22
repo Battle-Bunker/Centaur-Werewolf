@@ -14,7 +14,10 @@ export function TurnTrack() {
   const now = useNow(250);
   const list = useRef<HTMLOListElement>(null);
   const game = view?.game;
-  useEffect(() => { list.current?.querySelector('[aria-current="step"]')?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" }); }, [game?.turn]);
+  useEffect(() => {
+    const ol = list.current, el = ol?.querySelector<HTMLElement>('[aria-current="step"]');
+    if (ol && el) ol.scrollTo({ left: el.offsetLeft - ol.clientWidth / 2 + el.clientWidth / 2, behavior: "smooth" });
+  }, [game?.turn]);
   if (!view) return null;
   if (view.phase === "lobby") {
     const order = nightTurns(view.settings.deck);

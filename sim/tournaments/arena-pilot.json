@@ -1,7 +1,7 @@
 {
- "timers": { "dusk": 90, "turn": 8, "day": 420 },
+ "timers": { "dusk": 60, "turn": 8, "day": 300 },
  "agents": { "model": "sonnet", "effort": "medium" },
  "tables": [
-  { "label": "pilot-movement#1", "center": 3, "players": ["Alder", "Bryn", "Cass", "Dov", "Esme"], "deck": ["werewolf", "werewolf", "rustler", "farrier", "spooker", "sentry", "sage", "centaur"] }
+  { "label": "pilot-movement#2", "center": 3, "players": ["Alder", "Bryn", "Cass", "Dov", "Esme"], "deck": ["werewolf", "werewolf", "rustler", "farrier", "spooker", "sentry", "sage", "centaur"] }
  ]
 }

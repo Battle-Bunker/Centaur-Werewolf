@@ -4,14 +4,16 @@
  * are not listed. Commands with arguments open nested pages (palette/pages.ts). Ctrl/Cmd+K or "/" opens it; Esc or
  * Backspace on an empty search goes back a page, then closes.
  */
+import { ConvexError } from "convex/values";
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { availability, COMMANDS, type Availability, type CommandDef, type CommandId, type Group } from "../../shared/commands";
-import { useApp } from "../app/store";
+import { useApp, type FreshKey } from "../app/store";
+import { IconMenu, IconSearch } from "../components/icons";
 import { PAGES, type Page, type PickOption } from "./pages";
 
 const SECTIONS: { group: Group | "suggested"; title: string }[] = [
-  { group: "suggested", title: "Suggested" }, { group: "play", title: "Play" }, { group: "setup", title: "Setup" },
-  { group: "room", title: "Room" }, { group: "view", title: "View" }, { group: "help", title: "Help" },
+  { group: "suggested", title: "Suggested" }, { group: "play", title: "Play" }, { group: "talk", title: "Talk" }, { group: "setup", title: "Setup" },
+  { group: "room", title: "Room" }, { group: "connect", title: "Assistants" }, { group: "view", title: "View" }, { group: "help", title: "Help" },
 ];
 const isMac = typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform);
 export const SHORTCUT = isMac ? "⌘K" : "Ctrl K";
@@ -39,26 +41,24 @@ export function PaletteTrigger() {
   return (
     <div className="pal-trigger">
       <button type="button" className="pal-trigger-field" onClick={() => openPalette()} aria-label={`Search or do (${SHORTCUT})`} aria-keyshortcuts="Meta+K Control+K">
-        <SearchIcon /><span className="pal-trigger-text">Search or do…</span><kbd>{SHORTCUT}</kbd>
+        <IconSearch size={16} /><span className="pal-trigger-text">Search or do…</span><kbd>{SHORTCUT}</kbd>
       </button>
-      <button type="button" className="pal-trigger-menu" onClick={() => openPalette()} aria-label="Menu"><MenuIcon /></button>
+      <button type="button" className="pal-trigger-menu" onClick={() => openPalette()} aria-label="Menu: every command"><IconMenu size={16} /></button>
     </div>
   );
 }
-const SearchIcon = () => <svg aria-hidden width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>;
-const MenuIcon = () => <svg aria-hidden width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6h16M4 12h16M4 18h16" /></svg>;
 
 /** The commands worth offering first, given where the game is. */
 function suggestedIds(phase: string, host: boolean, players: number, openSteps: number): CommandId[] {
   if (phase === "home") return ["room.create", "room.join"];
   if (phase === "lobby") return host ? (players < 3 ? ["room.addBot", "ui.copyInvite"] : ["game.start", "setup.useRecommended"]) : ["ui.copyInvite", "ui.showRoles"];
   if (phase === "night") return openSteps ? ["night.planStep"] : ["ui.showRoles"];
-  if (phase === "day") return ["day.vote"];
+  if (phase === "day") return ["day.vote", "chat.send", "chat.sendSigned", "chat.sendUnsigned"];
   return host ? ["game.playAgain"] : [];
 }
 
 export function Palette() {
-  const { palette, openPalette, closePalette, ctx, view, exec } = useApp();
+  const { palette, openPalette, closePalette, ctx, view, exec, setDialog } = useApp();
   const [query, setQuery] = useState("");
   const [stack, setStack] = useState<Page[]>([]);
   const [selected, setSelected] = useState(0);
@@ -68,13 +68,13 @@ export function Palette() {
   const input = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const page = stack[stack.length - 1];
-  const env = useMemo(() => ({ view, exec }), [view, exec]);
+  const env = useMemo(() => ({ view, exec, showKey: (fresh: FreshKey) => setDialog({ kind: "connect", fresh }) }), [view, exec, setDialog]);
 
   // Global keys: the palette itself, and the single-letter shortcuts the registry declares.
   useEffect(() => {
     const on = (e: globalThis.KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); palette.open ? closePalette() : openPalette(); return; }
-      if (palette.open || isEditable(document.activeElement) || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (palette.open || isEditable(document.activeElement) || e.metaKey || e.ctrlKey || e.altKey || document.querySelector(".modal-overlay")) return;
       if (e.key === "/") { e.preventDefault(); openPalette(); return; }
       const cmd = COMMANDS.find(c => "shortcut" in c && c.shortcut?.toLowerCase() === e.key.toLowerCase());
       if (cmd && availability(cmd, ctx).ok && !PAGES[cmd.id] ) { e.preventDefault(); void exec(cmd.id).catch(() => {}); }
@@ -97,7 +97,7 @@ export function Palette() {
         .map(({ o }) => ({ id: o.id, label: o.label, detail: o.detail, can: o.unavailable ? { ok: false, reason: o.unavailable } : { ok: true }, option: o }));
     }
     if (page) return [];
-    const scored = COMMANDS.map(c => ({ c: c as CommandDef, can: availability(c, ctx), s: matchScore(query, c.title, c.keywords) }))
+    const scored = COMMANDS.filter(c => !(c as CommandDef).surfaces?.except.includes("palette")).map(c => ({ c: c as CommandDef, can: availability(c, ctx), s: matchScore(query, c.title, c.keywords) }))
       .filter(x => x.s > 0 && !(x.can.ok === false && x.can.hidden) && (query.trim() || x.can.ok || x.c.group === "play" || x.c.group === "setup"));
     const toRow = (x: (typeof scored)[number], section: string): Row => ({ id: x.c.id, label: x.c.title, detail: x.c.tooltip, can: x.can, shortcut: x.c.shortcut, section, command: x.c });
     if (query.trim()) return scored.sort((a, b) => Number(b.can.ok) - Number(a.can.ok) || b.s - a.s).map(x => toRow(x, "Results"));
@@ -123,7 +123,7 @@ export function Palette() {
   const settle = async (work: () => Page | void | Promise<Page | void>) => {
     setBusy(true); setError(null);
     try { const next = await work(); if (next) push(next); else closePalette(); }
-    catch { setError("That did not go through."); }
+    catch (e) { setError(e instanceof ConvexError ? String(e.data) : "That did not go through."); }
     finally { setBusy(false); }
   };
   const activate = (row: Row | undefined) => {
@@ -131,7 +131,10 @@ export function Palette() {
     if (page?.kind === "field") { const err = page.validate?.(query) ?? null; if (err) setError(err); else void settle(() => page.onSubmit(query)); return; }
     if (page?.kind === "info") { back(); return; }
     if (!row || !row.can.ok) return;
-    if (page?.kind === "pick") { void settle(() => page.onPick(row.id)); return; }
+    if (page?.kind === "pick") {
+      if (row.option?.confirm && armed !== row.id) { setArmed(row.id); return; }
+      void settle(() => page.onPick(row.id)); return;
+    }
     const cmd = row.command!;
     const form = PAGES[cmd.id as CommandId];
     if (form) { push(form(env)); return; }
@@ -149,7 +152,7 @@ export function Palette() {
   const chip = view ? `Room ${view.code} · ${ctx.host ? "host" : ctx.member ? "player" : "visitor"} · ${ctx.phase}` : "Front page";
   const placeholder = page?.kind === "field" ? (page.placeholder ?? page.label) : page?.kind === "pick" ? "Filter…" : page ? "" : "Search or do…";
   const detail = error ?? (page?.kind === "field" ? (page.validate?.(query) ?? "Press ↵ to confirm.")
-    : !current ? "" : !current.can.ok ? current.can.reason : armed === current.id ? `Press ↵ again to ${current.label.toLowerCase()}.` : (current.detail ?? ""));
+    : !current ? "" : !current.can.ok ? current.can.reason : armed === current.id ? (current.option?.confirm ?? `Press ↵ again to ${current.label.toLowerCase()}.`) : (current.detail ?? ""));
   let lastSection = "";
 
   return (
@@ -160,7 +163,7 @@ export function Palette() {
           {stack.map((p, i) => <span key={i} className="pal-crumb">{p.title}</span>)}
         </div>
         <div className="pal-input">
-          <SearchIcon />
+          <IconSearch size={16} />
           {page?.kind === "field" && <label htmlFor="pal-in">{page.label}</label>}
           <input id="pal-in" ref={input} value={query} onChange={e => { setQuery(e.target.value); setError(null); }} onKeyDown={onKey} placeholder={placeholder}
             readOnly={page?.kind === "info"} role="combobox" aria-expanded aria-controls="pal-list" autoComplete="off" spellCheck={false} />

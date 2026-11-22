@@ -48,7 +48,7 @@ export function Home() {
       </section>
 
       <section className="home-panel" aria-label="Sit down at a table">
-        <NameInput value={name} onChange={setName} onEnter={() => void run(code.length === 4 ? "join" : "create")} autoFocus={!name} />
+        <NameInput value={name} onChange={setName} onEnter={() => void run(code.length === 4 ? "join" : "create")} autoFocus={!name && innerWidth > 700} />
         <div className="home-actions">
           <button className="btn btn-primary btn-lg" disabled={!ready || !!busy} onClick={() => void run("create")} title={ready ? "Open a new table and invite others with its code." : "Enter a name first."}>
             {busy === "create" ? "Opening a table…" : "Open a new table"}

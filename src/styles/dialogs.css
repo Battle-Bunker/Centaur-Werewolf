@@ -1,0 +1,152 @@
+/* Overlays: the command palette, modals (role reference, connect an assistant) and the Connect page. */
+
+/* ── command palette: square, ruled, sectioned ── */
+.pal-overlay { position: fixed; inset: 0; background: rgb(8 16 12 / .55); backdrop-filter: blur(2px); display: flex; justify-content: center; align-items: flex-start; padding: 11vh 16px 16px; z-index: 600; animation: fade-in .16s both; }
+.pal { width: min(660px, 100%); max-height: 72vh; display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line-strong); box-shadow: var(--shadow-3), 0 0 0 4px color-mix(in srgb, var(--card) 40%, transparent); animation: pal-in .2s var(--ease-out); }
+@keyframes pal-in { from { opacity: 0; transform: translateY(-8px) scale(.985); } }
+.pal-head { display: flex; align-items: center; gap: 6px; padding: 9px 14px 0; flex-wrap: wrap; }
+.pal-chip, .pal-crumb { font: 500 11px var(--font); padding: 1px 7px; border: 1px solid var(--line-strong); color: var(--muted); letter-spacing: .02em; }
+.pal-crumb { color: var(--secondary); border-color: var(--secondary); }
+.pal-crumb::before { content: "›"; margin-right: 5px; opacity: .6; }
+.pal-input { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-bottom: 1px solid var(--line-strong); color: var(--muted); }
+.pal-input label { font-size: 12px; font-weight: 700; white-space: nowrap; color: var(--secondary); text-transform: uppercase; letter-spacing: .1em; }
+.pal-input input { flex: 1; border: 0; background: transparent; outline: none; font-size: 17px; color: var(--ink); min-width: 0; }
+.pal-list { overflow-y: auto; flex: 1; min-height: 60px; padding: 4px 0 6px; scrollbar-width: thin; }
+.pal-section { padding: 10px 14px 3px; font: 700 10.5px var(--font); text-transform: uppercase; letter-spacing: .14em; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+.pal-section::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.pal-row { display: flex; align-items: center; gap: 10px; padding: 7px 14px; cursor: pointer; border-left: 3px solid transparent; font-size: 15px; }
+.pal-row[aria-selected="true"] { background: var(--primary-soft); border-left-color: var(--primary); }
+.pal-row[aria-disabled="true"] { cursor: default; }
+.pal-row[aria-disabled="true"] .pal-row-label { opacity: .5; }
+.pal-row-label { flex: none; }
+.pal-row-detail, .pal-row-why { flex: 1; font-size: 12.5px; color: var(--muted); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.pal-row-why { text-align: right; font-style: italic; }
+.pal-row-armed { margin-left: auto; font-size: 12px; color: var(--danger); font-weight: 700; }
+.pal-row kbd { margin-left: auto; }
+.pal-empty, .pal-info { padding: 14px; color: var(--muted); }
+.pal-info { color: var(--ink); display: flex; flex-direction: column; gap: 8px; }
+.pal-foot { display: flex; align-items: center; gap: 12px; padding: 8px 14px; border-top: 1px solid var(--line-strong); font-size: 12.5px; color: var(--muted); background: var(--paper-2); }
+.pal-detail { flex: 1; min-width: 0; color: var(--ink-2); }
+.pal-detail.is-error { color: var(--danger); font-weight: 700; }
+.pal-keys { white-space: nowrap; display: flex; gap: 4px; align-items: center; }
+@media (max-width: 600px) { .pal-keys { display: none; } .pal-overlay { padding-top: 8vh; } }
+
+/* ── modals ── */
+.modal-overlay { position: fixed; inset: 0; z-index: 500; background: rgb(8 16 12 / .55); backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; padding: 16px; animation: fade-in .18s both; }
+.modal { position: relative; width: min(940px, 100%); max-height: min(860px, 100%); display: flex; flex-direction: column; background: var(--paper-2); border: 1px solid var(--line-strong); box-shadow: var(--shadow-3); animation: modal-in .28s var(--ease-out); }
+.modal::before { content: ""; position: absolute; inset: 5px; border: 1px solid var(--line); pointer-events: none; }
+@keyframes modal-in { from { opacity: 0; transform: translateY(14px) scale(.98); } }
+.modal-close { position: absolute; right: 12px; top: 12px; z-index: 2; }
+.modal-head { padding: 24px 26px 14px; display: flex; flex-direction: column; gap: 6px; border-bottom: 1px solid var(--line); }
+.modal-head h2 { font-size: 30px; }
+.modal-head p { max-width: 640px; font-size: 15px; }
+.filters { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.filter { padding: 4px 12px; border: 1px solid var(--line-strong); background: var(--card); border-radius: 15px; cursor: pointer; font-size: 13.5px; font-weight: 500; }
+.filter:hover { border-color: var(--primary); }
+.filter.is-on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+/* role reference */
+.rolebook-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 360px); min-height: 0; flex: 1; }
+.rolebook-grid { list-style: none; margin: 0; padding: 16px 20px 20px 26px; display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 12px; overflow-y: auto; align-content: start; }
+.rolebook-card { position: relative; width: 100%; display: flex; flex-direction: column; gap: 5px; padding: 0 0 6px; border: 0; background: none; cursor: pointer; text-align: left; }
+.rolebook-card img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: var(--r2); box-shadow: var(--shadow-1); transition: transform var(--t) var(--ease-out), box-shadow var(--t); }
+.rolebook-card:hover img { transform: translateY(-3px) rotate(-1deg); box-shadow: var(--shadow-2); }
+.rolebook-card.is-on img { box-shadow: 0 0 0 3px var(--team), var(--shadow-2); transform: translateY(-3px); }
+.rolebook-name { font: 600 14px var(--display); padding-right: 14px; }
+.rolebook-card .team-pip { position: absolute; right: 2px; bottom: 11px; }
+.rolebook-in { position: absolute; top: 5px; left: 5px; font: 700 11px var(--font); background: var(--ink); color: var(--paper); padding: 1px 6px; border-radius: 9px; }
+.rolebook-detail { border-left: 1px solid var(--line); padding: 20px 24px 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; animation: fade-up .3s var(--ease-out); }
+.rolebook-detail > img { width: 100%; max-width: 300px; aspect-ratio: 1; object-fit: cover; border-radius: var(--r2); box-shadow: var(--shadow-2); }
+.rolebook-detail h3 { font-size: 28px; }
+.rolebook-detail > div { display: flex; flex-direction: column; gap: 8px; }
+.rolebook-rule { font-size: 15.5px; line-height: 1.5; }
+.rolebook-detail dl { margin: 4px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; font-size: 14px; }
+.rolebook-detail dt { font: 700 11px var(--font); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding-top: 3px; }
+.rolebook-detail dd { margin: 0; display: flex; gap: 5px; align-items: baseline; }
+.rolebook-detail dd svg { color: var(--amber); flex: none; transform: translateY(2px); }
+
+/* connect an assistant */
+.connect { width: min(720px, 100%); }
+.connect-body { overflow-y: auto; padding: 6px 26px 24px; display: flex; flex-direction: column; }
+.connect-way { padding: 18px 0; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
+.connect-way h3 { font-size: 18px; display: flex; align-items: center; gap: 10px; }
+.connect-way > p { font-size: 14.5px; color: var(--ink-2); }
+.way-n { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--secondary); color: var(--secondary-ink); font: 700 13px var(--display); flex: none; }
+.url-row { display: flex; align-items: center; gap: 6px; border: 1px solid var(--line-strong); background: var(--card); padding: 4px 4px 4px 12px; border-radius: var(--r2); }
+.url-row code { flex: 1; font-size: 13.5px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+.key-row { border-color: var(--amber); background: var(--amber-soft); }
+.key-row code { font-weight: 600; }
+.copy.is-done { color: var(--primary); }
+.grants { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.grant { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; text-align: left; padding: 10px 12px; border: 1px solid var(--line-strong); background: var(--card); border-radius: var(--r2); cursor: pointer; transition: border-color var(--t-fast), box-shadow var(--t-fast); }
+.grant:hover:not(:disabled) { border-color: var(--primary); }
+.grant.is-on { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary); background: color-mix(in srgb, var(--primary) 5%, var(--card)); }
+.grant:disabled { opacity: .55; cursor: not-allowed; }
+.grant-head { display: flex; align-items: center; gap: 6px; color: var(--primary); }
+.grant-head b { color: var(--ink); font-size: 14.5px; }
+.grant-detail { font-size: 12.5px; color: var(--muted); line-height: 1.35; }
+.connect-way .field { max-width: 360px; }
+.connect-way > .btn-primary { align-self: flex-start; }
+.fresh { padding: 18px 0; display: flex; flex-direction: column; gap: 12px; border-bottom: 1px solid var(--line); animation: fade-up .35s var(--ease-out); }
+.fresh-head { display: flex; gap: 10px; align-items: flex-start; }
+.fresh-head svg { color: var(--primary-ink); background: var(--primary); border-radius: 50%; padding: 3px; width: 24px; height: 24px; flex: none; }
+.fresh-head div { display: flex; flex-direction: column; gap: 2px; font-size: 15px; }
+.fresh-head .quiet { font-size: 13.5px; }
+.fresh-warn { display: flex; gap: 8px; align-items: flex-start; font-size: 13.5px; color: var(--amber-text); font-weight: 500; }
+.fresh-warn svg { flex: none; margin-top: 1px; }
+.fresh > .btn { align-self: flex-start; }
+.codeblock { border: 1px solid var(--line-strong); border-radius: var(--r2); overflow: hidden; background: #13211a; color: #e3dcc6; }
+.codeblock-head { display: flex; justify-content: space-between; align-items: center; padding: 3px 4px 3px 12px; background: #0d1813; font-size: 12px; color: #a1b2a6; }
+.codeblock-head .btn-quiet { color: #cfd6c8; }
+.codeblock-head .btn-quiet:hover { color: #fff; background: rgb(255 255 255 / .08); }
+.codeblock pre { margin: 0; padding: 12px; font: 500 12.5px/1.55 var(--mono); white-space: pre-wrap; word-break: break-all; max-height: 220px; overflow: auto; }
+.connections { padding-top: 18px; display: flex; flex-direction: column; gap: 8px; }
+.connections h3 { font-size: 16px; }
+.connections ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.conn { display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 10px; border: 1px solid var(--line); background: var(--card); border-radius: var(--r2); animation: fade-up .3s var(--ease-out); }
+.conn-icon { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: var(--secondary-soft); color: var(--secondary); flex: none; }
+.conn-text { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+/* ── Connect page (an assistant's sign-in) ── */
+.consent-page { flex: 1; overflow-y: auto; display: flex; justify-content: center; align-items: flex-start; padding: 6vh 16px 32px; }
+.consent { width: min(620px, 100%); background: var(--card); border: 1px solid var(--line-strong); box-shadow: var(--shadow-2); padding: 30px 32px; display: flex; flex-direction: column; gap: 14px; position: relative; animation: modal-in .4s var(--ease-out); }
+.consent::before { content: ""; position: absolute; inset: 5px; border: 1px solid var(--line); pointer-events: none; }
+.consent h1 { font-size: clamp(26px, 4vw, 34px); }
+.consent-icon { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: var(--primary); color: var(--primary-ink); }
+.consent-icon.is-bad { background: var(--danger-soft); color: var(--danger); }
+.consent-facts { margin: 0; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--r2); }
+.consent-facts > div { display: grid; grid-template-columns: 170px 1fr; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+.consent-facts > div:last-child { border-bottom: 0; }
+.consent-facts dt { font: 700 11px var(--font); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding-top: 3px; }
+.consent-facts dd { margin: 0; display: flex; flex-direction: column; gap: 1px; }
+.consent-facts dd b { font-size: 16px; }
+.consent-group { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.consent-group legend { font: 600 16px var(--display); margin-bottom: 8px; padding: 0; }
+.room-options { display: flex; flex-direction: column; gap: 6px; }
+.room-option { display: grid; grid-template-columns: auto 1fr auto auto; gap: 12px; align-items: center; text-align: left; padding: 10px 12px; border: 1px solid var(--line-strong); background: var(--paper-2); border-radius: var(--r2); cursor: pointer; }
+.room-option b.mono { font-size: 17px; }
+.room-option:hover { border-color: var(--primary); }
+.room-option.is-on { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary); background: var(--card); }
+.room-option svg { color: var(--primary); }
+.consent-actions { display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; padding-top: 4px; }
+.consent-foot { text-align: right; }
+.consent-empty { display: flex; flex-direction: column; gap: 10px; padding: 14px; background: var(--amber-soft); border-radius: var(--r2); }
+.consent-empty p { font-size: 14.5px; }
+.consent-empty .code-input { width: 7em; }
+
+@media (max-width: 760px) {
+  .rolebook-body { grid-template-columns: 1fr; overflow-y: auto; }
+  .rolebook-grid { overflow: visible; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); padding: 14px 16px; }
+  .rolebook-detail { border-left: 0; border-top: 1px solid var(--line); overflow: visible; order: -1; flex-direction: row; flex-wrap: wrap; padding: 16px; }
+  .rolebook-detail > img { width: 120px; }
+  .rolebook-detail > div { flex: 1 1 220px; }
+  .modal { max-height: 100%; }
+  .modal-head { padding: 18px 16px 12px; }
+  .modal-head h2 { font-size: 24px; }
+  .connect-body { padding: 4px 16px 18px; }
+  .grants { grid-template-columns: 1fr; }
+  .consent { padding: 22px 18px; }
+  .consent-facts > div { grid-template-columns: 1fr; gap: 2px; }
+  .room-option { grid-template-columns: auto 1fr; }
+  .room-option .quiet { grid-column: 2; }
+}

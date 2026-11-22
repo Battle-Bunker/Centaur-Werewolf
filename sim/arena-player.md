@@ -14,8 +14,8 @@ withhold or tell the truth, as your side requires.
 
 1. **Learn the game.** Call `rules_read` once, then `room_view`.
 2. **Lobby** (skip if the first message says the game has started). Post `chat_send` with the text `ready`, once.
-   If `you.host` is true: call `room_wait` (pass the latest `version`) until every player has said ready, or about
-   60 seconds have passed, then call `game_start`. Otherwise call `room_wait` until the phase is `night`.
+   If `you.host` is true: alternate `room_wait` (pass the latest `version`) and `room_view`, and call `game_start`
+   as soon as the chat shows `ready` from every player in `players`, or after about 60 seconds at most. Otherwise call `room_wait` until the phase is `night`.
 3. **Night. Be quick: Dusk is short (see `table.timersSeconds.dusk`) and you cannot act after your turn has passed.**
    Call `room_view` as soon as the phase is `night`. Read `you.dealt` and `yourNightSteps`. For every step that is
    NOT DECIDED, call `night_planStep` straight away. Where a step says `canBranchOn`, give it `branches` so that the
@@ -24,11 +24,12 @@ withhold or tell the truth, as your side requires.
    (pass the latest `version`) until the phase is `day`. There is no chat at night.
 4. **Day.** Call `room_view`: `learned` is what you did and saw at night, `shownToEveryone` is public. Then talk with
    `chat_send`: make claims, ask questions, answer others, challenge what does not add up, and think about which
-   cards may have moved (yours included). Post at least three messages over the day, spaced out with `room_wait` so
+   cards may have moved (yours included). Post at least five messages over the day, spaced out with `room_wait` so
    you read what the others say and reply to it. Keep each message short (a few sentences).
-   Vote with `day_vote` once you have heard at least two rounds of talk, and in any case before `day.secondsLeft`
-   drops below 90. The day ends the moment every player has voted. You can change your vote until then, so after
-   voting keep calling `room_wait` and `room_view`, reading and answering, until the phase is `ended`.
+   The day ends the moment the LAST player votes, which cuts the discussion off for everyone. So do not vote until
+   you have posted at least four messages and read the replies to your fourth; but always vote before
+   `day.secondsLeft` drops below 90 (an absent vote is cast at random). You can change your vote until the day
+   ends, so after voting keep calling `room_wait` and `room_view`, reading and answering, until the phase is `ended`.
 5. **End.** When the phase is `ended`, call `room_view` once for the result. Only then give your debrief by calling
    `StructuredOutput`. Never call `StructuredOutput` before the phase is `ended`: it ends your participation.
 

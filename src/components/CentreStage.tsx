@@ -4,7 +4,7 @@
  */
 import { useMemo } from "react";
 import { deckProblem } from "../../shared/engine";
-import { ROLE, roleName, slotKey, TEAM_NAME, type RoleId, type Slot } from "../../shared/roles";
+import { ROLE, roleName, slotKey, type RoleId, type Slot } from "../../shared/roles";
 import type { Marker } from "../app/knowledge";
 import { useApp, useNow, type Picker } from "../app/store";
 import { Card, CommandButton, CountdownRing, ordinal } from "./bits";

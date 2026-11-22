@@ -14,7 +14,7 @@ import { layoutTable, type TableLayout } from "../app/layout";
 import { useApp, type Picker, type View } from "../app/store";
 import { Avatar, Card } from "./bits";
 import { CentreStage } from "./CentreStage";
-import { IconBot, IconCheck, IconCrown, IconEye, IconSpark } from "./icons";
+import { IconBot, IconCheck, IconCrown, IconEye } from "./icons";
 
 export function Table() {
   const { view, picker, exec } = useApp();
@@ -72,7 +72,7 @@ export function Table() {
             const s: Slot = { k: "p", i: p.seat };
             const pos = L.seats[p.seat] ?? L.seats[idx];
             return (
-              <Seat key={p.id} v={v} p={p} s={s} pos={pos} L={L} legal={legal(s)} order={order(s)} onPick={() => pick?.onPick(s)} marks={markers[slotKey(s)] ?? []}
+              <Seat key={p.id} v={v} p={p} pos={pos} L={L} legal={legal(s)} order={order(s)} onPick={() => pick?.onPick(s)} marks={markers[slotKey(s)] ?? []}
                 bubble={bubbles[p.seat]} awake={awake && p.me} fresh={fresh} dealIndex={((p.seat - viewer) % n + n) % n} />
             );
           })}
@@ -85,8 +85,8 @@ export function Table() {
 
 type Player = View["players"][number];
 
-function Seat({ v, p, s, pos, L, legal, order, onPick, marks, bubble, awake, fresh, dealIndex }: {
-  v: View; p: Player; s: Slot; pos: { x: number; y: number }; L: TableLayout; legal: boolean; order: number; onPick(): void; marks: Marker[];
+function Seat({ v, p, pos, L, legal, order, onPick, marks, bubble, awake, fresh, dealIndex }: {
+  v: View; p: Player; pos: { x: number; y: number }; L: TableLayout; legal: boolean; order: number; onPick(): void; marks: Marker[];
   bubble?: { id: string; text: string }; awake: boolean; fresh: boolean; dealIndex: number;
 }) {
   const game = v.game, mine = game?.mine ?? null, final = game?.final ?? null;
@@ -190,4 +190,3 @@ function VoteArrows({ L, arrows, reveal }: { L: TableLayout; arrows: { from: num
   );
 }
 
-export { IconSpark };

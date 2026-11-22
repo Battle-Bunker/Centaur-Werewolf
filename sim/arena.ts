@@ -3,7 +3,7 @@
  * MCP server with that player's own key, exactly as a person would connect their assistant.
  *
  *   npx tsx sim/arena.ts <tournament.json> [--out sim/runs/<name>] [--concurrency 2] [--only A-information#1,B-movement]
- *                        [--model sonnet] [--effort medium] [--dry]
+ *                        [--model sonnet] [--effort medium] [--timers dusk,turn,day] [--dry]
  *
  * The tournament file is the one tables.ts reads, plus optional `agents` (at top level, or per table to override):
  *   "agents": { "model": "sonnet", "effort": "medium",
@@ -44,6 +44,7 @@ const OUT = resolve(flag("out", `sim/runs/${basename(file, ".json")}`)!);
 const CONCURRENCY = Number(flag("concurrency", "2"));
 const ONLY = flag("only")?.split(",");
 const DEFAULT: Required<AgentSpec> = { model: flag("model", spec.agents?.model ?? "sonnet")!, effort: flag("effort", spec.agents?.effort ?? "medium")! };
+const TIMERS = flag("timers") ? (([dusk, turn, day]) => ({ dusk, turn, day }))(flag("timers")!.split(",").map(Number)) : undefined; // --timers dusk,turn,day overrides the file
 const LOBBY_MAX = 150; // seconds before the runner starts a game the host agent has not started
 const DEBRIEF_MAX = 180; // seconds after the game ends for agents to finish their debrief
 const RELAUNCHES = 2; // times an agent that stops before the game ends is resumed
@@ -136,7 +137,7 @@ async function playTable(t: TableSpec) {
   const label = t.label, dir = `${OUT}/${label.replace(/[^\w#-]/g, "_")}`;
   if (existsSync(`${dir}/result.json`)) { log(label, "already played: skipping"); return; }
   mkdirSync(dir, { recursive: true });
-  const timers = t.timers ?? spec.timers, cfg = t.agents ?? spec.agents;
+  const timers = TIMERS ?? t.timers ?? spec.timers, cfg = t.agents ?? spec.agents;
   const table: Table = await setupTable({ label, deck: t.deck, center: t.center, players: t.players, timers });
   writeFileSync(`${dir}/table.json`, JSON.stringify(table, null, 1));
   registerTable(table);

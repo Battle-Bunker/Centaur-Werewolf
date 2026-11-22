@@ -12,7 +12,7 @@ import { PAGES } from "../palette/pages";
  * that were not supplied. A command the registry marks `confirm: "inline"` asks for a second click, as the palette
  * asks for a second Enter.
  */
-export function CommandButton({ id, args, children, variant = "plain", icon, showReason, ...rest }: {
+export function CommandButton({ id, args, children, variant = "plain", icon, showReason, className = "", ...rest }: {
   id: CommandId; args?: Record<string, unknown>; children?: ReactNode; variant?: "primary" | "plain" | "quiet" | "danger" | "secondary"; icon?: ReactNode;
   /** Show the reason it cannot run under the button, not only in its tooltip. */
   showReason?: boolean;
@@ -32,7 +32,7 @@ export function CommandButton({ id, args, children, variant = "plain", icon, sho
     setBusy(false);
   };
   const button = (
-    <button type="button" className={`btn btn-${armed ? "danger" : variant}${busy ? " is-busy" : ""}`} disabled={!can.ok || busy} title={can.ok ? def.tooltip : can.reason} data-command={id} onClick={() => void click()} {...rest}>
+    <button type="button" className={`btn btn-${armed ? "danger" : variant}${busy ? " is-busy" : ""} ${className}`} disabled={!can.ok || busy} title={can.ok ? def.tooltip : can.reason} data-command={id} onClick={() => void click()} {...rest}>
       {icon}
       <span>{armed ? "Click again to confirm" : (children ?? def.title)}</span>
       {def.shortcut && variant === "primary" && !armed && <kbd>{def.shortcut}</kbd>}
@@ -78,13 +78,6 @@ export function TeamBadge({ team, short }: { team: Team; short?: boolean }) {
 export function TeamDot({ role }: { role: RoleId }) {
   const team = ROLE[role].team;
   return <span className={`team-pip team-${team}`} title={TEAM_NAME[team]} aria-label={TEAM_NAME[team]} />;
-}
-
-/** When a role acts: "Wakes 4th of 12" or "Sleeps". Wake order is the position among the night roles. */
-export function wakeWords(role: RoleId): string {
-  const r = ROLE[role];
-  if (r.wake === undefined || !r.steps) return "Sleeps through the night";
-  return "Wakes at night";
 }
 
 /** The full card for a role: art, name, team and rule. */
