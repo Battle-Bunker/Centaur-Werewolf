@@ -180,7 +180,7 @@ kbd { font: 500 11px/1 var(--mono); border: 1px solid var(--line-strong); border
 .tone-mask { --av-bg: #2a2236; --av-ink: #d8c8f0; display: grid; place-items: center; }
 
 /* ── a card that turns over ── */
-.card3d { display: inline-block; position: relative; perspective: 700px; flex: none; width: var(--card, 64px); height: var(--card, 64px); }
+.card3d { display: inline-block; position: relative; perspective: 700px; flex: none; width: var(--csz, 64px); height: var(--csz, 64px); }
 .card3d-inner { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .7s var(--ease-out); }
 .card3d.is-up .card3d-inner { transform: rotateY(180deg); }
 .card3d-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: var(--r2); overflow: hidden; box-shadow: var(--shadow-1); background: #efe4c8; }

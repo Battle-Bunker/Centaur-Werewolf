@@ -45,7 +45,7 @@ const CONCURRENCY = Number(flag("concurrency", "2"));
 const ONLY = flag("only")?.split(",");
 const DEFAULT: Required<AgentSpec> = { model: flag("model", spec.agents?.model ?? "sonnet")!, effort: flag("effort", spec.agents?.effort ?? "medium")! };
 const TIMERS = flag("timers") ? (([dusk, turn, day]) => ({ dusk, turn, day }))(flag("timers")!.split(",").map(Number)) : undefined; // --timers dusk,turn,day overrides the file
-const LOBBY_MAX = 150; // seconds before the runner starts a game the host agent has not started
+const LOBBY_MAX = 100; // seconds before the runner starts a game the host agent has not started
 const DEBRIEF_MAX = 180; // seconds after the game ends for agents to finish their debrief
 const RELAUNCHES = 2; // times an agent that stops before the game ends is resumed
 const SYSTEM = readFileSync(new URL("./arena-player.md", import.meta.url), "utf8");

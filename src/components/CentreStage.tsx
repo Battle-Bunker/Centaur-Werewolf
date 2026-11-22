@@ -34,7 +34,7 @@ export function CentreStage({ w, h, pick, legal, order, markers, fresh }: Props)
       <div className="stage-now" style={{ height: stageH }}>
         {final ? <Verdict compact={compact} /> : v.phase === "day" ? <DayNow size={stageH} compact={compact} /> : <NightNow size={stageH} compact={compact} />}
       </div>
-      <div className={`centre-cards rows-${rows}`} style={{ ["--card" as string]: `${cardSize}px`, ["--per-row" as string]: rows === 2 ? Math.ceil(count / 2) : count }}>
+      <div className={`centre-cards rows-${rows}`} style={{ ["--csz" as string]: `${cardSize}px`, ["--per-row" as string]: rows === 2 ? Math.ceil(count / 2) : count }}>
         {Array.from({ length: count }, (_, i) => {
           const s: Slot = { k: "c", i };
           const role: RoleId | null = final ? final.center[i] : null;
@@ -147,7 +147,7 @@ function LobbyCentre({ w, h }: { w: number; h: number }) {
   const c = Math.max(34, Math.min(84, h * 0.3, (w * 0.9) / Math.max(4, fan.length * 0.55)));
   return (
     <div className={`lobby-centre${small ? " is-compact" : ""}`}>
-      <div className="lobby-fan" style={{ ["--card" as string]: `${c}px`, ["--n" as string]: fan.length }} aria-label={`The deck: ${v.settings.deck.map(roleName).join(", ")}`}>
+      <div className="lobby-fan" style={{ ["--csz" as string]: `${c}px`, ["--n" as string]: fan.length }} aria-label={`The deck: ${v.settings.deck.map(roleName).join(", ")}`}>
         {fan.map((r, i) => <img key={`${r}${i}`} src={`/art/${r}.webp`} alt="" style={{ ["--i" as string]: i - (fan.length - 1) / 2 }} />)}
         {!fan.length && <img src="/art/back.webp" alt="" style={{ ["--i" as string]: 0 }} />}
       </div>

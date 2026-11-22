@@ -49,11 +49,11 @@ button.seat { cursor: pointer; }
 .seat.is-dead .avatar { filter: grayscale(.85) brightness(.75); }
 .seat.is-winner .seat-media { box-shadow: var(--shadow-2), 0 0 0 3px var(--amber), 0 0 28px -4px var(--amber); }
 
-.seat-card { position: absolute; right: calc(var(--card) * -.18); top: calc(var(--card) * -.2); z-index: 2; filter: drop-shadow(0 4px 8px rgb(0 0 0 / .3)); transform: rotate(4deg); transition: transform var(--t) var(--ease-out); }
+.seat-card { position: absolute; right: calc(var(--csz) * -.18); top: calc(var(--csz) * -.2); z-index: 2; filter: drop-shadow(0 4px 8px rgb(0 0 0 / .3)); transform: rotate(4deg); transition: transform var(--t) var(--ease-out); }
 .seat:hover .seat-card { transform: rotate(0) scale(1.06); }
 .seat-card.is-dealt { animation: deal .75s var(--ease-out) both; animation-delay: var(--deal); }
 @keyframes deal { from { transform: translate(var(--from-x), var(--from-y)) rotate(-30deg) scale(.6); opacity: 0; } 20% { opacity: 1; } }
-.seat-card-was { position: absolute; left: calc(var(--card) * -.32); bottom: calc(var(--card) * -.1); width: calc(var(--card) * .52); height: calc(var(--card) * .52); border-radius: var(--r1); overflow: hidden; box-shadow: 0 0 0 2px var(--card), var(--shadow-1); transform: rotate(-8deg); opacity: 0; animation: fade-in .4s var(--ease) forwards; animation-delay: calc(var(--deal) * 2.4 + 1s); }
+.seat-card-was { position: absolute; left: calc(var(--csz) * -.32); bottom: calc(var(--csz) * -.1); width: calc(var(--csz) * .52); height: calc(var(--csz) * .52); border-radius: var(--r1); overflow: hidden; box-shadow: 0 0 0 2px var(--card), var(--shadow-1); transform: rotate(-8deg); opacity: 0; animation: fade-in .4s var(--ease) forwards; animation-delay: calc(var(--deal) * 2.4 + 1s); }
 .seat-card-was img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.6); }
 @keyframes fade-in { to { opacity: 1; } }
 
@@ -76,7 +76,7 @@ button.seat { cursor: pointer; }
 .seat-tally { position: absolute; left: 6px; top: 6px; z-index: 2; min-width: 24px; height: 24px; padding: 0 6px; border-radius: 12px; display: grid; place-items: center; background: var(--ink); color: var(--paper); font: 700 13px var(--mono); animation: pop .4s var(--spring) both; animation-delay: 1.4s; }
 
 /* ── pins: what you know, pinned to a card ── */
-.pins { position: absolute; left: 5px; bottom: 5px; right: calc(var(--card) * .4); z-index: 2; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; pointer-events: auto; }
+.pins { position: absolute; left: 5px; bottom: 5px; right: calc(var(--csz) * .4); z-index: 2; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; pointer-events: auto; }
 .pin { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; padding: 2px 7px 2px 2px; border-radius: 11px; font: 700 11.5px/1.2 var(--font); background: var(--card); color: var(--ink); box-shadow: var(--shadow-1), inset 0 0 0 1px var(--team, var(--line-strong)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; animation: pin-in .45s var(--spring) both; }
 .pin span { overflow: hidden; text-overflow: ellipsis; }
 .pin img { width: 18px; height: 18px; border-radius: 50%; object-fit: cover; flex: none; }
@@ -138,7 +138,7 @@ button.seat { cursor: pointer; }
 .verdict-you.is-won { background: var(--amber); color: #1d1405; }
 .verdict-you.is-lost { background: color-mix(in srgb, var(--ink) 10%, transparent); color: var(--ink-2); }
 
-.centre-cards { display: grid; grid-template-columns: repeat(var(--per-row), var(--card)); gap: 14px 10px; justify-content: center; }
+.centre-cards { display: grid; grid-template-columns: repeat(var(--per-row), var(--csz)); gap: 14px 10px; justify-content: center; }
 .centre-card { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 0; border: 0; background: none; color: inherit; font: inherit; }
 button.centre-card { cursor: pointer; }
 .centre-card-face { position: relative; display: block; border-radius: var(--r2); transition: transform var(--t) var(--ease-out), box-shadow var(--t); }
@@ -158,8 +158,8 @@ button.centre-card { cursor: pointer; }
 /* ── the lobby's centre ── */
 .lobby-centre { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
 .lobby-centre.is-compact { gap: 6px; }
-.lobby-fan { position: relative; width: 100%; height: calc(var(--card) * 1.25); }
-.lobby-fan img { position: absolute; left: calc(50% - var(--card) / 2 + var(--i) * var(--card) * .42); top: 0; width: var(--card); height: var(--card); border-radius: var(--r2); box-shadow: var(--shadow-2); transform: rotate(calc(var(--i) * 4deg)) translateY(calc(var(--i) * var(--i) * 1.4px)); transform-origin: 50% 160%; transition: left var(--t) var(--ease-out), transform var(--t) var(--ease-out); animation: fan-in .6s var(--ease-out) both; }
+.lobby-fan { position: relative; width: 100%; height: calc(var(--csz) * 1.25); }
+.lobby-fan img { position: absolute; left: calc(50% - var(--csz) / 2 + var(--i) * var(--csz) * .42); top: 0; width: var(--csz); height: var(--csz); border-radius: var(--r2); box-shadow: var(--shadow-2); transform: rotate(calc(var(--i) * 4deg)) translateY(calc(var(--i) * var(--i) * 1.4px)); transform-origin: 50% 160%; transition: left var(--t) var(--ease-out), transform var(--t) var(--ease-out); animation: fan-in .6s var(--ease-out) both; }
 .lobby-status { display: flex; flex-direction: column; align-items: center; gap: 3px; max-width: 360px; }
 .lobby-status h3 { font-size: clamp(18px, 2vw, 26px); font-weight: 500; font-style: italic; }
 .lobby-status p { font-size: 14px; color: var(--ink-2); }

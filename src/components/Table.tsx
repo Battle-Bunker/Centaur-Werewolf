@@ -97,7 +97,7 @@ function Seat({ v, p, pos, L, legal, order, onPick, marks, bubble, awake, fresh,
   const chosen = order >= 0;
   const cls = ["seat", p.me && "is-me", legal && "is-legal", chosen && "is-chosen", dead && "is-dead", won && "is-winner", bubble && "is-speaking", awake && "is-awake", pos.y < L.cy - 4 && "is-top"].filter(Boolean).join(" ");
   const cardSize = Math.round(L.tw * (final ? 0.36 : 0.3));
-  const style = { left: pos.x, top: pos.y, width: L.tw, ["--tw" as string]: `${L.tw}px`, ["--th" as string]: `${L.th}px`, ["--card" as string]: `${cardSize}px`, ["--name-h" as string]: `${L.nameH}px`,
+  const style = { left: pos.x, top: pos.y, width: L.tw, ["--tw" as string]: `${L.tw}px`, ["--th" as string]: `${L.th}px`, ["--csz" as string]: `${cardSize}px`, ["--name-h" as string]: `${L.nameH}px`,
     ["--from-x" as string]: `${L.cx - pos.x}px`, ["--from-y" as string]: `${L.cy - pos.y}px`, ["--deal" as string]: `${dealIndex * 110}ms` } as CSSProperties;
   const label = `${p.name}${p.me ? " (you)" : ""}${p.bot ? ", practice bot" : ""}${voted ? ", has voted" : ""}${myVote ? ", your vote" : ""}${dead ? ", eliminated" : ""}${won ? ", won" : ""}${marks.length ? `. ${marks.map(m => m.title).join(" ")}` : ""}`;
   const finalTitle = final ? `${p.name} ended holding ${roleName(final.cards[p.seat])}${final.dealt[p.seat] !== final.cards[p.seat] ? ` (dealt ${roleName(final.dealt[p.seat])})` : ""}.` : undefined;
