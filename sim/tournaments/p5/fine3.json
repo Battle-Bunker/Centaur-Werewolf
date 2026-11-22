@@ -1,0 +1,174 @@
+{
+ "timers": {
+  "dusk": 8,
+  "turn": 2,
+  "day": 240,
+  "vote": 60
+ },
+ "agents": {
+  "model": "opus",
+  "effort": "medium"
+ },
+ "tables": [
+  {
+   "label": "F3-Q2-cutpurse-wolf",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "cutpurse",
+    "pickpocket",
+    "latecomer",
+    "sage",
+    "sentry",
+    "centaur"
+   ],
+   "players": [
+    "Cass",
+    "Dov",
+    "Bryn",
+    "Alder",
+    "Esme"
+   ],
+   "scenario": {
+    "seed": 13,
+    "cards": [
+     "werewolf",
+     "pickpocket",
+     "cutpurse",
+     "werewolf",
+     "sage",
+     "latecomer",
+     "centaur",
+     "sentry"
+    ],
+    "plans": {
+     "Esme": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 2
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Bryn": [
+      {
+       "step": "steal",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Dov": [
+      {
+       "step": "lift",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   },
+   "center": 3,
+   "replays": 5
+  },
+  {
+   "label": "F6-Q3-two-wolves-lure",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "sage",
+    "rustler",
+    "sentry",
+    "centaur"
+   ],
+   "players": [
+    "Bryn",
+    "Dov",
+    "Alder",
+    "Esme",
+    "Cass"
+   ],
+   "scenario": {
+    "seed": 16,
+    "cards": [
+     "werewolf",
+     "werewolf",
+     "centaur",
+     "lure",
+     "sentry",
+     "sage",
+     "rustler",
+     "phoenix"
+    ],
+    "plans": {
+     "Esme": [
+      {
+       "step": "lure",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ],
+         "role": "werewolf"
+        }
+       }
+      }
+     ],
+     "Alder": [
+      {
+       "step": "glance",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "c",
+           "i": 0
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   },
+   "center": 3,
+   "replays": 5
+  }
+ ]
+}

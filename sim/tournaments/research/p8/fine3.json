@@ -1,0 +1,164 @@
+{
+ "timers": {
+  "dusk": 8,
+  "turn": 2,
+  "day": 240,
+  "vote": 60
+ },
+ "agents": {
+  "model": "opus",
+  "effort": "medium"
+ },
+ "tables": [
+  {
+   "label": "S2-M1HS-pair-spooker",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "hollowsage",
+    "duncentaur",
+    "sage",
+    "sage",
+    "centaur",
+    "centaur",
+    "rustler",
+    "sentry",
+    "pickpocket",
+    "spooker"
+   ],
+   "center": 4,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Gale",
+    "Hale"
+   ],
+   "replays": 5,
+   "scenario": {
+    "seed": 21,
+    "cards": [
+     "werewolf",
+     "sage",
+     "werewolf",
+     "centaur",
+     "rustler",
+     "sage",
+     "spooker",
+     "sentry",
+     "hollowsage",
+     "duncentaur",
+     "centaur",
+     "pickpocket"
+    ],
+    "plans": {
+     "Bryn": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 2
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Fen": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 4
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Dov": [
+      {
+       "step": "glance",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "c",
+           "i": 0
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Esme": [
+      {
+       "step": "peek",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ]
+        }
+       }
+      },
+      {
+       "step": "trade",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "skip"
+        }
+       }
+      }
+     ],
+     "Gale": [
+      {
+       "step": "stampede",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "c",
+           "i": 1
+          },
+          {
+           "k": "c",
+           "i": 2
+          },
+          {
+           "k": "c",
+           "i": 3
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   }
+  }
+ ]
+}

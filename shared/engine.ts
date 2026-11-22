@@ -419,6 +419,9 @@ function applyEffect(e: Effect, c: Ctx): Applied {
       // A random card distortion picks its wrong role once, when cast, so every look at that card agrees; a random
       // viewer distortion draws afresh at each look.
       if (e.target === "card") {
+        // Rule lureSparesPhoenix: a Lure's dress cannot land on the card DEALT as a Phoenix (wherever it lies now).
+        if (state.rules.lureSparesPhoenix && c.stepId === "lure" && ROLE[state.instRole[instAt(state, slot)]]?.tags.includes("phoenix"))
+          return { ev: { kind: "void", why: "Dress a card for the pyre: did not happen, because at this table the Lure may not dress the card dealt as the Phoenix" } };
         const role = e.value === "chosen" ? c.named! : wrongRole(state, cardAt(state, slot), c.rng);
         state.tokens[slotKey(slot)] = { ...state.tokens[slotKey(slot)], distort: role };
         return { ev: { kind: "distort", slot, role: e.value === "chosen" ? role : null }, hidden: e.value === "random" ? { role } : undefined };
@@ -811,10 +814,11 @@ export function deckProblem(deck: RoleId[], players: number, center: number, rul
   return null;
 }
 
-/** The pack-covers assignment (rule packCovers): pack seats in seat order, each given a distinct Centaur-team role dealt to the centre, or null when there are fewer such roles than pack seats. Deterministic in the deal. */
+/** The pack-covers assignment (rule packCovers): pack seats in seat order, each given a distinct Centaur-team role dealt to the centre and to no player, or null when there are fewer such roles than pack seats. Deterministic in the deal. */
 export function packCovers(state: GameState): { seat: number; role: RoleId | null }[] {
   const pack = state.dealt.flatMap((r, i) => (ROLE[r].tags.includes("pack") ? [i] : []));
-  const pool = [...new Set(state.dealtCenter.filter(r => ROLE[r].team === "centaur"))].sort();
+  // Only roles with NO copy in any player's hand: a claim no honest player can contest by holding the card.
+  const pool = [...new Set(state.dealtCenter.filter(r => ROLE[r].team === "centaur" && !state.dealt.includes(r)))].sort();
   const offset = pool.length ? pack.reduce((a, i) => a + i, 0) % pool.length : 0;
   return pack.map((seat, k) => ({ seat, role: k < pool.length ? pool[(offset + k) % pool.length] : null }));
 }

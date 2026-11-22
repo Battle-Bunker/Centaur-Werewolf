@@ -1,0 +1,45 @@
+{
+ "timers": {
+  "dusk": 60,
+  "turn": 8,
+  "day": 240,
+  "vote": 60
+ },
+ "agents": {
+  "model": "opus",
+  "effort": "medium"
+ },
+ "redeal": "wolfDealt",
+ "tables": [
+  {
+   "label": "N-M1HS",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "hollowsage",
+    "duncentaur",
+    "sage",
+    "sage",
+    "centaur",
+    "centaur",
+    "rustler",
+    "sentry",
+    "pickpocket",
+    "spooker"
+   ],
+   "center": 4,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Gale",
+    "Hale"
+   ],
+   "replays": 2,
+   "redeal": "wolfDealt"
+  }
+ ]
+}

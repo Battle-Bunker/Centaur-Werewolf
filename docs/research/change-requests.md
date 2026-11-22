@@ -102,3 +102,33 @@ backward-induction argument becomes stronger (the wolf can no longer wait to see
 From the app session: during a Hush cut the app's WebSocket is not cut server-side, so a browser's devtools can still
 tell a cut from a real drop. Wish: cut the transport for the victim's session for the cut window. Not done; the AI
 harness sees only the MCP 503, which already matches a real drop.
+
+## CR-13. All-day chat latency floor for AI tables [measured; NOT needed]
+Measured from each agent's own stream (65 games: coarse 1, fine 1-2, parity): the thinking time between an agent's
+last tool result and each `chat_send`. Later messages: median 5.3 s (Centaur team), 5.9 s (Werewolf team), 5.8 s
+(Pyre); p90 16.0 / 15.0 / 12.7 s: no meaningful asymmetry. FIRST messages: Centaur 2.7 s, Werewolf 7.1 s, Pyre 7.3 s
+(medians): the whole latency asymmetry is in composing the opening claim (plus deliberate waiting). So no all-day floor
+in the shim; the opening is the only place that needs handling, and `openingStatements` (CR-10) does that, with the
+side effects recorded in log.md (it favours pre-committed stories). A cheaper harness-only alternative for comparison
+runs: the shim holds each agent's FIRST `chat_send` of the day until 15 s after the day starts (not built).
+
+## CR-12. Test the Den Census itself on the S3 duel [proposal]
+S3 swept 5-0 under the full census, a partial census and simultaneous claims: each time decided by "a wolf with the
+census would know the Sage is held". Test `census: "off"` on S3 (5 replays, ~$15). Prediction: Centaurs 3, wolves 2.
+
+## CR-14. Transport check for the first-message gap [measured; harness clean]
+Requested after two 8-player wolf debriefs said their first post "appeared later than sent". The shim forwards every
+non-`room_wait` call immediately (no per-seat queue). Measured from agent streams (89 hub games): `chat_send` round
+trip median 0.13 s, p90 0.20-0.22 s for every team. The first `chat_send` is ISSUED later by the wolf side (median
+13.8 s after day start for Centaur-team players, 19.2 s Werewolf team, 22.4 s Pyre). The gap is the model composing
+(and choosing to wait), not transport.
+
+## CR-15. "A Kindler's death is not a free wolf win" [proposal, untested]
+With the Phoenix held, eliminating a Kindler is neither a burning nor a Werewolf death, so under Blood Price it is a wolf
+win: every Kindler is a free decoy for the wolves (S5c: wolves 4 of 5 once the Lure fix exposed the Lure; PY6-S1#3:
+the wolf talked the table into eliminating the Lure). This default, not the Lure, is what turns the Lure fix into a
+wolf gift. **Proposed option `kindlerDeathVoids`** (default off): if a player holding a non-Phoenix Pyre card is
+eliminated while a Phoenix is held, and no Werewolf is eliminated, no main team wins (the Pyre does not win either);
+with a Werewolf also eliminated the Blood Price applies as usual. Effect on incentives: the wolves no longer gain from a
+Kindler's elimination, the Centaurs still lose by it (no main win), so the table must find the wolf; the Pyre is not
+helped. Prediction on S5c (Lure fix, openings off): from wolves 4 / Centaurs 1 to Centaurs 3-4 / wolves 1-2, path >= 2.5.

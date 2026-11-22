@@ -17,6 +17,8 @@ export interface Rules {
   biteNamesBiter: boolean;
   /** When nobody holds the role the Eavesdropper names, it gets a real result of its own as if it held it. Off: nothing. */
   eavesdropGhost: boolean;
+  /** The Lure may not dress the card dealt as a Phoenix (it may still dress any other card). */
+  lureSparesPhoenix: boolean;
   /** The discussion opens with simultaneous opening statements (held, revealed together in seat order). */
   openingStatements: boolean;
   /** How long the opening-statement window lasts, in seconds. */
@@ -53,6 +55,7 @@ export const DEFAULT_RULES: Rules = {
   dawnProclamations: true,
   biteNamesBiter: true,
   eavesdropGhost: true,
+  lureSparesPhoenix: false,
   openingStatements: false,
   openingSeconds: 60,
   bloodPriceCondemned: false,
@@ -111,6 +114,11 @@ export const RULE_DEFS: RuleDef[] = [
     off: "If nobody was dealt the role the Eavesdropper names, it learns nothing.",
   },
   {
+    id: "lureSparesPhoenix", kind: "boolean", title: "The Lure spares the Phoenix", tooltip: "Whether the Lure may dress the card dealt as the Phoenix.",
+    on: "The Lure may not dress the card dealt as a Phoenix (a dress aimed at it does not happen); it may still dress any other card. The Pyre must get its Phoenix burned by talk, not by an honest seer's sincere testimony.",
+    off: "The Lure may dress any card, the Phoenix included.",
+  },
+  {
     id: "openingStatements", kind: "boolean", title: "Opening statements", tooltip: "Whether the discussion opens with simultaneous opening statements.",
     on: "The discussion opens with opening statements: each player posts ONE message, which is held unseen; all are revealed together, in seat order, once every player has posted or the opening window ends. Nobody sees who has posted. Free chat (and getting ready, and sealed messages) opens after the reveal.",
     off: "The discussion opens straight into free chat.",
@@ -126,7 +134,7 @@ export const RULE_DEFS: RuleDef[] = [
   },
   {
     id: "packCovers", kind: "boolean", title: "Pack covers", tooltip: "Whether the census also gives each pack member a different cover role to claim.",
-    on: "With the census, every pack card is also told a cover for each pack seat: a different Centaur-team role among those dealt to the centre (the same assignment for the whole pack), so the pack's claims need not collide.",
+    on: "With the census, every pack card is also told a cover for each pack seat: a different Centaur-team role among those dealt to the centre with no copy in any player's hand (the same assignment for the whole pack), so the pack's claims need not collide.",
     off: "The pack gets no cover roles: each pack member chooses its own claim.",
   },
   {

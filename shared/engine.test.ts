@@ -190,6 +190,16 @@ describe("night", () => {
     expect(copierOptions(deck, "gleaner")).toEqual(["werewolf", "sage", "rustler", "centaur", "sentry", "herder"]);
     expect(copierOptions([...deck].reverse(), "gleaner").sort()).toEqual(copierOptions(deck, "gleaner").sort());
   });
+  it("lureSparesPhoenix: a Lure's dress on the Phoenix-dealt card does not happen; any other card is still dressed", () => {
+    const s = state(["lure", "phoenix", "sage"], ["werewolf", "centaur", "rustler"], { lureSparesPhoenix: true });
+    const dress = (t: Slot) => ({ lure: { branches: [], otherwise: { kind: "pick" as const, targets: [t], role: "werewolf" as RoleId } } });
+    const blocked = act(s, 0, dress(P(1)), 0);
+    expect(blocked.some(e => e.ev.kind === "void" && /may not dress the card dealt as the Phoenix/.test((e.ev as { why: string }).why))).toBe(true);
+    expect(Object.keys(s.tokens)).toHaveLength(0);
+    const ok = state(["lure", "phoenix", "sage"], ["werewolf", "centaur", "rustler"], { lureSparesPhoenix: true });
+    act(ok, 0, dress(P(2)), 0);
+    expect(Object.values(ok.tokens).some(t => t.distort === "werewolf")).toBe(true);
+  });
   it("census allButOne leaves one centre role out; pack covers give each pack seat a different centre Centaur role", () => {
     const s = state(["werewolf", "sage", "werewolf", "centaur"], ["rustler", "centaur", "sentry"], { census: "allButOne", packCovers: true });
     const a = act(s, 0, {}), b = act(s, 2, {});
@@ -202,6 +212,10 @@ describe("night", () => {
     expect(new Set(ca.covers.map(c => c.role)).size).toBe(2);
     expect(ca.covers.every(c => ["centaur", "rustler", "sentry"].includes(c.role!))).toBe(true);
     expect(say(a.find(e => e.ev.kind === "census")!, names, 0)).toMatch(/2 of the 3 roles .* Pack covers .*you: /);
+    // A duplicated role with a copy in a player's hand is never a cover (the honest holder would contest it).
+    const dup = state(["werewolf", "centaur", "werewolf"], ["centaur", "rustler", "sentry"], { packCovers: true });
+    const cd = act(dup, 0, {}).find(e => e.ev.kind === "census")!.ev as typeof ca;
+    expect(cd.covers.map(c => c.role).sort()).toEqual(["rustler", "sentry"]);
     const off = act(state(["werewolf", "sage", "werewolf"], ["rustler", "centaur", "sentry"]), 0, {});
     expect(off.find(e => e.ev.kind === "census")!.ev).not.toHaveProperty("covers");
   });

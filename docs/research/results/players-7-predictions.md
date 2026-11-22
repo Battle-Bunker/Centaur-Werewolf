@@ -238,3 +238,18 @@ Centaur team; the Moonsage read Esme = Herder; Dov glanced centre 3 = Centaur; t
 - Prediction (my roster-level prediction for this class): **wolves 4, Centaurs 1.** Path around 2.5, deception >= 2.5.
 - Falsifier: Centaurs 3+ (the table finds the wolf without exposing the fake Sage, e.g. by claim counting: Bryn's claim
   must collide with someone since only Sage, Werewolf and Centaur are in the centre and the Sage is "claimed").
+
+## Batch 3 (written 13:20, after batch 2, before these games)
+
+### Amendment A3 (rule setting, the hub's census "allButOne"), test F-P7-inversion-abo
+Why (F-P7-inversion swept 5-0 Centaurs, ToM 1.4): the dealt wolf Dov, whose card the Ember-Carrier had carried away,
+deduced it at once ("his census showed no Rustler or Pickpocket was in play and his own card had left him"), confessed
+honestly, and the Ember-Carrier confirmed the swap; with the Sage's true read on Bryn and the Sentry's "1 and 3 moved",
+Bryn (holding the wolf) had no counter-story. The census turned the Sentry's "moved" into certainty for Dov.
+Change: census "allButOne" (seed 32: Dov learns Rustler and Werewolf, not the Pickpocket). Dov can no longer exclude a
+held Pickpocket as the cause of his move, so his confession is a gamble, and the wolf side keeps an alternative
+("a Pickpocket moved Dov").
+- Prediction: Centaurs 3, wolves 1, Pyre 1 (from 5-0); ToM >= 2 (from 1.4); noise <= 1.5.
+- Falsifier: 5-0 Centaurs again (the Sage read + Sentry + Ember-Carrier's own admission suffice without the census).
+
+### Natural deals P7#3-4, K7#3-4 (no new prediction: the roster-level predictions above apply)
