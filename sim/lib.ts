@@ -46,7 +46,7 @@ export async function setupTable(config: TableConfig): Promise<Table> {
   const hostToken = token();
   const playtest = config.playtest || config.seed !== undefined;
   const { code } = (await run("room.create", hostToken, undefined, { name: hostName, ...(playtest ? { playtest: true } : {}) })) as { code: string };
-  const seats = [{ name: hostName, token: hostToken, key: "", host: true }];
+  const seats: Table["seats"] = [{ name: hostName, token: hostToken, key: "", host: true }];
   for (const name of others) { const t = token(); await run("room.join", t, undefined, { code, name }); seats.push({ name, token: t, key: "", host: false }); }
   await run("setup.setCenter", hostToken, code, { count: config.center });
   const current = (await view(code, hostToken))!.settings.deck;

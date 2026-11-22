@@ -1,0 +1,1291 @@
+{
+ "timers": {
+  "dusk": 60,
+  "turn": 8,
+  "day": 240
+ },
+ "redeal": "wolfDealt",
+ "tables": [
+  {
+   "label": "B-movement/strongC#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "rustler",
+    "farrier",
+    "spooker",
+    "sentry",
+    "sage",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "opus"
+     },
+     "werewolf": {
+      "model": "sonnet"
+     },
+     "lone": {
+      "model": "sonnet"
+     }
+    }
+   }
+  },
+  {
+   "label": "B-movement/strongW#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "rustler",
+    "farrier",
+    "spooker",
+    "sentry",
+    "sage",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "sonnet"
+     },
+     "werewolf": {
+      "model": "opus"
+     },
+     "lone": {
+      "model": "opus"
+     }
+    }
+   }
+  },
+  {
+   "label": "B-movement/allOpus#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "rustler",
+    "farrier",
+    "spooker",
+    "sentry",
+    "sage",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "agents": {
+    "model": "opus",
+    "effort": "medium"
+   }
+  },
+  {
+   "label": "E-sparse-table/strongC#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "tracker",
+    "whisperer",
+    "centaur",
+    "centaur",
+    "herald",
+    "herder",
+    "sage",
+    "farrier",
+    "sentry"
+   ],
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "opus"
+     },
+     "werewolf": {
+      "model": "sonnet"
+     },
+     "lone": {
+      "model": "sonnet"
+     }
+    }
+   }
+  },
+  {
+   "label": "E-sparse-table/strongW#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "tracker",
+    "whisperer",
+    "centaur",
+    "centaur",
+    "herald",
+    "herder",
+    "sage",
+    "farrier",
+    "sentry"
+   ],
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "sonnet"
+     },
+     "werewolf": {
+      "model": "opus"
+     },
+     "lone": {
+      "model": "opus"
+     }
+    }
+   }
+  },
+  {
+   "label": "E-sparse-table/allOpus#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "tracker",
+    "whisperer",
+    "centaur",
+    "centaur",
+    "herald",
+    "herder",
+    "sage",
+    "farrier",
+    "sentry"
+   ],
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "agents": {
+    "model": "opus",
+    "effort": "medium"
+   }
+  },
+  {
+   "label": "G-seven-classic/strongC#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "whisperer",
+    "sage",
+    "rustler",
+    "farrier",
+    "centaur",
+    "chiron",
+    "sagittarius",
+    "sentry"
+   ],
+   "center": 3,
+   "players": [
+    "Pax",
+    "Quill",
+    "Rhea",
+    "Sol",
+    "Tam",
+    "Una",
+    "Vale"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "opus"
+     },
+     "werewolf": {
+      "model": "sonnet"
+     },
+     "lone": {
+      "model": "sonnet"
+     }
+    }
+   }
+  },
+  {
+   "label": "G-seven-classic/strongW#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "whisperer",
+    "sage",
+    "rustler",
+    "farrier",
+    "centaur",
+    "chiron",
+    "sagittarius",
+    "sentry"
+   ],
+   "center": 3,
+   "players": [
+    "Pax",
+    "Quill",
+    "Rhea",
+    "Sol",
+    "Tam",
+    "Una",
+    "Vale"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "sonnet"
+     },
+     "werewolf": {
+      "model": "opus"
+     },
+     "lone": {
+      "model": "opus"
+     }
+    }
+   }
+  },
+  {
+   "label": "G-seven-classic/allOpus#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "whisperer",
+    "sage",
+    "rustler",
+    "farrier",
+    "centaur",
+    "chiron",
+    "sagittarius",
+    "sentry"
+   ],
+   "center": 3,
+   "players": [
+    "Pax",
+    "Quill",
+    "Rhea",
+    "Sol",
+    "Tam",
+    "Una",
+    "Vale"
+   ],
+   "agents": {
+    "model": "opus",
+    "effort": "medium"
+   }
+  },
+  {
+   "label": "H-seven-everything/strongC#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "tracker",
+    "forger",
+    "spooker",
+    "signet",
+    "centaur",
+    "herald",
+    "herder",
+    "sage",
+    "augur",
+    "hybrid"
+   ],
+   "center": 5,
+   "players": [
+    "Pax",
+    "Quill",
+    "Rhea",
+    "Sol",
+    "Tam",
+    "Una",
+    "Vale"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "opus"
+     },
+     "werewolf": {
+      "model": "sonnet"
+     },
+     "lone": {
+      "model": "sonnet"
+     }
+    }
+   }
+  },
+  {
+   "label": "H-seven-everything/strongW#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "tracker",
+    "forger",
+    "spooker",
+    "signet",
+    "centaur",
+    "herald",
+    "herder",
+    "sage",
+    "augur",
+    "hybrid"
+   ],
+   "center": 5,
+   "players": [
+    "Pax",
+    "Quill",
+    "Rhea",
+    "Sol",
+    "Tam",
+    "Una",
+    "Vale"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "sonnet"
+     },
+     "werewolf": {
+      "model": "opus"
+     },
+     "lone": {
+      "model": "opus"
+     }
+    }
+   }
+  },
+  {
+   "label": "H-seven-everything/allOpus#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "tracker",
+    "forger",
+    "spooker",
+    "signet",
+    "centaur",
+    "herald",
+    "herder",
+    "sage",
+    "augur",
+    "hybrid"
+   ],
+   "center": 5,
+   "players": [
+    "Pax",
+    "Quill",
+    "Rhea",
+    "Sol",
+    "Tam",
+    "Una",
+    "Vale"
+   ],
+   "agents": {
+    "model": "opus",
+    "effort": "medium"
+   }
+  },
+  {
+   "label": "B-movement/strongC#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "rustler",
+    "farrier",
+    "spooker",
+    "sentry",
+    "sage",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "opus"
+     },
+     "werewolf": {
+      "model": "sonnet"
+     },
+     "lone": {
+      "model": "sonnet"
+     }
+    }
+   }
+  },
+  {
+   "label": "B-movement/strongW#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "rustler",
+    "farrier",
+    "spooker",
+    "sentry",
+    "sage",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "sonnet"
+     },
+     "werewolf": {
+      "model": "opus"
+     },
+     "lone": {
+      "model": "opus"
+     }
+    }
+   }
+  },
+  {
+   "label": "B-movement/allOpus#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "rustler",
+    "farrier",
+    "spooker",
+    "sentry",
+    "sage",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "agents": {
+    "model": "opus",
+    "effort": "medium"
+   }
+  },
+  {
+   "label": "E-sparse-table/strongC#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "tracker",
+    "whisperer",
+    "centaur",
+    "centaur",
+    "herald",
+    "herder",
+    "sage",
+    "farrier",
+    "sentry"
+   ],
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "opus"
+     },
+     "werewolf": {
+      "model": "sonnet"
+     },
+     "lone": {
+      "model": "sonnet"
+     }
+    }
+   }
+  },
+  {
+   "label": "E-sparse-table/strongW#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "tracker",
+    "whisperer",
+    "centaur",
+    "centaur",
+    "herald",
+    "herder",
+    "sage",
+    "farrier",
+    "sentry"
+   ],
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "sonnet"
+     },
+     "werewolf": {
+      "model": "opus"
+     },
+     "lone": {
+      "model": "opus"
+     }
+    }
+   }
+  },
+  {
+   "label": "E-sparse-table/allOpus#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "tracker",
+    "whisperer",
+    "centaur",
+    "centaur",
+    "herald",
+    "herder",
+    "sage",
+    "farrier",
+    "sentry"
+   ],
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "agents": {
+    "model": "opus",
+    "effort": "medium"
+   }
+  },
+  {
+   "label": "G-seven-classic/strongC#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "whisperer",
+    "sage",
+    "rustler",
+    "farrier",
+    "centaur",
+    "chiron",
+    "sagittarius",
+    "sentry"
+   ],
+   "center": 3,
+   "players": [
+    "Pax",
+    "Quill",
+    "Rhea",
+    "Sol",
+    "Tam",
+    "Una",
+    "Vale"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "opus"
+     },
+     "werewolf": {
+      "model": "sonnet"
+     },
+     "lone": {
+      "model": "sonnet"
+     }
+    }
+   }
+  },
+  {
+   "label": "G-seven-classic/strongW#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "whisperer",
+    "sage",
+    "rustler",
+    "farrier",
+    "centaur",
+    "chiron",
+    "sagittarius",
+    "sentry"
+   ],
+   "center": 3,
+   "players": [
+    "Pax",
+    "Quill",
+    "Rhea",
+    "Sol",
+    "Tam",
+    "Una",
+    "Vale"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "sonnet"
+     },
+     "werewolf": {
+      "model": "opus"
+     },
+     "lone": {
+      "model": "opus"
+     }
+    }
+   }
+  },
+  {
+   "label": "G-seven-classic/allOpus#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "whisperer",
+    "sage",
+    "rustler",
+    "farrier",
+    "centaur",
+    "chiron",
+    "sagittarius",
+    "sentry"
+   ],
+   "center": 3,
+   "players": [
+    "Pax",
+    "Quill",
+    "Rhea",
+    "Sol",
+    "Tam",
+    "Una",
+    "Vale"
+   ],
+   "agents": {
+    "model": "opus",
+    "effort": "medium"
+   }
+  },
+  {
+   "label": "H-seven-everything/strongC#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "tracker",
+    "forger",
+    "spooker",
+    "signet",
+    "centaur",
+    "herald",
+    "herder",
+    "sage",
+    "augur",
+    "hybrid"
+   ],
+   "center": 5,
+   "players": [
+    "Pax",
+    "Quill",
+    "Rhea",
+    "Sol",
+    "Tam",
+    "Una",
+    "Vale"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "opus"
+     },
+     "werewolf": {
+      "model": "sonnet"
+     },
+     "lone": {
+      "model": "sonnet"
+     }
+    }
+   }
+  },
+  {
+   "label": "H-seven-everything/strongW#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "tracker",
+    "forger",
+    "spooker",
+    "signet",
+    "centaur",
+    "herald",
+    "herder",
+    "sage",
+    "augur",
+    "hybrid"
+   ],
+   "center": 5,
+   "players": [
+    "Pax",
+    "Quill",
+    "Rhea",
+    "Sol",
+    "Tam",
+    "Una",
+    "Vale"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "sonnet"
+     },
+     "werewolf": {
+      "model": "opus"
+     },
+     "lone": {
+      "model": "opus"
+     }
+    }
+   }
+  },
+  {
+   "label": "H-seven-everything/allOpus#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "tracker",
+    "forger",
+    "spooker",
+    "signet",
+    "centaur",
+    "herald",
+    "herder",
+    "sage",
+    "augur",
+    "hybrid"
+   ],
+   "center": 5,
+   "players": [
+    "Pax",
+    "Quill",
+    "Rhea",
+    "Sol",
+    "Tam",
+    "Una",
+    "Vale"
+   ],
+   "agents": {
+    "model": "opus",
+    "effort": "medium"
+   }
+  },
+  {
+   "label": "B-movement/strongC#3",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "rustler",
+    "farrier",
+    "spooker",
+    "sentry",
+    "sage",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "opus"
+     },
+     "werewolf": {
+      "model": "sonnet"
+     },
+     "lone": {
+      "model": "sonnet"
+     }
+    }
+   }
+  },
+  {
+   "label": "B-movement/strongW#3",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "rustler",
+    "farrier",
+    "spooker",
+    "sentry",
+    "sage",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "sonnet"
+     },
+     "werewolf": {
+      "model": "opus"
+     },
+     "lone": {
+      "model": "opus"
+     }
+    }
+   }
+  },
+  {
+   "label": "B-movement/allOpus#3",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "rustler",
+    "farrier",
+    "spooker",
+    "sentry",
+    "sage",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "agents": {
+    "model": "opus",
+    "effort": "medium"
+   }
+  },
+  {
+   "label": "E-sparse-table/strongC#3",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "tracker",
+    "whisperer",
+    "centaur",
+    "centaur",
+    "herald",
+    "herder",
+    "sage",
+    "farrier",
+    "sentry"
+   ],
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "opus"
+     },
+     "werewolf": {
+      "model": "sonnet"
+     },
+     "lone": {
+      "model": "sonnet"
+     }
+    }
+   }
+  },
+  {
+   "label": "E-sparse-table/strongW#3",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "tracker",
+    "whisperer",
+    "centaur",
+    "centaur",
+    "herald",
+    "herder",
+    "sage",
+    "farrier",
+    "sentry"
+   ],
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "sonnet"
+     },
+     "werewolf": {
+      "model": "opus"
+     },
+     "lone": {
+      "model": "opus"
+     }
+    }
+   }
+  },
+  {
+   "label": "E-sparse-table/allOpus#3",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "tracker",
+    "whisperer",
+    "centaur",
+    "centaur",
+    "herald",
+    "herder",
+    "sage",
+    "farrier",
+    "sentry"
+   ],
+   "center": 6,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ],
+   "agents": {
+    "model": "opus",
+    "effort": "medium"
+   }
+  },
+  {
+   "label": "G-seven-classic/strongC#3",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "whisperer",
+    "sage",
+    "rustler",
+    "farrier",
+    "centaur",
+    "chiron",
+    "sagittarius",
+    "sentry"
+   ],
+   "center": 3,
+   "players": [
+    "Pax",
+    "Quill",
+    "Rhea",
+    "Sol",
+    "Tam",
+    "Una",
+    "Vale"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "opus"
+     },
+     "werewolf": {
+      "model": "sonnet"
+     },
+     "lone": {
+      "model": "sonnet"
+     }
+    }
+   }
+  },
+  {
+   "label": "G-seven-classic/strongW#3",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "whisperer",
+    "sage",
+    "rustler",
+    "farrier",
+    "centaur",
+    "chiron",
+    "sagittarius",
+    "sentry"
+   ],
+   "center": 3,
+   "players": [
+    "Pax",
+    "Quill",
+    "Rhea",
+    "Sol",
+    "Tam",
+    "Una",
+    "Vale"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "sonnet"
+     },
+     "werewolf": {
+      "model": "opus"
+     },
+     "lone": {
+      "model": "opus"
+     }
+    }
+   }
+  },
+  {
+   "label": "G-seven-classic/allOpus#3",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "whisperer",
+    "sage",
+    "rustler",
+    "farrier",
+    "centaur",
+    "chiron",
+    "sagittarius",
+    "sentry"
+   ],
+   "center": 3,
+   "players": [
+    "Pax",
+    "Quill",
+    "Rhea",
+    "Sol",
+    "Tam",
+    "Una",
+    "Vale"
+   ],
+   "agents": {
+    "model": "opus",
+    "effort": "medium"
+   }
+  },
+  {
+   "label": "H-seven-everything/strongC#3",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "tracker",
+    "forger",
+    "spooker",
+    "signet",
+    "centaur",
+    "herald",
+    "herder",
+    "sage",
+    "augur",
+    "hybrid"
+   ],
+   "center": 5,
+   "players": [
+    "Pax",
+    "Quill",
+    "Rhea",
+    "Sol",
+    "Tam",
+    "Una",
+    "Vale"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "opus"
+     },
+     "werewolf": {
+      "model": "sonnet"
+     },
+     "lone": {
+      "model": "sonnet"
+     }
+    }
+   }
+  },
+  {
+   "label": "H-seven-everything/strongW#3",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "tracker",
+    "forger",
+    "spooker",
+    "signet",
+    "centaur",
+    "herald",
+    "herder",
+    "sage",
+    "augur",
+    "hybrid"
+   ],
+   "center": 5,
+   "players": [
+    "Pax",
+    "Quill",
+    "Rhea",
+    "Sol",
+    "Tam",
+    "Una",
+    "Vale"
+   ],
+   "agents": {
+    "model": "sonnet",
+    "effort": "medium",
+    "byTeam": {
+     "centaur": {
+      "model": "sonnet"
+     },
+     "werewolf": {
+      "model": "opus"
+     },
+     "lone": {
+      "model": "opus"
+     }
+    }
+   }
+  },
+  {
+   "label": "H-seven-everything/allOpus#3",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "tracker",
+    "forger",
+    "spooker",
+    "signet",
+    "centaur",
+    "herald",
+    "herder",
+    "sage",
+    "augur",
+    "hybrid"
+   ],
+   "center": 5,
+   "players": [
+    "Pax",
+    "Quill",
+    "Rhea",
+    "Sol",
+    "Tam",
+    "Una",
+    "Vale"
+   ],
+   "agents": {
+    "model": "opus",
+    "effort": "medium"
+   }
+  }
+ ]
+}

@@ -138,7 +138,7 @@ const HANDLERS: Record<ServerId, Handler> = {
     const { deck, duskSeconds, turnSeconds } = room.settings;
     const rules = rulesOf(room.settings.rules);
     // Seating and the shuffle draw from separate generators: the platform's cryptographic one, or two streams of the
-    // play-test seed, so neither can echo the other (see sim/deal-check.ts).
+    // play-test seed, so neither can echo the other (see sim/deal-uniformity.ts).
     const fixed = room.playtest ? room.settings.fixedDeal : undefined;
     const problem = fixed && fixedDealProblem(fixed, players.map(p => p._id), deck);
     if (problem) return fail(`The fixed deal no longer fits the table: ${problem} Clear it or fix it again.`);

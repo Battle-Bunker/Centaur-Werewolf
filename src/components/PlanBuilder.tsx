@@ -98,7 +98,7 @@ function StepResults({ results, v, seat, step }: { results: LogEntry[]; v: View;
         const seen = e.ev.kind === "look" && e.ev.roles ? e.ev.roles : e.ev.kind === "announce" ? e.ev.roles : null;
         return (
           <div key={k} className="result">
-            {seen && <span className="result-cards">{seen.map((r, j) => <Card key={j} role={r} size={54} flipDelay={150 + j * 200} />)}</span>}
+            {seen && <span className="result-cards">{seen.map((r, j) => <Card key={j} role={r} size={54} reveal flipDelay={150 + j * 200} />)}</span>}
             <p>{describe(e, v, seat)}{viaLabel(e) && <span className="via"> · {viaLabel(e)}</span>}</p>
           </div>
         );
@@ -194,7 +194,7 @@ function StepEditor({ v, role, step, outcomes, shape, publish, live }: { v: View
     <div className={`editor${live ? " is-live" : ""}`}>
       {seen && (
         <div className="seen">
-          <span className="result-cards">{seen.map((r, j) => <Card key={j} role={r} size={54} flipDelay={150} />)}</span>
+          <span className="result-cards">{seen.map((r, j) => <Card key={j} role={r} size={54} reveal flipDelay={150} />)}</span>
           <p>You saw <b>{seen.map(roleName).join(", ")}</b>. {live ? "Decide now." : "Your move for this is below."}</p>
         </div>
       )}

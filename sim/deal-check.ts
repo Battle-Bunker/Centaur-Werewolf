@@ -1,64 +1,57 @@
 /**
- * Regression check: are deals on the real server uniform? It opens a play-test table (the host sees the deal) with
- * bots in the other seats, then deals again and again through the app's own `game.start` and reads each deal from the
- * host's view, abandoning the round each time. It reports, per role, how often it lands at each position (seat or
- * centre card) against chance, a chi-square test, and the rate at which every wolf card lands in the centre.
- *   npx tsx sim/deal-check.ts [deals = 2000] [players = 5] [deck = werewolf,werewolf,sage,centaur,centaur,herald,rustler,sentry]
- * Exits non-zero if any role's positions fail the test at p < 0.001.
+ * Measures the server's deal: opens and starts tables through the app's own commands (no agents), reads each seat's
+ * dealt card from that player's own view, and compares where cards land with a uniform shuffle.
+ *   npx tsx sim/deal-check.ts [tables = 200] [outFile] [--mcp]
+ * Half the tables list the deck with the wolves first (as tables.ts does), half with the wolves last, so a bias that
+ * follows deck position shows up as a difference between the halves. Also records the seating (join order → seat)
+ * and whether whole deals repeat (a fixed seed would repeat them).
+ * The rooms are left to finish by themselves (very short timers, forced random play).
  */
-import { run, token, view } from "./lib";
+import { writeFileSync } from "node:fs";
+import { run, token, tool, view } from "./lib";
 
-const [nArg = "2000", pArg = "5", deckArg = "werewolf,werewolf,sage,centaur,centaur,herald,rustler,sentry"] = process.argv.slice(2);
-const N = Number(nArg), players = Number(pArg), deck = deckArg.split(",");
-const center = deck.length - players;
+const N = Number(process.argv[2] ?? 200), outFile = process.argv[3], VIA_MCP = process.argv.includes("--mcp"); // --mcp: start through the MCP game_start tool, as agents do
+const DECK = ["werewolf", "werewolf", "sage", "centaur", "centaur", "herald", "herder", "sentry"]; // round1 deck A
+const PLAYERS = 5, NAMES = ["P0", "P1", "P2", "P3", "P4"];
+const rows: { order: string; deckOrder: string[]; dealt: string[]; center: string[]; seating: number[] }[] = [];
 
-const host = token();
-const { code } = (await run("room.create", host, undefined, { name: "Checker", playtest: true })) as { code: string };
-for (let i = 1; i < players; i++) await run("room.addBot", host, code);
-await run("setup.setCenter", host, code, { count: center });
-for (const r of (await view(code, host))!.settings.deck) await run("setup.removeRole", host, code, { role: r });
-for (const r of deck) await run("setup.addRole", host, code, { role: r });
-await run("setup.setTimer", host, code, { timer: "dusk", seconds: 120 });
-await run("setup.setRule", host, code, { rule: "thiefMinPlayers", value: 3 });
-
-const roles = [...new Set(deck)];
-const counts = Object.fromEntries(roles.map(r => [r, Array(deck.length).fill(0)])) as Record<string, number[]>;
-const wolves = deck.filter(r => r === "werewolf").length;
-let allWolvesCentre = 0, hostSeat = Array(players).fill(0);
-const t0 = Date.now();
-for (let g = 0; g < N; g++) {
-  await run("game.start", host, code);
-  const v = (await view(code, host))!;
-  const d = v.game!.playtestDeal!;
-  [...d.dealt, ...d.center].forEach((r: string, pos: number) => counts[r][pos]++);
-  if (d.center.filter((r: string) => r === "werewolf").length === wolves) allWolvesCentre++;
-  hostSeat[v.game!.mine!.seat]++;
-  await run("game.abandon", host, code);
-  if ((g + 1) % 500 === 0) console.log(`  ${g + 1} deals (${((Date.now() - t0) / 1000).toFixed(0)}s)`);
+for (let n = 0; n < N; n++) {
+  const order = n % 2 ? "wolves-last" : "wolves-first";
+  const deckOrder = order === "wolves-first" ? DECK : [...DECK.slice(2), "werewolf", "werewolf"];
+  const toks = NAMES.map(() => token());
+  const { code } = (await run("room.create", toks[0], undefined, { name: NAMES[0] })) as { code: string };
+  for (let i = 1; i < PLAYERS; i++) await run("room.join", toks[i], undefined, { code, name: NAMES[i] });
+  await run("setup.setCenter", toks[0], code, { count: DECK.length - PLAYERS });
+  for (const role of (await view(code, toks[0]))!.settings.deck) await run("setup.removeRole", toks[0], code, { role });
+  for (const role of deckOrder) await run("setup.addRole", toks[0], code, { role });
+  for (const [timer, seconds] of Object.entries({ dusk: 5, turn: 5, day: 30 })) await run("setup.setTimer", toks[0], code, { timer, seconds });
+  const stored = (await view(code, toks[0]))!.settings.deck as string[];
+  if (VIA_MCP) await tool(((await run("connect.createKey", toks[0], code, { permission: "host", label: "deal-check" })) as { key: string }).key, "game_start");
+  else await run("game.start", toks[0], code);
+  const dealt: string[] = Array(PLAYERS), seating: number[] = Array(PLAYERS);
+  for (let i = 0; i < PLAYERS; i++) { const v = (await view(code, toks[i]))!; const mine = v.game!.mine!; dealt[mine.seat] = mine.dealt; seating[mine.seat] = i; }
+  const center = [...stored]; for (const d of dealt) center.splice(center.indexOf(d), 1);
+  rows.push({ order, deckOrder: stored, dealt, center, seating });
+  if ((n + 1) % 25 === 0) console.log(`${n + 1} tables`);
 }
+if (outFile) writeFileSync(outFile, JSON.stringify(rows, null, 1));
 
-/** Upper tail of chi-square with k degrees of freedom (Wilson–Hilferty). */
-function pChi(x: number, k: number) {
-  const z = (Math.cbrt(x / k) - (1 - 2 / (9 * k))) / Math.sqrt(2 / (9 * k));
-  const t = 1 / (1 + 0.2316419 * Math.abs(z)), poly = t * (0.31938153 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
-  const tail = Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI) * poly;
-  return z >= 0 ? tail : 1 - tail;
+const pct = (x: number, d: number) => `${((100 * x) / d).toFixed(1)}%`;
+for (const order of ["wolves-first", "wolves-last"]) {
+  const rs = rows.filter(r => r.order === order), n = rs.length;
+  const noWolf = rs.filter(r => !r.dealt.includes("werewolf")).length, both = rs.filter(r => r.dealt.filter(x => x === "werewolf").length === 2).length;
+  console.log(`\n${order} (stored deck ${rs[0].deckOrder.join(",")}), ${n} tables`);
+  console.log(`  no wolf dealt to a player: ${noWolf} = ${pct(noWolf, n)} (uniform 10.7%) · both wolves at the table ${pct(both, n)} (uniform 35.7%)`);
+  for (const role of [...new Set(DECK)]) {
+    const atSeat = Array.from({ length: PLAYERS }, (_, s) => rs.filter(r => r.dealt[s] === role).length);
+    const inCentre = rs.reduce((a, r) => a + r.center.filter(c => c === role).length, 0);
+    const copies = DECK.filter(x => x === role).length;
+    console.log(`  ${role.padEnd(9)} per seat ${atSeat.map(x => (x / n).toFixed(2)).join(" ")} · centre ${(inCentre / n).toFixed(2)}  (uniform: per seat ${(copies / 8).toFixed(2)}, centre ${((3 * copies) / 8).toFixed(2)})`);
+  }
+  const seatOf = Array.from({ length: PLAYERS }, (_, j) => Array.from({ length: PLAYERS }, (_, s) => rs.filter(r => r.seating[s] === j).length));
+  console.log(`  seating: share of games each join position sits in seat 0..4 (uniform 0.20):`);
+  seatOf.forEach((row, j) => console.log(`    joined ${j}: ${row.map(x => (x / n).toFixed(2)).join(" ")}`));
+  const keys = new Map<string, number>(); for (const r of rs) { const k = r.dealt.join(",") + "|" + r.seating.join(","); keys.set(k, (keys.get(k) ?? 0) + 1); }
+  console.log(`  distinct (deal, seating) outcomes: ${keys.size} of ${n}; most repeated ×${Math.max(...keys.values())}`);
 }
-const chi = (obs: number[], exp: number) => obs.reduce((a, x) => a + (x - exp) ** 2 / exp, 0);
-
-let failed = false;
-console.log(`\n${N} deals through game.start: ${players} players, ${center} centre, deck ${deck.join(" ")}`);
-console.log(`position:         ${Array.from({ length: deck.length }, (_, i) => (i < players ? `s${i}` : `c${i - players}`).padStart(5)).join("")}`);
-for (const r of roles) {
-  const exp = (N * deck.filter(x => x === r).length) / deck.length, x = chi(counts[r], exp), p = pChi(x, deck.length - 1);
-  if (p < 0.001) failed = true;
-  console.log(`${r.padEnd(17)} ${counts[r].map(c => String(c).padStart(5)).join("")}   chi2 ${x.toFixed(1)} (df ${deck.length - 1}) p ${p.toFixed(3)}${p < 0.001 ? "  BIASED" : ""}`);
-}
-const choose = (n: number, k: number): number => (k < 0 || k > n ? 0 : k === 0 ? 1 : (choose(n - 1, k - 1) * n) / k);
-const expectAll = choose(center, wolves) / choose(deck.length, wolves);
-console.log(`every werewolf in the centre: ${allWolvesCentre}/${N} = ${(100 * allWolvesCentre / N).toFixed(1)}% (chance ${(100 * expectAll).toFixed(1)}%)`);
-const hs = chi(hostSeat, N / players), hp = pChi(hs, players - 1);
-if (hp < 0.001) failed = true;
-console.log(`host's seat: ${hostSeat.join(" ")}   chi2 ${hs.toFixed(1)} p ${hp.toFixed(3)}`);
-console.log(failed ? "\nFAIL: a position is biased" : "\nok: deals are uniform");
-process.exit(failed ? 1 : 0);
+process.exit(0);

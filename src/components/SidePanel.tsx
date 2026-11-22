@@ -82,7 +82,7 @@ function Night({ v }: { v: View }) {
   return (
     <div className="panel">
       <section className="panel-hero">
-        <RoleCard role={mine.dealt} caption="You were dealt">
+        <RoleCard role={mine.dealt} caption="You were dealt" reveal={game.turn === 0 && Date.now() - game.turns[0].startsAt < 4000}>
           <p className="role-when">{role.steps && myTurn > 0 ? <>You wake <b>{ordinal(myTurn)}</b> of {game.turns.length - 1} turns.</> : "You sleep through the night."}</p>
         </RoleCard>
       </section>

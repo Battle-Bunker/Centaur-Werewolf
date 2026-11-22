@@ -17,7 +17,9 @@ export function layoutTable(W: number, H: number, n: number, viewer: number, opt
   let fallback: TableLayout | null = null;
   for (let tw = maxTw; tw >= 56; tw -= 4) {
     const th = tw * 0.75, bw = tw, bh = th + nameH;
-    const rx = W / 2 - bw / 2 - pad, ry = H / 2 - bh / 2 - pad;
+    // Room for the card on each tile's corner and for a tile growing when hovered or speaking.
+    const over = tw * 0.12;
+    const rx = W / 2 - bw / 2 - pad - over, ry = H / 2 - bh / 2 - pad - over;
     if (rx < 30 || ry < 30) continue;
     const seats: SeatBox[] = [];
     for (let i = 0; i < n; i++) {
