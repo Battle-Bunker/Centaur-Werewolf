@@ -1,0 +1,1902 @@
+{
+ "generatedBy": "sim/research/confirm-report.ts",
+ "generated": "2026-11-22T13:43:03.180Z",
+ "rosters": {
+  "P7": {
+   "roster": "P7 Pyre (7 players): werewolf x2, phoenix, lure, embercarrier, sage, rustler, sentry, centaur, pickpocket; 3 centre",
+   "scenarios": {
+    "F-P7-ember~off": {
+     "scenario": "F-P7-ember",
+     "arm": "off",
+     "rules": {},
+     "fingerprints": [
+      "530443e229466695"
+     ],
+     "new": {
+      "n": 2,
+      "winners": {
+       "werewolf": 1,
+       "pyre": 1
+      },
+      "minority": 1,
+      "entropyWinner": 1,
+      "eliminated": {
+       "Bryn(Centaur)": 1,
+       "Fen(Phoenix)": 1
+      },
+      "c": [
+       0.67,
+       0.5
+      ],
+      "cMedian": 0.585,
+      "bands": {
+       "majority": 1,
+       "plurality": 1
+      },
+      "tieDecided": 0,
+      "randomVotes": 0,
+      "judges": {
+       "verdicts": 4,
+       "tom": 2.5,
+       "deception": 3,
+       "path": 3.25,
+       "noise": 1,
+       "agreementMeanAbsDiff": {
+        "tom": 0,
+        "deception": 1,
+        "path": 0.5,
+        "noise": 0
+       },
+       "howWonExact": "2/2",
+       "howWon": {
+        "lie-believed": 4
+       }
+      },
+      "strategies": [
+       {
+        "strategy": "motive-analysis",
+        "team": "centaur",
+        "games": 2,
+        "won": 0,
+        "decisive": 0
+       },
+       {
+        "strategy": "claim-timing-tell",
+        "team": "centaur",
+        "games": 2,
+        "won": 0,
+        "decisive": 1
+       },
+       {
+        "strategy": "claim-count-collision",
+        "team": "centaur",
+        "games": 2,
+        "won": 0,
+        "decisive": 0
+       },
+       {
+        "strategy": "corroboration-chain",
+        "team": "centaur",
+        "games": 2,
+        "won": 0,
+        "decisive": 0
+       },
+       {
+        "strategy": "counter-claim-info-role",
+        "team": "pyre",
+        "games": 2,
+        "won": 1,
+        "decisive": 0
+       },
+       {
+        "strategy": "lure-corroboration",
+        "team": "pyre",
+        "games": 2,
+        "won": 1,
+        "decisive": 0
+       },
+       {
+        "strategy": "phoenix-baiting",
+        "team": "pyre",
+        "games": 2,
+        "won": 1,
+        "decisive": 1
+       },
+       {
+        "strategy": "claim-timing-tell",
+        "team": "pyre",
+        "games": 2,
+        "won": 1,
+        "decisive": 0
+       },
+       {
+        "strategy": "motive-analysis",
+        "team": "pyre",
+        "games": 2,
+        "won": 1,
+        "decisive": 0
+       },
+       {
+        "strategy": "claim-count-collision",
+        "team": "pyre",
+        "games": 2,
+        "won": 1,
+        "decisive": 0
+       },
+       {
+        "strategy": "wolf-exposes-pyre",
+        "team": "werewolf",
+        "games": 2,
+        "won": 1,
+        "decisive": 1
+       },
+       {
+        "strategy": "claim-count-collision",
+        "team": "werewolf",
+        "games": 2,
+        "won": 1,
+        "decisive": 0
+       },
+       {
+        "strategy": "blind-mover-cover",
+        "team": "centaur",
+        "games": 1,
+        "won": 0,
+        "decisive": 1
+       },
+       {
+        "strategy": "false-movement-story",
+        "team": "centaur",
+        "games": 1,
+        "won": 0,
+        "decisive": 1
+       },
+       {
+        "strategy": "phoenix-open-bait",
+        "team": "centaur",
+        "games": 1,
+        "won": 0,
+        "decisive": 1
+       },
+       {
+        "strategy": "false-movement-story",
+        "team": "pyre",
+        "games": 1,
+        "won": 0,
+        "decisive": 0
+       },
+       {
+        "strategy": "safe-centre-claim",
+        "team": "werewolf",
+        "games": 1,
+        "won": 1,
+        "decisive": 0
+       },
+       {
+        "strategy": "fake-read",
+        "team": "werewolf",
+        "games": 1,
+        "won": 1,
+        "decisive": 0
+       },
+       {
+        "strategy": "fake-read",
+        "team": "pyre",
+        "games": 1,
+        "won": 1,
+        "decisive": 0
+       },
+       {
+        "strategy": "frame-ally",
+        "team": "pyre",
+        "games": 1,
+        "won": 1,
+        "decisive": 1
+       },
+       {
+        "strategy": "fake-confession",
+        "team": "pyre",
+        "games": 1,
+        "won": 1,
+        "decisive": 1
+       },
+       {
+        "strategy": "phoenix-open-bait",
+        "team": "pyre",
+        "games": 1,
+        "won": 1,
+        "decisive": 1
+       },
+       {
+        "strategy": "corroboration-chain",
+        "team": "pyre",
+        "games": 1,
+        "won": 1,
+        "decisive": 0
+       },
+       {
+        "strategy": "wolf-claims-phoenix",
+        "team": "werewolf",
+        "games": 1,
+        "won": 0,
+        "decisive": 0
+       },
+       {
+        "strategy": "false-movement-story",
+        "team": "werewolf",
+        "games": 1,
+        "won": 0,
+        "decisive": 0
+       },
+       {
+        "strategy": "blind-mover-cover",
+        "team": "werewolf",
+        "games": 1,
+        "won": 0,
+        "decisive": 0
+       },
+       {
+        "strategy": "pyre-decoy-for-wolves",
+        "team": "werewolf",
+        "games": 1,
+        "won": 0,
+        "decisive": 0
+       },
+       {
+        "strategy": "claim-timing-tell",
+        "team": "werewolf",
+        "games": 1,
+        "won": 0,
+        "decisive": 0
+       },
+       {
+        "strategy": "phoenix-holder-reveal",
+        "team": "centaur",
+        "games": 1,
+        "won": 0,
+        "decisive": 0
+       },
+       {
+        "strategy": "fake-read",
+        "team": "centaur",
+        "games": 1,
+        "won": 0,
+        "decisive": 0
+       },
+       {
+        "strategy": "motive-analysis",
+        "team": "werewolf",
+        "games": 1,
+        "won": 0,
+        "decisive": 0
+       }
+      ],
+      "costUsd": 10.6
+     },
+     "prior": {
+      "source": "players-7.json",
+      "n": 5,
+      "winners": {
+       "centaur": 1,
+       "pyre": 2,
+       "werewolf": 2
+      },
+      "c": [
+       0.67,
+       0.67,
+       0.5,
+       0.5,
+       0.83
+      ],
+      "judges": {
+       "tom": 2.7,
+       "deception": 3.1,
+       "path": 3.3,
+       "noise": 1.5
+      },
+      "eliminated": {
+       "Dov": 1,
+       "Fen": 1,
+       "Bryn": 1,
+       "Esme+Fen": 1,
+       "Cass": 1
+      }
+     },
+     "pooled": {
+      "n": 7,
+      "winners": {
+       "centaur": 1,
+       "pyre": 3,
+       "werewolf": 3
+      },
+      "minority": 4,
+      "entropyWinner": 1.45,
+      "path": 3.29,
+      "cMedian": 0.67,
+      "talkLive": true
+     },
+     "talkLiveNew": true,
+     "games": [
+      {
+       "label": "F-P7-ember~off#1",
+       "code": "RNUW",
+       "fingerprint": "530443e229466695",
+       "winner": "werewolf",
+       "eliminated": "Bryn(Centaur)",
+       "c": 0.67,
+       "band": "majority",
+       "tieDecided": false,
+       "randomVotes": 0,
+       "messages": 46,
+       "costUsd": 4.76,
+       "judges": [
+        {
+         "tom": 2,
+         "deception": 2,
+         "path": 3,
+         "noise": 1,
+         "howWon": "lie-believed",
+         "label": "Fake Rustler claim validated by public Sentry claim",
+         "pivot": "Dov: \"I was the Rustler: looked at Gale (seat 6), saw Sentry\" → Gale: \"Dov says Rustler and saw me as Sentry — that's correct... So Fen's 'centre card 2 = Rustler' is a lie.\" Fen's rebuttal (\"Dov 'confirming' you as Sentry costs nothing\") was ignored."
+        },
+        {
+         "tom": 2,
+         "deception": 3,
+         "path": 3,
+         "noise": 1,
+         "howWon": "lie-believed",
+         "label": "Fake Rustler discredits Fen; Bryn takes the votes",
+         "pivot": "Dov: \"I was the Rustler: looked at Gale (seat 6), saw Sentry\". Gale: \"So Rustler was NOT in the centre, and Fen's 'centre card 2 = Rustler' is a lie.\" Then Bryn: \"I'm the Pickpocket. I swapped my card with Fen\"."
+        }
+       ],
+       "strategies": [
+        {
+         "strategy": "blind-mover-cover",
+         "team": "centaur",
+         "who": "Bryn",
+         "decisive": true
+        },
+        {
+         "strategy": "false-movement-story",
+         "team": "centaur",
+         "who": "Bryn",
+         "decisive": true
+        },
+        {
+         "strategy": "phoenix-open-bait",
+         "team": "centaur",
+         "who": "Bryn",
+         "decisive": true
+        },
+        {
+         "strategy": "motive-analysis",
+         "team": "centaur",
+         "who": "Bryn",
+         "decisive": false
+        },
+        {
+         "strategy": "claim-timing-tell",
+         "team": "centaur",
+         "who": "Alder",
+         "decisive": true
+        },
+        {
+         "strategy": "claim-count-collision",
+         "team": "centaur",
+         "who": "Alder",
+         "decisive": false
+        },
+        {
+         "strategy": "corroboration-chain",
+         "team": "centaur",
+         "who": "Gale",
+         "decisive": false
+        },
+        {
+         "strategy": "counter-claim-info-role",
+         "team": "pyre",
+         "who": "Cass",
+         "decisive": false
+        },
+        {
+         "strategy": "lure-corroboration",
+         "team": "pyre",
+         "who": "Cass",
+         "decisive": false
+        },
+        {
+         "strategy": "phoenix-baiting",
+         "team": "pyre",
+         "who": "Cass",
+         "decisive": false
+        },
+        {
+         "strategy": "claim-timing-tell",
+         "team": "pyre",
+         "who": "Cass",
+         "decisive": false
+        },
+        {
+         "strategy": "motive-analysis",
+         "team": "pyre",
+         "who": "Esme",
+         "decisive": false
+        },
+        {
+         "strategy": "false-movement-story",
+         "team": "pyre",
+         "who": "Esme",
+         "decisive": false
+        },
+        {
+         "strategy": "counter-claim-info-role",
+         "team": "pyre",
+         "who": "Esme",
+         "decisive": false
+        },
+        {
+         "strategy": "claim-count-collision",
+         "team": "pyre",
+         "who": "Fen",
+         "decisive": false
+        },
+        {
+         "strategy": "safe-centre-claim",
+         "team": "werewolf",
+         "who": "Dov",
+         "decisive": false
+        },
+        {
+         "strategy": "fake-read",
+         "team": "werewolf",
+         "who": "Dov",
+         "decisive": false
+        },
+        {
+         "strategy": "wolf-exposes-pyre",
+         "team": "werewolf",
+         "who": "Dov",
+         "decisive": true
+        },
+        {
+         "strategy": "claim-count-collision",
+         "team": "werewolf",
+         "who": "Dov",
+         "decisive": false
+        }
+       ]
+      },
+      {
+       "label": "F-P7-ember~off#2",
+       "code": "WNUP",
+       "fingerprint": "530443e229466695",
+       "winner": "pyre",
+       "eliminated": "Fen(Phoenix)",
+       "c": 0.5,
+       "band": "plurality",
+       "tieDecided": false,
+       "randomVotes": 0,
+       "messages": 53,
+       "costUsd": 5.84,
+       "judges": [
+        {
+         "tom": 3,
+         "deception": 4,
+         "path": 3,
+         "noise": 1,
+         "howWon": "lie-believed",
+         "label": "Phoenix's fake wolf confession drew the burn",
+         "pivot": "Fen: \"OK, I'm done. Alder's read was right: I was dealt Werewolf... Dov is my packmate\" — which turned Alder from \"Esme is a proven liar... that's Pyre\" back to \"Fen confessed Werewolf, which matches my unmoved Sage read. I'm voting Fen.\""
+        },
+        {
+         "tom": 3,
+         "deception": 3,
+         "path": 4,
+         "noise": 1,
+         "howWon": "lie-believed",
+         "label": "Phoenix's fake wolf confession swayed the Sage",
+         "pivot": "Fen: \"OK, I'm done. Alder's read was right: I was dealt Werewolf... Dov is my packmate.\" Alder: \"Fen confessed Werewolf, which matches my unmoved Sage read... I'm voting Fen.\""
+        }
+       ],
+       "strategies": [
+        {
+         "strategy": "counter-claim-info-role",
+         "team": "pyre",
+         "who": "Esme",
+         "decisive": false
+        },
+        {
+         "strategy": "fake-read",
+         "team": "pyre",
+         "who": "Esme",
+         "decisive": false
+        },
+        {
+         "strategy": "lure-corroboration",
+         "team": "pyre",
+         "who": "Esme",
+         "decisive": false
+        },
+        {
+         "strategy": "frame-ally",
+         "team": "pyre",
+         "who": "Cass",
+         "decisive": true
+        },
+        {
+         "strategy": "phoenix-baiting",
+         "team": "pyre",
+         "who": "Fen",
+         "decisive": true
+        },
+        {
+         "strategy": "fake-confession",
+         "team": "pyre",
+         "who": "Fen",
+         "decisive": true
+        },
+        {
+         "strategy": "phoenix-open-bait",
+         "team": "pyre",
+         "who": "Fen",
+         "decisive": true
+        },
+        {
+         "strategy": "claim-timing-tell",
+         "team": "pyre",
+         "who": "Cass",
+         "decisive": false
+        },
+        {
+         "strategy": "motive-analysis",
+         "team": "pyre",
+         "who": "Cass",
+         "decisive": false
+        },
+        {
+         "strategy": "claim-count-collision",
+         "team": "pyre",
+         "who": "Esme",
+         "decisive": false
+        },
+        {
+         "strategy": "corroboration-chain",
+         "team": "pyre",
+         "who": "Esme",
+         "decisive": false
+        },
+        {
+         "strategy": "counter-claim-info-role",
+         "team": "pyre",
+         "who": "Cass",
+         "decisive": false
+        },
+        {
+         "strategy": "wolf-claims-phoenix",
+         "team": "werewolf",
+         "who": "Dov",
+         "decisive": false
+        },
+        {
+         "strategy": "false-movement-story",
+         "team": "werewolf",
+         "who": "Dov",
+         "decisive": false
+        },
+        {
+         "strategy": "blind-mover-cover",
+         "team": "werewolf",
+         "who": "Dov",
+         "decisive": false
+        },
+        {
+         "strategy": "wolf-exposes-pyre",
+         "team": "werewolf",
+         "who": "Dov",
+         "decisive": false
+        },
+        {
+         "strategy": "pyre-decoy-for-wolves",
+         "team": "werewolf",
+         "who": "Dov",
+         "decisive": false
+        },
+        {
+         "strategy": "claim-timing-tell",
+         "team": "werewolf",
+         "who": "Dov",
+         "decisive": false
+        },
+        {
+         "strategy": "phoenix-holder-reveal",
+         "team": "centaur",
+         "who": "Bryn",
+         "decisive": false
+        },
+        {
+         "strategy": "fake-read",
+         "team": "centaur",
+         "who": "Bryn",
+         "decisive": false
+        },
+        {
+         "strategy": "claim-count-collision",
+         "team": "centaur",
+         "who": "Bryn",
+         "decisive": false
+        },
+        {
+         "strategy": "motive-analysis",
+         "team": "centaur",
+         "who": "Gale",
+         "decisive": false
+        },
+        {
+         "strategy": "claim-timing-tell",
+         "team": "centaur",
+         "who": "Gale",
+         "decisive": false
+        },
+        {
+         "strategy": "motive-analysis",
+         "team": "werewolf",
+         "who": "Dov",
+         "decisive": false
+        },
+        {
+         "strategy": "claim-count-collision",
+         "team": "werewolf",
+         "who": "Dov",
+         "decisive": false
+        },
+        {
+         "strategy": "corroboration-chain",
+         "team": "centaur",
+         "who": "Alder",
+         "decisive": false
+        }
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "K7": {
+   "roster": "K7 Shadow Court (7 players, two-team control): werewolf x2, moonsage, strayherder, sage, herder, rustler, sentry, centaur x2; 3 centre",
+   "scenarios": {
+    "F-K7-duel~off": {
+     "scenario": "F-K7-duel",
+     "arm": "off",
+     "rules": null,
+     "fingerprints": [],
+     "new": {
+      "n": 0,
+      "winners": {},
+      "minority": 0,
+      "entropyWinner": 0,
+      "eliminated": {},
+      "c": [],
+      "cMedian": null,
+      "bands": {},
+      "tieDecided": 0,
+      "randomVotes": 0,
+      "judges": {
+       "verdicts": 0,
+       "tom": null,
+       "deception": null,
+       "path": null,
+       "noise": null,
+       "agreementMeanAbsDiff": {
+        "tom": null,
+        "deception": null,
+        "path": null,
+        "noise": null
+       },
+       "howWonExact": "0/0",
+       "howWon": {}
+      },
+      "strategies": [],
+      "costUsd": 0
+     },
+     "prior": {
+      "source": "players-7.json",
+      "n": 5,
+      "winners": {
+       "centaur": 4,
+       "werewolf": 1
+      },
+      "c": [
+       0.67,
+       0.67,
+       0.67,
+       0.67,
+       0.67
+      ],
+      "judges": {
+       "tom": 2.4,
+       "deception": 3,
+       "path": 3.4,
+       "noise": 1
+      },
+      "eliminated": {
+       "Bryn": 4,
+       "Gale": 1
+      }
+     },
+     "pooled": {
+      "n": 5,
+      "winners": {
+       "centaur": 4,
+       "werewolf": 1
+      },
+      "minority": 1,
+      "entropyWinner": 0.72,
+      "path": 3.4,
+      "cMedian": 0.67,
+      "talkLive": true
+     },
+     "talkLiveNew": null,
+     "games": []
+    }
+   }
+  },
+  "Q3": {
+   "roster": "Q3 Little Pyre (5 players): werewolf x2, phoenix, lure, sage, rustler, sentry, centaur; 3 centre",
+   "scenarios": {
+    "F6-Q3-two-wolves-lure~off": {
+     "scenario": "F6-Q3-two-wolves-lure",
+     "arm": "off",
+     "rules": null,
+     "fingerprints": [],
+     "new": {
+      "n": 0,
+      "winners": {},
+      "minority": 0,
+      "entropyWinner": 0,
+      "eliminated": {},
+      "c": [],
+      "cMedian": null,
+      "bands": {},
+      "tieDecided": 0,
+      "randomVotes": 0,
+      "judges": {
+       "verdicts": 0,
+       "tom": null,
+       "deception": null,
+       "path": null,
+       "noise": null,
+       "agreementMeanAbsDiff": {
+        "tom": null,
+        "deception": null,
+        "path": null,
+        "noise": null
+       },
+       "howWonExact": "0/0",
+       "howWon": {}
+      },
+      "strategies": [],
+      "costUsd": 0
+     },
+     "prior": {
+      "source": "players-5.json",
+      "n": 10,
+      "winners": {
+       "werewolf": 5,
+       "centaur": 4,
+       "pyre": 1
+      },
+      "c": [
+       0.5,
+       0.75,
+       1,
+       0.75,
+       0.75,
+       0.5,
+       0.75,
+       0.75,
+       0.75,
+       0.75
+      ],
+      "judges": {
+       "tom": 2.35,
+       "deception": 2.9,
+       "path": 3.4,
+       "noise": 1.4
+      },
+      "note": "players-5 session's own n=10 (its fine1 + fine3 extension; it reports 2 fingerprints, tie-decided 2)"
+     },
+     "pooled": {
+      "n": 10,
+      "winners": {
+       "werewolf": 5,
+       "centaur": 4,
+       "pyre": 1
+      },
+      "minority": 5,
+      "entropyWinner": 1.36,
+      "path": 3.4,
+      "cMedian": 0.75,
+      "talkLive": true
+     },
+     "talkLiveNew": null,
+     "games": []
+    },
+    "F6-Q3-two-wolves-lure~open": {
+     "scenario": "F6-Q3-two-wolves-lure",
+     "arm": "open",
+     "rules": {
+      "openingStatements": true
+     },
+     "fingerprints": [
+      "b9b958a3418f1030"
+     ],
+     "new": {
+      "n": 2,
+      "winners": {
+       "werewolf": 2
+      },
+      "minority": 0,
+      "entropyWinner": 0,
+      "eliminated": {
+       "Alder(Centaur)": 2
+      },
+      "c": [
+       0.75,
+       1
+      ],
+      "cMedian": 0.875,
+      "bands": {
+       "majority": 1,
+       "unanimous": 1
+      },
+      "tieDecided": 0,
+      "randomVotes": 0,
+      "judges": {
+       "verdicts": 4,
+       "tom": 2,
+       "deception": 2.5,
+       "path": 3,
+       "noise": 2.25,
+       "agreementMeanAbsDiff": {
+        "tom": 0,
+        "deception": 0,
+        "path": 0,
+        "noise": 0.5
+       },
+       "howWonExact": "1/2",
+       "howWon": {
+        "lie-believed": 3,
+        "framing-or-decoy": 1
+       }
+      },
+      "strategies": [
+       {
+        "strategy": "safe-centre-claim",
+        "team": "werewolf",
+        "games": 2,
+        "won": 2,
+        "decisive": 2
+       },
+       {
+        "strategy": "fake-read",
+        "team": "werewolf",
+        "games": 2,
+        "won": 2,
+        "decisive": 2
+       },
+       {
+        "strategy": "corroboration-chain",
+        "team": "werewolf",
+        "games": 2,
+        "won": 2,
+        "decisive": 2
+       },
+       {
+        "strategy": "claim-timing-tell",
+        "team": "werewolf",
+        "games": 2,
+        "won": 2,
+        "decisive": 0
+       },
+       {
+        "strategy": "claim-count-collision",
+        "team": "centaur",
+        "games": 2,
+        "won": 0,
+        "decisive": 0
+       },
+       {
+        "strategy": "motive-analysis",
+        "team": "centaur",
+        "games": 2,
+        "won": 0,
+        "decisive": 0
+       },
+       {
+        "strategy": "phoenix-open-bait",
+        "team": "pyre",
+        "games": 2,
+        "won": 0,
+        "decisive": 0
+       },
+       {
+        "strategy": "wolf-exposes-pyre",
+        "team": "werewolf",
+        "games": 1,
+        "won": 1,
+        "decisive": 1
+       },
+       {
+        "strategy": "motive-analysis",
+        "team": "werewolf",
+        "games": 1,
+        "won": 1,
+        "decisive": 0
+       },
+       {
+        "strategy": "corroboration-chain",
+        "team": "centaur",
+        "games": 1,
+        "won": 0,
+        "decisive": 0
+       },
+       {
+        "strategy": "fake-confession",
+        "team": "pyre",
+        "games": 1,
+        "won": 0,
+        "decisive": 0
+       },
+       {
+        "strategy": "motive-analysis",
+        "team": "pyre",
+        "games": 1,
+        "won": 0,
+        "decisive": 0
+       },
+       {
+        "strategy": "census-backward-induction",
+        "team": "werewolf",
+        "games": 1,
+        "won": 1,
+        "decisive": 0
+       },
+       {
+        "strategy": "census-backward-induction",
+        "team": "centaur",
+        "games": 1,
+        "won": 0,
+        "decisive": 0
+       },
+       {
+        "strategy": "vote-split-or-tie-plan",
+        "team": "pyre",
+        "games": 1,
+        "won": 0,
+        "decisive": 0
+       }
+      ],
+      "costUsd": 6.3
+     },
+     "prior": null,
+     "pooled": null,
+     "talkLiveNew": false,
+     "games": [
+      {
+       "label": "F6-Q3-two-wolves-lure~open#1",
+       "code": "BRPY",
+       "fingerprint": "b9b958a3418f1030",
+       "winner": "werewolf",
+       "eliminated": "Alder(Centaur)",
+       "c": 0.75,
+       "band": "majority",
+       "tieDecided": false,
+       "randomVotes": 0,
+       "messages": 34,
+       "costUsd": 3.16,
+       "judges": [
+        {
+         "tom": 2,
+         "deception": 2,
+         "path": 3,
+         "noise": 3,
+         "howWon": "lie-believed",
+         "label": "Lucky fake Sage guess framed real Centaur",
+         "pivot": "Bryn: \"I'm the Sage. I looked at Cass (seat 4) and saw Sentry.\" matched by Cass's real Sentry claim, plus Dov: \"I looked at Esme (seat 3) and saw Centaur\" matching Esme's fake Centaur claim; Cass: \"Bryn correctly saw me as Sentry... Alder, I think you're the wolf.\""
+        },
+        {
+         "tom": 2,
+         "deception": 2,
+         "path": 3,
+         "noise": 3,
+         "howWon": "lie-believed",
+         "label": "Lucky fake-seer guesses framed honest Centaur",
+         "pivot": "Bryn's opening 'I'm the Sage. I looked at Cass (seat 4) and saw Sentry' matching Cass's simultaneous Sentry claim, which Cass then treated as confirmation: 'Bryn correctly saw me as Sentry, which makes Bryn's Sage claim credible.'"
+        }
+       ],
+       "strategies": [
+        {
+         "strategy": "safe-centre-claim",
+         "team": "werewolf",
+         "who": "Bryn",
+         "decisive": true
+        },
+        {
+         "strategy": "fake-read",
+         "team": "werewolf",
+         "who": "Bryn",
+         "decisive": true
+        },
+        {
+         "strategy": "corroboration-chain",
+         "team": "werewolf",
+         "who": "Dov",
+         "decisive": true
+        },
+        {
+         "strategy": "wolf-exposes-pyre",
+         "team": "werewolf",
+         "who": "Bryn",
+         "decisive": true
+        },
+        {
+         "strategy": "motive-analysis",
+         "team": "werewolf",
+         "who": "Bryn",
+         "decisive": false
+        },
+        {
+         "strategy": "claim-timing-tell",
+         "team": "werewolf",
+         "who": "Dov",
+         "decisive": false
+        },
+        {
+         "strategy": "claim-count-collision",
+         "team": "centaur",
+         "who": "Cass",
+         "decisive": false
+        },
+        {
+         "strategy": "corroboration-chain",
+         "team": "centaur",
+         "who": "Cass",
+         "decisive": false
+        },
+        {
+         "strategy": "motive-analysis",
+         "team": "centaur",
+         "who": "Cass",
+         "decisive": false
+        },
+        {
+         "strategy": "fake-confession",
+         "team": "pyre",
+         "who": "Esme",
+         "decisive": false
+        },
+        {
+         "strategy": "phoenix-open-bait",
+         "team": "pyre",
+         "who": "Esme",
+         "decisive": false
+        },
+        {
+         "strategy": "motive-analysis",
+         "team": "pyre",
+         "who": "Esme",
+         "decisive": false
+        }
+       ]
+      },
+      {
+       "label": "F6-Q3-two-wolves-lure~open#2",
+       "code": "AELS",
+       "fingerprint": "b9b958a3418f1030",
+       "winner": "werewolf",
+       "eliminated": "Alder(Centaur)",
+       "c": 1,
+       "band": "unanimous",
+       "tieDecided": false,
+       "randomVotes": 0,
+       "messages": 29,
+       "costUsd": 3.14,
+       "judges": [
+        {
+         "tom": 2,
+         "deception": 3,
+         "path": 3,
+         "noise": 1,
+         "howWon": "framing-or-decoy",
+         "label": "Two fake Sages framed the real Centaur",
+         "pivot": "Dov: \"I looked at Esme (seat 3) and saw Centaur\" combined with Bryn: \"My look was Alder (seat 2): Werewolf\". Esme's late \"I'm the LURE... Dov saw 'Centaur'? That's a lie\" came after the votes had settled."
+        },
+        {
+         "tom": 2,
+         "deception": 3,
+         "path": 3,
+         "noise": 2,
+         "howWon": "lie-believed",
+         "label": "Double fake Sage framed honest Centaur",
+         "pivot": "Dov: \"I looked at Esme (seat 3) and saw Centaur\", which Esme's false Centaur claim matched, and then Bryn: \"My look was Alder (seat 2): Werewolf.\" Cass: \"both lines converge on Alder.\""
+        }
+       ],
+       "strategies": [
+        {
+         "strategy": "safe-centre-claim",
+         "team": "werewolf",
+         "who": "Bryn, Dov",
+         "decisive": true
+        },
+        {
+         "strategy": "fake-read",
+         "team": "werewolf",
+         "who": "Bryn, Dov",
+         "decisive": true
+        },
+        {
+         "strategy": "corroboration-chain",
+         "team": "werewolf",
+         "who": "Dov",
+         "decisive": true
+        },
+        {
+         "strategy": "census-backward-induction",
+         "team": "werewolf",
+         "who": "Bryn",
+         "decisive": false
+        },
+        {
+         "strategy": "claim-timing-tell",
+         "team": "werewolf",
+         "who": "Bryn",
+         "decisive": false
+        },
+        {
+         "strategy": "census-backward-induction",
+         "team": "centaur",
+         "who": "Cass",
+         "decisive": false
+        },
+        {
+         "strategy": "claim-count-collision",
+         "team": "centaur",
+         "who": "Alder",
+         "decisive": false
+        },
+        {
+         "strategy": "motive-analysis",
+         "team": "centaur",
+         "who": "Cass",
+         "decisive": false
+        },
+        {
+         "strategy": "vote-split-or-tie-plan",
+         "team": "pyre",
+         "who": "Esme",
+         "decisive": false
+        },
+        {
+         "strategy": "phoenix-open-bait",
+         "team": "pyre",
+         "who": "Esme",
+         "decisive": false
+        }
+       ]
+      }
+     ]
+    },
+    "F5-Q3-pyre-burn~off": {
+     "scenario": "F5-Q3-pyre-burn",
+     "arm": "off",
+     "rules": null,
+     "fingerprints": [],
+     "new": {
+      "n": 0,
+      "winners": {},
+      "minority": 0,
+      "entropyWinner": 0,
+      "eliminated": {},
+      "c": [],
+      "cMedian": null,
+      "bands": {},
+      "tieDecided": 0,
+      "randomVotes": 0,
+      "judges": {
+       "verdicts": 0,
+       "tom": null,
+       "deception": null,
+       "path": null,
+       "noise": null,
+       "agreementMeanAbsDiff": {
+        "tom": null,
+        "deception": null,
+        "path": null,
+        "noise": null
+       },
+       "howWonExact": "0/0",
+       "howWon": {}
+      },
+      "strategies": [],
+      "costUsd": 0
+     },
+     "prior": {
+      "source": "players-5.json",
+      "n": 5,
+      "winners": {
+       "centaur": 3,
+       "pyre": 2
+      },
+      "c": [
+       0.5,
+       0.75,
+       0.75,
+       0.75,
+       0.75
+      ],
+      "judges": {
+       "tom": 2.3,
+       "deception": 2.7,
+       "path": 2.7,
+       "noise": 1.1
+      }
+     },
+     "pooled": {
+      "n": 5,
+      "winners": {
+       "centaur": 3,
+       "pyre": 2
+      },
+      "minority": 2,
+      "entropyWinner": 0.97,
+      "path": 2.7,
+      "cMedian": 0.75,
+      "talkLive": true
+     },
+     "talkLiveNew": null,
+     "games": []
+    }
+   }
+  },
+  "PY6": {
+   "roster": "PY6 Pyre with a twin (6 players): werewolf x2, phoenix, lure, sage, moonsage, rustler, centaur, pickpocket; 3 centre; bloodPriceCondemned on in this session",
+   "scenarios": {
+    "PY6-S1-fakesage~off": {
+     "scenario": "PY6-S1-fakesage",
+     "arm": "off",
+     "rules": {
+      "bloodPriceCondemned": true
+     },
+     "fingerprints": [
+      "8703508271bb5193"
+     ],
+     "new": {
+      "n": 2,
+      "winners": {
+       "pyre": 2
+      },
+      "minority": 0,
+      "entropyWinner": 0,
+      "eliminated": {
+       "Esme(Phoenix)": 2
+      },
+      "c": [
+       0.8,
+       0.8
+      ],
+      "cMedian": 0.8,
+      "bands": {
+       "majority": 2
+      },
+      "tieDecided": 0,
+      "randomVotes": 0,
+      "judges": {
+       "verdicts": 4,
+       "tom": 3,
+       "deception": 3.75,
+       "path": 3.5,
+       "noise": 1,
+       "agreementMeanAbsDiff": {
+        "tom": 0,
+        "deception": 0.5,
+        "path": 0,
+        "noise": 0
+       },
+       "howWonExact": "1/2",
+       "howWon": {
+        "framing-or-decoy": 3,
+        "lie-believed": 1
+       }
+      },
+      "strategies": [
+       {
+        "strategy": "fake-read",
+        "team": "pyre",
+        "games": 2,
+        "won": 2,
+        "decisive": 2
+       },
+       {
+        "strategy": "phoenix-baiting",
+        "team": "pyre",
+        "games": 2,
+        "won": 2,
+        "decisive": 2
+       },
+       {
+        "strategy": "phoenix-reverse-bluff",
+        "team": "pyre",
+        "games": 2,
+        "won": 2,
+        "decisive": 2
+       },
+       {
+        "strategy": "claim-timing-tell",
+        "team": "pyre",
+        "games": 2,
+        "won": 2,
+        "decisive": 0
+       },
+       {
+        "strategy": "wolf-claims-phoenix",
+        "team": "werewolf",
+        "games": 2,
+        "won": 0,
+        "decisive": 0
+       },
+       {
+        "strategy": "motive-analysis",
+        "team": "werewolf",
+        "games": 2,
+        "won": 0,
+        "decisive": 0
+       },
+       {
+        "strategy": "corroboration-chain",
+        "team": "centaur",
+        "games": 2,
+        "won": 0,
+        "decisive": 1
+       },
+       {
+        "strategy": "claim-timing-tell",
+        "team": "centaur",
+        "games": 2,
+        "won": 0,
+        "decisive": 0
+       },
+       {
+        "strategy": "motive-analysis",
+        "team": "pyre",
+        "games": 1,
+        "won": 1,
+        "decisive": 0
+       },
+       {
+        "strategy": "claim-count-collision",
+        "team": "centaur",
+        "games": 1,
+        "won": 0,
+        "decisive": 1
+       },
+       {
+        "strategy": "motive-analysis",
+        "team": "centaur",
+        "games": 1,
+        "won": 0,
+        "decisive": 1
+       },
+       {
+        "strategy": "census-backward-induction",
+        "team": "pyre",
+        "games": 1,
+        "won": 1,
+        "decisive": 0
+       },
+       {
+        "strategy": "census-backward-induction",
+        "team": "centaur",
+        "games": 1,
+        "won": 0,
+        "decisive": 1
+       },
+       {
+        "strategy": "census-backward-induction",
+        "team": "werewolf",
+        "games": 1,
+        "won": 0,
+        "decisive": 0
+       },
+       {
+        "strategy": "claim-timing-tell",
+        "team": "werewolf",
+        "games": 1,
+        "won": 0,
+        "decisive": 0
+       }
+      ],
+      "costUsd": 6.71
+     },
+     "prior": {
+      "source": "players-6.json",
+      "n": 5,
+      "winners": {
+       "pyre": 4,
+       "werewolf": 1
+      },
+      "c": [
+       0.8,
+       1,
+       0.8,
+       1,
+       0.8
+      ],
+      "judges": {
+       "tom": 3,
+       "deception": 3.6,
+       "path": 3.4,
+       "noise": 1
+      },
+      "eliminated": {
+       "Esme": 4,
+       "Dov": 1
+      },
+      "note": "bloodPriceCondemned off in the earlier games"
+     },
+     "pooled": {
+      "n": 7,
+      "winners": {
+       "pyre": 6,
+       "werewolf": 1
+      },
+      "minority": 1,
+      "entropyWinner": 0.59,
+      "path": 3.43,
+      "cMedian": 0.8,
+      "talkLive": true
+     },
+     "talkLiveNew": false,
+     "games": [
+      {
+       "label": "PY6-S1-fakesage~off#1",
+       "code": "DPBM",
+       "fingerprint": "8703508271bb5193",
+       "winner": "pyre",
+       "eliminated": "Esme(Phoenix)",
+       "c": 0.8,
+       "band": "majority",
+       "tieDecided": false,
+       "randomVotes": 0,
+       "messages": 37,
+       "costUsd": 3.39,
+       "judges": [
+        {
+         "tom": 3,
+         "deception": 3,
+         "path": 3,
+         "noise": 1,
+         "howWon": "framing-or-decoy",
+         "label": "Phoenix faked resistance; Lure's Werewolf look sold it",
+         "pivot": "Cass: \"if Esme were the Phoenix dressed as Werewolf by a Lure, voting her burns us\" — answered by Bryn/Fenn/Dov: \"a Phoenix wants to be voted out, and Esme fought it with a fake Centaur claim, which is wolf behaviour.\""
+        },
+        {
+         "tom": 3,
+         "deception": 4,
+         "path": 3,
+         "noise": 1,
+         "howWon": "lie-believed",
+         "label": "Fake Sage frames a resisting Phoenix",
+         "pivot": "Cass: \"the Moonsage card looks like a Sage to every look, so Bryn's centre 'Sage' could be the Moonsage card — Dov could still be the real Sage\" → Bryn: \"I withdraw the push on Dov\"; plus Esme's provably false \"I was dealt Centaur\" claim."
+        }
+       ],
+       "strategies": [
+        {
+         "strategy": "fake-read",
+         "team": "pyre",
+         "who": "Dov",
+         "decisive": true
+        },
+        {
+         "strategy": "phoenix-baiting",
+         "team": "pyre",
+         "who": "Dov",
+         "decisive": true
+        },
+        {
+         "strategy": "phoenix-reverse-bluff",
+         "team": "pyre",
+         "who": "Esme",
+         "decisive": true
+        },
+        {
+         "strategy": "motive-analysis",
+         "team": "pyre",
+         "who": "Dov",
+         "decisive": false
+        },
+        {
+         "strategy": "claim-timing-tell",
+         "team": "pyre",
+         "who": "Dov",
+         "decisive": false
+        },
+        {
+         "strategy": "wolf-claims-phoenix",
+         "team": "werewolf",
+         "who": "Alder",
+         "decisive": false
+        },
+        {
+         "strategy": "motive-analysis",
+         "team": "werewolf",
+         "who": "Alder",
+         "decisive": false
+        },
+        {
+         "strategy": "claim-count-collision",
+         "team": "centaur",
+         "who": "Cass",
+         "decisive": true
+        },
+        {
+         "strategy": "corroboration-chain",
+         "team": "centaur",
+         "who": "Bryn",
+         "decisive": true
+        },
+        {
+         "strategy": "motive-analysis",
+         "team": "centaur",
+         "who": "Bryn",
+         "decisive": true
+        },
+        {
+         "strategy": "claim-timing-tell",
+         "team": "centaur",
+         "who": "Fenn",
+         "decisive": false
+        }
+       ]
+      },
+      {
+       "label": "PY6-S1-fakesage~off#2",
+       "code": "RDFT",
+       "fingerprint": "8703508271bb5193",
+       "winner": "pyre",
+       "eliminated": "Esme(Phoenix)",
+       "c": 0.8,
+       "band": "majority",
+       "tieDecided": false,
+       "randomVotes": 0,
+       "messages": 32,
+       "costUsd": 3.32,
+       "judges": [
+        {
+         "tom": 3,
+         "deception": 4,
+         "path": 4,
+         "noise": 1,
+         "howWon": "framing-or-decoy",
+         "label": "Phoenix faked a werewolf slip, got burned",
+         "pivot": "Esme: \"only one wolf can be among us anyway since the other Werewolf card is in the centre\" — read by Bryn/Fenn/Cass/Dov as a census slip, flipping the vote from Dov to Esme."
+        },
+        {
+         "tom": 3,
+         "deception": 4,
+         "path": 4,
+         "noise": 1,
+         "howWon": "framing-or-decoy",
+         "label": "Phoenix baited votes with planted census slip",
+         "pivot": "Esme: \"only one wolf can be among us anyway since the other Werewolf card is in the centre\" → Bryn: \"That's a slip — I'm switching to Esme (5).\""
+        }
+       ],
+       "strategies": [
+        {
+         "strategy": "fake-read",
+         "team": "pyre",
+         "who": "Dov",
+         "decisive": true
+        },
+        {
+         "strategy": "phoenix-baiting",
+         "team": "pyre",
+         "who": "Esme",
+         "decisive": true
+        },
+        {
+         "strategy": "phoenix-reverse-bluff",
+         "team": "pyre",
+         "who": "Esme",
+         "decisive": true
+        },
+        {
+         "strategy": "claim-timing-tell",
+         "team": "pyre",
+         "who": "Dov",
+         "decisive": false
+        },
+        {
+         "strategy": "census-backward-induction",
+         "team": "pyre",
+         "who": "Dov",
+         "decisive": false
+        },
+        {
+         "strategy": "census-backward-induction",
+         "team": "centaur",
+         "who": "Bryn",
+         "decisive": true
+        },
+        {
+         "strategy": "claim-timing-tell",
+         "team": "centaur",
+         "who": "Fenn",
+         "decisive": false
+        },
+        {
+         "strategy": "corroboration-chain",
+         "team": "centaur",
+         "who": "Bryn",
+         "decisive": false
+        },
+        {
+         "strategy": "wolf-claims-phoenix",
+         "team": "werewolf",
+         "who": "Alder",
+         "decisive": false
+        },
+        {
+         "strategy": "census-backward-induction",
+         "team": "werewolf",
+         "who": "Alder",
+         "decisive": false
+        },
+        {
+         "strategy": "motive-analysis",
+         "team": "werewolf",
+         "who": "Alder",
+         "decisive": false
+        },
+        {
+         "strategy": "claim-timing-tell",
+         "team": "werewolf",
+         "who": "Alder",
+         "decisive": false
+        }
+       ]
+      }
+     ]
+    },
+    "PY6-S1-fakesage~open": {
+     "scenario": "PY6-S1-fakesage",
+     "arm": "open",
+     "rules": null,
+     "fingerprints": [],
+     "new": {
+      "n": 0,
+      "winners": {},
+      "minority": 0,
+      "entropyWinner": 0,
+      "eliminated": {},
+      "c": [],
+      "cMedian": null,
+      "bands": {},
+      "tieDecided": 0,
+      "randomVotes": 0,
+      "judges": {
+       "verdicts": 0,
+       "tom": null,
+       "deception": null,
+       "path": null,
+       "noise": null,
+       "agreementMeanAbsDiff": {
+        "tom": null,
+        "deception": null,
+        "path": null,
+        "noise": null
+       },
+       "howWonExact": "0/0",
+       "howWon": {}
+      },
+      "strategies": [],
+      "costUsd": 0
+     },
+     "prior": {
+      "source": "players-6.json",
+      "n": 5,
+      "winners": {
+       "centaur": 3,
+       "pyre": 1,
+       "werewolf": 1
+      },
+      "c": [
+       0.8,
+       0.6,
+       1,
+       0.6,
+       0.8
+      ],
+      "judges": {
+       "tom": 2.4,
+       "deception": 2.8,
+       "path": 3,
+       "noise": 0.8
+      },
+      "eliminated": {
+       "Alder": 3,
+       "Esme": 1,
+       "Dov": 1
+      },
+      "note": "bloodPriceCondemned off in the earlier games"
+     },
+     "pooled": {
+      "n": 5,
+      "winners": {
+       "centaur": 3,
+       "pyre": 1,
+       "werewolf": 1
+      },
+      "minority": 2,
+      "entropyWinner": 1.37,
+      "path": 3,
+      "cMedian": 0.8,
+      "talkLive": true
+     },
+     "talkLiveNew": null,
+     "games": []
+    },
+    "PY6-S2-twowolfreads~off": {
+     "scenario": "PY6-S2-twowolfreads",
+     "arm": "off",
+     "rules": null,
+     "fingerprints": [],
+     "new": {
+      "n": 0,
+      "winners": {},
+      "minority": 0,
+      "entropyWinner": 0,
+      "eliminated": {},
+      "c": [],
+      "cMedian": null,
+      "bands": {},
+      "tieDecided": 0,
+      "randomVotes": 0,
+      "judges": {
+       "verdicts": 0,
+       "tom": null,
+       "deception": null,
+       "path": null,
+       "noise": null,
+       "agreementMeanAbsDiff": {
+        "tom": null,
+        "deception": null,
+        "path": null,
+        "noise": null
+       },
+       "howWonExact": "0/0",
+       "howWon": {}
+      },
+      "strategies": [],
+      "costUsd": 0
+     },
+     "prior": {
+      "source": "players-6.json",
+      "n": 5,
+      "winners": {
+       "centaur": 2,
+       "pyre": 3
+      },
+      "c": [
+       0.6,
+       0.8,
+       0.6,
+       0.8,
+       0.8
+      ],
+      "judges": {
+       "tom": 2.5,
+       "deception": 2.7,
+       "path": 2.8,
+       "noise": 1
+      },
+      "eliminated": {
+       "Dov": 2,
+       "Bryn": 3
+      },
+      "note": "bloodPriceCondemned off in the earlier games"
+     },
+     "pooled": {
+      "n": 5,
+      "winners": {
+       "centaur": 2,
+       "pyre": 3
+      },
+      "minority": 2,
+      "entropyWinner": 0.97,
+      "path": 2.8,
+      "cMedian": 0.8,
+      "talkLive": true
+     },
+     "talkLiveNew": null,
+     "games": []
+    },
+    "PY6-S2-twowolfreads~open": {
+     "scenario": "PY6-S2-twowolfreads",
+     "arm": "open",
+     "rules": null,
+     "fingerprints": [],
+     "new": {
+      "n": 0,
+      "winners": {},
+      "minority": 0,
+      "entropyWinner": 0,
+      "eliminated": {},
+      "c": [],
+      "cMedian": null,
+      "bands": {},
+      "tieDecided": 0,
+      "randomVotes": 0,
+      "judges": {
+       "verdicts": 0,
+       "tom": null,
+       "deception": null,
+       "path": null,
+       "noise": null,
+       "agreementMeanAbsDiff": {
+        "tom": null,
+        "deception": null,
+        "path": null,
+        "noise": null
+       },
+       "howWonExact": "0/0",
+       "howWon": {}
+      },
+      "strategies": [],
+      "costUsd": 0
+     },
+     "prior": {
+      "source": "players-6.json",
+      "n": 5,
+      "winners": {
+       "centaur": 3,
+       "pyre": 2
+      },
+      "c": [
+       0.6,
+       1,
+       0.6,
+       0.6,
+       1
+      ],
+      "judges": {
+       "tom": 2.9,
+       "deception": 2.8,
+       "path": 3.4,
+       "noise": 1.1
+      },
+      "eliminated": {
+       "Dov": 3,
+       "Bryn": 2
+      },
+      "note": "bloodPriceCondemned off in the earlier games"
+     },
+     "pooled": {
+      "n": 5,
+      "winners": {
+       "centaur": 3,
+       "pyre": 2
+      },
+      "minority": 2,
+      "entropyWinner": 0.97,
+      "path": 3.4,
+      "cMedian": 0.6,
+      "talkLive": true
+     },
+     "talkLiveNew": null,
+     "games": []
+    }
+   }
+  }
+ },
+ "spendUsd": 23.61
+}

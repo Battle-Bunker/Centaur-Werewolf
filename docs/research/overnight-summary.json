@@ -1,29 +1,310 @@
 {
- "generatedAt": "2026-11-22T13:35:58.543Z",
+ "generatedAt": "2026-11-22T13:43:58.884Z",
  "top3": [
   {
    "rank": 1,
    "key": "players-5.json:Q3 Little Pyre",
    "players": 5,
-   "weakness": "Lure-dressed Phoenix read by the Sage: Pyre 4 of 5 (F8); Pyre share inflated by Pyre-centred scenarios"
+   "weakness": "Lure-dressed Phoenix read by the Sage: Pyre 4 of 5 (F8)"
   },
   {
    "rank": 2,
-   "key": "players-7.json:P7",
-   "players": 7,
-   "weakness": "one fixed scenario only (confirmation at n=10 running); noise 1.5; two plurality votes of five"
+   "key": "players-6.json:PY6",
+   "players": 6,
+   "alsoSee": "hub.json:D6",
+   "weakness": "wolves near-spectators in lone-wolf scenarios (2 of 38 fixed); Pyre too strong with the Lure dress"
   },
   {
    "rank": 3,
-   "key": "hub.json:D6 + players-6 PY6",
-   "players": 6,
-   "weakness": "Pyre too strong when the Lure dresses the Phoenix; wolves near-spectators in lone-wolf deals; opening statements shift it per scenario"
+   "key": "players-7.json:K7",
+   "players": 7,
+   "weakness": "Centaur-leaning (8 of 10 fixed); two scenarios only"
+  }
+ ],
+ "honourable": [
+  {
+   "key": "players-7.json:P7",
+   "why": "best single scenario (Pyre 2 / wolves 2 / Centaurs 1, ToM 2.7) but misses the consensus criterion: 5 of 19 votes in band"
   }
  ],
  "notSolved": {
   "players": 8,
   "why": "of 10 fixed scenarios 1 talk-live, 2 borderline, 7 swept; 63 games Centaurs 52, wolves 6, Pyre 5 (first 8-player session)"
  },
+ "confirmation": [
+  {
+   "roster": "P7",
+   "scenario": "F-P7-ember",
+   "arm": "off",
+   "rules": {},
+   "newN": 2,
+   "newWinners": {
+    "werewolf": 1,
+    "pyre": 1
+   },
+   "newMinority": 1,
+   "newC": [
+    0.67,
+    0.5
+   ],
+   "newJudges": {
+    "tom": 2,
+    "deception": 2.5,
+    "path": 3,
+    "noise": 1
+   },
+   "pooled": {
+    "n": 7,
+    "winners": {
+     "centaur": 1,
+     "pyre": 3,
+     "werewolf": 3
+    },
+    "judges": null
+   }
+  },
+  {
+   "roster": "K7",
+   "scenario": "F-K7-duel",
+   "arm": "off",
+   "rules": null,
+   "newN": 0,
+   "newWinners": {},
+   "newMinority": 0,
+   "newC": [],
+   "newJudges": {
+    "tom": null,
+    "deception": null,
+    "path": null,
+    "noise": null
+   },
+   "pooled": {
+    "n": 5,
+    "winners": {
+     "centaur": 4,
+     "werewolf": 1
+    },
+    "judges": null
+   }
+  },
+  {
+   "roster": "Q3",
+   "scenario": "F6-Q3-two-wolves-lure",
+   "arm": "off",
+   "rules": null,
+   "newN": 0,
+   "newWinners": {},
+   "newMinority": 0,
+   "newC": [],
+   "newJudges": {
+    "tom": null,
+    "deception": null,
+    "path": null,
+    "noise": null
+   },
+   "pooled": {
+    "n": 10,
+    "winners": {
+     "werewolf": 5,
+     "centaur": 4,
+     "pyre": 1
+    },
+    "judges": null
+   }
+  },
+  {
+   "roster": "Q3",
+   "scenario": "F6-Q3-two-wolves-lure",
+   "arm": "open",
+   "rules": {
+    "openingStatements": true
+   },
+   "newN": 2,
+   "newWinners": {
+    "werewolf": 2
+   },
+   "newMinority": 0,
+   "newC": [
+    0.75,
+    1
+   ],
+   "newJudges": {
+    "tom": 2,
+    "deception": 2,
+    "path": 3,
+    "noise": 3
+   },
+   "pooled": null
+  },
+  {
+   "roster": "Q3",
+   "scenario": "F5-Q3-pyre-burn",
+   "arm": "off",
+   "rules": null,
+   "newN": 0,
+   "newWinners": {},
+   "newMinority": 0,
+   "newC": [],
+   "newJudges": {
+    "tom": null,
+    "deception": null,
+    "path": null,
+    "noise": null
+   },
+   "pooled": {
+    "n": 5,
+    "winners": {
+     "centaur": 3,
+     "pyre": 2
+    },
+    "judges": null
+   }
+  },
+  {
+   "roster": "PY6",
+   "scenario": "PY6-S1-fakesage",
+   "arm": "off",
+   "rules": {
+    "bloodPriceCondemned": true
+   },
+   "newN": 2,
+   "newWinners": {
+    "pyre": 2
+   },
+   "newMinority": 0,
+   "newC": [
+    0.8,
+    0.8
+   ],
+   "newJudges": {
+    "tom": 3,
+    "deception": 3.75,
+    "path": 3.5,
+    "noise": 1
+   },
+   "pooled": {
+    "n": 7,
+    "winners": {
+     "pyre": 6,
+     "werewolf": 1
+    },
+    "judges": null
+   }
+  },
+  {
+   "roster": "PY6",
+   "scenario": "PY6-S1-fakesage",
+   "arm": "open",
+   "rules": null,
+   "newN": 0,
+   "newWinners": {},
+   "newMinority": 0,
+   "newC": [],
+   "newJudges": {
+    "tom": null,
+    "deception": null,
+    "path": null,
+    "noise": null
+   },
+   "pooled": {
+    "n": 5,
+    "winners": {
+     "centaur": 3,
+     "pyre": 1,
+     "werewolf": 1
+    },
+    "judges": null
+   }
+  },
+  {
+   "roster": "PY6",
+   "scenario": "PY6-S2-twowolfreads",
+   "arm": "off",
+   "rules": null,
+   "newN": 0,
+   "newWinners": {},
+   "newMinority": 0,
+   "newC": [],
+   "newJudges": {
+    "tom": null,
+    "deception": null,
+    "path": null,
+    "noise": null
+   },
+   "pooled": {
+    "n": 5,
+    "winners": {
+     "centaur": 2,
+     "pyre": 3
+    },
+    "judges": null
+   }
+  },
+  {
+   "roster": "PY6",
+   "scenario": "PY6-S2-twowolfreads",
+   "arm": "open",
+   "rules": null,
+   "newN": 0,
+   "newWinners": {},
+   "newMinority": 0,
+   "newC": [],
+   "newJudges": {
+    "tom": null,
+    "deception": null,
+    "path": null,
+    "noise": null
+   },
+   "pooled": {
+    "n": 5,
+    "winners": {
+     "centaur": 3,
+     "pyre": 2
+    },
+    "judges": null
+   }
+  }
+ ],
+ "sessions": [
+  {
+   "file": "confirm.json",
+   "games": 6,
+   "usd": 24,
+   "note": ""
+  },
+  {
+   "file": "hub.json",
+   "games": 89,
+   "usd": 313,
+   "note": "players only (judges and taggers about $10 more)"
+  },
+  {
+   "file": "players-5.json",
+   "games": 81,
+   "usd": 236,
+   "note": ""
+  },
+  {
+   "file": "players-6.json",
+   "games": 73,
+   "usd": 277,
+   "note": ""
+  },
+  {
+   "file": "players-7.json",
+   "games": 57,
+   "usd": 296,
+   "note": ""
+  },
+  {
+   "file": "players-8.json",
+   "games": 63,
+   "usd": 334,
+   "note": "from players-8.md: $317 games + $17 judging"
+  }
+ ],
+ "totalGames": 369,
+ "unparsed": [],
  "strategies": {
   "hub-strategies.json": {
    "taxonomy": {
@@ -836,6 +1117,7 @@
   }
  },
  "sources": [
+  "confirm.json",
   "hub.json",
   "players-5.json",
   "players-6.json",
