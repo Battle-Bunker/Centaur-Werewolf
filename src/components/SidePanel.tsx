@@ -5,7 +5,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ROLE, roleName, type RoleId } from "../../shared/roles";
 import { viaLabel } from "../../shared/text";
-import { looseFacts, notices } from "../app/knowledge";
+import { looseFacts, notices, shownSentence } from "../app/knowledge";
 import { myNight } from "../app/night";
 import { useApp, usePrevious, type View } from "../app/store";
 import { deckWarnings, proclamationForgers } from "../app/teams";
@@ -163,8 +163,8 @@ function Day({ v }: { v: View }) {
         {game.shown.length > 0 && (
           <div className="shown-list">
             <span className="eyebrow">Proclaimed to everyone{game.shown.some(s => s.atDawn) ? " at dawn" : ""}</span>
-            {game.shown.map((s, i) => <p key={i}><img src={`/art/${s.role}.webp`} alt="" /><span>{s.slot.k === "c" ? `Centre ${s.slot.i + 1}` : v.players[s.slot.i]?.name} was said to be <b>{roleName(s.role)}</b> (the {roleName(s.by)}'s turn). Not proof: it may be forged or distorted, and the card may have moved.</span></p>)}
-            {proclamationForgers(v.settings.deck).length > 0 && <p className="quiet small">A proclamation may be forged at this table.</p>}
+            {game.shown.map((s, i) => <p key={i}><img src={`/art/${s.role}.webp`} alt="" /><span>{shownSentence(s, v, mine.seat)}</span></p>)}
+            {proclamationForgers(v.settings.deck).length > 0 && <p className="quiet small">A Forger is in this deck: any of these may be forged, and looks exactly like a real one.</p>}
           </div>
         )}
         {marks.length > 0 && marks.map((m, i) => <p key={i} className="fact fact-mark"><img src={`/art/${m.role}.webp`} alt="" />{m.label} lies on <b>{v.players[m.seat]?.name ?? `seat ${m.seat}`}</b>. Everyone sees it; nobody knows who laid it.</p>)}
@@ -194,7 +194,10 @@ function Powers({ v }: { v: View }) {
   const [card, setCard] = useState<RoleId>(() => ctx.deck[0] ?? "");
   const [a, setA] = useState<number | null>(mine.daySwap?.a ?? null);
   const [b, setB] = useState<number | null>(mine.daySwap?.b ?? null);
-  const look = mine.journal.find(e => e.ev.kind === "look" && e.ev.roles && e.ev.slots[0]?.k === "p");
+  const look = mine.journal.find(e => e.ev.kind === "look" && e.ev.roles && e.ev.slots.length === 2 && e.ev.slots.every(s => s.k === "p"));
+  const seenPair = look?.ev.kind === "look" && look.ev.roles ? look.ev : null;
+  const [reportCard, setReportCard] = useState<RoleId | null>(null);
+  const [seat2, setSeat2] = useState<number | null>(null);
   const chat = ctx.chatPower, day = ctx.dayPower;
   const swapOn = day === "swap" || !!mine.daySwap;
   if (!chat && !day && !mine.daySwap) return null;
@@ -210,15 +213,21 @@ function Powers({ v }: { v: View }) {
       <h2 className="section-title">Your power, once</h2>
       {chat === "signed" && (
         <div className="power-card">
-          <p><IconSeal size={16} /> Post one message the game seals as sent by the player dealt <b>{roleName("signet")}</b>.</p>
+          <p><IconSeal size={16} /> Post one message sealed “the {roleName("signet")}”. It carries no name; a forger's seal looks the same.</p>
           <textarea className="input" rows={2} maxLength={600} value={text} onChange={e => setText(e.target.value)} placeholder="Your sealed message…" aria-label="Sealed message" />
           <CommandButton id="chat.sendSigned" args={{ text: text.trim() }} variant="secondary" disabled={!text.trim()}>Post with the seal</CommandButton>
         </div>
       )}
       {chat === "report" && (
         <div className="power-card">
-          <p><IconSeal size={16} /> Post a sealed report the game writes from your night look{look && look.ev.kind === "look" && look.ev.roles ? <>: <i>“at night, {v.players[look.ev.slots[0].i]?.name}'s card was {roleName(look.ev.roles[0])}.”</i></> : "."}</p>
-          <CommandButton id="chat.sendReport" variant="secondary">Post the sealed report</CommandButton>
+          <p><IconSeal size={16} /> Post a sealed report the game writes from your night look. It is sealed “the Notary” and carries no name.</p>
+          {seenPair && <>
+            <div className="segmented segmented-text" role="radiogroup" aria-label="Which role the report names">
+              {[...new Set(seenPair.roles!)].map(r => <button key={r} type="button" role="radio" aria-checked={(reportCard ?? seenPair.roles![0]) === r} className={`segment${(reportCard ?? seenPair.roles![0]) === r ? " is-on" : ""}`} onClick={() => setReportCard(r)}>{roleName(r)}</button>)}
+            </div>
+            <p className="quiet small">It will read: “Sealed report: at night, at least one of {v.players[seenPair.slots[0].i]?.name}'s and {v.players[seenPair.slots[1].i]?.name}'s cards was {roleName(reportCard ?? seenPair.roles![0])}.”</p>
+          </>}
+          <CommandButton id="chat.sendReport" args={seenPair ? { card: reportCard ?? seenPair.roles![0] } : {}} variant="secondary">Post the sealed report</CommandButton>
         </div>
       )}
       {chat === "forge" && (
@@ -228,9 +237,9 @@ function Powers({ v }: { v: View }) {
             {(["signet", "notary"] as const).map(r => <button key={r} type="button" role="radio" aria-checked={as === r} className={`segment${as === r ? " is-on" : ""}`} disabled={!sealers.includes(r)} title={sealers.includes(r) ? `Forge the ${roleName(r)}'s seal` : `There is no ${roleName(r)} in this deck: its seal would give you away.`} onClick={() => setAs(r)}>{roleName(r)}</button>)}
           </div>
           {as === "signet" ? <textarea className="input" rows={2} maxLength={600} value={text} onChange={e => setText(e.target.value)} placeholder="The message…" aria-label="Forged message" />
-            : <div className="power-row">{seatSelect(seat, setSeat, "Whose card")}<select className="input" value={card} onChange={e => setCard(e.target.value)} aria-label="The card it names">{[...new Set(ctx.deck)].map(r => <option key={r} value={r}>{roleName(r)}</option>)}</select></div>}
-          {as === "notary" && seat !== null && <p className="quiet small">It will read: “Sealed report: at night, {v.players[seat]?.name} (seat {seat})'s card was {roleName(card)}.”</p>}
-          <CommandButton id="chat.forgeSeal" args={as === "signet" ? { as, text: text.trim() } : { as, seat: seat ?? -1, card }} variant="secondary" disabled={as === "signet" ? !text.trim() : seat === null}>Post the forged seal</CommandButton>
+            : <div className="power-row">{seatSelect(seat, setSeat, "One player", seat2)}{seatSelect(seat2, setSeat2, "The other", seat)}<select className="input" value={card} onChange={e => setCard(e.target.value)} aria-label="The card it names">{[...new Set(ctx.deck)].map(r => <option key={r} value={r}>{roleName(r)}</option>)}</select></div>}
+          {as === "notary" && seat !== null && seat2 !== null && <p className="quiet small">It will read: “Sealed report: at night, at least one of {v.players[Math.min(seat, seat2)]?.name}'s and {v.players[Math.max(seat, seat2)]?.name}'s cards was {roleName(card)}.”</p>}
+          <CommandButton id="chat.forgeSeal" args={as === "signet" ? { as, text: text.trim() } : { as, seat: seat ?? -1, seat2: seat2 ?? -1, card }} variant="secondary" disabled={as === "signet" ? !text.trim() : seat === null || seat2 === null}>Post the forged seal</CommandButton>
         </div>
       )}
       {day === "cut" && (
