@@ -180,3 +180,8 @@ movement near them (seats 2-6 and 0 unmoved).
   someone saw it: Cass did, centre 2; two Centaur cards in the deck). The Hush (Fen) can cut Cass or the Sage.
 - Prediction: **wolves 3, Centaurs 2; talk-live**. Judges deception >= 2.5.
 - Falsifier: 5-0 either way with path < 2 (the Glamour frame always or never works).
+
+*Amendment to F-G7-glamour (12:10, before any replay):* the Hush is moved to the centre (Fen becomes the second
+Centaur, glancing centre 1 = Rustler; Cass now sees centre 2 = Hush), because a Hush cut currently removes an AI player for good (harness bug reported
+to the hub: the client drops the MCP server after the 503s). The rest of the night is unchanged. Prediction unchanged:
+wolves 3, Centaurs 2, talk-live.
