@@ -8,8 +8,9 @@ import { internalMutation, mutation, type MutationCtx } from "./_generated/serve
 import type { Id } from "./_generated/dataModel";
 import { internal } from "./_generated/api";
 import { availability, COMMAND, type CommandId } from "../shared/commands";
-import { advance, deal, freshProgress, nightTurns, shapeOf, shuffle, validPlan, type StepPlan } from "../shared/engine";
+import { advance, dealFixed, freshProgress, nightTurns, secureRng, seededRng, shapeOf, shuffle, validPlan, type StepPlan } from "../shared/engine";
 import { CENTER_DEFAULT, recommendedDeck, ROLE } from "../shared/roles";
+import { rulesOf } from "../shared/settings";
 import { endDay, type Game, type Turn } from "./game";
 import { contextOf, loadScope, type Scope } from "./scope";
 import { answerRequest, createKey } from "./auth";
@@ -48,7 +49,7 @@ const HANDLERS: Record<ServerId, Handler> = {
     let code = "";
     do code = Array.from({ length: 4 }, () => LETTERS[Math.floor(Math.random() * LETTERS.length)]).join("");
     while (await ctx.db.query("rooms").withIndex("code", q => q.eq("code", code)).unique());
-    const room = await ctx.db.insert("rooms", { code, phase: "lobby", round: 0, settings: { deck: recommendedDeck(3), centerCount: CENTER_DEFAULT, duskSeconds: 20, turnSeconds: 12, daySeconds: 300 } });
+    const room = await ctx.db.insert("rooms", { code, phase: "lobby", round: 0, playtest: a.playtest ?? false, settings: { deck: recommendedDeck(3), centerCount: CENTER_DEFAULT, duskSeconds: 20, turnSeconds: 12, daySeconds: 300, rules: {} } });
     const host = await ctx.db.insert("players", { room, token, name: a.name, bot: false });
     await ctx.db.patch(room, { host });
     return { code };
@@ -95,12 +96,25 @@ const HANDLERS: Record<ServerId, Handler> = {
   "setup.setCenter": async (ctx, s, a) => {
     await ctx.db.patch(s!.room._id, { settings: { ...s!.room.settings, centerCount: a.count } });
   },
+  "setup.setRule": async (ctx, s, a) => {
+    const { room } = s!;
+    await ctx.db.patch(room._id, { settings: { ...room.settings, rules: { ...rulesOf(room.settings.rules), [a.rule]: a.value } } });
+  },
+  "setup.fixDeal": async (ctx, s, a) => {
+    const { room, players } = s!;
+    const problem = fixedDealProblem({ seats: a.seats, cards: a.cards }, players.map(p => p._id), room.settings.deck);
+    if (problem) return fail(problem);
+    await ctx.db.patch(room._id, { settings: { ...room.settings, fixedDeal: { seed: a.seed, seats: a.seats, cards: a.cards } } });
+  },
+  "setup.clearDeal": async (ctx, s) => {
+    const { fixedDeal: _gone, ...settings } = s!.room.settings;
+    await ctx.db.patch(s!.room._id, { settings });
+  },
   "chat.send": async (ctx, s, a, _token, via) => {
     const { room, me } = s!;
     await ctx.db.insert("messages", { room: room._id, round: room.round, phase: room.phase, player: me!._id, name: me!.name, text: a.text, via });
   },
   "chat.sendSigned": (ctx, s, a, _t, via) => markedPost(ctx, s!, a.text, "signed", via),
-  "chat.sendUnsigned": (ctx, s, a, _t, via) => markedPost(ctx, s!, a.text, "unsigned", via),
   "connect.createKey": async (ctx, s, a) => {
     const { key, id } = await createKey(ctx, s!.me!, a.permission, a.label);
     return { key, connection: id };
@@ -122,8 +136,15 @@ const HANDLERS: Record<ServerId, Handler> = {
   "game.start": async (ctx, s) => {
     const { room, players } = s!;
     const { deck, duskSeconds, turnSeconds } = room.settings;
-    const seats = shuffle(players, Math.random).map(p => p._id);
-    const state = deal(deck, seats.length, Math.random);
+    const rules = rulesOf(room.settings.rules);
+    // Seating and the shuffle draw from separate generators: the platform's cryptographic one, or two streams of the
+    // play-test seed, so neither can echo the other (see sim/deal-uniformity.ts).
+    const fixed = room.playtest ? room.settings.fixedDeal : undefined;
+    const problem = fixed && fixedDealProblem(fixed, players.map(p => p._id), deck);
+    if (problem) return fail(`The fixed deal no longer fits the table: ${problem} Clear it or fix it again.`);
+    const seatRng = fixed?.seed !== undefined ? seededRng(fixed.seed) : secureRng, cardRng = fixed?.seed !== undefined ? seededRng(fixed.seed ^ 0x5bd1e995) : secureRng;
+    const seats = fixed?.seats ?? shuffle(players, seatRng).map(p => p._id);
+    const state = dealFixed(fixed?.cards ?? shuffle(deck, cardRng), seats.length, rules);
     let t = Date.now();
     const turns: Turn[] = [{ role: null, startsAt: t, endsAt: (t += duskSeconds * 1000) }];
     for (const role of nightTurns(deck)) turns.push({ role, startsAt: t, endsAt: (t += turnSeconds * 1000) });
@@ -131,7 +152,7 @@ const HANDLERS: Record<ServerId, Handler> = {
       seats, state, turns, turn: 0, log: [],
       plans: seats.map(() => ({})),
       progress: state.dealt.map(r => ({ ...freshProgress(), done: !ROLE[r].steps })),
-      votes: seats.map(() => null), forcedVotes: [], chatUsed: seats.map(() => false),
+      votes: seats.map(() => null), forcedVotes: [], chatUsed: seats.map(() => false), daySwap: null, fixed: !!fixed,
     };
     const round = room.round + 1;
     await ctx.db.patch(room._id, { phase: "night", round, game });
@@ -144,7 +165,7 @@ const HANDLERS: Record<ServerId, Handler> = {
     const err = validPlan(role, a.step, seat, shapeOf(game.state), a.plan as StepPlan);
     if (err) return fail(err);
     game.plans[seat][a.step] = a.plan;
-    if (game.turns[game.turn]?.role === role.id) game.log.push(...advance(game.state, seat, game.plans[seat], game.progress[seat], game.turn, Math.random, { live: a.step }));
+    if (game.turns[game.turn]?.role === role.id) game.log.push(...advance(game.state, seat, game.plans[seat], game.progress[seat], game.turn, secureRng, { live: a.step, history: game.log }));
     await ctx.db.patch(room._id, { game });
   },
   "night.clearStep": async (ctx, s, a) => {
@@ -168,9 +189,31 @@ const HANDLERS: Record<ServerId, Handler> = {
     game.votes[s!.seat] = null;
     await ctx.db.patch(s!.room._id, { game });
   },
+  "day.queueSwap": async (ctx, s, a) => {
+    const { room, seat } = s!;
+    const game = room.game as Game;
+    if (a.a >= game.seats.length || a.b >= game.seats.length) return fail("There is no such seat.");
+    if (a.a === seat || a.b === seat) return fail("Your own card cannot be part of the swap: choose two other players.");
+    if (a.a === a.b) return fail("Choose two different players.");
+    game.daySwap = { a: a.a, b: a.b, by: seat };
+    await ctx.db.patch(room._id, { game });
+  },
+  "day.clearSwap": async (ctx, s) => {
+    const game = s!.room.game as Game;
+    game.daySwap = null;
+    await ctx.db.patch(s!.room._id, { game });
+  },
   "day.endDiscussion": (ctx, s) => endDay(ctx, s!.room),
+  "game.abandon": async (ctx, s) => { await ctx.db.patch(s!.room._id, { phase: "lobby", game: undefined }); },
   "game.playAgain": async (ctx, s) => { await ctx.db.patch(s!.room._id, { phase: "lobby", game: undefined }); },
 };
+
+/** Why a fixed seating or deal does not fit the room's players and deck, or null. */
+function fixedDealProblem(f: { seats?: string[]; cards?: string[] }, players: string[], deck: string[]): string | null {
+  if (f.seats && (f.seats.length !== players.length || new Set(f.seats).size !== f.seats.length || f.seats.some(id => !players.includes(id)))) return "The seating must list every player in the room exactly once.";
+  if (f.cards && [...f.cards].sort().join() !== [...deck].sort().join()) return "The fixed cards must be exactly the cards of the deck, rearranged.";
+  return null;
+}
 
 /** Who is calling: a browser (its secret token) or an assistant already authenticated as one player (convex/mcp.ts). */
 export type Caller = { token: string } | { player: Id<"players"> };

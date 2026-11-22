@@ -10,7 +10,15 @@ export default defineSchema({
     /** Incremented at every deal, so a timer scheduled for an earlier round does nothing. */
     round: v.number(),
     host: v.optional(v.id("players")),
-    settings: v.object({ deck: v.array(v.string()), centerCount: v.number(), duskSeconds: v.number(), turnSeconds: v.number(), daySeconds: v.number() }),
+    settings: v.object({
+      deck: v.array(v.string()), centerCount: v.number(), duskSeconds: v.number(), turnSeconds: v.number(), daySeconds: v.number(),
+      /** Rule variants (shared/settings.ts); missing ones take their defaults. */
+      rules: v.optional(v.record(v.string(), v.union(v.boolean(), v.number(), v.string()))),
+      /** Play-test tables only: a fixed seed, seating and/or cards for the next deal. */
+      fixedDeal: v.optional(v.object({ seed: v.optional(v.number()), seats: v.optional(v.array(v.id("players"))), cards: v.optional(v.array(v.string())) })),
+    }),
+    /** A play-test table: chosen at creation, shown to everyone; its host may fix the deal and sees every card. */
+    playtest: v.optional(v.boolean()),
     /** The game in progress (convex/game.ts `Game`). It holds hidden information: only convex/rooms.ts reads it out. */
     game: v.optional(v.any()),
   }).index("code", ["code"]),

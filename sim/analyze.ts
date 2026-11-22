@@ -23,10 +23,9 @@ const choose = (n: number, k: number): number => (k < 0 || k > n ? 0 : k === 0 ?
 interface Seat { seat: number; name: string; dealt: string; endedHolding: string; endedOnTeam: string; votedFor: string; voteWasRandom: boolean; votesReceived: number; eliminated: boolean; won: boolean }
 interface Debrief { dealt: string; believedFinalCard: string; finalCard: string; won: boolean; nightPlan: string; planRanAsIntended: boolean; claims: { claim: string; wasTrue: boolean }[]; vote: { seat: number | null; name: string; reasoning: string }; changedVote: boolean; decidedBy: string; tension: number; tensionWhy: string; fun: number; funWhy: string; confusions: string[] }
 interface Game {
-  label: string; deck: string; code: string; players: number; center: number; cards: string[];
+  label: string; deck: string; code: string; players: number; center: number; cards: string[]; rules?: Record<string, unknown>;
   headline: string; notes: string[]; winningTeam: string; eliminated: string[]; seats: Seat[]; centre: string[]; nightLog: string[];
   chat: { from: string; text: string; phase: string }[]; timeline: any; agents: any[]; debriefs: Record<string, Debrief>; run?: any; timers: unknown;
-  branched: number; chosenMoves: number; planSteps: number;
 }
 
 const games: Game[] = [];
@@ -35,21 +34,11 @@ for (const d of readdirSync(out, { withFileTypes: true }).filter(d => d.isDirect
   if (!existsSync(`${dir}/result.json`)) { console.log(`${d}: no result`); continue; }
   const v = read(`${dir}/result.json`), table = read(`${dir}/table.json`);
   const debriefs: Record<string, Debrief> = {};
-  // From the transcripts: plan steps queued, how many used conditional branches (last plan per step counts).
-  const lastPlan: Record<string, unknown> = {};
-  for (const s of table.seats) if (existsSync(`${dir}/${s.name}.jsonl`)) for (const l of readFileSync(`${dir}/${s.name}.jsonl`, "utf8").split("\n")) {
-    let e: any; try { e = JSON.parse(l); } catch { continue; }
-    if (e.type === "assistant") for (const c of e.message?.content ?? []) if (c.type === "tool_use" && c.name.endsWith("night_planStep")) lastPlan[`${s.name}/${c.input.step}`] = c.input.plan;
-  }
-  const plans = Object.values(lastPlan) as { branches?: unknown[] }[];
   for (const s of table.seats) if (existsSync(`${dir}/${s.name}.debrief.json`)) debriefs[s.name] = read(`${dir}/${s.name}.debrief.json`);
   games.push({
-    label: table.config.label, deck: table.config.label.replace(/#\d+$/, ""), code: table.code, players: table.seats.length, center: table.config.center, cards: table.config.deck,
+    label: table.config.label, deck: table.config.label.replace(/#\d+$/, ""), code: table.code, players: table.seats.length, center: table.config.center, cards: table.config.deck, rules: table.config.rules,
     ...v.result, chat: v.chat, timeline: existsSync(`${dir}/timeline.json`) ? read(`${dir}/timeline.json`) : {}, agents: existsSync(`${dir}/agents.json`) ? read(`${dir}/agents.json`) : [], debriefs,
     run: existsSync(`${dir}/run.json`) ? read(`${dir}/run.json`) : undefined, timers: table.config.timers,
-    planSteps: plans.length, branched: plans.filter(p => (p?.branches ?? []).length > 0).length,
-    // A player's card moved by a choice (Rustler trade, Farrier shoe, Spooker stampede through a seat), not a forced random move.
-    chosenMoves: (v.result.nightLog as string[]).filter(l => !l.includes("random: out of time") && (/ swapped /.test(l) || / stampeded /.test(l)) && /'s card|their own card/.test(l)).length,
   });
 }
 
@@ -79,14 +68,14 @@ const decks = [...new Set(games.map(g => g.deck))];
 const perDeck: Record<string, unknown> = {};
 for (const deck of decks) {
   const gs = games.filter(g => g.deck === deck), m = measures(gs);
-  const b = randomPlay(gs[0].cards, gs[0].players, BG, { requireWolfDealt: gs[0].run?.redeal === "wolfDealt" }); baselines.set(deck, b);
+  const b = randomPlay(gs[0].cards, gs[0].players, BG, gs[0].rules ?? {}); baselines.set(deck, b);
   perDeck[deck] = { ...m, baseline: b };
   say(`\n### ${deck} (${m.games} games, ${gs[0].players} players, ${gs[0].center} centre)`);
   say(`  winners    played: Centaur ${m.win.centaur} · Werewolf ${m.win.werewolf} · nobody ${m.win.nobody} · extra wins ${m.extraWins}`);
-  say(`             random: Centaur ${fp(b.win.centaur)} · Werewolf ${fp(b.win.werewolf)} · nobody ${fp(b.win.nobody)} · prophecy ${fp(b.prophecyWins)}`);
+  say(`             random: Centaur ${fp(b.win.centaur)} · Werewolf ${fp(b.win.werewolf)} · nobody ${fp(b.win.nobody)} · a creature won ${fp(b.creatureWins)}`);
   say(`  wolf eliminated when one held at the end: played ${m.wolfEliminated}/${m.wolfAtTable} · random ${fp(b.wolfDeadWhenPresent)}`);
   say(`  eliminated seat held a moved card: played ${m.eliminatedHeldMoved}/${m.games} · random ${fp(b.eliminatedHeldMoved)} · cards moved/game ${m.movedPerGame.toFixed(1)} (random ${b.movedPerGame.toFixed(1)})`);
-  say(`  forced night moves ${m.forcedMoves} · random votes ${m.randomVotes} · day messages/game ${m.messagesPerGame.toFixed(0)} · conditional plans ${gs.reduce((a, g) => a + g.branched, 0)}/${gs.reduce((a, g) => a + g.planSteps, 0)} plan steps · chosen moves of a player's card ${gs.reduce((a, g) => a + g.chosenMoves, 0)}${gs[0].run?.redeal ? ` · deals discarded ${gs.reduce((a, g) => a + (g.run?.discardedDeals ?? 0), 0)} (baseline conditioned on a wolf dealt)` : ""}`);
+  say(`  forced night moves ${m.forcedMoves} · random votes ${m.randomVotes} · day messages/game ${m.messagesPerGame.toFixed(0)}`);
   for (const g of gs) say(`    ${g.label} ${g.code}: ${g.headline}${g.notes.length ? " " + g.notes.join(" ") : ""}`);
 }
 const all = measures(games);
@@ -181,12 +170,5 @@ say("\n## Tension and fun");
 const ds = games.flatMap(g => Object.values(g.debriefs));
 say(`  tension ${(ds.reduce((a, d) => a + d.tension, 0) / (ds.length || 1)).toFixed(1)} · fun ${(ds.reduce((a, d) => a + d.fun, 0) / (ds.length || 1)).toFixed(1)} over ${ds.length} debriefs`);
 
-say("\n## Deck × arm table");
-say("  deck/arm | games | C/W/N wins | wolf elim when held | elim held moved card | cond. plans | chosen moves | msgs/game | $/game");
-for (const deck of decks) {
-  const gs = games.filter(g => g.deck === deck), m = measures(gs);
-  const cost = gs.reduce((a, g) => a + g.agents.reduce((x: number, s: any) => x + s.costUsd, 0), 0) / gs.length;
-  say(`  ${deck} | ${m.games} | ${m.win.centaur}/${m.win.werewolf}/${m.win.nobody} | ${m.wolfEliminated}/${m.wolfAtTable} | ${m.eliminatedHeldMoved} | ${gs.reduce((a, g) => a + g.branched, 0)} | ${gs.reduce((a, g) => a + g.chosenMoves, 0)} | ${m.messagesPerGame.toFixed(0)} | ${cost.toFixed(2)}`);
-}
 writeFileSync(`${out}/analysis.json`, JSON.stringify({ perDeck, overall: all, honesty, games: games.map(g => ({ label: g.label, code: g.code, headline: g.headline, winningTeam: g.winningTeam })) }, null, 1));
 writeFileSync(`${out}/analysis.txt`, lines.join("\n"));

@@ -2,14 +2,36 @@
  * The pure game engine: no Convex, no React, no clock. The server (convex/) calls it inside mutations and the client
  * uses the same functions to show legal targets and plan coverage, so the two can never disagree.
  */
-import { CENTER_MAX, CENTER_MIN, pickCount, ROLE, condSource, sameSlot, slotKey, type Effect, type Ref, type RoleDef, type RoleId, type Shape, type Slot, type StepDef, type Team } from "./roles";
+import { CENTER_MAX, CENTER_MIN, condSource, legalRoles, pickCount, ROLE, roleName, sameSlot, slotKey, type Effect, type Ref, type RoleDef, type RoleId, type Shape, type Slot, type StepDef, type Team, type WinRule } from "./roles";
+import { DEFAULT_RULES, type Rules } from "./settings";
 
 export type Rng = () => number;
 
+/** Draws from the platform's cryptographic generator (Node and Convex both provide it): independent of any seed. */
+export const secureRng: Rng = () => {
+  const a = new Uint32Array(2);
+  crypto.getRandomValues(a);
+  return (a[0] * 2 ** 21 + (a[1] >>> 11)) / 2 ** 53;
+};
+/** A small, good seeded generator (splitmix32), for fixed deals at play-test tables and for tests. */
+export function seededRng(seed: number): Rng {
+  let s = seed >>> 0;
+  return () => {
+    s = (s + 0x9e3779b9) >>> 0;
+    let z = s;
+    z = Math.imul(z ^ (z >>> 16), 0x85ebca6b) >>> 0;
+    z = Math.imul(z ^ (z >>> 13), 0xc2b2ae35) >>> 0;
+    return ((z ^ (z >>> 16)) >>> 0) / 2 ** 32;
+  };
+}
+
 // ───────────────────────────── plans ─────────────────────────────
 
-/** What an actor does at one step: pick targets, go ahead with a yes/no step, or decline an optional step. */
-export type Decision = { kind: "pick"; targets: Slot[] } | { kind: "do" } | { kind: "skip" };
+/**
+ * What an actor does at one step: pick targets (with a role, at a step that names one), name a role (at a step that
+ * only names one), go ahead with a yes/no step, or decline an optional step.
+ */
+export type Decision = { kind: "pick"; targets: Slot[]; role?: RoleId } | { kind: "name"; role: RoleId } | { kind: "do" } | { kind: "skip" };
 
 /**
  * A queued decision for one step. `branches` are tried in order against what the actor saw at the step this one
@@ -23,9 +45,12 @@ export interface StepPlan {
 export type Plan = Record<string, StepPlan>;
 
 export function resolvePlan(plan: StepPlan | undefined, seen: RoleId[] | undefined): Decision | undefined {
+  return resolveBranch(plan, seen)?.decision;
+}
+function resolveBranch(plan: StepPlan | undefined, seen: RoleId[] | undefined): { decision: Decision; branch: RoleId[] | null } | undefined {
   if (!plan) return undefined;
-  if (seen) for (const b of plan.branches) if (b.roles.some(r => seen.includes(r))) return b.decision;
-  return plan.otherwise;
+  if (seen) for (const b of plan.branches) if (b.roles.some(r => seen.includes(r))) return { decision: b.decision, branch: b.roles };
+  return plan.otherwise ? { decision: plan.otherwise, branch: null } : undefined;
 }
 
 /** The roles a step's plan leaves undecided, out of the roles the actor could see. Empty: fully queued. */
@@ -38,18 +63,42 @@ export function uncovered(plan: StepPlan | undefined, outcomes: RoleId[]): RoleI
 
 // ───────────────────────────── state ─────────────────────────────
 
+/** A proclamation: a card as it was at one moment of the night, shown to everyone (at dawn, under that table rule). */
+export interface Shown {
+  slot: Slot;
+  role: RoleId;
+  /** The role whose turn it is published as ("herald"): a forgery is published as the Herald's. */
+  by: RoleId;
+  /** The turn it was really made in. Not shown to players while it is published at dawn. */
+  turn: number;
+  /** Published at dawn rather than at once. */
+  atDawn: boolean;
+  /** A Forger's: revealed only after the game. */
+  forged?: boolean;
+}
+
 export interface GameState {
   /** The role each seat was dealt: it decides who wakes when, whatever happens to the card later. */
   dealt: RoleId[];
   /** The card each seat holds now. */
   cards: RoleId[];
   center: RoleId[];
+  /** The roles dealt to the centre, in place (the census reads them; `center` changes as cards move). */
+  dealtCenter: RoleId[];
   /** Keys of the slots whose card has changed tonight. */
   moved: string[];
-  /** What everyone has been shown: a card as it was at one moment, which later movement can make stale. */
-  shown: { slot: Slot; role: RoleId; turn: number }[];
-  /** Prophecies bound to cards (by role id): the seat named, or -1 for "nobody". */
-  prophecy: Record<RoleId, number>;
+  shown: Shown[];
+  /** Seats marked by cards (by role id): the Cuckoo's egg, the Oxpecker's bond. They bind to the CARD. */
+  marks: Record<RoleId, number>;
+  /** Tokens lying on cards, keyed by the slot the card is in now: they move with the card. */
+  tokens: Record<string, { glamour?: RoleId }>;
+  /** The seat the Biter bit, and the Biter's seat. The bite binds to the SEAT. */
+  bitten: { seat: number; by: number } | null;
+  /** Seats that became an Imago at dawn. */
+  imago: number[];
+  /** The night is over. */
+  dawn: boolean;
+  rules: Rules;
 }
 
 /** One actor's place in their night script. */
@@ -60,8 +109,11 @@ export interface Progress {
   seen: Record<string, RoleId[]>;
   done: boolean;
 }
-export const shapeOf = (state: GameState): Shape => ({ players: state.dealt.length, center: state.center.length });
+export const shapeOf = (state: GameState): Shape => ({ players: state.dealt.length, center: state.center.length, deck: [...state.dealt, ...state.dealtCenter] });
 export const freshProgress = (): Progress => ({ step: 0, picks: {}, seen: {}, done: false });
+
+/** A copied journal line: what the player dealt a role did and learned at one of its steps. */
+export interface Overheard { step: string; ev: LogEvent }
 
 export type LogEvent =
   | { kind: "look"; slots: Slot[]; roles?: RoleId[]; teams?: Team[] }
@@ -69,19 +121,40 @@ export type LogEvent =
   | { kind: "seats"; label: string; seats: number[] }
   | { kind: "moved"; slots: Slot[]; moved: boolean[] }
   | { kind: "rotate"; slots: Slot[] }
-  | { kind: "announce"; slots: Slot[]; roles: RoleId[] }
+  | { kind: "announce"; slots: Slot[]; roles: RoleId[]; atDawn: boolean }
   | { kind: "count"; label: string; n: number }
-  | { kind: "predict"; seat: number }
+  | { kind: "census"; roles: RoleId[]; of: number }
+  | { kind: "glamour"; slot: Slot; role: RoleId }
+  | { kind: "witness"; by: RoleId; slots: Slot[]; roles: RoleId[] }
+  | { kind: "forge"; slots: Slot[]; roles: RoleId[]; as: RoleId }
+  | { kind: "overhear"; role: RoleId; copied: Overheard[] }
+  | { kind: "bite"; seat: number; took: boolean }
+  | { kind: "mark"; seat: number; label: string; public: boolean; unheld?: boolean }
+  /** Dawn notices, each to the seat it concerns. */
+  | { kind: "bitten"; by: number | null }
+  | { kind: "imago" }
+  /** A step the actor had queued that turned out not to happen. */
+  | { kind: "void"; why: string }
+  /** The Moon-Thief's swap, made as the votes locked. */
+  | { kind: "daySwap"; a: number; b: number }
   | { kind: "skip" };
 
 export interface LogEntry {
   turn: number;
+  /** The actor, or the seat a dawn notice is for; -1 for something the game itself did. */
   seat: number;
   role: RoleId;
   step: string;
   /** How the decision was made. */
   via: "auto" | "queued" | "live" | "forced";
   ev: LogEvent;
+  /** A conditional plan's choice: what the actor saw, and the branch it matched (null: `otherwise`). */
+  cond?: { saw: RoleId[]; branch: RoleId[] | null };
+  /**
+   * What only the post-game log may show: the true cards behind a glamoured look, where an Eavesdropper's copy came
+   * from. Views strip it until the game has ended.
+   */
+  hidden?: { truth?: RoleId[]; source?: number | "ghost" | "none" };
 }
 
 export function shuffle<T>(xs: readonly T[], rng: Rng): T[] {
@@ -90,11 +163,15 @@ export function shuffle<T>(xs: readonly T[], rng: Rng): T[] {
   return a;
 }
 
-export function deal(deck: RoleId[], players: number, rng: Rng): GameState {
-  if (deck.length < players + CENTER_MIN) throw new Error("The deck is too small for this table.");
-  const cards = shuffle(deck, rng);
-  const dealt = cards.slice(0, players);
-  return { dealt, cards: [...dealt], center: cards.slice(players), moved: [], shown: [], prophecy: {} };
+/** A state with the cards already in place: the first `players` cards to the seats in order, the rest to the centre. */
+export function dealFixed(cards: RoleId[], players: number, rules: Partial<Rules> = {}): GameState {
+  if (cards.length < players + CENTER_MIN) throw new Error("The deck is too small for this table.");
+  const dealt = cards.slice(0, players), center = cards.slice(players);
+  return { dealt, cards: [...dealt], center: [...center], dealtCenter: [...center], moved: [], shown: [], marks: {}, tokens: {}, bitten: null, imago: [], dawn: false, rules: { ...DEFAULT_RULES, ...rules } };
+}
+
+export function deal(deck: RoleId[], players: number, rng: Rng, rules: Partial<Rules> = {}): GameState {
+  return dealFixed(shuffle(deck, rng), players, rules);
 }
 
 /** The roles in the deck that take a night turn, in wake order: one turn each, whether dealt or in the centre. */
@@ -116,19 +193,32 @@ export function legalTargets(step: StepDef, seat: number, { players, center }: S
   return out;
 }
 
-/** Whether a step happens at all for this actor (the lone-wolf rule). */
+const TAG_WORDS: Record<string, string> = { pack: "a card of the pack", wolf: "a Werewolf card" };
+/** Whether a step happens at all for this actor (the lone-wolf rule), and if not, why. */
 export function stepApplies(step: StepDef, seat: number, state: GameState): boolean {
-  if (!step.onlyIfAlone) return true;
-  return !state.dealt.some((r, i) => i !== seat && ROLE[r].tags.includes(step.onlyIfAlone!));
+  return stepVoid(step, seat, state) === null;
+}
+function stepVoid(step: StepDef, seat: number, state: GameState): string | null {
+  if (step.onlyIfAlone && state.dealt.some((r, i) => i !== seat && ROLE[r].tags.includes(step.onlyIfAlone!))) return `another player was dealt ${TAG_WORDS[step.onlyIfAlone] ?? `a "${step.onlyIfAlone}" card`}, so you were not alone`;
+  if (step.names && !legalRoles(step, shapeOf(state).deck!, state.dealt[seat]).length) return "there was no role you could name";
+  return null;
 }
 
 /** A step with nothing to decide: it just happens when the actor's turn comes. */
-export const isAuto = (step: StepDef) => !step.pick && !step.optional;
+export const isAuto = (step: StepDef) => !step.pick && !step.optional && !step.names;
 
-export function validDecision(step: StepDef, seat: number, shape: Shape, d: Decision): string | null {
+function roleProblem(step: StepDef, shape: Shape, role: RoleId | undefined, actor?: RoleId): string | null {
+  if (!step.names) return role ? "This step takes no role." : null;
+  if (!role) return "Name a role as well.";
+  const legal = legalRoles(step, shape.deck ?? Object.keys(ROLE), actor);
+  return legal.includes(role) ? null : `You cannot name ${roleName(role)} here: choose one of ${legal.map(roleName).join(", ") || "(none)"}.`;
+}
+
+export function validDecision(step: StepDef, seat: number, shape: Shape, d: Decision, actor?: RoleId): string | null {
   if (d.kind === "skip") return step.optional ? null : "This step cannot be skipped.";
-  if (d.kind === "do") return step.pick ? "Choose a target." : null;
-  if (!step.pick) return "This step takes no target.";
+  if (d.kind === "do") return step.pick ? "Choose a target." : step.names ? "Name a role." : null;
+  if (d.kind === "name") return step.pick ? "Choose a target (and a role)." : roleProblem(step, shape, d.role, actor);
+  if (!step.pick) return step.names ? "This step takes a role only: use { \"kind\": \"name\", \"role\": <id> }." : "This step takes no target.";
   const count = pickCount(step, shape);
   if (d.targets.length !== count) return `Choose ${count} target${count === 1 ? "" : "s"}.`;
   const legal = legalTargets(step, seat, shape);
@@ -136,7 +226,7 @@ export function validDecision(step: StepDef, seat: number, shape: Shape, d: Deci
     if (!legal.some(l => sameSlot(l, t))) return "That target is not allowed.";
     if (d.targets.findIndex(o => sameSlot(o, t)) !== n) return "Choose different targets.";
   }
-  return null;
+  return roleProblem(step, shape, d.role, actor);
 }
 
 export function validPlan(role: RoleDef, stepId: string, seat: number, shape: Shape, plan: StepPlan): string | null {
@@ -145,19 +235,23 @@ export function validPlan(role: RoleDef, stepId: string, seat: number, shape: Sh
   if (isAuto(step)) return "Nothing to decide at this step.";
   if (plan.branches.length && !condSource(role, stepId)) return "This step has nothing to be conditional on.";
   for (const d of [...plan.branches.map(b => b.decision), ...(plan.otherwise ? [plan.otherwise] : [])]) {
-    const err = validDecision(step, seat, shape, d);
+    const err = validDecision(step, seat, shape, d, role.id);
     if (err) return err;
   }
   return null;
 }
 
-export function randomDecision(step: StepDef, seat: number, shape: Shape, rng: Rng): Decision {
+export function randomDecision(step: StepDef, seat: number, shape: Shape, rng: Rng, actor?: RoleId): Decision {
+  const roles = legalRoles(step, shape.deck ?? Object.keys(ROLE), actor);
+  const someRole = () => roles[Math.floor(rng() * roles.length)];
   const options: Decision[] = [];
   if (step.pick) {
     const legal = legalTargets(step, seat, shape), count = pickCount(step, shape);
-    if (count === 1) for (const t of legal) options.push({ kind: "pick", targets: [t] });
-    else options.push({ kind: "pick", targets: shuffle(legal, rng).slice(0, count) });
-  } else options.push({ kind: "do" });
+    const withRole = (d: { kind: "pick"; targets: Slot[] }): Decision => (step.names ? { ...d, role: someRole() } : d);
+    if (count === 1) for (const t of legal) options.push(withRole({ kind: "pick", targets: [t] }));
+    else options.push(withRole({ kind: "pick", targets: shuffle(legal, rng).slice(0, count) }));
+  } else if (step.names) options.push({ kind: "name", role: someRole() });
+  else options.push({ kind: "do" });
   // A step with several targets has too many combinations to list; declining gets the weight of one target.
   if (step.optional) options.push({ kind: "skip" });
   return options[Math.floor(rng() * options.length)];
@@ -174,60 +268,147 @@ function resolveRef(ref: Ref, seat: number, players: number, picks: Slot[], prog
   return { k: "p", i };
 }
 
-const cardAt = (state: GameState, s: Slot) => (s.k === "p" ? state.cards[s.i] : state.center[s.i]);
+export const cardAt = (state: GameState, s: Slot) => (s.k === "p" ? state.cards[s.i] : state.center[s.i]);
 const setCard = (state: GameState, s: Slot, r: RoleId) => { if (s.k === "p") state.cards[s.i] = r; else state.center[s.i] = r; };
 
-function applyEffect(e: Effect, state: GameState, seat: number, picks: Slot[], progress: Progress, stepId: string, turn: number, rng: Rng): LogEvent | null {
+/** What an actor sees at a slot: a glamour fools everyone but the Werewolf team. */
+function seenAt(state: GameState, s: Slot, actor: number): { role: RoleId; truth: RoleId } {
+  const truth = cardAt(state, s);
+  if (actor >= 0 && ROLE[state.dealt[actor]].team === "werewolf") return { role: truth, truth };
+  return { role: state.tokens[slotKey(s)]?.glamour ?? truth, truth };
+}
+
+/** Moves the tokens of several slots along with their cards: `to[i]` receives what lay on `from[i]`. */
+function moveTokens(state: GameState, from: Slot[], to: Slot[]) {
+  const held = from.map(s => state.tokens[slotKey(s)]);
+  for (const s of from) delete state.tokens[slotKey(s)];
+  to.forEach((s, i) => { if (held[i]) state.tokens[slotKey(s)] = held[i]; });
+}
+
+type Applied = { ev: LogEvent; hidden?: LogEntry["hidden"] } | null;
+const INFORMATION: Effect["kind"][] = ["look", "learnSeats", "learnMoved", "count", "census", "witness"];
+
+interface Ctx { state: GameState; seat: number; picks: Slot[]; named?: RoleId; progress: Progress; stepId: string; turn: number; rng: Rng; history: LogEntry[] }
+
+function applyEffect(e: Effect, c: Ctx): Applied {
+  const { state, seat, picks, progress } = c;
   const touch = (s: Slot) => { if (!state.moved.includes(slotKey(s))) state.moved.push(slotKey(s)); };
   const players = state.dealt.length;
+  const ref = (r: Ref) => resolveRef(r, seat, players, picks, progress);
   switch (e.kind) {
     case "look": {
-      const slots = e.targets === "picks" ? picks : e.targets.map(t => resolveRef(t, seat, players, picks, progress));
-      const roles = slots.map(s => cardAt(state, s));
-      if (e.reveal === "role") { progress.seen[stepId] = roles; return { kind: "look", slots, roles }; }
-      return { kind: "look", slots, teams: roles.map(r => ROLE[r].team) };
+      const slots = e.targets === "picks" ? picks : e.targets.map(ref);
+      const seen = slots.map(s => seenAt(state, s, seat));
+      const roles = seen.map(x => x.role);
+      const hidden = seen.some(x => x.role !== x.truth) ? { truth: seen.map(x => x.truth) } : undefined;
+      if (e.reveal === "role") { progress.seen[c.stepId] = roles; return { ev: { kind: "look", slots, roles }, hidden }; }
+      return { ev: { kind: "look", slots, teams: roles.map(r => ROLE[r].team) }, hidden };
     }
     case "swap": {
-      const a = resolveRef(e.a, seat, players, picks, progress), b = resolveRef(e.b, seat, players, picks, progress);
+      const a = ref(e.a), b = ref(e.b);
       if (sameSlot(a, b)) return null;
       const ca = cardAt(state, a);
       setCard(state, a, cardAt(state, b)); setCard(state, b, ca);
+      moveTokens(state, [a, b], [b, a]);
       touch(a); touch(b);
-      return { kind: "swap", a, b };
+      return { ev: { kind: "swap", a, b } };
     }
     case "rotate": {
       const held = picks.map(s => cardAt(state, s));
-      picks.forEach((s, i) => { setCard(state, picks[(i + 1) % picks.length], held[i]); touch(s); });
-      return { kind: "rotate", slots: picks };
+      const next = picks.map((_, i) => picks[(i + 1) % picks.length]);
+      picks.forEach((s, i) => { setCard(state, next[i], held[i]); touch(s); });
+      moveTokens(state, picks, next);
+      return { ev: { kind: "rotate", slots: picks } };
     }
     case "announce": {
-      const roles = picks.map(s => cardAt(state, s));
-      picks.forEach((slot, i) => state.shown.push({ slot, role: roles[i], turn }));
-      return { kind: "announce", slots: picks, roles };
+      const seen = picks.map(s => seenAt(state, s, seat));
+      const atDawn = state.rules.dawnProclamations;
+      picks.forEach((slot, i) => state.shown.push({ slot, role: seen[i].role, by: state.dealt[seat], turn: c.turn, atDawn }));
+      return { ev: { kind: "announce", slots: picks, roles: seen.map(x => x.role), atDawn }, hidden: seen.some(x => x.role !== x.truth) ? { truth: seen.map(x => x.truth) } : undefined };
     }
-    case "count": return { kind: "count", label: e.label, n: state.center.filter(r => ROLE[r].tags.includes(e.tag)).length };
-    case "predict": {
-      state.prophecy[state.dealt[seat]] = picks[0].i;
-      return { kind: "predict", seat: picks[0].i };
+    case "count": return { ev: { kind: "count", label: e.label, n: state.center.filter(r => ROLE[r].tags.includes(e.tag)).length } };
+    case "census": {
+      if (state.rules.census === "off") return null;
+      let roles = [...state.dealtCenter];
+      if (state.rules.census === "three") roles = shuffle(roles, c.rng).slice(0, 3);
+      return { ev: { kind: "census", roles: roles.sort(), of: state.dealtCenter.length } };
+    }
+    case "glamour": {
+      const slot = picks[0];
+      state.tokens[slotKey(slot)] = { ...state.tokens[slotKey(slot)], glamour: c.named! };
+      return { ev: { kind: "glamour", slot, role: c.named! } };
+    }
+    case "witness": {
+      const made = state.shown.filter(s => s.by === e.by && !s.forged);
+      return { ev: { kind: "witness", by: e.by, slots: made.map(s => s.slot), roles: made.map(s => s.role) } };
+    }
+    case "forge": {
+      for (const slot of picks) state.shown.push({ slot, role: c.named!, by: e.as, turn: c.turn, atDawn: true, forged: true });
+      return { ev: { kind: "forge", slots: picks, roles: picks.map(() => c.named!), as: e.as } };
+    }
+    case "overhear": {
+      const role = c.named!;
+      let source = -1;
+      for (let k = 1; k < players && source < 0; k++) { const i = (seat + k) % players; if (state.dealt[i] === role) source = i; }
+      if (source >= 0) {
+        const copied = c.history.filter(h => h.seat === source && h.role === role && h.turn <= c.turn).map(h => ({ step: h.step, ev: h.ev }));
+        return { ev: { kind: "overhear", role, copied }, hidden: { source } };
+      }
+      if (!state.rules.eavesdropGhost) return { ev: { kind: "overhear", role, copied: [] }, hidden: { source: "none" } };
+      return { ev: { kind: "overhear", role, copied: ghostLooks(role, state, seat, c.turn, c.rng) }, hidden: { source: "ghost" } };
+    }
+    case "bite": {
+      const t = ref(e.target);
+      if (t.k !== "p") throw new Error("Only a player can be bitten.");
+      if (ROLE[cardAt(state, t)].team === "werewolf") return { ev: { kind: "bite", seat: t.i, took: false } };
+      state.bitten = { seat: t.i, by: seat };
+      return { ev: { kind: "bite", seat: t.i, took: true } };
+    }
+    case "mark": {
+      const t = ref(e.target);
+      if (t.k !== "p") throw new Error("Only a player can be marked.");
+      state.marks[state.dealt[seat]] = t.i;
+      return { ev: { kind: "mark", seat: t.i, label: e.label, public: e.public } };
     }
     case "learnSeats": {
       let seats = state.dealt.flatMap((r, i) => (i !== seat && ROLE[r].tags.includes(e.tag) ? [i] : []));
-      if (e.limit !== undefined) seats = shuffle(seats, rng).slice(0, e.limit);
-      return { kind: "seats", label: e.label, seats };
+      if (e.limit !== undefined) seats = shuffle(seats, c.rng).slice(0, e.limit);
+      return { ev: { kind: "seats", label: e.label, seats } };
     }
     case "learnMoved": {
       const slots: Slot[] = [...new Set([(seat + players - 1) % players, seat, (seat + 1) % players])].map(i => ({ k: "p" as const, i }));
-      return { kind: "moved", slots, moved: slots.map(s => state.moved.includes(slotKey(s))) };
+      return { ev: { kind: "moved", slots, moved: slots.map(s => state.moved.includes(slotKey(s))) } };
     }
   }
 }
 
 /**
+ * The Eavesdropper's own result when nobody holds the role it named: that role's information effects run from the
+ * Eavesdropper's seat on random legal targets. Nothing moves, nothing is marked, and a proclamation becomes a private look.
+ */
+function ghostLooks(role: RoleId, state: GameState, seat: number, turn: number, rng: Rng): Overheard[] {
+  const shape = shapeOf(state), progress = freshProgress(), out: Overheard[] = [];
+  for (const step of ROLE[role].steps ?? []) {
+    if (!stepApplies(step, seat, state)) continue;
+    const picks = step.pick ? shuffle(legalTargets(step, seat, shape), rng).slice(0, pickCount(step, shape)) : [];
+    progress.picks[step.id] = picks;
+    for (const e of step.effects) {
+      const eff: Effect | null = e.kind === "announce" ? { kind: "look", targets: "picks", reveal: "role" } : INFORMATION.includes(e.kind) ? e : null;
+      if (!eff) continue;
+      const r = applyEffect(eff, { state, seat, picks, progress, stepId: step.id, turn, rng, history: [] });
+      if (r) out.push({ step: step.id, ev: r.ev });
+    }
+  }
+  return out;
+}
+
+/**
  * Runs an actor's script as far as it can go: automatic steps happen, decided steps happen, and it stops at the first
  * step with no decision yet. With `force`, undecided steps get a uniformly random legal decision instead of stopping.
- * `live` names a step whose plan was just set during the actor's own turn, for the log.
+ * `live` names a step whose plan was just set during the actor's own turn, for the log. `history` is the night's log so
+ * far (the Eavesdropper copies from it).
  */
-export function advance(state: GameState, seat: number, plan: Plan, progress: Progress, turn: number, rng: Rng, opts: { force?: boolean; live?: string } = {}): LogEntry[] {
+export function advance(state: GameState, seat: number, plan: Plan, progress: Progress, turn: number, rng: Rng, opts: { force?: boolean; live?: string; history?: LogEntry[] } = {}): LogEntry[] {
   const role = ROLE[state.dealt[seat]];
   const steps = role.steps ?? [];
   const shape = shapeOf(state);
@@ -235,33 +416,88 @@ export function advance(state: GameState, seat: number, plan: Plan, progress: Pr
   while (!progress.done) {
     const step = steps[progress.step];
     if (!step) { progress.done = true; break; }
-    if (!stepApplies(step, seat, state)) { progress.step++; continue; }
-    let decision: Decision | undefined, via: LogEntry["via"] = "auto";
+    const entry = (ev: LogEvent, via: LogEntry["via"], extra: Partial<LogEntry> = {}): LogEntry => ({ turn, seat, role: role.id, step: step.id, via, ev, ...extra });
+    const why = stepVoid(step, seat, state);
+    if (why) {
+      // A step that does not happen is silent, unless the actor had queued something for it: then they are told.
+      if (plan[step.id]) log.push(entry({ kind: "void", why: `${step.title}: did not happen, because ${why}.` }, "auto"));
+      progress.step++;
+      continue;
+    }
+    let decision: Decision | undefined, via: LogEntry["via"] = "auto", cond: LogEntry["cond"];
     if (isAuto(step)) decision = { kind: "do" };
     else {
-      const src = condSource(role, step.id);
-      decision = resolvePlan(plan[step.id], src ? progress.seen[src.id] : undefined);
+      const src = condSource(role, step.id), seen = src ? progress.seen[src.id] : undefined;
+      const chosen = resolveBranch(plan[step.id], seen);
+      decision = chosen?.decision;
       via = opts.live === step.id ? "live" : "queued";
-      if (decision && validDecision(step, seat, shape, decision)) decision = undefined;
+      if (chosen && seen && plan[step.id].branches.length) cond = { saw: seen, branch: chosen.branch };
+      if (decision && validDecision(step, seat, shape, decision, role.id)) decision = undefined;
       if (!decision) {
         if (!opts.force) break;
-        decision = randomDecision(step, seat, shape, rng); via = "forced";
+        decision = randomDecision(step, seat, shape, rng, role.id); via = "forced"; cond = undefined;
       }
     }
-    const entry = (ev: LogEvent): LogEntry => ({ turn, seat, role: role.id, step: step.id, via, ev });
-    if (decision.kind === "skip") {
-      // Declining to name anyone is itself a prophecy: nobody will be eliminated.
-      if (step.effects.some(e => e.kind === "predict")) { state.prophecy[role.id] = -1; log.push(entry({ kind: "predict", seat: -1 })); }
-      else log.push(entry({ kind: "skip" }));
-    }
+    const extra = cond ? { cond } : {};
+    if (decision.kind === "skip") log.push(entry({ kind: "skip" }, via, extra));
     else {
       const picks = decision.kind === "pick" ? decision.targets : [];
+      const named = decision.kind === "pick" || decision.kind === "name" ? decision.role : undefined;
       progress.picks[step.id] = picks;
-      for (const e of step.effects) { const ev = applyEffect(e, state, seat, picks, progress, step.id, turn, rng); if (ev) log.push(entry(ev)); }
+      const history = [...(opts.history ?? []), ...log];
+      for (const e of step.effects) {
+        const r = applyEffect(e, { state, seat, picks, named, progress, stepId: step.id, turn, rng, history });
+        if (r) log.push(entry(r.ev, via, { ...extra, ...(r.hidden ? { hidden: r.hidden } : {}) }));
+      }
     }
     progress.step++;
   }
   return log;
+}
+
+// ───────────────────────────── dawn ─────────────────────────────
+
+/**
+ * The night is over. A public mark nobody made (the Cuckoo in the centre) is made at random; seats whose metamorph
+ * card was moved become Imagos; the bitten player is told; the proclamations are published together, in random order.
+ * Returns the dawn notices, each addressed to the seat it concerns (`seat: -1` for the table).
+ */
+export function dawn(state: GameState, deck: RoleId[], turn: number, rng: Rng): LogEntry[] {
+  const log: LogEntry[] = [];
+  const players = state.dealt.length;
+  for (const id of new Set(deck)) for (const step of ROLE[id]?.steps ?? []) for (const e of step.effects) {
+    if (e.kind !== "mark" || !e.public || id in state.marks) continue;
+    const seat = Math.floor(rng() * players);
+    state.marks[id] = seat;
+    log.push({ turn, seat: -1, role: id, step: "dawn", via: "auto", ev: { kind: "mark", seat, label: e.label, public: true, unheld: true } });
+  }
+  const bitten = state.bitten?.seat ?? -1;
+  state.dealt.forEach((r, i) => {
+    if (!ROLE[r].metamorph || i === bitten || !state.moved.includes(slotKey({ k: "p", i }))) return;
+    state.imago.push(i);
+    log.push({ turn, seat: i, role: r, step: "dawn", via: "auto", ev: { kind: "imago" } });
+  });
+  if (state.bitten) log.push({ turn, seat: state.bitten.seat, role: state.dealt[state.bitten.seat], step: "dawn", via: "auto", ev: { kind: "bitten", by: state.rules.biteNamesBiter ? state.bitten.by : null } });
+  state.shown = [...state.shown.filter(s => !s.atDawn), ...shuffle(state.shown.filter(s => s.atDawn), rng)];
+  state.dawn = true;
+  return log;
+}
+
+/** The proclamations a player may see now: the ones shown at once, and the dawn ones once the night is over. */
+export const visibleShown = (state: GameState) => state.shown.filter(s => !s.atDawn || state.dawn);
+/** Public marks a player may see now (the egg): only after dawn. */
+export function publicMarks(state: GameState): { role: RoleId; seat: number; label: string }[] {
+  if (!state.dawn) return [];
+  return Object.entries(state.marks).flatMap(([role, seat]) => {
+    const e = ROLE[role]?.steps?.flatMap(s => s.effects).find(x => x.kind === "mark" && x.public);
+    return e && e.kind === "mark" ? [{ role, seat, label: e.label }] : [];
+  });
+}
+
+/** The Moon-Thief's swap, as the votes lock: two seats' cards change places. */
+export function daySwap(state: GameState, a: number, b: number): LogEvent {
+  [state.cards[a], state.cards[b]] = [state.cards[b], state.cards[a]];
+  return { kind: "daySwap", a, b };
 }
 
 // ───────────────────────────── day ─────────────────────────────
@@ -275,22 +511,41 @@ export interface Outcome {
   headline: string;
   /** Wins and turns of fate beyond the team result, one sentence each. */
   notes: string[];
-  /** The team each seat ended on, after rules that change it. */
+  /** The team each seat ended on, after rules that change it (bitten: Werewolf; Imago: Wildwood). */
   teams: Team[];
+  /** One sentence per seat: why they won or lost. */
+  why: string[];
+  /** Seats that lost to the Sporeling's curse. */
+  cursed: number[];
+  /** Werewolf cards and Centaur-team players among the eliminated. */
+  wolvesDown: number;
+  centaursDown: number;
 }
 
+export interface ResolveInput {
+  /** Seats whose vote the game cast at random. */
+  forced?: number[];
+  bitten?: { seat: number; by: number } | null;
+  imago?: number[];
+  marks?: Record<RoleId, number>;
+  rules?: Partial<Rules>;
+}
+
+
 /**
- * Counts the vote and decides the winners, by the cards players HOLD at the end. The seat(s) with the most votes are
- * eliminated, unless nobody received more than one. Then the Centaurs win if a Werewolf was eliminated (or, with no
- * Werewolf at the table, if nobody was), and the wolves' side wins if not. On top of that, the holder of a card with
- * a prophecy wins if it came true.
+ * Counts the vote and decides the winners, by the cards players HOLD at the count (docs/design/synthesis.md 3.4):
+ * tally; teams (bitten, Imago, card); the main result (decoy, no wolf held, Blood Price); the creatures; the curse;
+ * the Oxpecker; and a sentence per seat saying why. Any day swap must already have been applied to `cards`.
  */
-export function resolveVote(cards: RoleId[], votes: (number | null)[], prophecy: Record<RoleId, number> = {}): Outcome {
+export function resolveVote(cards: RoleId[], votes: (number | null)[], input: ResolveInput = {}): Outcome {
+  const rules = { ...DEFAULT_RULES, ...input.rules };
   const n = cards.length;
+  const forced = new Set(input.forced ?? []);
+  const marks = input.marks ?? {};
   const tally = Array<number>(n).fill(0);
   votes.forEach((v, i) => { if (v !== null) tally[v] += ROLE[cards[i]].vote?.weight ?? 1; });
   const top = Math.max(...tally);
-  let deaths = top >= 2 ? tally.flatMap((t, i) => (t === top ? [i] : [])) : [];
+  let deaths = top >= rules.eliminationVotes ? tally.flatMap((t, i) => (t === top ? [i] : [])) : [];
   const protectedSeats = new Set(votes.flatMap((v, i) => (v !== null && ROLE[cards[i]].vote?.protectsTarget ? [v] : [])));
   deaths = deaths.filter(d => !protectedSeats.has(d));
   const notes: string[] = [];
@@ -298,45 +553,131 @@ export function resolveVote(cards: RoleId[], votes: (number | null)[], prophecy:
     const d = deaths[i], v = votes[d];
     if (ROLE[cards[d]].vote?.takesTargetDown && v !== null && !deaths.includes(v) && !protectedSeats.has(v)) { deaths.push(v); notes.push(`${ROLE[cards[d]].name} fell and took their target down too.`); }
   }
+  deaths.sort((a, b) => a - b);
   const dead = (i: number) => deaths.includes(i);
-  // A card that takes its neighbour's side: the team of the card held clockwise, or Centaur if that card wins alone.
-  const teams: Team[] = cards.map((r, i) => {
-    if (ROLE[r].win !== "neighbour") return ROLE[r].team;
-    const next = ROLE[cards[(i + 1) % n]];
-    return next.team === "lone" || next.win === "neighbour" ? "centaur" : next.team;
-  });
-  const seatsOf = (team: Team) => teams.flatMap((t, i) => (t === team ? [i] : []));
-  const wolves = cards.flatMap((r, i) => (ROLE[r].tags.includes("wolf") ? [i] : []));
-  const done = (winners: number[], winningTeam: Outcome["winningTeam"], headline: string): Outcome => {
-    cards.forEach((r, i) => {
-      if (ROLE[r].win !== "prophecy" || !(r in prophecy)) return;
-      const came = prophecy[r] === -1 ? deaths.length === 0 : dead(prophecy[r]);
-      if (came) { if (!winners.includes(i)) winners.push(i); notes.push(`The ${ROLE[r].name}'s prophecy came true.`); }
-    });
-    return { tally, deaths, winners: winners.sort((a, b) => a - b), winningTeam, headline, notes, teams };
-  };
 
-  const martyrs = cards.flatMap((r, i) => (ROLE[r].win === "dies" && dead(i) ? [i] : []));
-  if (martyrs.length) return done(martyrs, "lone", `The ${ROLE[cards[martyrs[0]]].name} was eliminated and wins alone.`);
-  if (wolves.length) {
-    if (wolves.some(dead)) return done(seatsOf("centaur"), "centaur", "A Werewolf was eliminated. The Centaurs win.");
-    return done(seatsOf("werewolf"), "werewolf", deaths.length ? "No Werewolf was eliminated. The Werewolves win." : "Nobody was eliminated. The Werewolves win.");
+  // ── teams ──
+  const bitten = input.bitten?.seat ?? -1;
+  const imago = new Set((input.imago ?? []).filter(i => i !== bitten));
+  const teams: Team[] = cards.map((r, i) => (i === bitten ? "werewolf" : imago.has(i) ? "wild" : ROLE[r].team));
+  const creature = (i: number) => teams[i] === "wild";
+  const winRule = (i: number): WinRule | undefined => (imago.has(i) ? "eliminated" : creature(i) ? ROLE[cards[i]].win : undefined);
+  const seatsOf = (team: Team) => teams.flatMap((t, i) => (t === team ? [i] : []));
+  const isWolf = (i: number) => ROLE[cards[i]].tags.includes("wolf");
+  const wolvesHeld = cards.some((_, i) => isWolf(i));
+  const W = deaths.filter(isWolf).length, C = deaths.filter(i => teams[i] === "centaur").length;
+  const winners = new Set<number>();
+  const why: string[] = Array(n).fill("");
+
+  // ── main result ──
+  let winningTeam: Outcome["winningTeam"], headline: string, reason: string;
+  const decoy = deaths.find(i => ROLE[cards[i]].decoy && teams[i] === ROLE[cards[i]].team);
+  if (decoy !== undefined) {
+    winningTeam = ROLE[cards[decoy]].team;
+    reason = `the ${ROLE[cards[decoy]].name} was eliminated`;
+    headline = `The ${ROLE[cards[decoy]].name} was eliminated, so the ${winningTeam === "werewolf" ? "Werewolf team" : "Centaurs"} win${winningTeam === "werewolf" ? "s" : ""}${W ? ", even though a Werewolf fell too" : ""}.`;
+    seatsOf(winningTeam).forEach(i => winners.add(i));
+  } else if (!wolvesHeld) {
+    if (!deaths.length) {
+      winningTeam = "centaur"; reason = "nobody held a Werewolf card and nobody was eliminated";
+      headline = "No player held a Werewolf card and nobody was eliminated. The Centaurs win.";
+      seatsOf("centaur").forEach(i => winners.add(i));
+    } else {
+      const allies = seatsOf("werewolf").filter(i => !dead(i));
+      if (allies.length) {
+        winningTeam = "werewolf"; reason = "nobody held a Werewolf card, yet someone was eliminated (only its surviving members win)";
+        headline = "No player held a Werewolf card, but the herd turned on itself. The Werewolf team's survivors win.";
+        allies.forEach(i => winners.add(i));
+      } else {
+        winningTeam = "nobody"; reason = "nobody held a Werewolf card, yet someone was eliminated";
+        headline = "No player held a Werewolf card, and someone was eliminated anyway. No team wins.";
+      }
+    }
+  } else if (rules.bloodPrice ? W > C : W > 0) {
+    winningTeam = "centaur";
+    reason = C ? `more Werewolves than Centaurs were eliminated (${W} to ${C})` : W === 1 ? "a Werewolf was eliminated" : `${W} Werewolves were eliminated`;
+    headline = C ? `More Werewolves than Centaurs were eliminated (${W} to ${C}). The Centaurs win.` : `${W === 1 ? "A Werewolf was" : `${W} Werewolves were`} eliminated. The Centaurs win.`;
+    seatsOf("centaur").forEach(i => winners.add(i));
+  } else {
+    winningTeam = "werewolf";
+    if (!deaths.length) { reason = "nobody was eliminated"; headline = "Nobody was eliminated. The Werewolf team wins."; }
+    else if (!W) { reason = "no Werewolf was eliminated"; headline = "No Werewolf was eliminated. The Werewolf team wins."; }
+    else { reason = `as many Centaurs as Werewolves fell (${W} to ${C}), and the Blood Price makes that a Centaur loss`; headline = `A Werewolf fell, but so did ${C === 1 ? "a Centaur" : `${C} Centaurs`} (${W} to ${C}): under the Blood Price the Werewolf team wins.`; }
+    seatsOf("werewolf").forEach(i => winners.add(i));
   }
-  if (!deaths.length) return done(seatsOf("centaur"), "centaur", "There was no Werewolf at the table and nobody was eliminated. The Centaurs win.");
-  const allies = seatsOf("werewolf").filter(i => !dead(i));
-  if (allies.length) return done(allies, "werewolf", "There was no Werewolf at the table, but the herd turned on itself. The wolves' allies win.");
-  return done([], "nobody", "There was no Werewolf at the table, and someone was eliminated anyway. Nobody wins.");
+
+  // ── creatures ──
+  const keystoneDead = deaths.some(i => winRule(i) === "keystone");
+  const creatureWhy = (i: number): string => {
+    const rule = winRule(i), name = imago.has(i) ? "Imago" : ROLE[cards[i]].name;
+    if (rule === "keystone") {
+      if (dead(i)) return `held the ${name} and was eliminated, so lost (and took the whole wood down)`;
+      const fallen = deaths.filter(j => j !== i && creature(j));
+      if (fallen.length) return `held the ${name} and lost, because another creature was eliminated`;
+      winners.add(i); return `held the ${name} and won, because no creature was eliminated`;
+    }
+    if (keystoneDead) return `held the ${name}, but the Elderbark was eliminated, so no other creature wins`;
+    if (rule === "eliminated") {
+      if (dead(i)) { winners.add(i); return imago.has(i) ? "became an Imago when their card was moved in the night, and won by being eliminated" : `held the ${name} and won by being eliminated`; }
+      return imago.has(i) ? "became an Imago when their card was moved in the night, and lost because they were not eliminated" : `held the ${name} and lost because they were not eliminated`;
+    }
+    if (rule === "markEliminated") {
+      const m = marks[cards[i]];
+      if (m === undefined) return `held the ${name}, which marked nobody, so lost`;
+      if (dead(i)) return `held the ${name} and lost, because they were eliminated themselves`;
+      if (!dead(m)) return `held the ${name} and lost, because the marked seat ${m} was not eliminated`;
+      winners.add(i); return `held the ${name} and won, because the marked seat ${m} was eliminated and they were not`;
+    }
+    return "";
+  };
+  for (let i = 0; i < n; i++) if (creature(i) && winRule(i) !== "markWins") why[i] = creatureWhy(i);
+
+  // ── curse ──
+  const cursers = deaths.filter(i => creature(i) && ROLE[cards[i]].curse);
+  const cursed = votes.flatMap((v, j) => (v !== null && cursers.includes(v) && (rules.randomVotesCurse || !forced.has(j)) ? [j] : []));
+
+  // ── the Oxpecker: follows its host, after the curse ──
+  for (let i = 0; i < n; i++) {
+    if (winRule(i) !== "markWins") continue;
+    const host = marks[cards[i]], name = ROLE[cards[i]].name;
+    if (host === undefined || host === i) why[i] = `held the ${name}, bonded to ${host === i ? "their own seat" : "nobody"}, so lost`;
+    else if (keystoneDead) why[i] = `held the ${name}, but the Elderbark was eliminated, so no other creature wins`;
+    else if (winners.has(host) && !cursed.includes(host)) { winners.add(i); why[i] = `held the ${name} and won with the seat it bonded to (seat ${host}), which won`; }
+    else why[i] = `held the ${name} and lost with the seat it bonded to (seat ${host}), which lost`;
+  }
+  for (const j of cursed) winners.delete(j);
+
+  // ── why, for everyone else ──
+  const teamWord: Record<Team, string> = { centaur: "the Centaur team", werewolf: "the Werewolf team", wild: "the Wildwood" };
+  for (let i = 0; i < n; i++) {
+    if (!why[i]) {
+      const t = teams[i], on = i === bitten ? `was bitten, so played for ${teamWord[t]}` : `held the ${ROLE[cards[i]].name}, on ${teamWord[t]}`;
+      if (winningTeam === "nobody") why[i] = `${on}, and no team won because ${reason}`;
+      else if (t === winningTeam) why[i] = winners.has(i) || cursed.includes(i) ? `${on}, which won because ${reason}` : `${on}, which won because ${reason}, but only its surviving members win`;
+      else why[i] = `${on}, which lost because ${reason}`;
+    }
+    if (cursed.includes(i)) why[i] += `; then voted for the Sporeling holder (seat ${votes[i]}), who was eliminated, so lost to the curse`;
+    why[i] = `${winners.has(i) ? "Won" : "Lost"}: ${why[i]}.`;
+  }
+
+  for (let i = 0; i < n; i++) if (creature(i) && winners.has(i)) notes.push(`Seat ${i} won as the ${imago.has(i) ? "Imago" : ROLE[cards[i]].name}.`);
+  if (cursed.length) notes.push(`The Sporeling's curse: ${cursed.map(j => `seat ${j}`).join(", ")} voted for it and lost.`);
+  return { tally, deaths, winners: [...winners].sort((a, b) => a - b), winningTeam, headline, notes, teams, why, cursed, wolvesDown: W, centaursDown: C };
 }
 
-/** Deck checks for the lobby: the count, and each role's copy limit. */
-export function deckProblem(deck: RoleId[], players: number, center: number): string | null {
+/** Deck checks for the lobby: the count, each role's copy limit, and the deck rules of the roster and table rules. */
+export function deckProblem(deck: RoleId[], players: number, center: number, rules: Partial<Rules> = {}): string | null {
+  const r = { ...DEFAULT_RULES, ...rules };
   if (players < 3) return `Needs 3 players (${players} seated).`;
   if (center < CENTER_MIN || center > CENTER_MAX) return `The centre holds ${CENTER_MIN} to ${CENTER_MAX} cards.`;
   const need = players + center;
   if (deck.length !== need) return `The deck needs ${need} cards: ${players} players and ${center} in the centre (it has ${deck.length}).`;
   for (const id of new Set(deck)) {
     if (!ROLE[id]) return `Unknown role ${id}.`;
-    if (deck.filter(r => r === id).length > ROLE[id].max) return `Too many copies of ${ROLE[id].name}.`;
+    if (deck.filter(x => x === id).length > ROLE[id].max) return `Too many copies of ${ROLE[id].name}.`;
   }
+  if (deck.includes("forger") && !deck.includes("herald")) return "A Forger needs a Herald in the deck.";
+  if (deck.includes("forger") && !r.dawnProclamations) return "A Forger needs the \"Proclamations at dawn\" rule: otherwise the timing gives the forgery away.";
+  if (deck.some(id => ROLE[id].dayPower === "swap") && players < r.thiefMinPlayers) return `The Moon-Thief needs ${r.thiefMinPlayers} or more players at this table (the "Moon-Thief table size" rule).`;
   return null;
 }
