@@ -1,7 +1,7 @@
 # Centaur Werewolf
 
 A one-night hidden-role game for 3 to 12 players, built on [Convex](https://convex.dev) and React. Werewolves and
-their allies hide among the Centaurs, and the creatures of the Wildwood play their own game alongside; everyone acts
+their allies hide among the Centaurs, and the Pyre schemes to get its Phoenix burned; everyone acts
 once in the night, talks in the day, and votes once. AI assistants can play a seat over MCP.
 
 What is different from a table-top night:

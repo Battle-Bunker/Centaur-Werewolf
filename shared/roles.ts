@@ -8,8 +8,8 @@
  * `curse`, `metamorph`), a once-per-game `chat` power and a `dayPower` of the player dealt the card.
  */
 
-/** wild: the Wildwood creatures, who win or lose by their own rules alongside the main result. */
-export type Team = "centaur" | "werewolf" | "wild";
+/** pyre: the third team (the Phoenix and its Kindlers). loner: cards that win by their own rule alongside the result. */
+export type Team = "centaur" | "werewolf" | "pyre" | "loner";
 export type RoleId = string;
 
 /** A card position: a player's seat or one of the centre cards. */
@@ -66,7 +66,13 @@ export type Effect =
   /** The player at `target` joins the Werewolf team at dawn, unless their card is already on it. Binds to the SEAT. */
   | { kind: "bite"; target: Ref }
   /** The actor's dealt card is marked with the seat at `target`; a `public` mark is shown to everyone at dawn. */
-  | { kind: "mark"; target: Ref; public: boolean; label: string };
+  | { kind: "mark"; target: Ref; public: boolean; label: string }
+  /**
+   * The actor becomes a copy of the card at the step's first pick, for the rest of the game: the copy is recorded on
+   * the actor's CARD (instance), takes that card's true, current identity (what it has become, if it is a copier;
+   * never a distortion), and from then on acts in that role's turn with its script, and wins, votes and speaks as it.
+   */
+  | { kind: "adopt" };
 
 export interface StepDef {
   id: string;
@@ -85,19 +91,17 @@ export interface StepDef {
   skipLabel?: string;
   /** The step only happens when no other player was dealt a role sharing this tag (the lone wolf's step). */
   onlyIfAlone?: string;
+  /** The step only happens when this table rule is on. */
+  ifRule?: string;
   effects: Effect[];
 }
 
-/** How the holder wins, when not simply with their team. */
+/** How a loner's holder wins. */
 export type WinRule =
-  /** Wins if eliminated. */
-  | "eliminated"
   /** Wins if the seat this card marked is eliminated and the holder is not. */
   | "markEliminated"
   /** Wins exactly when the seat this card marked wins. */
-  | "markWins"
-  /** Wins if not eliminated and no other creature is; if eliminated, no other creature wins. */
-  | "keystone";
+  | "markWins";
 
 export interface RoleDef {
   id: RoleId;
@@ -119,15 +123,15 @@ export interface RoleDef {
   wake?: number;
   steps?: StepDef[];
   /** Day-vote modifiers, applied by the card a player HOLDS when the vote is counted. */
-  vote?: { weight?: number; protectsTarget?: boolean; takesTargetDown?: boolean };
-  /** How the holder wins, when not simply with `team` (creature rules: a bitten holder loses them). */
+  vote?: { weight?: number; protectsTarget?: boolean; takesTargetDown?: boolean; /** This weight when the vote goes to a holder of a card with the tag. */ weightAgainst?: { tag: string; weight: number } };
+  /** How a loner's holder wins (a bitten holder loses it). */
   win?: WinRule;
   /** If the holder is eliminated, this card's team wins the main result, whatever else falls. */
   decoy?: boolean;
-  /** Every player whose own vote went to an eliminated holder of this card loses, whatever else happens. */
-  curse?: boolean;
-  /** If the card dealt to this card's seat is moved during the night, that seat becomes an Imago at dawn. */
-  metamorph?: boolean;
+  /** If no player holds a Phoenix at dawn, this card becomes a Phoenix. */
+  heir?: boolean;
+  /** Acts in this role's night turn (a shared turn, so the timetable does not tell the kinds apart). */
+  turnOf?: RoleId;
   /**
    * A once-per-game chat power of the player DEALT this card. signed: a free-text post sealed as from the player dealt
    * this card. report: a sealed post the game composes from the actor's night look. forge: a post carrying any seal of
@@ -137,8 +141,9 @@ export interface RoleDef {
   /**
    * A day power of the player DEALT this card. swap: queue a swap of two other players' cards, made when the vote
    * phase ends. cut: once, cut one player off the table for a while, exactly as if their connection dropped.
+   * ember: queue a seat to receive the Phoenix card when the vote phase ends.
    */
-  dayPower?: "swap" | "cut";
+  dayPower?: "swap" | "cut" | "ember";
   /** A twin: acts in the named role's turn with the same steps, on another team. */
   twinOf?: RoleId;
   /** What a look at this card shows instead of the card itself (a twin that passes for its original). */
@@ -149,6 +154,9 @@ const look = (targets: Ref[] | "picks", reveal: "role" | "team" = "role"): Effec
 /** R2: every pack card begins its turn seeing the other pack seats and the census of the centre. */
 const pack: StepDef = { id: "pack", title: "Meet the pack", effects: [{ kind: "learnSeats", tag: "pack", label: "The pack" }, { kind: "census" }] };
 const scent: StepDef = { id: "scent", title: "Alone: scent a player", onlyIfAlone: "pack", optional: true, skipLabel: "Don't scent", pick: { pools: ["others"], count: 1 }, effects: [look("picks", "team")] };
+const KINDLER_RULE = "You are a Kindler of the Pyre. In the early turn \"The brood gathers\" (shared by every Kindler kind, and by the Phoenix only under the \"Phoenix knows its kin\" rule) you learn which seats were DEALT a Phoenix and which were dealt Kindler cards. You and every Kindler win exactly when a player holding a Phoenix card is eliminated, whether or not you survive (see the Pyre rules for when no player holds one).";
+const GATHER: StepDef = { id: "gather", title: "The brood gathers", effects: [{ kind: "learnSeats", tag: "phoenix", label: "The Phoenix (as dealt)" }, { kind: "learnSeats", tag: "kindler", label: "Fellow Kindlers" }] };
+const COPY_RULE = "You wake before everyone else. For the rest of the game you are a copy of the card you take: its team, whether it counts as a Werewolf, its win rule, its vote and chat and day powers (your own uses of them), and its night action, which you then perform in that role's own turn (decide it live, or queue it in advance for each role you might become; undecided steps get a random move). You take the card's TRUE identity even if a distortion showed you something else, and you are told what you became. If the card is itself a copier, you become what it has become (or, if it has not, a copier with nothing left to do, on the Centaur team). The pack does not learn about you; if you become a pack card, you do see the pack. A look at your card always shows your own face (Gleaner or Echo), and if your card is moved its new holder holds the copy. If you never become anything, you are on the Centaur team.";
 const PACK_RULE = "You wake knowing which other players were dealt cards of the pack (the Werewolves and the cards that wake with them) and, under the Den Census rule, which roles lie in the centre (not where).";
 
 export const ROLES: RoleDef[] = [
@@ -344,37 +352,77 @@ export const ROLES: RoleDef[] = [
     blurb: "May post one message the table knows came from the player dealt Signet.",
     rules: "You do nothing at night. Once during the day you may post a message that the game itself marks as sent by the player who was dealt Signet. It proves the card you were dealt, not the card you hold now.",
   },
+  // ── The Pyre: a third team. The Phoenix must burn (be eliminated) for its Kindlers to win. ──
   {
-    id: "moth", name: "Moth", team: "centaur", tags: ["wild"], max: 12, metamorph: true,
-    blurb: "Starts as a Centaur; if its card is moved in the night, its seat wakes as an Imago that wants to be eliminated.",
-    rules: "You do nothing at night and start as a Centaur (a Larva). If the card dealt to you is moved during the night, at dawn you are told you have become an Imago: a creature that wins only by being eliminated, whatever card you hold. Otherwise whoever holds this card is on the Centaur team. A swap during the day does not change it.",
-  },
-  // ── The Wildwood: creatures ──
-  {
-    id: "elderbark", name: "Elderbark", team: "wild", tags: ["wild"], max: 12, wake: 8, win: "keystone",
-    blurb: "Learns which seats were dealt creatures. Wins if no creature is eliminated.",
-    rules: "You learn which other seats were dealt creature cards (the Moth included). Whoever holds this card wins if they are not eliminated and no other creature or Imago is. If they are eliminated, no other creature wins.",
-    steps: [{ id: "map", title: "Read the wood", effects: [{ kind: "learnSeats", tag: "wild", label: "Creatures" }] }],
+    id: "phoenix", name: "Phoenix", team: "pyre", tags: ["phoenix"], max: 12, wake: 5, turnOf: "kindler",
+    blurb: "The Pyre's sacrifice: the Pyre wins if whoever holds this card is eliminated.",
+    rules: "You are the Pyre's sacrifice. The whole Pyre team (you and every Kindler) wins if the player HOLDING a Phoenix card is eliminated. You do not know who the Kindlers are (unless the table's \"Phoenix knows its kin\" rule is on: then you wake with the brood and learn their seats). If the card moves, its new holder is the Phoenix, untold.",
+    steps: [{ id: "kin", title: "Know your kin", ifRule: "phoenixKnowsKindlers", effects: [{ kind: "learnSeats", tag: "kindler", label: "Your Kindlers" }] }],
   },
   {
-    id: "cuckoo", name: "Cuckoo", team: "wild", tags: ["wild"], max: 12, wake: 25, win: "markEliminated",
-    blurb: "Looks at a card, then lays its egg on a player; wins if the egged player is eliminated.",
-    rules: "Look at one other player's card, then lay your egg on any other player. At dawn everyone sees which seat holds the egg, but not who laid it. The egg stays with this CARD: whoever holds it when the votes are counted wins if the egged player is eliminated and they are not. If nobody holds the Cuckoo at night, the game lays the egg on a random seat and it benefits nobody.",
+    id: "kindler", name: "Kindler", team: "pyre", tags: ["kindler"], max: 12, wake: 5,
+    blurb: "Pyre: learns where the Phoenix was dealt and who the other Kindlers are; wins when the Phoenix burns.",
+    rules: `${KINDLER_RULE}`,
+    steps: [GATHER],
+  },
+  {
+    id: "lure", name: "Lure", team: "pyre", tags: ["kindler"], max: 12, wake: 5, turnOf: "kindler",
+    blurb: "A Kindler who makes one card read as a role of their choosing tonight, so honest eyes accuse it.",
+    rules: `${KINDLER_RULE} Then choose any one card and any role in the deck: until dawn every look at that card (except the Werewolf team's) shows that role, wherever it moves. Dress the Phoenix as a Werewolf and let honest seers condemn it.`,
+    steps: [GATHER, { id: "lure", title: "Dress a card for the pyre", names: "deck", pick: { pools: ["self", "others", "center"], count: 1 }, effects: [{ kind: "distort", target: "card", value: "chosen" }] }],
+  },
+  {
+    id: "falsewitness", name: "False Witness", team: "pyre", tags: ["kindler"], max: 12, wake: 5, turnOf: "kindler", chat: "forge",
+    blurb: "A Kindler who can post one forged seal, e.g. a Notary's report naming the Phoenix as a Werewolf.",
+    rules: `${KINDLER_RULE} Once during the day you may post one forged sealed message (a Signet message, or a Notary's report \"at night, <player>'s card was <role>\" of your choosing), identical to a real one until the game ends. The sealing role must be in the deck.`,
+    steps: [GATHER],
+  },
+  {
+    id: "embercarrier", name: "Ember-Carrier", team: "pyre", tags: ["kindler"], max: 12, wake: 5, turnOf: "kindler", dayPower: "ember",
+    blurb: "A Kindler who can carry the ember: as the vote ends, the Phoenix card swaps with a chosen player's card.",
+    rules: `${KINDLER_RULE} During discussion or the vote you may queue \"carry the ember to seat X\" (any other player). The instant the vote ends, after any Moon-Thief swap and before anything is counted, a Phoenix card (one held by a player if any, else one in the centre) swaps places with seat X's card: whoever the herd is about to burn becomes the Phoenix. You may change or clear it until then.`,
+    steps: [GATHER],
+  },
+  {
+    id: "heavyhand", name: "Heavy Hand", team: "pyre", tags: ["kindler"], max: 12, wake: 5, turnOf: "kindler", vote: { weightAgainst: { tag: "phoenix", weight: 2 } },
+    blurb: "A Kindler whose vote counts double when cast for whoever holds the Phoenix.",
+    rules: `${KINDLER_RULE} Whoever holds this card when the votes are counted has a vote that counts twice if it goes to a player holding a Phoenix card, once otherwise.`,
+    steps: [GATHER],
+  },
+  {
+    id: "heir", name: "Heir", team: "pyre", tags: ["kindler"], max: 12, wake: 5, turnOf: "kindler", heir: true,
+    blurb: "A Kindler whose card becomes a Phoenix if no player holds one at dawn.",
+    rules: `${KINDLER_RULE} If at dawn no player holds a Phoenix card (it lies in the centre or was moved there), the card of the Heir becomes a Phoenix for the rest of the game and whoever holds it is told: the Pyre always has something to burn.`,
+    steps: [GATHER],
+  },
+  // ── Loners: each wins by its own rule, alongside whatever team wins. ──
+  {
+    id: "cuckoo", name: "Cuckoo", team: "loner", tags: [], max: 12, wake: 25, win: "markEliminated",
+    blurb: "A loner: looks at a card, then lays its egg on a player; wins if the egged player is eliminated.",
+    rules: "You are a loner: you win by your own rule, alongside whatever team wins, and lose otherwise. Look at one other player's card, then lay your egg on any other player. At dawn everyone sees which seat holds the egg, but not who laid it. The egg stays with this CARD: whoever holds it when the votes are counted wins if the egged player is eliminated and they are not. If nobody holds the Cuckoo at night, the game lays the egg on a random seat and it benefits nobody.",
     steps: [
       { id: "peek", title: "Look at a player's card", pick: { pools: ["others"], count: 1 }, effects: [look("picks")] },
       { id: "egg", title: "Lay your egg on a player", pick: { pools: ["others"], count: 1 }, effects: [{ kind: "mark", target: { pick: 0 }, public: true, label: "The egg" }] },
     ],
   },
   {
-    id: "oxpecker", name: "Oxpecker", team: "wild", tags: ["wild"], max: 12, wake: 85, win: "markWins",
-    blurb: "Looks at a player's card and bonds to them; wins exactly when they win.",
-    rules: "Late in the night, look at one other player's card and bond to that seat. The bond stays with this CARD: whoever holds it wins exactly when the player in the bonded seat wins, whatever side that turns out to be (unless the Elderbark is eliminated).",
+    id: "oxpecker", name: "Oxpecker", team: "loner", tags: [], max: 12, wake: 85, win: "markWins",
+    blurb: "A loner: looks at a player's card and bonds to them; wins exactly when they win.",
+    rules: "You are a loner. Late in the night, look at one other player's card and bond to that seat. The bond stays with this CARD: whoever holds it wins exactly when the player in the bonded seat wins, whatever side that turns out to be, and loses otherwise.",
     steps: [{ id: "bond", title: "Bond to a player", pick: { pools: ["others"], count: 1 }, effects: [look("picks"), { kind: "mark", target: { pick: 0 }, public: false, label: "Your bond" }] }],
   },
+  // ── Copiers: become another role for the rest of the game. ──
   {
-    id: "sporeling", name: "Sporeling", team: "wild", tags: ["wild"], max: 12, win: "eliminated", curse: true,
-    blurb: "Wins if eliminated; everyone who voted for it then loses.",
-    rules: "You do nothing at night. Whoever holds this card wins if they are eliminated, and then every player whose own vote went to them loses, whichever side they were on. A vote the game cast at random does not count for this, unless the table's rule says so.",
+    id: "gleaner", name: "Gleaner", team: "centaur", tags: [], max: 12, wake: 2,
+    blurb: "Wakes first, looks at a centre card and becomes that role for the rest of the game.",
+    rules: `${COPY_RULE} You look at one centre card and become a copy of it.`,
+    steps: [{ id: "glean", title: "Take a role from the centre", pick: { pools: ["center"], count: 1 }, effects: [look("picks"), { kind: "adopt" }] }],
+  },
+  {
+    id: "echo", name: "Echo", team: "centaur", tags: [], max: 12, wake: 3,
+    blurb: "Wakes first, looks at another player's card and becomes that role for the rest of the game.",
+    rules: `${COPY_RULE} You look at another player's card and become a copy of it.`,
+    steps: [{ id: "echo", title: "Take a role from a player", pick: { pools: ["others"], count: 1 }, effects: [look("picks"), { kind: "adopt" }] }],
   },
 ];
 
@@ -400,7 +448,7 @@ for (const t of TWINS) {
 
 export const ROLE: Record<RoleId, RoleDef> = Object.fromEntries(ROLES.map(r => [r.id, r]));
 export const roleName = (id: RoleId) => ROLE[id]?.name ?? id;
-export const TEAM_NAME: Record<Team, string> = { centaur: "Centaur team", werewolf: "Werewolf team", wild: "Wildwood" };
+export const TEAM_NAME: Record<Team, string> = { centaur: "Centaur team", werewolf: "Werewolf team", pyre: "Pyre", loner: "Loner (wins alone)" };
 
 /** Roles that take a night turn, in wake order. */
 export const NIGHT_ROLES = ROLES.filter(r => r.steps && r.wake !== undefined).sort((a, b) => a.wake! - b.wake!);
@@ -426,6 +474,6 @@ export function legalRoles(step: StepDef, deck: RoleId[], actor?: RoleId): RoleI
 
 /** A sensible deck for a table: wolves and their allies scale with its size, the rest mixes information, movement and vote roles. */
 export function recommendedDeck(players: number, center: number = CENTER_DEFAULT): RoleId[] {
-  const order = ["werewolf", "werewolf", "sage", "rustler", "centaur", "farrier", "herald", "sentry", "centaur", "herder", "whisperer", "chiron", "cuckoo", "spooker", "elderbark", "centaur", "tracker", "oxpecker"];
+  const order = ["werewolf", "werewolf", "sage", "rustler", "centaur", "farrier", "herald", "sentry", "centaur", "herder", "whisperer", "chiron", "cuckoo", "spooker", "notary", "centaur", "tracker", "oxpecker"];
   return order.slice(0, Math.min(order.length, players + center));
 }

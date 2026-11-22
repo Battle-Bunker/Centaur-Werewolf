@@ -34,6 +34,7 @@ function effectWords(e: Effect, s: StepDef): string {
     case "forge": return `adds a forged proclamation of the named role at the chosen centre card(s), published at dawn exactly as the ${ROLE[e.as]?.name ?? e.as}'s, in random order with the real ones`;
     case "overhear": return "names a role; receives a copy of everything the first player clockwise who was DEALT it learned tonight (or, if nobody was, a ghost result per the table rule)";
     case "bite": return "bites the player at the looked-at seat: unless their card is on the Werewolf team, they join the Werewolf team at dawn (told privately)";
+    case "adopt": return "becomes a copy of that card for the rest of the game (its TRUE current identity, not a distortion): team, Werewolf or not, win rule, vote/chat/day powers, and its night action, performed in that role's own turn";
     case "mark": return e.public ? `lays ${e.label.toLowerCase()} on the chosen player (bound to THIS card; shown to everyone at dawn, not who laid it)` : `binds this card to the chosen player's seat (${e.label.toLowerCase()}, private)`;
   }
 }
@@ -49,10 +50,8 @@ function stepWords(s: StepDef): string {
 }
 
 const WIN: Record<string, string> = {
-  eliminated: "wins if eliminated (alongside whatever team result)",
   markEliminated: "wins if the seat marked by THIS card is eliminated and the holder is not",
-  markWins: "wins exactly when the seat bonded to THIS card wins (after the curse)",
-  keystone: "wins if not eliminated and no other creature or Imago is eliminated; if eliminated, no other creature wins",
+  markWins: "wins exactly when the seat bonded to THIS card wins (after everything else is decided)",
 };
 
 function card(r: RoleDef, turnPos: Map<string, number>): string {
@@ -62,7 +61,8 @@ function card(r: RoleDef, turnPos: Map<string, number>): string {
   lines.push(`### ${r.name} (\`${r.id}\`)`);
   lines.push("");
   lines.push(`- **Team:** ${TEAM_NAME[r.team]}. **Counts as a Werewolf:** ${wolf ? "yes" : "no"}.${pack ? " **Pack:** wakes knowing the other pack seats and gets the census." : ""} Tags: ${r.tags.length ? r.tags.join(", ") : "none"}. Copies allowed: up to ${r.max}.`);
-  lines.push(`- **Night:** ${r.steps && turn.wake !== undefined ? `${r.twinOf ? `acts in the ${turn.name}'s turn (a shadow twin: one public turn for both)` : "has its own turn"}, wake ${turn.wake} (position ${turnPos.get(turn.id)} of the full roster's night order).` : "no night action."}`);
+  const shared = r.turnOf ? ROLE[r.turnOf] : turn;
+  lines.push(`- **Night:** ${r.steps && shared.wake !== undefined ? `${r.twinOf ? `acts in the ${turn.name}'s turn (a shadow twin: one public turn for both)` : r.turnOf ? `acts in the shared "${shared.name}" turn` : "has its own turn"}, wake ${shared.wake} (position ${turnPos.get(shared.id)} of the full roster's night order).` : "no night action."}`);
   for (const s of r.steps ?? []) lines.push(`  - ${stepWords(s)}`);
   lines.push(`- **A look at this card shows:** ${r.looksAs ? `a ${ROLE[r.looksAs].name} (it passes for its original), except to Werewolf-team looks` : "this card"}${r.looksAs ? "" : ", unless distorted"}.`);
   const powers: string[] = [];
@@ -76,11 +76,12 @@ function card(r: RoleDef, turnPos: Map<string, number>): string {
   if (r.dayPower === "cut") powers.push("once, the player DEALT it may cut another player off for the cut length, exactly as a dropped connection (day_cutLine)");
   lines.push(`- **Day / vote / chat powers:** ${powers.length ? powers.join("; ") : "none"}.`);
   const win: string[] = [];
-  if (r.win) win.push(`its holder ${WIN[r.win]} (a creature rule: lost if bitten)`);
+  if (r.win) win.push(`a loner: its holder ${WIN[r.win]}, alongside whatever team wins (lost if bitten)`);
+  else if (r.team === "pyre") win.push("with the Pyre: every Pyre card's holder wins when a player holding a Phoenix card is eliminated (see section 5)");
   else win.push(`with the ${TEAM_NAME[r.team]}`);
-  if (r.decoy) win.push(`if its holder is eliminated, the ${TEAM_NAME[r.team]} wins the main result outright`);
-  if (r.curse) win.push("every player whose own vote went to an eliminated holder loses (the curse)");
-  if (r.metamorph) win.push("if the card DEALT to this seat is moved at night, that seat becomes an Imago at dawn (a creature that wins only if eliminated)");
+  if (r.decoy) win.push(`if its holder is eliminated, the ${TEAM_NAME[r.team]} wins the main result outright (unless a burning denies it)`);
+  if (r.heir) win.push("if the deck's Phoenix is not held by any player at dawn, this card becomes a Phoenix (its holder is told)");
+  if (r.vote?.weightAgainst) win.push(`its holder's vote counts ${r.vote.weightAgainst.weight} when cast for a holder of a "${r.vote.weightAgainst.tag}" card`);
   lines.push(`- **Win:** ${win.join("; ")}.`);
   lines.push(`- **Card text:** ${r.rules}`);
   return lines.join("\n");
@@ -181,7 +182,7 @@ Roles with no night action: ${ROLES.filter(r => !r.steps).map(r => r.name).join(
 
 ## 7. Every card
 
-${(["werewolf", "centaur", "wild"] as const).map(t => `## ${TEAM_NAME[t]}\n\n${byTeam(t).map(r => card(r, turnPos)).join("\n\n")}`).join("\n\n")}
+${(["werewolf", "centaur", "pyre", "loner"] as const).map(t => `## ${TEAM_NAME[t]}\n\n${byTeam(t).map(r => card(r, turnPos)).join("\n\n")}`).join("\n\n")}
 `.replace(/\n{3,}/g, "\n\n");
 }
 

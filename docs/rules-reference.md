@@ -29,7 +29,6 @@ It states the game exactly as built. Design history: docs/design/synthesis.md an
 | `bloodPrice` | Blood Price | true | on / off | The Centaurs win only if more Werewolves than Centaurs are eliminated: a tie that takes down a Centaur along with a Werewolf is a loss for the Centaurs. |
 | `census` | Den Census | "all" | all / three / off | Every card of the pack (Werewolves and the cards that wake with them) learns which roles were dealt to the centre: the roles, not their positions. |
 | `dawnProclamations` | Proclamations at dawn | true | on / off | Every proclamation (the Herald's, and a Forger's) is published together at dawn, in random order, each marked "Herald's turn" and true at that moment of the night. |
-| `randomVotesCurse` | Random votes curse | false | on / off | A vote the game cast at random never triggers the Sporeling's curse. |
 | `biteNamesBiter` | The bitten know the Biter | true | on / off | A bitten player is told which seat bit them. |
 | `eavesdropGhost` | Eavesdropper's own result | true | on / off | If nobody was dealt the role the Eavesdropper names, it secretly gets a real result of its own as if it held that role (looks only, never moves), and is not told which case happened. |
 | `thiefMinPlayers` | Moon-Thief table size | 7 | 3 to 12 | The Moon-Thief may be in the deck only with 7 or more players. |
@@ -38,6 +37,9 @@ It states the game exactly as built. Design history: docs/design/synthesis.md an
 | `chatDuringVote` | Chat during the vote | false | on / off | Chat closes when the vote phase begins. |
 | `cutSeconds` | Hush cut length | 60 | 15 to 180 | A Hush's cut lasts 60 seconds. |
 | `cutDuringVote` | Hush during the vote | true | on / off | A Hush may cut during discussion or the vote phase, and a cut may run on into the vote. |
+| `phoenixKnowsKindlers` | Phoenix knows its kin | false | on / off | The Phoenix does not know who the Kindlers are; the Kindlers know where the Phoenix was dealt. |
+| `burningDeniesWolves` | A burning denies the wolves | true | on / off | When a Phoenix holder is eliminated (a burning), the Werewolf team cannot win, and the Centaurs win only if a Werewolf was eliminated too (with Blood Price deciding ties as usual). |
+| `pyreFallback` | When no Phoenix is held | "kindler" | kindler / none | If no player holds a Phoenix card at the count, the Pyre wins if any player holding a Kindler card is eliminated (that counts as a burning). |
 
 ## 4. Information, looks and movement
 
@@ -89,37 +91,39 @@ It states the game exactly as built. Design history: docs/design/synthesis.md an
 
 ## 6. Night order (the full roster)
 
-1. Elderbark (wake 8)
-2. Werewolf (wake 10)
-3. Stalking Horse (wake 11)
-4. Glamour (wake 12)
-5. Moon-Thief (wake 13)
-6. Will-o'-Wisp (wake 14)
-7. Tracker (wake 15)
-8. Mistweaver (wake 16)
-9. Fogbank (wake 17)
-10. Whisperer (wake 20)
-11. Cuckoo (wake 25)
-12. Sage (wake 30) + Moonsage
-13. Notary (wake 32)
-14. Centaur (wake 35) + Dun Centaur
-15. Herald (wake 40) + Pale Herald
-16. Forger (wake 42)
-17. Poacher (wake 44)
-18. Rustler (wake 45) + Dusk Rustler
-19. Cutpurse (wake 46)
-20. Pickpocket (wake 47)
-21. Drifter (wake 48)
-22. Farrier (wake 50)
-23. Spooker (wake 55)
-24. Herder (wake 80) + Stray Herder
-25. Oxpecker (wake 85)
-26. Latecomer (wake 88)
-27. Sentry (wake 90)
-28. Eavesdropper (wake 93)
-29. Biter (wake 96)
+1. Gleaner (wake 2)
+2. Echo (wake 3)
+3. Kindler (wake 5)
+4. Werewolf (wake 10)
+5. Stalking Horse (wake 11)
+6. Glamour (wake 12)
+7. Moon-Thief (wake 13)
+8. Will-o'-Wisp (wake 14)
+9. Tracker (wake 15)
+10. Mistweaver (wake 16)
+11. Fogbank (wake 17)
+12. Whisperer (wake 20)
+13. Cuckoo (wake 25)
+14. Sage (wake 30) + Moonsage
+15. Notary (wake 32)
+16. Centaur (wake 35) + Dun Centaur
+17. Herald (wake 40) + Pale Herald
+18. Forger (wake 42)
+19. Poacher (wake 44)
+20. Rustler (wake 45) + Dusk Rustler
+21. Cutpurse (wake 46)
+22. Pickpocket (wake 47)
+23. Drifter (wake 48)
+24. Farrier (wake 50)
+25. Spooker (wake 55)
+26. Herder (wake 80) + Stray Herder
+27. Oxpecker (wake 85)
+28. Latecomer (wake 88)
+29. Sentry (wake 90)
+30. Eavesdropper (wake 93)
+31. Biter (wake 96)
 
-Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling.
+Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 
 ## 7. Every card
 
@@ -128,7 +132,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Werewolf (`werewolf`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** yes. **Pack:** wakes knowing the other pack seats and gets the census. Tags: wolf, pack. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 10 (position 2 of the full roster's night order).
+- **Night:** has its own turn, wake 10 (position 4 of the full roster's night order).
   - *Meet the pack* (automatic): learns which other seats were DEALT a card tagged "pack" (journal label "The pack"); then learns the roles DEALT to the centre (not where, not what is there now), per the Den Census rule.
   - *Alone: scent a player* (OPTIONAL (may be declined, unless the Mandatory-night-steps rule is on)): only if no other player was dealt a "pack" card; chooses another player's card; sees only the team of the chosen card.
 - **A look at this card shows:** this card, unless distorted.
@@ -139,18 +143,18 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Stalking Horse (`stalkinghorse`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** no. **Pack:** wakes knowing the other pack seats and gets the census. Tags: pack. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 11 (position 3 of the full roster's night order).
+- **Night:** has its own turn, wake 11 (position 5 of the full roster's night order).
   - *Meet the pack* (automatic): learns which other seats were DEALT a card tagged "pack" (journal label "The pack"); then learns the roles DEALT to the centre (not where, not what is there now), per the Den Census rule.
   - *Alone: scent a player* (OPTIONAL (may be declined, unless the Mandatory-night-steps rule is on)): only if no other player was dealt a "pack" card; chooses another player's card; sees only the team of the chosen card.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
-- **Win:** with the Werewolf team; if its holder is eliminated, the Werewolf team wins the main result outright.
+- **Win:** with the Werewolf team; if its holder is eliminated, the Werewolf team wins the main result outright (unless a burning denies it).
 - **Card text:** You wake knowing which other players were dealt cards of the pack (the Werewolves and the cards that wake with them) and, under the Den Census rule, which roles lie in the centre (not where). If no other pack card was dealt, you may scent one player's team. You are NOT a Werewolf. If whoever holds this card is eliminated, the Werewolf team wins, even if a Werewolf falls too.
 
 ### Glamour (`glamour`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** yes. **Pack:** wakes knowing the other pack seats and gets the census. Tags: wolf, pack. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 12 (position 4 of the full roster's night order).
+- **Night:** has its own turn, wake 12 (position 6 of the full roster's night order).
   - *Meet the pack* (automatic): learns which other seats were DEALT a card tagged "pack" (journal label "The pack"); then learns the roles DEALT to the centre (not where, not what is there now), per the Den Census rule.
   - *Cast a glamour* (MANDATORY): chooses your own card or another player's card or a centre card; names any role in the deck; distorts the chosen card: until dawn every look at it (except Werewolf-team looks) shows the role they name; it travels with the card.
 - **A look at this card shows:** this card, unless distorted.
@@ -161,7 +165,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Moon-Thief (`moonthief`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** yes. **Pack:** wakes knowing the other pack seats and gets the census. Tags: wolf, pack. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 13 (position 5 of the full roster's night order).
+- **Night:** has its own turn, wake 13 (position 7 of the full roster's night order).
   - *Meet the pack* (automatic): learns which other seats were DEALT a card tagged "pack" (journal label "The pack"); then learns the roles DEALT to the centre (not where, not what is there now), per the Den Census rule.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** the player DEALT it may queue a swap of two other players' cards during discussion or the vote; it happens as the vote ends, before counting (day_queueSwap).
@@ -171,7 +175,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Tracker (`tracker`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** yes. **Pack:** wakes knowing the other pack seats and gets the census. Tags: wolf, pack. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 15 (position 7 of the full roster's night order).
+- **Night:** has its own turn, wake 15 (position 9 of the full roster's night order).
   - *Meet the pack* (automatic): learns which other seats were DEALT a card tagged "pack" (journal label "The pack"); then learns the roles DEALT to the centre (not where, not what is there now), per the Den Census rule.
   - *Pick up a trail* (automatic): learns which other seats were DEALT a card tagged "seer" (only 1, chosen at random) (journal label "An information role").
 - **A look at this card shows:** this card, unless distorted.
@@ -182,7 +186,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Whisperer (`whisperer`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 20 (position 10 of the full roster's night order).
+- **Night:** has its own turn, wake 20 (position 12 of the full roster's night order).
   - *Hear a name* (automatic): learns which other seats were DEALT a card tagged "wolf" (only 1, chosen at random) (journal label "A Werewolf").
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -192,7 +196,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Forger (`forger`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 42 (position 16 of the full roster's night order).
+- **Night:** has its own turn, wake 42 (position 18 of the full roster's night order).
   - *See the Herald's proclamation* (automatic): sees what the Herald proclaimed so far tonight (or that nothing was).
   - *Forge a proclamation* (MANDATORY): chooses a centre card (2 centre cards when the centre holds 5 or more); names any role in the deck; adds a forged proclamation of the named role at the chosen centre card(s), published at dawn exactly as the Herald's, in random order with the real ones.
 - **A look at this card shows:** this card, unless distorted.
@@ -203,7 +207,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Spooker (`spooker`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 55 (position 23 of the full roster's night order).
+- **Night:** has its own turn, wake 55 (position 25 of the full roster's night order).
   - *Stampede three cards* (MANDATORY): chooses 3 different cards (each another player's card or a centre card); moves the chosen cards one place along (first to second's place, second to third's, third to first's), seeing none of them.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -213,7 +217,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Eavesdropper (`eavesdropper`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** yes. **Pack:** wakes knowing the other pack seats and gets the census. Tags: wolf, pack. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 93 (position 28 of the full roster's night order).
+- **Night:** has its own turn, wake 93 (position 30 of the full roster's night order).
   - *Meet the pack* (automatic): learns which other seats were DEALT a card tagged "pack" (journal label "The pack"); then learns the roles DEALT to the centre (not where, not what is there now), per the Den Census rule.
   - *Name a role to overhear* (MANDATORY): names a role in the deck that acts at night and is not of the pack (not itself); names a role; receives a copy of everything the first player clockwise who was DEALT it learned tonight (or, if nobody was, a ghost result per the table rule).
 - **A look at this card shows:** this card, unless distorted.
@@ -224,7 +228,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Biter (`biter`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** yes. **Pack:** wakes knowing the other pack seats and gets the census. Tags: wolf, pack. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 96 (position 29 of the full roster's night order).
+- **Night:** has its own turn, wake 96 (position 31 of the full roster's night order).
   - *Meet the pack* (automatic): learns which other seats were DEALT a card tagged "pack" (journal label "The pack"); then learns the roles DEALT to the centre (not where, not what is there now), per the Den Census rule.
   - *Look at a player's true card* (MANDATORY): chooses another player's card; sees the role of the chosen card.
   - *Bite them?* (OPTIONAL (may be declined, unless the Mandatory-night-steps rule is on)): bites the player at the looked-at seat: unless their card is on the Werewolf team, they join the Werewolf team at dawn (told privately).
@@ -236,7 +240,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Will-o'-Wisp (`wisp`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 14 (position 6 of the full roster's night order).
+- **Night:** has its own turn, wake 14 (position 8 of the full roster's night order).
   - *Lead a look astray* (MANDATORY): chooses your own card or another player's card or a centre card; distorts the chosen card: until dawn every look at it (except Werewolf-team looks) shows one random other role from the deck, drawn once; it travels with the card.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -246,7 +250,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Mistweaver (`mistweaver`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 16 (position 8 of the full roster's night order).
+- **Night:** has its own turn, wake 16 (position 10 of the full roster's night order).
   - *Veil a player's eyes* (MANDATORY): chooses another player's card; names any role in the deck; veils the chosen player: tonight every centre card they look at shows the role named.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -256,7 +260,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Fogbank (`fogbank`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 17 (position 9 of the full roster's night order).
+- **Night:** has its own turn, wake 17 (position 11 of the full roster's night order).
   - *Fog a player's eyes* (MANDATORY): chooses another player's card; veils the chosen player: tonight every centre card they look at shows a random wrong role, drawn at each look.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -266,7 +270,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Poacher (`poacher`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 44 (position 17 of the full roster's night order).
+- **Night:** has its own turn, wake 44 (position 19 of the full roster's night order).
   - *Swap with a player* (MANDATORY): chooses another player's card; swaps their own card with it; then sees the role of their own (new) card.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -294,7 +298,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Moonsage (`moonsage`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** acts in the Sage's turn (a shadow twin: one public turn for both), wake 30 (position 12 of the full roster's night order).
+- **Night:** acts in the Sage's turn (a shadow twin: one public turn for both), wake 30 (position 14 of the full roster's night order).
   - *Read a player's card* (MANDATORY): chooses another player's card; sees the role of the chosen card.
 - **A look at this card shows:** a Sage (it passes for its original), except to Werewolf-team looks.
 - **Day / vote / chat powers:** none.
@@ -304,7 +308,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Dun Centaur (`duncentaur`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** yes. Tags: wolf. Copies allowed: up to 12.
-- **Night:** acts in the Centaur's turn (a shadow twin: one public turn for both), wake 35 (position 14 of the full roster's night order).
+- **Night:** acts in the Centaur's turn (a shadow twin: one public turn for both), wake 35 (position 16 of the full roster's night order).
   - *Look at a centre card* (MANDATORY): chooses a centre card; sees the role of the chosen card.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -314,7 +318,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Pale Herald (`paleherald`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** acts in the Herald's turn (a shadow twin: one public turn for both), wake 40 (position 15 of the full roster's night order).
+- **Night:** acts in the Herald's turn (a shadow twin: one public turn for both), wake 40 (position 17 of the full roster's night order).
   - *Proclaim a centre card* (MANDATORY): chooses a centre card (2 centre cards when the centre holds 5 or more); publishes to everyone what the chosen card(s) show right now (at dawn under the Proclamations-at-dawn rule), without saying who proclaimed.
 - **A look at this card shows:** a Herald (it passes for its original), except to Werewolf-team looks.
 - **Day / vote / chat powers:** none.
@@ -324,7 +328,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Dusk Rustler (`duskrustler`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** yes. Tags: wolf. Copies allowed: up to 12.
-- **Night:** acts in the Rustler's turn (a shadow twin: one public turn for both), wake 45 (position 18 of the full roster's night order).
+- **Night:** acts in the Rustler's turn (a shadow twin: one public turn for both), wake 45 (position 20 of the full roster's night order).
   - *Peek at a player's card* (MANDATORY): chooses another player's card; sees the role of the chosen card.
   - *Trade cards with them?* (OPTIONAL (may be declined, unless the Mandatory-night-steps rule is on)): swaps their own card with it.
 - **A look at this card shows:** this card, unless distorted.
@@ -335,7 +339,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Stray Herder (`strayherder`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** acts in the Herder's turn (a shadow twin: one public turn for both), wake 80 (position 24 of the full roster's night order).
+- **Night:** acts in the Herder's turn (a shadow twin: one public turn for both), wake 80 (position 26 of the full roster's night order).
   - *Count the strays* (automatic): learns how many cards tagged "wolf" lie in the centre right now (the truth: never distorted).
 - **A look at this card shows:** a Herder (it passes for its original), except to Werewolf-team looks.
 - **Day / vote / chat powers:** none.
@@ -347,7 +351,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Sage (`sage`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: seer. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 30 (position 12 of the full roster's night order).
+- **Night:** has its own turn, wake 30 (position 14 of the full roster's night order).
   - *Read a player's card* (MANDATORY): chooses another player's card; sees the role of the chosen card.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -357,7 +361,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Centaur (`centaur`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 35 (position 14 of the full roster's night order).
+- **Night:** has its own turn, wake 35 (position 16 of the full roster's night order).
   - *Look at a centre card* (MANDATORY): chooses a centre card; sees the role of the chosen card.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -367,7 +371,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Herald (`herald`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: seer. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 40 (position 15 of the full roster's night order).
+- **Night:** has its own turn, wake 40 (position 17 of the full roster's night order).
   - *Proclaim a centre card* (MANDATORY): chooses a centre card (2 centre cards when the centre holds 5 or more); publishes to everyone what the chosen card(s) show right now (at dawn under the Proclamations-at-dawn rule), without saying who proclaimed.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -377,7 +381,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Notary (`notary`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: seer. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 32 (position 13 of the full roster's night order).
+- **Night:** has its own turn, wake 32 (position 15 of the full roster's night order).
   - *Read a player's card* (MANDATORY): chooses another player's card; sees the role of the chosen card.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** once, the player DEALT it posts a sealed report the game composes from its night look (chat_sendReport).
@@ -387,7 +391,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Rustler (`rustler`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 45 (position 18 of the full roster's night order).
+- **Night:** has its own turn, wake 45 (position 20 of the full roster's night order).
   - *Peek at a player's card* (MANDATORY): chooses another player's card; sees the role of the chosen card.
   - *Trade cards with them?* (OPTIONAL (may be declined, unless the Mandatory-night-steps rule is on)): swaps their own card with it.
 - **A look at this card shows:** this card, unless distorted.
@@ -398,7 +402,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Farrier (`farrier`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 50 (position 22 of the full roster's night order).
+- **Night:** has its own turn, wake 50 (position 24 of the full roster's night order).
   - *Peek at a centre card* (MANDATORY): chooses a centre card; sees the role of the chosen card.
   - *Give that card to…* (OPTIONAL (may be declined, unless the Mandatory-night-steps rule is on)): chooses your own card or the card of the player clockwise of you; swaps the two cards.
 - **A look at this card shows:** this card, unless distorted.
@@ -409,7 +413,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Cutpurse (`cutpurse`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 46 (position 19 of the full roster's night order).
+- **Night:** has its own turn, wake 46 (position 21 of the full roster's night order).
   - *Swap with a player* (MANDATORY): chooses another player's card; swaps their own card with it; then sees the role of their own (new) card.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -419,7 +423,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Pickpocket (`pickpocket`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 47 (position 20 of the full roster's night order).
+- **Night:** has its own turn, wake 47 (position 22 of the full roster's night order).
   - *Swap blind with a player* (MANDATORY): chooses another player's card; swaps their own card with it.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -429,7 +433,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Drifter (`drifter`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 48 (position 21 of the full roster's night order).
+- **Night:** has its own turn, wake 48 (position 23 of the full roster's night order).
   - *Swap with a centre card* (MANDATORY): chooses a centre card; swaps their own card with it; then sees the role of their own (new) card.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -439,7 +443,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Herder (`herder`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: seer. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 80 (position 24 of the full roster's night order).
+- **Night:** has its own turn, wake 80 (position 26 of the full roster's night order).
   - *Count the strays* (automatic): learns how many cards tagged "wolf" lie in the centre right now (the truth: never distorted).
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -449,7 +453,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Latecomer (`latecomer`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 88 (position 26 of the full roster's night order).
+- **Night:** has its own turn, wake 88 (position 28 of the full roster's night order).
   - *Swap blind with a player* (MANDATORY): chooses another player's card; swaps their own card with it.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -459,7 +463,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 ### Sentry (`sentry`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 90 (position 27 of the full roster's night order).
+- **Night:** has its own turn, wake 90 (position 29 of the full roster's night order).
   - *Check the watch* (automatic): learns, for their own seat and each neighbour, whether that card has been moved so far tonight (not by whom, not to where, not what it is).
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -484,53 +488,118 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet, Moth, Sporeling
 - **Win:** with the Centaur team.
 - **Card text:** You do nothing at night. Once during the day you may post a message that the game itself marks as sent by the player who was dealt Signet. It proves the card you were dealt, not the card you hold now.
 
-### Moth (`moth`)
+### Gleaner (`gleaner`)
 
-- **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: wild. Copies allowed: up to 12.
-- **Night:** no night action.
+- **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
+- **Night:** has its own turn, wake 2 (position 1 of the full roster's night order).
+  - *Take a role from the centre* (MANDATORY): chooses a centre card; sees the role of the chosen card; then becomes a copy of that card for the rest of the game (its TRUE current identity, not a distortion): team, Werewolf or not, win rule, vote/chat/day powers, and its night action, performed in that role's own turn.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
-- **Win:** with the Centaur team; if the card DEALT to this seat is moved at night, that seat becomes an Imago at dawn (a creature that wins only if eliminated).
-- **Card text:** You do nothing at night and start as a Centaur (a Larva). If the card dealt to you is moved during the night, at dawn you are told you have become an Imago: a creature that wins only by being eliminated, whatever card you hold. Otherwise whoever holds this card is on the Centaur team. A swap during the day does not change it.
+- **Win:** with the Centaur team.
+- **Card text:** You wake before everyone else. For the rest of the game you are a copy of the card you take: its team, whether it counts as a Werewolf, its win rule, its vote and chat and day powers (your own uses of them), and its night action, which you then perform in that role's own turn (decide it live, or queue it in advance for each role you might become; undecided steps get a random move). You take the card's TRUE identity even if a distortion showed you something else, and you are told what you became. If the card is itself a copier, you become what it has become (or, if it has not, a copier with nothing left to do, on the Centaur team). The pack does not learn about you; if you become a pack card, you do see the pack. A look at your card always shows your own face (Gleaner or Echo), and if your card is moved its new holder holds the copy. If you never become anything, you are on the Centaur team. You look at one centre card and become a copy of it.
 
-## Wildwood
+### Echo (`echo`)
 
-### Elderbark (`elderbark`)
-
-- **Team:** Wildwood. **Counts as a Werewolf:** no. Tags: wild. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 8 (position 1 of the full roster's night order).
-  - *Read the wood* (automatic): learns which other seats were DEALT a card tagged "wild" (journal label "Creatures").
+- **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
+- **Night:** has its own turn, wake 3 (position 2 of the full roster's night order).
+  - *Take a role from a player* (MANDATORY): chooses another player's card; sees the role of the chosen card; then becomes a copy of that card for the rest of the game (its TRUE current identity, not a distortion): team, Werewolf or not, win rule, vote/chat/day powers, and its night action, performed in that role's own turn.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
-- **Win:** its holder wins if not eliminated and no other creature or Imago is eliminated; if eliminated, no other creature wins (a creature rule: lost if bitten).
-- **Card text:** You learn which other seats were dealt creature cards (the Moth included). Whoever holds this card wins if they are not eliminated and no other creature or Imago is. If they are eliminated, no other creature wins.
+- **Win:** with the Centaur team.
+- **Card text:** You wake before everyone else. For the rest of the game you are a copy of the card you take: its team, whether it counts as a Werewolf, its win rule, its vote and chat and day powers (your own uses of them), and its night action, which you then perform in that role's own turn (decide it live, or queue it in advance for each role you might become; undecided steps get a random move). You take the card's TRUE identity even if a distortion showed you something else, and you are told what you became. If the card is itself a copier, you become what it has become (or, if it has not, a copier with nothing left to do, on the Centaur team). The pack does not learn about you; if you become a pack card, you do see the pack. A look at your card always shows your own face (Gleaner or Echo), and if your card is moved its new holder holds the copy. If you never become anything, you are on the Centaur team. You look at another player's card and become a copy of it.
+
+## Pyre
+
+### Phoenix (`phoenix`)
+
+- **Team:** Pyre. **Counts as a Werewolf:** no. Tags: phoenix. Copies allowed: up to 12.
+- **Night:** acts in the shared "Kindler" turn, wake 5 (position 3 of the full roster's night order).
+  - *Know your kin* (automatic): learns which other seats were DEALT a card tagged "kindler" (journal label "Your Kindlers").
+- **A look at this card shows:** this card, unless distorted.
+- **Day / vote / chat powers:** none.
+- **Win:** with the Pyre: every Pyre card's holder wins when a player holding a Phoenix card is eliminated (see section 5).
+- **Card text:** You are the Pyre's sacrifice. The whole Pyre team (you and every Kindler) wins if the player HOLDING a Phoenix card is eliminated. You do not know who the Kindlers are (unless the table's "Phoenix knows its kin" rule is on: then you wake with the brood and learn their seats). If the card moves, its new holder is the Phoenix, untold.
+
+### Kindler (`kindler`)
+
+- **Team:** Pyre. **Counts as a Werewolf:** no. Tags: kindler. Copies allowed: up to 12.
+- **Night:** has its own turn, wake 5 (position 3 of the full roster's night order).
+  - *The brood gathers* (automatic): learns which other seats were DEALT a card tagged "phoenix" (journal label "The Phoenix (as dealt)"); then learns which other seats were DEALT a card tagged "kindler" (journal label "Fellow Kindlers").
+- **A look at this card shows:** this card, unless distorted.
+- **Day / vote / chat powers:** none.
+- **Win:** with the Pyre: every Pyre card's holder wins when a player holding a Phoenix card is eliminated (see section 5).
+- **Card text:** You are a Kindler of the Pyre. In the early turn "The brood gathers" (shared by every Kindler kind, and by the Phoenix only under the "Phoenix knows its kin" rule) you learn which seats were DEALT a Phoenix and which were dealt Kindler cards. You and every Kindler win exactly when a player holding a Phoenix card is eliminated, whether or not you survive (see the Pyre rules for when no player holds one).
+
+### Lure (`lure`)
+
+- **Team:** Pyre. **Counts as a Werewolf:** no. Tags: kindler. Copies allowed: up to 12.
+- **Night:** acts in the shared "Kindler" turn, wake 5 (position 3 of the full roster's night order).
+  - *The brood gathers* (automatic): learns which other seats were DEALT a card tagged "phoenix" (journal label "The Phoenix (as dealt)"); then learns which other seats were DEALT a card tagged "kindler" (journal label "Fellow Kindlers").
+  - *Dress a card for the pyre* (MANDATORY): chooses your own card or another player's card or a centre card; names any role in the deck; distorts the chosen card: until dawn every look at it (except Werewolf-team looks) shows the role they name; it travels with the card.
+- **A look at this card shows:** this card, unless distorted.
+- **Day / vote / chat powers:** none.
+- **Win:** with the Pyre: every Pyre card's holder wins when a player holding a Phoenix card is eliminated (see section 5).
+- **Card text:** You are a Kindler of the Pyre. In the early turn "The brood gathers" (shared by every Kindler kind, and by the Phoenix only under the "Phoenix knows its kin" rule) you learn which seats were DEALT a Phoenix and which were dealt Kindler cards. You and every Kindler win exactly when a player holding a Phoenix card is eliminated, whether or not you survive (see the Pyre rules for when no player holds one). Then choose any one card and any role in the deck: until dawn every look at that card (except the Werewolf team's) shows that role, wherever it moves. Dress the Phoenix as a Werewolf and let honest seers condemn it.
+
+### False Witness (`falsewitness`)
+
+- **Team:** Pyre. **Counts as a Werewolf:** no. Tags: kindler. Copies allowed: up to 12.
+- **Night:** acts in the shared "Kindler" turn, wake 5 (position 3 of the full roster's night order).
+  - *The brood gathers* (automatic): learns which other seats were DEALT a card tagged "phoenix" (journal label "The Phoenix (as dealt)"); then learns which other seats were DEALT a card tagged "kindler" (journal label "Fellow Kindlers").
+- **A look at this card shows:** this card, unless distorted.
+- **Day / vote / chat powers:** once, the player DEALT it posts a forged Signet or Notary seal, identical to a real one until the end (chat_forgeSeal).
+- **Win:** with the Pyre: every Pyre card's holder wins when a player holding a Phoenix card is eliminated (see section 5).
+- **Card text:** You are a Kindler of the Pyre. In the early turn "The brood gathers" (shared by every Kindler kind, and by the Phoenix only under the "Phoenix knows its kin" rule) you learn which seats were DEALT a Phoenix and which were dealt Kindler cards. You and every Kindler win exactly when a player holding a Phoenix card is eliminated, whether or not you survive (see the Pyre rules for when no player holds one). Once during the day you may post one forged sealed message (a Signet message, or a Notary's report "at night, <player>'s card was <role>" of your choosing), identical to a real one until the game ends. The sealing role must be in the deck.
+
+### Ember-Carrier (`embercarrier`)
+
+- **Team:** Pyre. **Counts as a Werewolf:** no. Tags: kindler. Copies allowed: up to 12.
+- **Night:** acts in the shared "Kindler" turn, wake 5 (position 3 of the full roster's night order).
+  - *The brood gathers* (automatic): learns which other seats were DEALT a card tagged "phoenix" (journal label "The Phoenix (as dealt)"); then learns which other seats were DEALT a card tagged "kindler" (journal label "Fellow Kindlers").
+- **A look at this card shows:** this card, unless distorted.
+- **Day / vote / chat powers:** none.
+- **Win:** with the Pyre: every Pyre card's holder wins when a player holding a Phoenix card is eliminated (see section 5).
+- **Card text:** You are a Kindler of the Pyre. In the early turn "The brood gathers" (shared by every Kindler kind, and by the Phoenix only under the "Phoenix knows its kin" rule) you learn which seats were DEALT a Phoenix and which were dealt Kindler cards. You and every Kindler win exactly when a player holding a Phoenix card is eliminated, whether or not you survive (see the Pyre rules for when no player holds one). During discussion or the vote you may queue "carry the ember to seat X" (any other player). The instant the vote ends, after any Moon-Thief swap and before anything is counted, a Phoenix card (one held by a player if any, else one in the centre) swaps places with seat X's card: whoever the herd is about to burn becomes the Phoenix. You may change or clear it until then.
+
+### Heavy Hand (`heavyhand`)
+
+- **Team:** Pyre. **Counts as a Werewolf:** no. Tags: kindler. Copies allowed: up to 12.
+- **Night:** acts in the shared "Kindler" turn, wake 5 (position 3 of the full roster's night order).
+  - *The brood gathers* (automatic): learns which other seats were DEALT a card tagged "phoenix" (journal label "The Phoenix (as dealt)"); then learns which other seats were DEALT a card tagged "kindler" (journal label "Fellow Kindlers").
+- **A look at this card shows:** this card, unless distorted.
+- **Day / vote / chat powers:** none.
+- **Win:** with the Pyre: every Pyre card's holder wins when a player holding a Phoenix card is eliminated (see section 5); its holder's vote counts 2 when cast for a holder of a "phoenix" card.
+- **Card text:** You are a Kindler of the Pyre. In the early turn "The brood gathers" (shared by every Kindler kind, and by the Phoenix only under the "Phoenix knows its kin" rule) you learn which seats were DEALT a Phoenix and which were dealt Kindler cards. You and every Kindler win exactly when a player holding a Phoenix card is eliminated, whether or not you survive (see the Pyre rules for when no player holds one). Whoever holds this card when the votes are counted has a vote that counts twice if it goes to a player holding a Phoenix card, once otherwise.
+
+### Heir (`heir`)
+
+- **Team:** Pyre. **Counts as a Werewolf:** no. Tags: kindler. Copies allowed: up to 12.
+- **Night:** acts in the shared "Kindler" turn, wake 5 (position 3 of the full roster's night order).
+  - *The brood gathers* (automatic): learns which other seats were DEALT a card tagged "phoenix" (journal label "The Phoenix (as dealt)"); then learns which other seats were DEALT a card tagged "kindler" (journal label "Fellow Kindlers").
+- **A look at this card shows:** this card, unless distorted.
+- **Day / vote / chat powers:** none.
+- **Win:** with the Pyre: every Pyre card's holder wins when a player holding a Phoenix card is eliminated (see section 5); if the deck's Phoenix is not held by any player at dawn, this card becomes a Phoenix (its holder is told).
+- **Card text:** You are a Kindler of the Pyre. In the early turn "The brood gathers" (shared by every Kindler kind, and by the Phoenix only under the "Phoenix knows its kin" rule) you learn which seats were DEALT a Phoenix and which were dealt Kindler cards. You and every Kindler win exactly when a player holding a Phoenix card is eliminated, whether or not you survive (see the Pyre rules for when no player holds one). If at dawn no player holds a Phoenix card (it lies in the centre or was moved there), the card of the Heir becomes a Phoenix for the rest of the game and whoever holds it is told: the Pyre always has something to burn.
+
+## Loner (wins alone)
 
 ### Cuckoo (`cuckoo`)
 
-- **Team:** Wildwood. **Counts as a Werewolf:** no. Tags: wild. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 25 (position 11 of the full roster's night order).
+- **Team:** Loner (wins alone). **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
+- **Night:** has its own turn, wake 25 (position 13 of the full roster's night order).
   - *Look at a player's card* (MANDATORY): chooses another player's card; sees the role of the chosen card.
   - *Lay your egg on a player* (MANDATORY): chooses another player's card; lays the egg on the chosen player (bound to THIS card; shown to everyone at dawn, not who laid it).
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
-- **Win:** its holder wins if the seat marked by THIS card is eliminated and the holder is not (a creature rule: lost if bitten).
-- **Card text:** Look at one other player's card, then lay your egg on any other player. At dawn everyone sees which seat holds the egg, but not who laid it. The egg stays with this CARD: whoever holds it when the votes are counted wins if the egged player is eliminated and they are not. If nobody holds the Cuckoo at night, the game lays the egg on a random seat and it benefits nobody.
+- **Win:** a loner: its holder wins if the seat marked by THIS card is eliminated and the holder is not, alongside whatever team wins (lost if bitten).
+- **Card text:** You are a loner: you win by your own rule, alongside whatever team wins, and lose otherwise. Look at one other player's card, then lay your egg on any other player. At dawn everyone sees which seat holds the egg, but not who laid it. The egg stays with this CARD: whoever holds it when the votes are counted wins if the egged player is eliminated and they are not. If nobody holds the Cuckoo at night, the game lays the egg on a random seat and it benefits nobody.
 
 ### Oxpecker (`oxpecker`)
 
-- **Team:** Wildwood. **Counts as a Werewolf:** no. Tags: wild. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 85 (position 25 of the full roster's night order).
+- **Team:** Loner (wins alone). **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
+- **Night:** has its own turn, wake 85 (position 27 of the full roster's night order).
   - *Bond to a player* (MANDATORY): chooses another player's card; sees the role of the chosen card; then binds this card to the chosen player's seat (your bond, private).
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
-- **Win:** its holder wins exactly when the seat bonded to THIS card wins (after the curse) (a creature rule: lost if bitten).
-- **Card text:** Late in the night, look at one other player's card and bond to that seat. The bond stays with this CARD: whoever holds it wins exactly when the player in the bonded seat wins, whatever side that turns out to be (unless the Elderbark is eliminated).
-
-### Sporeling (`sporeling`)
-
-- **Team:** Wildwood. **Counts as a Werewolf:** no. Tags: wild. Copies allowed: up to 12.
-- **Night:** no night action.
-- **A look at this card shows:** this card, unless distorted.
-- **Day / vote / chat powers:** none.
-- **Win:** its holder wins if eliminated (alongside whatever team result) (a creature rule: lost if bitten); every player whose own vote went to an eliminated holder loses (the curse).
-- **Card text:** You do nothing at night. Whoever holds this card wins if they are eliminated, and then every player whose own vote went to them loses, whichever side they were on. A vote the game cast at random does not count for this, unless the table's rule says so.
+- **Win:** a loner: its holder wins exactly when the seat bonded to THIS card wins (after everything else is decided), alongside whatever team wins (lost if bitten).
+- **Card text:** You are a loner. Late in the night, look at one other player's card and bond to that seat. The bond stays with this CARD: whoever holds it wins exactly when the player in the bonded seat wins, whatever side that turns out to be, and loses otherwise.

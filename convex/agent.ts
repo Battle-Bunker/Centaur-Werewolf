@@ -8,7 +8,7 @@
 import { v } from "convex/values";
 import { internalQuery, type QueryCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
-import { isAuto, legalTargets, publicMarks, seededRng, shapeOf, shuffle, turnKey, visibleShown, type StepPlan } from "../shared/engine";
+import { actingRole, freshProgress, isAuto, isPhoenix, legalTargets, publicMarks, seededRng, shapeOf, shuffle, turnKey, visibleShown, type Progress, type StepPlan } from "../shared/engine";
 import { condSource, legalRoles, pickCount, ROLE, ROLES, TEAM_NAME, type RoleId, type Slot } from "../shared/roles";
 import { describeRules, rulesOf } from "../shared/settings";
 import { cardOf, describe, revealHidden, seatName, voteLine, type Names } from "../shared/text";
@@ -18,6 +18,8 @@ import { redact, sealNote } from "./rooms";
 import { loadScope, type Scope } from "./scope";
 
 const secs = (ms: number) => Math.max(0, Math.round(ms / 1000));
+/** The label every text uses for a slot ("centre card 1" for { k: "c", i: 0 }), shown beside every slot argument. */
+const slotLabelOf = (s: Slot) => (s.k === "c" ? `centre card ${s.i + 1}` : `seat ${s.i}`);
 const roleCard = (id: RoleId) => ({ id, name: ROLE[id].name, team: TEAM_NAME[ROLE[id].team], rule: ROLE[id].rules });
 
 // ───────────── chat ─────────────
@@ -101,11 +103,10 @@ export function caveats(deck: RoleId[]): string[] {
   if (any("stalkinghorse")) out.push("A Stalking Horse is in this deck: it wakes with the pack and knows what they know. If whoever holds it is eliminated, the Werewolf team wins, even if a Werewolf falls too.");
   if (any("moonthief")) out.push("A Moon-Thief is in this deck: the player dealt it may swap two other players' cards the instant the vote phase ends, before anything is counted.");
   if (any("hush")) out.push("A Hush is in this deck: once, it can cut one player off for a while, exactly as if their connection dropped. A player going offline may be a real drop or a cut; only the results say.");
-  if (any("sporeling")) out.push("A Sporeling is in this deck: if you vote for whoever holds it and they are eliminated, you lose, whatever side you are on.");
-  if (any("moth")) out.push("A Moth is in this deck: if the card dealt to its seat was moved tonight, that player is now an Imago, who wins only by being eliminated.");
+  if (has(deck, r => ROLE[r]?.team === "pyre")) out.push(`The Pyre is in this deck: its Kindlers win when a player holding a Phoenix is eliminated, and know where the Phoenix was dealt. A player eager to be voted out, or pushing hard on one seat, may be Pyre.${any("lure") ? " A Lure may have dressed a card (the Phoenix?) as another role tonight." : ""}${any("falsewitness") ? " A False Witness may post a forged seal." : ""}${any("embercarrier") ? " An Ember-Carrier may send the Phoenix card to any seat as the vote ends." : ""}${any("heavyhand") ? " A Heavy Hand's vote counts double against the Phoenix's holder." : ""}${any("heir") ? " If no player holds a Phoenix at dawn, an Heir's card becomes one." : ""}`);
+  if (any("gleaner", "echo")) out.push("A copier is in this deck (Gleaner: from the centre; Echo: from a player): it may have become any role, with that role's team and powers, and acts in that role's turn. Two players can truthfully claim the same role. A look at a copier's card shows Gleaner or Echo.");
   if (any("cuckoo")) out.push("A Cuckoo is in this deck: whoever holds it wins if the egged seat is eliminated and they are not. Pressure on the egged seat may come from them.");
   if (any("oxpecker")) out.push("An Oxpecker is in this deck: whoever holds it wins exactly when the seat it bonded to wins, whatever side that is.");
-  if (any("elderbark")) out.push("An Elderbark is in this deck: it knows which seats were dealt creatures, and wins if no creature is eliminated. A claim to be the Elderbark may be a lie.");
   return out;
 }
 
@@ -137,7 +138,7 @@ export const view = internalQuery({
     const ended = room.phase === "ended";
     const mine = game && seat >= 0 ? game.state.dealt[seat] : null;
     const myBite = game?.state.dawn ? game.state.bitten.find(b => b.seat === seat) : undefined;
-    const imagoMe = !!game && game.state.imago.includes(seat);
+    const heirMe = !!game && game.log.some(e => e.seat === seat && e.ev.kind === "heir");
     const timer = (endsAt: number | undefined) => (endsAt === undefined ? null : { endsAt, secondsLeft: secs(endsAt - now) });
 
     const out: Record<string, unknown> = {
@@ -152,7 +153,7 @@ export const view = internalQuery({
         dealt: mine ? roleCard(mine) : null,
         status: !mine ? null : myBite
           ? { bitten: { by: rules.biteNamesBiter ? who(myBite.by) : "(not told)" }, winsBy: "You were bitten: you now win only with the Werewolf team. You are not a Werewolf and have no creature rules." }
-          : imagoMe ? { imago: true, winsBy: "You are an Imago: you win only by being eliminated, whatever card you hold." }
+          : heirMe ? { heir: true, winsBy: "No player held a Phoenix at dawn, so the Heir's card you hold became a Phoenix: if you are eliminated, the Pyre wins." }
           : { winsBy: "By the card you HOLD when the votes are counted (it may have been moved since you were dealt it): its team, or its own rule." },
       },
       players: game
@@ -167,7 +168,7 @@ export const view = internalQuery({
         werewolves: werewolfCensus(deckIds),
         caveats: caveats(deckIds),
       },
-      learned: null, yourNightSteps: null, night: null, proclamations: null, marks: null, day: null, vote: null, result: null,
+      learned: null, yourNightSteps: null, copier: null, night: null, proclamations: null, marks: null, day: null, vote: null, result: null,
       chat: chat(scope, rows, a.chatSince ?? 0),
       chatCount: rows.length,
       chatOpen: room.phase === "lobby" || room.phase === "day" || room.phase === "ended" || (room.phase === "vote" && rules.chatDuringVote),
@@ -180,34 +181,51 @@ export const view = internalQuery({
       if (room.phase === "night") {
         // Interchangeable targets (centre cards) are listed in an order of this viewer's own, so no position is a default.
         const order = seededRng((game.dealSeed ?? 0) ^ (seat * 7919 + 1));
-        out.yourNightSteps = (role.steps ?? []).map((step, i) => {
+        const render = (role: typeof ROLE[string], progress: Progress, plans: Record<string, StepPlan>, as?: RoleId) => (role.steps ?? []).map((step, i) => {
           const done = progress.done || i < progress.step;
-          if (done) return { step: step.id, title: step.title, status: "done" };
-          if (isAuto(step)) return { step: step.id, title: step.title, status: "automatic: happens by itself on your turn" };
+          if (done) return { step: step.id, title: step.title, status: "done", ...(as ? { as } : {}) };
+          if (isAuto(step)) return { step: step.id, title: step.title, status: "automatic: happens by itself on your turn", ...(as ? { as } : {}) };
           const src = condSource(role, step.id), seen = src ? progress.seen[src.id] : undefined;
-          const plan = game.plans[seat][step.id] as StepPlan | undefined;
+          const plan = plans[step.id] as StepPlan | undefined;
           const raw = legalTargets(step, seat, shape), roles = legalRoles(step, shape.deck!, role.id);
           const targets = [...raw.filter(t => t.k === "p"), ...shuffle(raw.filter(t => t.k === "c"), order)];
           const optional = step.optional && !shape.mandatory;
           const decisionFor = (n: number) => (step.pick ? { kind: "pick", targets: targets.slice(n, n + pickCount(step, shape)), ...(step.names ? { role: roles[0] } : {}) } : step.names ? { kind: "name", role: roles[0] } : { kind: "do" });
           const possible = [...new Set(shape.deck!)];
           return {
-            step: step.id, title: step.title,
+            step: step.id, title: step.title, ...(as ? { as, plansWith: `night_planStep { "step": "${step.id}", "as": "${as}", "plan": ... }` } : {}),
             status: plan ? "queued (you can still change it until it happens)" : "NOT DECIDED: a random move is made for you if this is still undecided when your turn ends",
             note: step.onlyIfAlone ? "Only happens if no other player was dealt a card of the pack; if it does not happen, you are told." : null,
             choices: [
-              ...(step.pick ? [{ kind: "pick", targetsNeeded: pickCount(step, shape), legalTargets: targets.map(t => ({ slot: t, is: t.k === "p" && t.i === seat ? "your own card" : slotName(t) })), ...(step.names ? { alsoName: "a role from legalRoles, as \"role\"" } : {}) }] : step.names ? [{ kind: "name", means: "name a role from legalRoles, as \"role\"" }] : [{ kind: "do", means: step.doLabel ?? "Do it" }]),
+              ...(step.pick ? [{ kind: "pick", targetsNeeded: pickCount(step, shape), legalTargets: targets.map(t => ({ slot: t, label: slotLabelOf(t), is: t.k === "p" && t.i === seat ? "your own card" : slotName(t) })), ...(step.names ? { alsoName: "a role from legalRoles, as \"role\"" } : {}) }] : step.names ? [{ kind: "name", means: "name a role from legalRoles, as \"role\"" }] : [{ kind: "do", means: step.doLabel ?? "Do it" }]),
               ...(optional ? [{ kind: "skip", means: step.skipLabel ?? "Skip" }] : []),
             ],
             mandatory: !optional,
             legalRoles: step.names ? roles.map(r => ({ id: r, name: ROLE[r].name })) : null,
             ...(src ? (seen ? { youSaw: seen.map(r => ROLE[r].name) } : {
               canBranchOn: `what you will see at step "${src.id}"`, possibleCards: possible,
-              exampleConditionalPlan: { step: step.id, plan: { branches: [{ roles: possible.filter(r => ROLE[r].team === "werewolf"), decision: optional ? { kind: "skip" } : decisionFor(1) }], otherwise: decisionFor(0) } },
+              exampleConditionalPlan: { step: step.id, ...(as ? { as } : {}), plan: { branches: [{ roles: possible.filter(r => ROLE[r].team === "werewolf"), decision: optional ? { kind: "skip" } : decisionFor(1) }], otherwise: decisionFor(0) } },
             }) : {}),
             queuedPlan: plan ?? null,
           };
         });
+        out.yourNightSteps = render(role, progress, game.plans[seat]);
+        // A copier: before copying, the steps of every role it may become (plan them with "as"); after, its copy's steps.
+        if (role.steps?.some(st => st.effects.some(e => e.kind === "adopt"))) {
+          const became = game.state.adopted[String(seat)];
+          const plans = game.adoptPlans?.[seat] ?? {};
+          if (became) {
+            (out.yourNightSteps as unknown[]).push(...render(ROLE[became], game.adoptProgress?.[seat] ?? freshProgress(), plans[became] ?? {}, became));
+            out.copier = { became: ROLE[became].name, note: `You are now a copy of the ${ROLE[became].name}. Its steps (marked "as") run in its own turn.` };
+          } else {
+            const mayBecome = [...new Set(role.steps.some(st => st.pick?.pools.includes("center")) ? game.state.dealtCenter : shape.deck!)].filter(r => r !== role.id);
+            out.copier = {
+              became: null,
+              note: "You may queue, for each role you might become, what that role will do: night_planStep with \"as\": <role id>. Undecided steps of the role you become are asked live in its turn, else random.",
+              stepsIfYouBecome: Object.fromEntries(mayBecome.filter(r => ROLE[r]?.steps?.some(st => !isAuto(st))).map(r => [r, render(ROLE[r], freshProgress(), plans[r] ?? {}, r)])),
+            };
+          }
+        }
       }
     }
 
@@ -230,8 +248,9 @@ export const view = internalQuery({
         note: "Every role in the deck gets a turn of the same length whether or not anyone holds it; a twin acts in its original's turn. Chat is closed until day. Proclamations and the egg are published at dawn.",
       };
     }
-    const dayPower = mine && !game.powerUsed?.[seat] ? ROLE[mine].dayPower : undefined;
-    const swapInfo = mine && ROLE[mine].dayPower === "swap" ? (game.daySwap?.by === seat ? { a: who(game.daySwap.a), b: who(game.daySwap.b), note: "Made the instant the vote phase ends. Change it with day_queueSwap, cancel with day_clearSwap." } : { none: "You may queue a swap with day_queueSwap { a, b } (two other players' seats)." }) : null;
+    const actingOf = (i: number) => actingRole(game.state, i);
+    const dayPower = mine && !game.powerUsed?.[seat] ? ROLE[actingOf(seat)].dayPower : undefined;
+    const swapInfo = mine && ROLE[actingOf(seat)].dayPower === "swap" ? (game.daySwap?.by === seat ? { a: who(game.daySwap.a), b: who(game.daySwap.b), note: "Made the instant the vote phase ends. Change it with day_queueSwap, cancel with day_clearSwap." } : { none: "You may queue a swap with day_queueSwap { a, b } (two other players' seats)." }) : null;
     if (room.phase === "day") {
       out.day = {
         discussionEnds: timer(game.dayEndsAt),
@@ -240,6 +259,7 @@ export const view = internalQuery({
         youAreReady: seat >= 0 ? !!game.ready?.[seat] : null,
         yourSwap: swapInfo,
         yourCut: dayPower === "cut" ? `You may cut one player off for ${rules.cutSeconds} s with day_cutLine { "seat": n } (once).` : null,
+        yourEmber: mine && ROLE[actingOf(seat)].dayPower === "ember" ? { queued: game.embers?.[String(seat)] !== undefined ? who(game.embers[String(seat)]) : null, how: "day_queueEmber { \"seat\": n } (change it any time until the vote ends; day_clearEmber to cancel)" } : null,
         warning: deckIds.includes("sporeling") ? "If you vote for whoever holds the Sporeling and they are eliminated, you lose." : null,
         note: `Discussion. Voting is NOT open yet. The vote phase (${room.settings.voteSeconds ?? 20} s) starts when this timer runs out, when the host ends the discussion, or as soon as every seated human is ready (day_ready { "ready": true }).`,
       };
@@ -259,7 +279,7 @@ export const view = internalQuery({
     if (ended && game.outcome) {
       const o = game.outcome, s = game.state;
       out.result = {
-        headline: o.headline, notes: o.notes, winningTeam: o.winningTeam,
+        headline: o.headline, notes: o.notes, winningTeam: o.winningTeam, pyreWon: o.burned,
         youWon: seat >= 0 ? o.winners.includes(seat) : null,
         why: seat >= 0 ? o.why[seat] : null,
         eliminated: o.deaths.map(who),
@@ -268,7 +288,11 @@ export const view = internalQuery({
           seat: i, name: names.players[i].name, dealt: ROLE[s.dealt[i]].name, endedHolding: ROLE[s.cards[i]].name, endedOnTeam: TEAM_NAME[o.teams[i]],
           won: o.winners.includes(i), why: o.why[i],
           votedFor: who(game.votes[i]!), voteWasRandom: game.forcedVotes.includes(i), votesReceived: o.tally[i], eliminated: o.deaths.includes(i),
-          bitten: s.bitten.some(b => b.seat === i), imago: s.imago.includes(i), cursed: o.cursed.includes(i),
+          became: s.adopted[String(i)] ? ROLE[s.adopted[String(i)]].name : null,
+          endedHoldingCopyOf: s.adopted[String(s.inst[i])] ? ROLE[s.adopted[String(s.inst[i])]].name : null,
+          heldPhoenix: isPhoenix(s, s.inst[i]),
+          summary: `dealt ${ROLE[s.dealt[i]].name}${s.adopted[String(i)] ? `, became ${ROLE[s.adopted[String(i)]].name}` : ""}, ended holding ${ROLE[s.cards[i]].name}${s.adopted[String(s.inst[i])] ? ` (a copy of ${ROLE[s.adopted[String(s.inst[i])]].name})` : ""}, on the ${TEAM_NAME[o.teams[i]]}: ${o.why[i]}`,
+          bitten: s.bitten.some(b => b.seat === i),
           cutOff: (game.seatEffects ?? []).filter(e => e.seat === i).map(e => ({ by: who(e.by), forSeconds: Math.round((e.until - e.from) / 1000), at: e.from })),
         })),
         votes: game.seats.map((_, i) => voteLine(i, game.votes[i]!, game.forcedVotes.includes(i), names)),
@@ -289,7 +313,7 @@ export const RULES = `CENTAUR WEREWOLF: how to play
 One night, one day of discussion, one vote.
 - Each player is dealt one card face down; extra cards lie face down in the centre. You know only your own card.
 - NIGHT. It begins with Dusk (read your card), then every role in the deck that acts at night gets one turn, in a fixed order, each exactly the same length, whether a player holds that card or it lies in the centre. Everyone sees which turn it is. You act on the turn of the card you were DEALT. A shadow twin acts in its original's turn (one public turn for both). A deck may hold several copies of a card; all their holders act in the same turn.
-- DAWN. Proclamations (and, with a Cuckoo, the egg) are published; a bitten player or an Imago is told privately.
+- DAWN. Proclamations (and, with a Cuckoo, the egg) are published; a bitten player, or an Heir whose card became a Phoenix, is told privately.
 - DISCUSSION. Everyone talks in chat. Voting is not open yet. It ends when its timer runs out, when the host ends it, or as soon as every seated human is ready (day_ready { "ready": true }); everyone sees who is ready.
 - VOTE. A separate timed phase (20 s by default). Vote for one other player with day_vote { "seat": n }; you may change it until the phase ends. It ends when its timer runs out or once every seated human has voted. A player who has not voted then gets a uniformly random vote (anyone but themselves), marked "did not vote in time: voted at random" in the results. Chat is closed during the vote unless the table rule opens it.
 - COUNT. All players tied on the most votes are eliminated (every one of them), if that is at least the table's "Votes to eliminate" (2 by default); otherwise nobody is. A Moon-Thief's queued swap happens the instant the vote phase ends, before anything is counted.
@@ -299,23 +323,24 @@ Cards, looks and what you know
 - Night actions can move cards. Your own card may be swapped away without you knowing. A moved card takes its team with it: the card you HOLD when the votes are counted decides your team (unless you were bitten or became an Imago). Several roles MUST swap (Cutpurse, Pickpocket, Drifter, Poacher, Latecomer); with the "Mandatory night steps" rule, every optional step must be done too.
 - Distortion: Glamour (a chosen role on a card) and Will-o'-Wisp (a random wrong role on a card) make every look at that card show a wrong role until dawn, wherever the card moves; Mistweaver (a chosen role) and Fogbank (random) make every centre card ONE player looks at tonight show a wrong role. The victim is never told. A distorted look also distorts what a proclamation publishes and what a conditional plan branches on (it branches on what you SAW). The Werewolf team's own looks and the Herder's count always see the truth. The latest distortion of a card wins; a veil on the viewer is applied last. The results show both what was seen and what was true.
 - Twins: Moonsage, Pale Herald and Stray Herder show as their original to every look; Dun Centaur and Dusk Rustler show as themselves.
+- Copiers: the Gleaner (from a centre card) and the Echo (from a player) wake first and become a copy of the card's TRUE identity (never a distortion): its team, Werewolf or not, win rule, powers and night action, performed in that role's own turn. A copier can queue, for each role it might become, what that role will do (night_planStep with "as"). The pack does not learn about a copier that became a Werewolf. A look at a copier's card shows its own face; if the card moves, its new holder holds the copy.
+- The Pyre: the Phoenix wants to be eliminated; Kindlers (Kindler, Lure, False Witness, Ember-Carrier, Heavy Hand, Heir) share an early turn, "The brood gathers", learning where the Phoenix was DEALT and who the other Kindlers were dealt to, and win when a Phoenix holder is eliminated. The Phoenix does not know the Kindlers unless the table rule says so.
 - Seals: a sealed message (Signet's free text, the Notary's report composed by the game from its night look) is marked "The game confirms this was sent by the player DEALT <role>". With a Counterfeiter in the deck, any seal may be forged, identical until the game ends. With a Forger, one dawn proclamation may be forged.
 - Connections: a player goes offline after a short time without a heartbeat and comes back when they reconnect. With a Hush in the deck, a drop may be a deliberate cut; nothing tells the two apart until the results. Nothing typed while cut off is delivered later; a vote not cast in time is random.
 - What "blind" roles do not learn: the Spooker, Pickpocket and Latecomer see none of the cards they move or take; the Sentry learns only WHETHER nearby cards moved, not what they are; the Herder learns only HOW MANY Werewolf cards lie in the centre, not which; the Whisperer is told one Werewolf's seat, and that Werewolf does not know the Whisperer; the census tells the pack which roles were dealt to the centre, not where; the Elderbark learns which seats were DEALT creatures, not what they hold now; a bitten player is not told what the Biter holds.
 
 How the game is decided (in this order)
-1. Swap: the Moon-Thief's queued swap, if any.
-2. Tally: votes, weighted by the card each voter holds (Chiron counts twice). Every seat tied on the most votes is eliminated, if that is enough votes.
-3. Teams: a bitten seat is on the Werewolf team (and has no creature rules); an Imago is a creature; everyone else is on the team of the card they hold.
-4. Main result:
+1. Swaps: the Moon-Thief's queued swap; then each Ember-Carrier's ember (a Phoenix card, held by a player if any, else from the centre, swaps with the chosen seat's card), in seat order.
+2. Tally: votes, weighted by the card each voter holds (Chiron counts twice; a Heavy Hand counts twice when it votes for a Phoenix holder). Every seat tied on the most votes is eliminated, if that is enough votes.
+3. Teams: a bitten seat is on the Werewolf team; everyone else is on the team of the card they hold (a copier's card: the team of what it copied).
+4. Main result (Centaurs v. Werewolves):
    a. If an eliminated player holds a Stalking Horse, the Werewolf team wins.
-   b. If no player holds a Werewolf card: the Centaurs win if nobody is eliminated; if someone is, the SURVIVING Werewolf-team players win (if there are none, no team wins).
+   b. If no player holds a Werewolf card: the Centaurs win if nobody is eliminated; if someone is, the SURVIVING Werewolf-team players win (if there are none, no main team wins).
    c. Otherwise, with the Blood Price rule: the Centaurs win only if more Werewolf cards than Centaur-team players are eliminated (a Werewolf and a Centaur tied and eliminated is a Werewolf-team win). Without it: the Centaurs win if any Werewolf card is eliminated. If the Centaurs do not win, the Werewolf team does.
-   Every member of the winning team wins, alive or dead. Eliminating a Werewolf-team card that is not a Werewolf never wins for the Centaurs.
+   Every member of the winning team wins, alive or dead. Eliminating a Werewolf-team card that is not a Werewolf never wins for the Centaurs. Pyre and loner cards count as neither Werewolves nor Centaurs.
    ${werewolfCensus()}
-5. Creatures win alongside: the Sporeling holder and an Imago win if eliminated; the Cuckoo holder wins if the seat its card's egg is on is eliminated and they are not; the Elderbark holder wins if they are not eliminated and no other creature or Imago is. If the Elderbark holder is eliminated, no other creature wins.
-6. Curse: every player whose own vote (not a random one, unless the table rule says so) went to an eliminated Sporeling holder loses, whatever else happened.
-7. Oxpecker: its holder wins if the seat its card bonded to is a winner after step 6 (and no Elderbark was eliminated); the curse then applies to it too.
+5. The burning: if a player holding a Phoenix card is eliminated (or, if no player holds one, under the table rule, if a Kindler is), the Pyre wins: every player holding a Pyre card, alive or dead. With the "A burning denies the wolves" rule (on by default): the Werewolf team cannot win (even by the Stalking Horse), and the Centaurs keep their win only if it came from 4c (a Werewolf eliminated, Blood Price as usual); otherwise no main team wins.
+6. Loners win alongside: the Cuckoo holder wins if the seat its card's egg is on is eliminated and they are not; then the Oxpecker holder wins if the seat its card bonded to is a winner.
 After the game, room_view's "result" says for every seat the card dealt, the card held at the end, the team ended on, whether they won and why, how they voted (and whether the vote was random), and any cut.
 
 Deciding your night action (tool night_planStep)

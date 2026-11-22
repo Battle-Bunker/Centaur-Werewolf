@@ -508,7 +508,7 @@
    "seed": 14004
   },
   {
-   "label": "T6-wildwood5x4#1",
+   "label": "T6-loners5x4#1",
    "center": 4,
    "players": [
     "Alder",
@@ -524,14 +524,14 @@
     "centaur",
     "rustler",
     "sentry",
-    "sporeling",
+    "herald",
     "cuckoo",
-    "elderbark"
+    "oxpecker"
    ],
    "seed": 15001
   },
   {
-   "label": "T6-wildwood5x4#2",
+   "label": "T6-loners5x4#2",
    "center": 4,
    "players": [
     "Alder",
@@ -547,14 +547,14 @@
     "centaur",
     "rustler",
     "sentry",
-    "sporeling",
+    "herald",
     "cuckoo",
-    "elderbark"
+    "oxpecker"
    ],
    "seed": 15002
   },
   {
-   "label": "T6-wildwood5x4#3",
+   "label": "T6-loners5x4#3",
    "center": 4,
    "players": [
     "Alder",
@@ -570,14 +570,14 @@
     "centaur",
     "rustler",
     "sentry",
-    "sporeling",
+    "herald",
     "cuckoo",
-    "elderbark"
+    "oxpecker"
    ],
    "seed": 15003
   },
   {
-   "label": "T6-wildwood5x4#4",
+   "label": "T6-loners5x4#4",
    "center": 4,
    "players": [
     "Alder",
@@ -593,9 +593,9 @@
     "centaur",
     "rustler",
     "sentry",
-    "sporeling",
+    "herald",
     "cuckoo",
-    "elderbark"
+    "oxpecker"
    ],
    "seed": 15004
   }

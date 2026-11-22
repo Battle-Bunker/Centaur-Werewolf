@@ -13,8 +13,8 @@ const b64 = (b: Buffer) => b.toString("base64url");
 
 // A play-test table with a fixed deal, so every new mechanic is exercised on purpose: the Moon-Thief (Ada), Glamour
 // (Bo), Sage (Cy), Biter (Di) and Eavesdropper (Ed, who decides nothing and gets forced random moves); in the centre the
-// Herald, Forger, Cuckoo (its egg is laid at random at dawn), Sporeling and Elderbark.
-const DECK = ["moonthief", "glamour", "sage", "biter", "eavesdropper", "herald", "forger", "cuckoo", "sporeling", "elderbark"];
+// Herald, Forger, Cuckoo (its egg is laid at random at dawn), Phoenix and Oxpecker.
+const DECK = ["moonthief", "glamour", "sage", "biter", "eavesdropper", "herald", "forger", "cuckoo", "phoenix", "oxpecker"];
 const table = await setupTable({ label: "smoke", players: ["Ada", "Bo", "Cy", "Di", "Ed"], deck: DECK, center: 5, timers: { dusk: 15, turn: 5, day: 60, vote: 8 }, playtest: true });
 const [host, ...rest] = table.seats;
 console.log(`room ${table.code}  MCP ${MCP_URL}`);
@@ -107,7 +107,7 @@ check("every top-level key is present in every phase", ["learned", "yourNightSte
 check("the night counts down to your own turn", keys.Cy.night?.yourTurn.state === "upcoming" && (keys.Cy.night?.yourTurn.startsInSeconds ?? 0) > 0);
 const glam = keys.Bo.yourNightSteps!.find(s => s.step === "glamour")!, listen = keys.Ed.yourNightSteps!.find(s => s.step === "listen")!;
 check("a naming step lists its legal roles", glam.legalRoles!.some(r => r.id === "sage") && listen.legalRoles!.every(r => !["glamour", "biter", "moonthief", "eavesdropper"].includes(r.id)) && listen.choices![0].kind === "name");
-check("a role the step cannot name is refused with the legal ones", /cannot name/.test((await refused(tool(bo.key, "night_planStep", { step: "glamour", plan: { branches: [], otherwise: { kind: "pick", targets: [{ k: "p", i: 1 }], role: "moth" } } }))) ?? ""));
+check("a role the step cannot name is refused with the legal ones", /cannot name/.test((await refused(tool(bo.key, "night_planStep", { step: "glamour", plan: { branches: [], otherwise: { kind: "pick", targets: [{ k: "p", i: 1 }], role: "notary" } } }))) ?? ""));
 await tool(bo.key, "night_planStep", { step: "glamour", plan: { branches: [], otherwise: { kind: "pick", targets: [{ k: "p", i: 1 }], role: "sage" } } });
 await tool(cy.key, "night_planStep", { step: "read", plan: { branches: [], otherwise: { kind: "pick", targets: [{ k: "p", i: 1 }] } } });
 await tool(di.key, "night_planStep", { step: "sniff", plan: { branches: [], otherwise: { kind: "pick", targets: [{ k: "p", i: 2 }] } } });
@@ -124,7 +124,7 @@ check("the plan's branch is confirmed in the Biter's journal", views.Di.learned!
 check("the Eavesdropper's forced choice ran", views.Ed.learned!.some(l => /overheard|listened/.test(l)));
 check("the unheld Cuckoo's egg is public at dawn", views.Bo.marks?.length === 1 && views.Bo.marks[0].what === "The egg");
 check("nobody else learns of the glamour or the bite", !views.Ada.learned!.some(l => /glamour|bit/i.test(l)) && !views.Ed.learned!.some(l => /truly/.test(l)));
-check("the day warns about the Sporeling's curse", /Sporeling/.test(views.Bo.day?.warning ?? ""));
+check("the deck's caveats warn about the Pyre", ((views.Bo.table as { caveats: string[] }).caveats ?? []).some(c => /Pyre/.test(c)));
 check("only the player dealt the Moon-Thief may queue a swap", /Moon-Thief/.test((await refused(tool(bo.key, "day_queueSwap", { a: 2, b: 3 }))) ?? ""));
 check("the Moon-Thief cannot swap their own card", /own card/.test((await refused(tool(ada.key, "day_queueSwap", { a: 0, b: 2 }))) ?? ""));
 await tool(ada.key, "day_queueSwap", { a: 1, b: 2 });
@@ -199,6 +199,35 @@ v = await tool<V>(host.key, "room_view");
 const r2 = v.result as unknown as { seats: { cutOff: { by: string }[] }[]; dealSeed: number | null };
 check("the results reveal who was cut off and by whom, and the deal seed", r2.seats[1].cutOff[0]?.by === "Cy (seat 2)" && typeof r2.dealSeed === "number");
 check("the results reveal the forged seal", ((await tool<V>(di.key, "room_view")).chat as unknown as { FORGED?: string }[]).some(m => !!m.FORGED));
+
+console.log("\na copier, the brood and the ember");
+await tool(host.key, "game_playAgain");
+const DECK3 = ["echo", "phoenix", "embercarrier", "kindler", "werewolf", "lure", "sage", "centaur", "herald", "sentry"];
+for (const role of (await view(table.code, host.token))!.settings.deck) await run("setup.removeRole", host.token, table.code, { role });
+for (const role of DECK3) await run("setup.addRole", host.token, table.code, { role });
+await run("setup.fixDeal", host.token, table.code, { seats: table.seats.map(s => s.id), cards: DECK3 });
+await tool(host.key, "game_start");
+const ada3 = await tool<{ copier: { stepsIfYouBecome: Record<string, unknown> } }>(ada.key, "room_view");
+check("a copier sees the steps of every role it may become, to plan them with \"as\"", !!ada3.copier && "werewolf" in ada3.copier.stepsIfYouBecome && "sage" in ada3.copier.stepsIfYouBecome);
+await tool(ada.key, "night_planStep", { step: "echo", plan: { branches: [], otherwise: { kind: "pick", targets: [{ k: "p", i: 4 }] } } });
+await tool(ada.key, "night_planStep", { step: "scent", as: "werewolf", plan: { branches: [], otherwise: { kind: "skip" } } });
+check("a plan for a role the copier is not becoming is accepted before copying", true);
+v = await tool<V>(host.key, "room_view", { compact: true });
+for (let i = 0; i < 20 && v.phase === "night"; i++) { await tool(host.key, "room_wait", { version: v.version, until: "phase" }); v = await tool<V>(host.key, "room_view", { compact: true }); }
+const adaL = (await tool<V>(ada.key, "room_view")).learned!, diL = (await tool<V>(di.key, "room_view")).learned!;
+console.log(`       Ada: ${adaL.join(" | ")}\n       Di: ${diL.join(" | ")}`);
+check("the Echo became a copy of the Werewolf and acted in its turn", adaL.some(l => /became a copy of the Werewolf/.test(l)) && adaL.some(l => /The pack: Ed \(seat 4\)/.test(l)));
+check("the brood gathered: a Kindler knows where the Phoenix was dealt", diL.some(l => /The Phoenix \(as dealt\): Bo \(seat 1\)/.test(l)));
+await tool(cy.key, "day_queueEmber", { seat: 4 });
+check("only an Ember-Carrier may carry the ember", /Ember-Carrier/.test((await refused(tool(bo.key, "day_queueEmber", { seat: 4 }))) ?? ""));
+for (const s of table.seats) await tool(s.key, "day_ready", { ready: true });
+for (const [s, target] of [[ada, 4], [bo, 4], [cy, 4], [di, 4], [ed, 0]] as const) await tool(s.key, "day_vote", { seat: target });
+v = await tool<V>(host.key, "room_view");
+const r3 = v.result as unknown as { headline: string; pyreWon: boolean; seats: { summary: string; won: boolean }[] };
+console.log(`       ${r3.headline}`);
+for (const x of r3.seats) console.log(`       ${x.summary}`);
+check("the ember moved the Phoenix onto the herd's target: the Pyre burned and won, the wolves were denied", r3.pyreWon && r3.seats[4].summary.includes("ended holding Phoenix") && [2, 3, 4].every(i => r3.seats[i].won) && !r3.seats[0].won);
+check("the result says what the copier became", r3.seats[0].summary.startsWith("dealt Echo, became Werewolf"));
 
 console.log(failed ? `\n${failed} check(s) FAILED` : "\nall checks passed");
 process.exit(failed ? 1 : 0);

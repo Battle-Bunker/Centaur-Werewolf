@@ -3,7 +3,8 @@ import type { QueryCtx } from "./_generated/server";
 import type { Doc, Id } from "./_generated/dataModel";
 import type { CommandContext } from "../shared/commands";
 import { HOME_CONTEXT } from "../shared/commands";
-import { isAuto } from "../shared/engine";
+import { actingRole, isAuto } from "../shared/engine";
+import type { RoleId } from "../shared/roles";
 import { ROLE } from "../shared/roles";
 import { rulesOf } from "../shared/settings";
 import type { Game } from "./game";
@@ -34,6 +35,15 @@ export function openSteps(game: Game, seat: number): string[] {
   return (ROLE[game.state.dealt[seat]].steps ?? []).filter((s, i) => i >= p.step && !isAuto(s)).map(s => s.id);
 }
 
+/** A copier's plannable roles: any before its copy; the copy's role while that script still has open steps; else none. */
+export function adoptOpen(game: Game, seat: number): RoleId[] | "any" {
+  if (!ROLE[game.state.dealt[seat]].steps?.some(s => s.effects.some(e => e.kind === "adopt"))) return [];
+  const a = game.state.adopted[String(seat)];
+  if (!a) return "any";
+  const p = game.adoptProgress?.[seat];
+  return p?.done ? [] : (ROLE[a].steps ?? []).some((s, i) => i >= (p?.step ?? 0) && !isAuto(s)) ? [a] : [];
+}
+
 export function contextOf(scope: Scope | null): CommandContext {
   if (!scope) return HOME_CONTEXT;
   const { room, players, me, seat } = scope;
@@ -47,9 +57,11 @@ export function contextOf(scope: Scope | null): CommandContext {
     center: room.settings.centerCount,
     deck: room.settings.deck,
     openSteps: room.phase === "night" && game && seat >= 0 ? openSteps(game, seat) : [],
+    adoptOpen: room.phase === "night" && game && seat >= 0 ? adoptOpen(game, seat) : [],
     voted: !!game && seat >= 0 && game.votes[seat] !== null,
-    chatPower: game && seat >= 0 && !game.chatUsed[seat] ? (ROLE[game.state.dealt[seat]].chat ?? null) : null,
-    dayPower: game && seat >= 0 && !game.powerUsed?.[seat] ? (ROLE[game.state.dealt[seat]].dayPower ?? null) : null,
+    // Powers of the card the viewer was DEALT, as it is now: a copier has its copy's powers (its own uses of them).
+    chatPower: game && seat >= 0 && !game.chatUsed[seat] ? (ROLE[actingRole(game.state, seat)].chat ?? null) : null,
+    dayPower: game && seat >= 0 && !game.powerUsed?.[seat] ? (ROLE[actingRole(game.state, seat)].dayPower ?? null) : null,
     ready: !!game?.ready?.[seat],
     swapQueued: !!game?.daySwap && game.daySwap.by === seat,
     playtest: !!room.playtest,

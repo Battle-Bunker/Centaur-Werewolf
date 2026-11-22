@@ -10,11 +10,11 @@ import { internalMutation, mutation, type MutationCtx } from "./_generated/serve
 import type { Id } from "./_generated/dataModel";
 import { internal } from "./_generated/api";
 import { availability, COMMAND, type CommandId } from "../shared/commands";
-import { advance, dealFixed, freshProgress, nightTurns, secureRng, seededRng, shapeOf, shuffle, validPlan, type StepPlan } from "../shared/engine";
+import { advance, dealFixed, freshProgress, nightTurns, secureRng, seededRng, shapeOf, shuffle, turnKey, validPlan, type StepPlan } from "../shared/engine";
 import { CENTER_DEFAULT, recommendedDeck, ROLE } from "../shared/roles";
 import { rulesOf } from "../shared/settings";
 import { seatName } from "../shared/text";
-import { endVote, seatedHumans, startVote, VOTE_SECONDS_DEFAULT, type Game, type Turn } from "./game";
+import { endVote, nightSeats, seatedHumans, startVote, VOTE_SECONDS_DEFAULT, type Game, type Turn } from "./game";
 import { gateOf, UNREACHABLE } from "./presence";
 import { contextOf, loadScope, type Scope } from "./scope";
 import { answerRequest, createKey } from "./auth";
@@ -177,7 +177,7 @@ const HANDLERS: Record<ServerId, Handler> = {
     for (const role of nightTurns(deck)) turns.push({ role, startsAt: t, endsAt: (t += turnSeconds * 1000) });
     const game: Game = {
       seats, state, turns, turn: 0, log: [],
-      plans: seats.map(() => ({})),
+      plans: seats.map(() => ({})), adoptPlans: seats.map(() => ({})), adoptProgress: seats.map(() => null), embers: {},
       progress: state.dealt.map(r => ({ ...freshProgress(), done: !ROLE[r].steps })),
       votes: seats.map(() => null), forcedVotes: [], chatUsed: seats.map(() => false), powerUsed: seats.map(() => false), ready: seats.map(() => false), seatEffects: [],
       daySwap: null, fixed: !!fixed, dealSeed,
@@ -189,16 +189,28 @@ const HANDLERS: Record<ServerId, Handler> = {
   "night.planStep": async (ctx, s, a) => {
     const { room, seat } = s!;
     const game = room.game as Game;
-    const role = ROLE[game.state.dealt[seat]];
+    const role = ROLE[a.as ?? game.state.dealt[seat]];
     const err = validPlan(role, a.step, seat, shapeOf(game.state), a.plan as StepPlan);
     if (err) return fail(err);
-    game.plans[seat][a.step] = a.plan;
-    if (game.turns[game.turn]?.role === role.id) game.log.push(...advance(game.state, seat, game.plans[seat], game.progress[seat], game.turn, secureRng, { live: a.step, history: game.log }));
+    const turnRole = game.turns[game.turn]?.role;
+    if (a.as) {
+      const seats = nightSeats(game);
+      (game.adoptPlans![seat][a.as] ??= {})[a.step] = a.plan;
+      // Planned during the copy's own turn: it runs at once, as a live decision.
+      if (game.state.adopted[String(seat)] === a.as && turnRole === turnKey(a.as)) {
+        game.log.push(...advance(game.state, seat, game.adoptPlans![seat][a.as], (seats[seat].adoptProgress ??= freshProgress()), game.turn, secureRng, { live: a.step, history: game.log, role: a.as }));
+        game.adoptProgress![seat] = seats[seat].adoptProgress ?? null;
+      }
+    } else {
+      game.plans[seat][a.step] = a.plan;
+      if (turnRole === turnKey(role.id)) game.log.push(...advance(game.state, seat, game.plans[seat], game.progress[seat], game.turn, secureRng, { live: a.step, history: game.log }));
+    }
     await ctx.db.patch(room._id, { game });
   },
   "night.clearStep": async (ctx, s, a) => {
     const game = s!.room.game as Game;
-    delete game.plans[s!.seat][a.step];
+    if (a.as) delete game.adoptPlans?.[s!.seat]?.[a.as]?.[a.step];
+    else delete game.plans[s!.seat][a.step];
     await ctx.db.patch(s!.room._id, { game });
   },
   "day.vote": async (ctx, s, a) => {
@@ -227,6 +239,19 @@ const HANDLERS: Record<ServerId, Handler> = {
   "day.clearSwap": async (ctx, s) => {
     const game = s!.room.game as Game;
     game.daySwap = null;
+    await ctx.db.patch(s!.room._id, { game });
+  },
+  "day.queueEmber": async (ctx, s, a) => {
+    const { room, seat } = s!;
+    const game = room.game as Game;
+    if (a.seat >= game.seats.length) return fail("There is no such seat.");
+    if (a.seat === seat) return fail("Choose another player.");
+    (game.embers ??= {})[String(seat)] = a.seat;
+    await ctx.db.patch(room._id, { game });
+  },
+  "day.clearEmber": async (ctx, s) => {
+    const game = s!.room.game as Game;
+    delete game.embers?.[String(s!.seat)];
     await ctx.db.patch(s!.room._id, { game });
   },
   "day.ready": async (ctx, s, a) => {

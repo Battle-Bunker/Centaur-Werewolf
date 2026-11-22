@@ -101,3 +101,68 @@ the results; presence and every perceivable signal go through one central gate.
 (shown after the game); forced random moves are uniform over every legal decision (ordered multi-target choices and
 declining included); the MCP view lists centre-card targets in a per-viewer order and gives a ready-to-edit
 conditional plan built from the legal choices.
+
+## 8. Role copying (two copiers on one `adopt` primitive)
+
+**Direction.** A card that copies a centre card and one that copies a player's card, becoming that role for the game.
+
+**Realised.** `Effect { kind: "adopt" }`, recorded on the copier's CARD INSTANCE (`GameState.adopted`), read
+everywhere a rule needs the card's identity (`effRole`, `heldRoles`, `actingRole`).
+- **Gleaner** (wake 2, a centre card) and **Echo** (wake 3, another player's card): both wake before every other role,
+  so their own turns exist whenever they are in the deck and reveal nothing about what was copied. The copier then
+  performs the copied role's night action **in that role's own ordinary turn** (`actorsOf`/`runTurn`).
+- **What is copied:** the card's TRUE current identity: never a distortion (the log shows both what was seen and what
+  was taken); a twin stays a twin; a copier that already copied passes on what it became; an uncopied copier passes on
+  a spent copier (Centaur team, nothing left to do).
+- **Copying a Werewolf:** the copier counts as a Werewolf and sees the pack in the Werewolf turn; the pack does NOT see
+  the copier (pack knowledge is of DEALT cards). Lone-wolf steps follow the usual rule.
+- **Per-card state:** the copy has its own: its own egg or bond (marks bind to the copier's instance), its own once-per-
+  game chat and day powers (granted by `actingRole`), its own Heir conversion. Copying a Phoenix makes a second Phoenix;
+  copying a Kindler joins the Pyre and gathers with the brood (wake 5, after the copiers).
+- **Looks** at a copier's card show its own face (Gleaner/Echo). If the card moves, its new holder holds the copy.
+- **Plans:** `night.planStep { step, plan, as: <role> }` queues what the copier will do for each role it may become
+  (stored per role in `Game.adoptPlans[seat][role][step]`, the same `StepPlan` shape, branches included). Default:
+  decide live in that role's turn, else a uniformly random move. The MCP view lists `copier.stepsIfYouBecome[role]`
+  (with legal choices) before the copy and the copied role's steps (marked `as`) after it.
+- **Results:** each seat's `summary` reads "dealt Echo, became Werewolf, ended holding Echo (a copy of Werewolf), …".
+
+## 9. The Pyre (the third team, replacing the Wildwood)
+
+**Direction.** One sacrificial member who wants to be eliminated plus supporters who win when it is.
+
+**Realised.** Team `pyre`. A **burning** is the elimination of a player holding a Phoenix card.
+- **Phoenix** (no night action): the Pyre wins if its holder is eliminated. It does not know the Kindlers unless the
+  rule `phoenixKnowsKindlers` (default off) is on.
+- **Kindlers** all share one early turn, "The brood gathers" (wake 5, `turnOf: "kindler"`), learning which seats were
+  DEALT a Phoenix and which were dealt Kindler cards. All Pyre cards' holders win exactly when a Phoenix burns, alive or
+  dead. Kinds (several of each allowed): **Kindler** (plain), **Lure** (a chosen card distortion: dress the Phoenix as a
+  Werewolf), **False Witness** (one forged seal; needs a Signet or Notary in the deck), **Ember-Carrier** (queues a seat;
+  as the vote ends, after any Moon-Thief swap, a Phoenix card, held if any else from the centre, swaps with that seat's
+  card; it may target any other seat, since it cannot know who holds what), **Heavy Hand** (its vote counts 2 when cast
+  for a Phoenix holder), **Heir** (if the deck's Phoenix is held by no player at dawn, every held Heir card becomes a
+  Phoenix and its holder is told).
+- **No Phoenix held at the count** (and no Heir conversion): rule `pyreFallback`: "kindler" (default; a Kindler's
+  elimination counts as the burning) or "none".
+- **Rule `burningDeniesWolves`** (default on): a burning denies every Werewolf-team win (including the Stalking Horse's),
+  and the Centaurs keep their win only if it came from the Blood Price count (a Werewolf eliminated, W > C).
+- **Interactions.** A burning is about the CARD: a bitten Phoenix holder plays for the wolves, yet the card still burns.
+  A moved Phoenix: the Kindlers knew only the dealt seat. A moved Kindler card: its new holder is Pyre, untold. Pyre cards
+  show as themselves to a look and count as neither Werewolves nor Centaurs under Blood Price. A Hush may cut anyone,
+  Pyre included.
+- **Order:** swaps (Moon-Thief, then embers) → tally (Heavy Hand) → teams → main result (decoy, no Werewolf held,
+  Blood Price) → the burning (Pyre wins; with the rule, denial) → loners (Cuckoo, then Oxpecker).
+- **What happened to the Wildwood.** Kept as **loners** (team `loner`, individual win rules, clearly labelled): the
+  **Cuckoo** (egg parasite) and the **Oxpecker** (symbiont): both give a seat a private agenda that does not depend on
+  the main teams. Retired: the **Sporeling** and the **Moth/Imago** (both "wants to be eliminated", now the Phoenix's
+  job; the curse made votes arithmetic) and the **Elderbark** (its point was mapping a faction that no longer exists).
+
+## 10. Round-2 findings applied
+
+- Mandatory movers (section 2) plus the `mandatorySteps` rule give Centaur movers no option to sit still; the Cutpurse
+  and Drifter also learn something only by moving (what they took), so where to move is a real decision.
+- Parameters invisible to detectors: the Spooker's rotation direction (the order of its three picks) and the
+  Ember-Carrier's target are invisible to the Sentry, which sees only *that* a card moved.
+- Votes stay secret until the end; only "has voted" is public (unchanged).
+- Slot labels: every text says "centre card 1" for `{ k: "c", i: 0 }`; every legal target in the MCP view now carries
+  its `label` beside the slot, and the argument description says the index counts from 0.
+- Evidence: random-play baselines are not evidence of balance; balance is judged from all-Opus tournaments.
