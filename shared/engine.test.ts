@@ -39,7 +39,7 @@ describe("deal", () => {
   });
   it("gives every night role in the deck one turn, in wake order, dealt or not", () => {
     expect(nightTurns(["centaur", "sentry", "werewolf", "werewolf", "farrier", "sage", "chiron"])).toEqual(["werewolf", "sage", "centaur", "farrier", "sentry"]);
-    expect(nightTurns(ROLES.map(r => r.id))).toEqual(["gleaner", "echo", "kindler", "werewolf", "stalkinghorse", "glamour", "moonthief", "wisp", "tracker", "mistweaver", "fogbank", "whisperer", "cuckoo", "sage", "notary", "centaur", "herald", "forger", "poacher", "rustler", "cutpurse", "pickpocket", "drifter", "farrier", "spooker", "herder", "oxpecker", "latecomer", "sentry", "eavesdropper", "biter"]);
+    expect(nightTurns(ROLES.map(r => r.id))).toEqual(["gleaner", "echo", "kindler", "werewolf", "stalkinghorse", "glamour", "moonthief", "wisp", "tracker", "mistweaver", "fogbank", "mirage", "whisperer", "cuckoo", "sage", "notary", "centaur", "herald", "forger", "poacher", "rustler", "cutpurse", "pickpocket", "drifter", "farrier", "spooker", "herder", "oxpecker", "latecomer", "sentry", "eavesdropper", "biter"]);
     // A twin acts in its original's turn: one public turn for the pair, and the original's turn even if only the twin is in the deck.
     expect(nightTurns(["sage", "moonsage", "centaur"])).toEqual(["sage", "centaur"]);
     expect(nightTurns(["moonsage", "centaur"])).toEqual(["sage", "centaur"]);

@@ -138,3 +138,52 @@ no one can model why the evidence is wrong (no theory of mind possible about a d
 - **H2 (shadow Sage leaks a wolf):** the Moonsage does not know the wolves, so its frames are gambles; if Moonsage
   duels lose consistently because it frames a Centaur that is vouched for, a twin that ALSO learns one wolf seat
   (Whisperer + Moonsage) should make the duel truly symmetric.
+
+## Coarse-pass check (2026-11-22, after 10 coarse games; see players-8-log.md) and fine pass 1 predictions
+
+Coarse in one line: Centaurs 7 of 10 (plus V8#1), wolves 2 (M1#2, M2#2), Pyre 0. M4 (stealers) read talk-dead (path
+1, 1); M5 (predicted bad) read clean (noise 1-2, ToM 2), so my M5 prediction is falsified on ToM. Fine pass 1 takes M1
+and M2. Every scenario below was checked with scenario-check.ts (night as intended). 5 replays each, seeds 11-14.
+
+- **F1-M1-duel (predicted TALK-LIVE).** Sage Alder(0) read the lone Werewolf Dov(3). The Moonsage Bryn(1) read Cass(2)
+  truly (Centaur). Cass's glance found a Sage in centre 1, so of the Sage-faces only two are on players, and if Alder
+  and Bryn both claim Sage one of them is the Moonsage. The lone wolf Dov scented Bryn: wolf team. So Dov knows Bryn is
+  his ally and can back Bryn's Sage claim ("Alder is the Moonsage framing me"). The Dun Centaur Esme(4) glanced centre 2
+  = Werewolf and can claim Centaur truthfully. Fen (Rustler) peeked Hale; Hale (Pickpocket) swapped with Fen; the
+  Sentry saw both move. The crux: an accusing Sage read against a harmless, consistent one. **Predict: Centaurs 2,
+  wolves 3; minority >= 1; judges' path >= 2.5.** Falsified as talk-dead if 5-0 either way with path < 2.
+- **F2-M1-pair (predicted TALK-DEAD control).** Wolves Alder(0) and Cass(2) are a pack pair. Sage Bryn(1) read Cass =
+  Werewolf. Sage Fen(5) read Esme (Rustler, who confirms). Centaur Dov glanced centre 1 and saw "Sage" (truly the
+  Moonsage). So the table sees three Sage-faces: Bryn, Fen and the centre, and none is left for Cass to claim. Cass
+  can only attack Bryn without a role. Alder holds a census-safe claim (Centaur, Drifter or Dun Centaur in the centre).
+  **Predict: Centaurs 5-0 (Cass eliminated), path < 2.** Falsified if the wolves win any replay.
+- **F3-M2-lure (predicted TALK-LIVE three ways).** The Lure Cass(2) dressed the Phoenix Bryn(1) as a Werewolf; Sage
+  Alder read Bryn = "Werewolf". The lone wolf Dov(3) scented Bryn and learned "of the Pyre", so he knows the read is a
+  Lure frame. The Echo Esme(4) copied Fen's Rustler and peeked Cass: Lure. That is a third-party clue that a Lure is
+  held, so the frame story is available to the Centaurs. Bryn wants to burn; Dov wants anyone but himself and Bryn.
+  **Predict: Pyre 2, Centaurs 2, wolves 1; minority >= 2; ToM >= 2.5.**
+- **F4-M2-ember (predicted TALK-LIVE).** The Ember-Carrier Dov(3) carried the Phoenix from Cass(2) to Fen(5), so Fen
+  holds the Phoenix unknowingly and Cass holds a Centaur. Sage Bryn read Esme(4) = Werewolf (a pack pair with Alder).
+  The Rustler Hale peeked Cass = Centaur (after the carry); the Sentry saw Fen's card move. The Centaurs can
+  reconstruct the carry only if Cass reveals that she was dealt the Phoenix. **Predict: Centaurs 3, Pyre 1, wolves 1;
+  path >= 2.5.** Falsified as talk-dead if Esme is eliminated in all 5.
+
+## Fine pass 1 outcome in one line, and fine pass 2 predictions (2026-11-22, before any replay)
+
+Fine pass 1: all four scenarios swept (F1 Centaurs 5-0, F2 Centaurs 5-0, F3 Pyre 5-0, F4 Centaurs 5-0). F1 was my
+predicted talk-live scenario and it was talk-dead. The judges' reason in 2 of 5 replays was decision theory: under
+Blood Price, eliminating a Moonsage (not a Werewolf) can never win, so when two Sage claims clash and one names a
+Werewolf, the accused is the only vote that can win. The other 3 replays turned on timing: Dov claimed late.
+**Amendment A (new card, additive): Hollow Sage** (`hollowsage`), a shadow twin of the Sage that COUNTS AS A WEREWOLF
+(outside the pack, like the Dun Centaur) and passes as a Sage to every look. Eliminating the fake Sage then also wins,
+so both readings of a Sage duel have a winning vote, and the table must decide which Sage lies.
+
+- **H1-M1H-duel** (F1 with the Hollow Sage in Bryn's seat; otherwise identical). **Predict: Centaurs 3, wolves 2;
+  minority >= 1; path >= 2.5.** The timing tell (Dov claims late) remains, so the Centaurs keep an edge.
+- **H2-M1H-pair** (F2 with the Hollow Sage in the centre, so Dov's glance shows "Sage"). Cass can now claim "Bryn is
+  the Hollow Sage", and that vote would win if it were true. **Predict: Centaurs 4, wolves 1** (the wolves still
+  collide on claims and Cass is late).
+- **H2c-M1H-pair-covers** (H2 plus the hub's `packCovers`: the pack is told distinct cover roles from the centre).
+  **Predict: Centaurs 3, wolves 2; no claim collisions between the two wolves in any replay.**
+Falsifiers: H1 at 5-0 Centaurs with the judges citing the count or timing means the twin's win condition was not the
+binding constraint; H2c with a wolf collision means covers are ignored.
