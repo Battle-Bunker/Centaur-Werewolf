@@ -1,0 +1,154 @@
+{
+ "about": "players-6 fine pass 6: PY6 with the Moonsage held (does the wolf side get a live game?)",
+ "timers": {
+  "dusk": 8,
+  "turn": 2,
+  "day": 240,
+  "vote": 60
+ },
+ "agents": {
+  "model": "opus",
+  "effort": "medium"
+ },
+ "tables": [
+  {
+   "label": "PY6-S5-twinheld",
+   "replays": 5,
+   "center": 3,
+   "deck": [
+    "centaur",
+    "lure",
+    "moonsage",
+    "phoenix",
+    "pickpocket",
+    "rustler",
+    "sage",
+    "werewolf",
+    "werewolf"
+   ],
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "scenario": {
+    "seed": 614,
+    "cards": [
+     "sage",
+     "phoenix",
+     "lure",
+     "werewolf",
+     "moonsage",
+     "rustler",
+     "werewolf",
+     "centaur",
+     "pickpocket"
+    ],
+    "plans": {
+     "Cass": [
+      {
+       "step": "lure",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 1
+          }
+         ],
+         "role": "werewolf"
+        }
+       }
+      }
+     ],
+     "Dov": [
+      {
+       "step": "scent",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 0
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Alder": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Esme": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 1
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Fenn": [
+      {
+       "step": "peek",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 1
+          }
+         ]
+        }
+       }
+      },
+      {
+       "step": "trade",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "skip"
+        }
+       }
+      }
+     ]
+    }
+   },
+   "rules": {
+    "openingStatements": true,
+    "bloodPriceCondemned": true
+   }
+  }
+ ]
+}

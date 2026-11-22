@@ -138,3 +138,30 @@ c (ON): S1 .8 .6 1 .6 .8; S2 .6 1 .6 .6 1; S2-nodenial .8 .6 .8 1 .6.
 - **Heuristic P6-5: simultaneous opening claims transfer power to the side whose truthful claims cross-check (the
   Centaurs) by making liars commit before they know what is safe. Expect defector win shares to drop wherever a
   defector's best lie depended on hearing the others first (wolves claiming last; claims that copy another's read).**
+
+## Fine pass 4 (13:05-13:20, 10 replays, ~$36; opening statements ON)
+
+| Scenario | Predicted | Result | c | Judges ToM / dec / path / noise |
+| --- | --- | --- | --- | --- |
+| PE6-S1 ember-carried Phoenix | C 3, P 1, W 1 | **Centaurs 5-0** | .8 x5 | 1.7 / 2.1 / 1.6 / 0.3 |
+| PF6-S1 sealed pair reports + False Witness | P 2, C 2, W 1 | **Centaurs 5-0** | .6 .8 .8 .6 .6 | 2.0 / 2.1 / 1.0 / 0.2 |
+
+Both predictions falsified: both sweeps, talk-dead (I4 degenerate). WHY, and the smallest change that would leave a
+credible counter-story:
+- **PE6-S1: the carried Phoenix's dealt holder became an honest witness.** Once the ember moved the Phoenix away, Bryn
+  (dealt Phoenix) held the Rustler, i.e. was a Centaur, and had every reason to say "I was dealt the Phoenix"; with
+  the Sage's "Rustler on Bryn" and the Sentry's "Esme moved" that decoded the swap mechanically in all five replays
+  (the Ember-Carrier itself then confessed in 3 of 5). Same mechanism as the robbed wolf in V6#1 and SO6:
+  **Heuristic P6-6: any blind swap converts its victim into a witness for the side of the card it received; a swap
+  only creates lasting uncertainty if the victim's new team gives it a reason to keep the old story.** Smallest
+  change: a variant Ember-Carrier whose carried Phoenix keeps the dealt holder on the Pyre ("the brood's mark": the
+  player dealt the Phoenix still wins with the Pyre), so the old holder keeps lying. Engine change (team by dealt card
+  for one seat): requested, not implemented tonight.
+- **PF6-S1: the Notary's private read is a two-card Sage.** The seal itself is now ambiguous (pair), but the Notary
+  saw BOTH roles and said exactly which was which in its sealed opening; the Rustler and the Centaur confirmed the
+  rest; the False Witness's forged seal (posted in 4 of 5) came late and read as a Pyre move ("a forger would never
+  protect the Phoenix"). The evidence amendment made the PUBLIC artefact ambiguous but left the Notary's PRIVATE
+  knowledge exact, and players simply say what they saw. **Heuristic P6-7: ambiguity in a public artefact does not
+  survive an honest holder who knows the unambiguous fact behind it; make the holder's own knowledge ambiguous.**
+  Smallest change: a variant Notary that learns only the pair statement it will seal ("at least one of A and B is a
+  Werewolf"), like the amended Herald. Requested.
