@@ -517,6 +517,21 @@ describe("table rules for passivity", () => {
   });
 });
 
+describe("scenario replay", () => {
+  it("a seeded night is fully deterministic: random distortions, ghost results, the unheld egg, forced moves and proclamation order", () => {
+    const deck = ["wisp", "fogbank", "eavesdropper", "herald", "forger", "centaur", "rustler", "cuckoo", "sentry", "sage"];
+    const run = () => {
+      const s = dealFixed(deck, 6);
+      const log: LogEntry[] = [];
+      const seats: NightSeat[] = s.dealt.map(() => ({ plan: {}, progress: freshProgress() }));
+      nightTurns(deck).forEach((role, turn) => log.push(...runTurn(s, role, seats, turn + 1, seededRng(1000 + turn), log, { force: true })));
+      log.push(...dawn(s, deck, 99, seededRng(77)));
+      return JSON.stringify({ log, shown: s.shown, marks: s.marks, cards: s.cards, center: s.center });
+    };
+    expect(run()).toBe(run());
+  });
+});
+
 describe("copiers (adopt)", () => {
   const go = (dealt: string[], center: string[], plans: Record<number, Plan> = {}, adoptPlans: Record<number, Record<string, Plan>> = {}, rules = {}) => { const s = state(dealt, center, rules); const log = night(s, plans, 3, adoptPlans); return { s, log }; };
   it("Gleaner copies a centre card and acts in that role's turn with the plan queued for it", () => {

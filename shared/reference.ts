@@ -115,7 +115,7 @@ It states the game exactly as built. Design history: docs/design/synthesis.md an
 | --- | --- | --- |
 | Night: Dusk | Everyone reads their card and may queue their night decisions. | Dusk timer (${TIMERS.dusk.min}-${TIMERS.dusk.max} s, default 20) |
 | Night: turns | One turn per night role in the deck, in wake order, each exactly the turn length (${TIMERS.turn.min}-${TIMERS.turn.max} s, default 12), **whether or not anyone holds that card**. A shadow twin acts in its original's turn. Everyone sees which turn it is. Each player acts in the turn of the card they were DEALT, even if it has been moved. Undecided steps at the end of a player's turn get a uniformly random legal decision. | Last turn |
-| Dawn | Proclamations are published (in random order under the dawn rule); a public mark nobody made (an unheld Cuckoo's egg) is laid on a random seat; bitten players and Imagos are told privately. | Immediately |
+| Dawn | Proclamations are published (in random order under the dawn rule); a public mark nobody made (an unheld Cuckoo's egg) is laid on a random seat; if the deck's Phoenix is held by no player, every held Heir card becomes a Phoenix; bitten players and Heirs so turned are told privately. | Immediately |
 | Discussion | Chat. Players mark themselves ready. A Hush may cut; a Moon-Thief may queue its swap (only under the day-swap rule, off by default). No voting. | Its timer (${TIMERS.day.min}-${TIMERS.day.max} s, default 300), the host, or every seated human ready |
 | Vote | Each seated player votes for one other player and may change it. Votes are secret until the end; only "has voted" is public. Chat closed unless the rule opens it. | Its timer (${TIMERS.vote.min}-${TIMERS.vote.max} s, default 20) or every seated human has voted |
 | Count | Missing votes are cast uniformly at random (marked "did not vote in time"). The Moon-Thief's swap happens (day-swap rule only). Then the resolution order below. | |
@@ -132,7 +132,7 @@ ${ruleRows.join("\n")}
 - **Cards move**: swaps, rotations and the Moon-Thief's day swap move cards between seats and the centre. A moved card
   carries its team, its win rule and anything bound to it (an egg, a bond, a distortion token). Nobody is told their
   card moved (the Sentry may detect *that* a nearby card moved; nothing detects direction or destination).
-- **You act by the card you were DEALT; you win by the card you HOLD at the count** (unless bitten or an Imago).
+- **You act by the card you were DEALT; you win by the card you HOLD at the count** (unless bitten: a bitten player plays for the Werewolf team; a copier's card counts as what it copied).
 - **Card instances**: every physical card is distinct even when several copies of a role exist; marks bind to the
   physical card.
 - **What a look shows**, in order: a passing twin shows its original; then the latest card distortion (Glamour: a chosen
@@ -193,11 +193,13 @@ To replay one scenario many times with only the day varying:
 2. As host (host grant only), fix the deal and every random draw: \`setup.fixDeal { seats: [player ids, seat 0 first],
    cards: [seat 0, …, then centre card 1, …], nightSeed: n }\`. The night seed drives every random draw of the night and
    the count (random information, random distortions, forced moves, the unheld egg, random votes), each moment from its
-   own seeded stream, so identical decisions give identical results.
+   own seeded stream, so identical decisions give identical results. If only \`seed\` is given, the night seed is
+   derived from it, so \`seed\` alone already fixes the whole scenario.
 3. Queue every seat's night decisions up front with each seat's own key (\`night.planStep\`, with \`as\` for copiers),
    during dusk. Dusk and night turns may be as short as 1 second at a play-test table (\`setup.setTimer\`).
 4. After the count, \`result.scenario.fingerprint\` (MCP) or \`game.final.fingerprint\` (app) is a canonical hash of the
-   deal, the night seed, the rules and every night event; runs with equal fingerprints differed only in the day.
+   deal, the night seed, the rules, every night event (with what random draws produced) and the order the dawn
+   proclamations were published in; runs with equal fingerprints differed only in the day.
 
 ## 8. Night order (the full roster)
 

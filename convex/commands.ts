@@ -180,7 +180,7 @@ const HANDLERS: Record<ServerId, Handler> = {
       plans: seats.map(() => ({})), adoptPlans: seats.map(() => ({})), adoptProgress: seats.map(() => null),
       progress: state.dealt.map(r => ({ ...freshProgress(), done: !ROLE[r].steps })),
       votes: seats.map(() => null), forcedVotes: [], chatUsed: seats.map(() => false), powerUsed: seats.map(() => false), ready: seats.map(() => false), seatEffects: [],
-      daySwap: null, fixed: !!fixed, dealSeed, ...(fixed?.nightSeed !== undefined ? { nightSeed: fixed.nightSeed } : {}),
+      daySwap: null, fixed: !!fixed, dealSeed, ...(fixed?.nightSeed !== undefined || fixed?.seed !== undefined ? { nightSeed: fixed.nightSeed ?? (fixed.seed! ^ 0x2545f491) >>> 0 } : {}),
     };
     const round = room.round + 1;
     await ctx.db.patch(room._id, { phase: "night", round, game });

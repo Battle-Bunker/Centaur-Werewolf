@@ -90,7 +90,7 @@ the results; presence and every perceivable signal go through one central gate.
   the window: exactly a real drop.
 - Every registry command declares `perceivable` (a test fails if one does not); the dispatcher applies seat effects
   from that one property, so future commands cannot forget.
-- The Hush: `day.cutLine { seat }`, once per game; rules `cutSeconds` (default 60) and `cutDuringVote` (default on).
+- The Hush: `day.cutLine { seat }`, once per game; rules `cutSeconds` (default 60) and `cutDuringVote` (default off since round 3: a vote forced at random after the talk is outcome noise).
   Revealed only in the results (`cutOff` per seat, a log line, `seatEffects`).
 - Contract for future real-time channels (video, audio): see docs/architecture.md, "Presence and the gate".
 

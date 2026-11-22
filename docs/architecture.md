@@ -79,7 +79,7 @@ the lobby, shown in both views and described in the MCP rules text. A game copie
 | `mandatorySteps` | false | bool | Optional night steps may not be declined |
 | `chatDuringVote` | false | bool | Chat stays open during the vote phase |
 | `cutSeconds` | 60 | 15–180 | Length of a Hush's cut |
-| `cutDuringVote` | true | bool | A Hush may cut during the vote, and a cut may run into it |
+| `cutDuringVote` | false | bool | A Hush may cut during the vote, and a cut may run into it |
 | `phoenixKnowsKindlers` | false | bool | The Phoenix learns the Kindlers' seats |
 | `burningDeniesWolves` | true | bool | A burning denies the Werewolf team; Centaurs keep only a Blood-Price win |
 | `pyreFallback` | `"kindler"` | kindler / none | With no Phoenix held, a Kindler's elimination is the burning, or the Pyre cannot win |

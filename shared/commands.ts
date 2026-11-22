@@ -222,7 +222,7 @@ export const COMMANDS = [
       seed: z.number().int().min(0).max(2 ** 31).optional().describe("Seeds the seating and the shuffle."),
       seats: z.array(z.string()).min(3).max(12).optional().describe("Player ids in seat order (seat 0 first): every player in the room exactly once."),
       cards: z.array(roleId).min(6).max(18).optional().describe("Role ids: the card of seat 0, seat 1, …, then centre card 1, 2, …"),
-      nightSeed: z.number().int().min(0).max(2 ** 31).optional().describe("Seeds every random draw of the night and the count (random information, random distortions, forced moves, the egg, random votes), so identical decisions give identical results."),
+      nightSeed: z.number().int().min(0).max(2 ** 32).optional().describe("Seeds every random draw of the night and the count (random information, random distortions, the Eavesdropper's ghost result, forced moves, the unheld egg, the order of dawn proclamations, random votes), so identical decisions give identical results. Derived from seed when omitted."),
     }).strict(),
     available: ctx => (ctx.playtest ? OK : no("Only at a play-test table (chosen when the room is created).", true)),
   }),

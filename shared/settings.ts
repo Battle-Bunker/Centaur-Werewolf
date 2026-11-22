@@ -29,7 +29,7 @@ export interface Rules {
   chatDuringVote: boolean;
   /** How long a Hush's cut lasts, in seconds. */
   cutSeconds: number;
-  /** A Hush may cut during the vote phase too (not only during discussion), and a cut may run on into it. */
+  /** A Hush may cut during the vote phase too, and a cut may run on into it. Off by default: a vote forced at random after the talk is outcome noise. */
   cutDuringVote: boolean;
   /** The Phoenix wakes with the brood and learns the Kindlers' seats. */
   phoenixKnowsKindlers: boolean;
@@ -51,7 +51,7 @@ export const DEFAULT_RULES: Rules = {
   mandatorySteps: false,
   chatDuringVote: false,
   cutSeconds: 60,
-  cutDuringVote: true,
+  cutDuringVote: false,
   phoenixKnowsKindlers: false,
   burningDeniesWolves: true,
   pyreFallback: "kindler",
