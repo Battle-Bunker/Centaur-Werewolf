@@ -6,7 +6,7 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { loadGames, seatOf, type Game } from "./game";
 
-const DIRS = ["sim/runs/p5/coarse", "sim/runs/p5/fine1", "sim/runs/p5/fine2", "sim/runs/p5/coarse2"].filter(existsSync);
+const DIRS = ["sim/runs/p5/coarse", "sim/runs/p5/fine1", "sim/runs/p5/fine2", "sim/runs/p5/coarse2", "sim/runs/p5/fine3"].filter(existsSync);
 const games = loadGames(DIRS);
 const ROSTERS: Record<string, { name: string; deck: string[]; groups: RegExp; rules: string }> = {
   Q3: { name: "Little Pyre", deck: ["werewolf", "werewolf", "phoenix", "lure", "sage", "rustler", "sentry", "centaur"], groups: /^(Q3|Q3-n|F5-|F6-|F8-)/, rules: "defaults" },
@@ -22,7 +22,7 @@ const band = (g: Game, c: number) => (!g.eliminated.length || c <= 0.4 ? "scatte
 const mean = (xs: number[]) => (xs.length ? +(xs.reduce((a, b) => a + b, 0) / xs.length).toFixed(2) : null);
 const count = (xs: string[]) => xs.reduce<Record<string, number>>((a, x) => ((a[x] = (a[x] ?? 0) + 1), a), {});
 
-const out: Record<string, unknown> = { generated: new Date().toISOString(), players: 5, center: 3, timers: { dusk: "60 natural / 8 fixed", turn: "8 natural / 2 fixed", day: 240, vote: 60 }, agents: "all seats Opus, medium effort", rosters: {} };
+const out: Record<string, unknown> = { generated: new Date().toISOString(), players: 5, center: 3, timers: { dusk: "60 natural / 8 fixed", turn: "8 natural / 2 fixed", day: 240, vote: 60 }, agents: "all seats Opus, medium effort", openingStatements: "off in every game", rosters: {} };
 for (const [id, r] of Object.entries(ROSTERS)) {
   const gs = games.filter(g => r.groups.test(g.group));
   const natural = gs.filter(g => !g.fingerprint || !/^[DF]\d/.test(g.group));
@@ -31,7 +31,7 @@ for (const [id, r] of Object.entries(ROSTERS)) {
   for (const grp of [...new Set(fixed.map(g => g.group))]) {
     const fg = fixed.filter(g => g.group === grp), js = fg.flatMap(g => g.judges), w = count(fg.map(winner));
     const minority = fg.length - Math.max(...Object.values(w)), path = mean(js.map(j => j.pathDependence)) ?? 0;
-    scen[grp] = { replays: fg.length, fingerprints: new Set(fg.map(g => g.fingerprint)).size, winners: w, minority, talkLive: minority >= 1 && path >= 2, degenerate: minority === 0 && path < 2,
+    scen[grp] = { replays: fg.length, fingerprints: new Set(fg.map(g => g.fingerprint)).size, tieDecided: fg.filter(g => /Blood Price/.test(g.headline) && g.eliminated.length > 1).length, winners: w, minority, talkLive: minority >= 1 && path >= 2, degenerate: minority === 0 && path < 2,
       judges: { tom: mean(js.map(j => j.tomRequired)), deception: mean(js.map(j => j.deceptionCleverness)), path, noise: mean(js.map(j => j.noise)) }, concentration: fg.map(g => +conc(g).toFixed(2)) };
   }
   const js = gs.flatMap(g => g.judges), pairs = gs.filter(g => g.judges.length >= 2).map(g => g.judges);

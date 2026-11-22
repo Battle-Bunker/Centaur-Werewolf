@@ -4,9 +4,11 @@ Session of 2026-11-22 (all games after the evidence amendment). Machine-readable
 with `npx tsx sim/research/p5-report.ts`). Predictions written before each batch: players-5-predictions.md; log and
 lessons: players-5-log.md; requests to the hub: players-5-requests.md. Raw runs: sim/runs/p5 (git-ignored).
 
-**What was played.** 71 all-Opus games (every seat Opus, medium effort), about $206 of players plus about $8 of
-judges and tagging: 21 natural-deal games across 6 rosters and 50 fixed-scenario replays (10 scenarios × 5). Every
-fixed scenario's 5 replays share one fingerprint (same deal, seed and night; only the day differs). Two neutral
+**What was played.** 81 all-Opus games (opening statements OFF in every game) (every seat Opus, medium effort), about $236 of players plus about $9 of
+judges and tagging: 21 natural-deal games across 6 rosters and 60 fixed-scenario replays (10 scenarios × 5, and the
+two best scenarios F3 and F6 extended to 10). Every fixed scenario's replays share one deal, seed and night (only the
+day differs); the 5 extension replays of F3/F6 have a different fingerprint only because the rules hash gained new
+default-off options between batches. Two neutral
 judges per game. Default rules (Blood Price, census "all", 2 votes to eliminate, chat closed in the vote); timers:
 discussion 240 s, vote 60 s (natural deals: dusk 60 s, turn 8 s; fixed scenarios: 8 s / 2 s, plans pre-queued).
 **Counts, not rates:** no roster has 10 natural games.
@@ -15,8 +17,8 @@ discussion 240 s, vote 60 s (natural deals: dusk 60 s, turn 8 s; fixed scenarios
 
 | Rank | Roster (centre 3) | Fixed scenarios talk-live | Natural deals (C / W / Pyre) | Judges ToM / deception / path / noise | Vote bands (all games) |
 | --- | --- | --- | --- | --- | --- |
-| 1 | **Q3 Little Pyre**: werewolf ×2, phoenix, lure, sage, rustler, sentry, centaur | **3 of 3** (F5 C3-P2, F6 W2-C2-P1, F8 P4-W1) | 3 / 2 / 1 of 6 | 2.45 / 2.76 / 2.86 / 1.19 | majority 16, plurality 3, unanimous 2 |
-| 2 | **Q2 Three Hands**: werewolf ×2, cutpurse, pickpocket, latecomer, sage, sentry, centaur | 1 of 3 (F3 W3-C2); F4, F7 degenerate | 3 / 2 / - of 5 | 1.88 / 1.98 / 2.10 / 0.45 | unanimous 15, majority 5 |
+| 1 | **Q3 Little Pyre**: werewolf ×2, phoenix, lure, sage, rustler, sentry, centaur | **3 of 3** (F5 C3-P2, F6 W5-C4-P1 over 10, F8 P4-W1) | 3 / 2 / 1 of 6 | 2.45 / 2.76 / 2.86 / 1.19 | majority 16, plurality 3, unanimous 2 |
+| 2 | **Q2 Three Hands**: werewolf ×2, cutpurse, pickpocket, latecomer, sage, sentry, centaur | 1 of 3 (F3 W6-C4 over 10); F4, F7 degenerate | 3 / 2 / - of 5 | 1.88 / 1.98 / 2.10 / 0.45 | unanimous 15, majority 5 |
 | 3 | **Q1D Moon and Drover**: werewolf, moonsage, spooker, sage, **drover** (new), sentry, centaur ×2 | 1 of 2 (D1 C4-W1); D2 degenerate | 2 / 1 / - of 3 | 1.88 / 2.31 / 2.00 / 0.92 | majority 8, unanimous 5 |
 
 - **Q3 Little Pyre** is the best 5-player roster found: every tested scenario was talk-live, judges' path
@@ -38,10 +40,10 @@ discussion 240 s, vote 60 s (natural deals: dusk 60 s, turn 8 s; fixed scenarios
 | --- | --- | --- | --- | --- | --- | --- |
 | F1 spooker-decoy | Q1 | lone wolf; Spooker rotates a Centaur away; Sage, Moonsage, Rustler in the centre | W 5 | 3.0 | 2.2 | sweep, talk mattered |
 | F2 twin-duel | Q1 | Sage reads the wolf; Moonsage reads the Sage; Rustler sees the Moonsage as "Sage" | C 5 | 3.3 | 2.0 | sweep (wolf slips) |
-| F3 cutpurse-wolf | Q2 | 2 wolves; Cutpurse knowingly steals one; Pickpocket lifts the Cutpurse card off the old wolf | W 3, C 2 | 3.7 | 2.6 | **talk-live** |
+| F3 cutpurse-wolf (10 replays) | Q2 | 2 wolves; Cutpurse knowingly steals one; Pickpocket lifts the Cutpurse card off the old wolf | W 6, C 4 | 3.4 | 2.5 | **talk-live** |
 | F4 lone-wolf | Q2 | lone wolf untouched; only movers in the centre | C 5 | 1.0 | 1.5 | **degenerate** (predicted control) |
 | F5 pyre-burn | Q3 | Sage reads the lone wolf; Phoenix and a self-dressed Lure held | C 3, Pyre 2 | 2.7 | 2.3 | **talk-live** |
-| F6 two-wolves-lure | Q3 | 2 wolves, self-dressed Lure held; Phoenix and Sage in the centre | W 2, C 2, Pyre 1 | 3.2 | 2.4 | **talk-live** |
+| F6 two-wolves-lure (10 replays) | Q3 | 2 wolves, self-dressed Lure held; Phoenix and Sage in the centre | W 5, C 4, Pyre 1 (2 of the W wins by a Blood Price tie) | 3.4 | 2.4 | **talk-live** |
 | F7 blind-carrier | Q2 | Pickpocket blindly lifts the wolf; Latecomer swaps with the Centaur | C 5 | 1.3 | 1.2 | **degenerate** |
 | F8 dressed-phoenix | Q3 | Lure dresses the Phoenix as a Werewolf; Sage reads it; Rustler peeks the real wolf | Pyre 4, W 1 | 3.2 | 2.8 | **talk-live** |
 | D1 = F1 + Drover | Q1D | as F1, Drover in place of the Rustler | C 4, W 1 | 2.2 | 1.9 | **talk-live** |
@@ -50,6 +52,16 @@ discussion 240 s, vote 60 s (natural deals: dusk 60 s, turn 8 s; fixed scenarios
 Judges agreed closely: mean absolute difference per scale 0.1-0.46 per roster, `howWon` identical in 61 of 71 pairs.
 No missed votes, no forced night moves in fixed scenarios. Discussions lasted 43-130 s and always ended with everyone
 ready (22-42 messages).
+
+## Caveats from cross-session findings
+- **Timing tell (harness artefact, confirmed here).** Over 71 games (before the extension), a Centaur seat spoke first
+  in 65; median first-message delay 15.4 s for Centaur-dealt seats, 24.6 s for wolf-dealt, 18.5 s for Pyre (mean
+  speaking rank 2.3 vs 4.2 vs 3.6; sim/research/first-messages.ts). "Claim timing" was tagged as evidence in 17 games,
+  decisive in 8 Centaur wins. Centaur wins are therefore somewhat inflated, and their "cleverness" partly rests on a
+  latency tell that human play would not have. None of these games used the hub's `openingStatements` rule.
+- **Ties.** Blood Price ties decided 2 of F6's 10 replays and 1 of F1's 5 (wolf wins); exact parity cannot occur at 5.
+- **Q4 copiers are contaminated:** a since-fixed bug let an AI Gleaner see which roles lay in the centre before copying.
+  Its "talk-dead" verdict is void.
 
 ## Interesting games
 
@@ -126,6 +138,9 @@ credibility card" when the duplicate itself was one.
 ## What is not yet known
 - Natural-deal win shares: 5-6 natural games per recommended roster is far too few for rates. The fixed scenarios
   measure day-variability, not class frequencies.
+- F2 (Moonsage duel, C5) with the hub's `hollowsage` twin or census off: the hub's most-informative suggested test,
+  not run (budget).
+- Effect of `openingStatements` on F3/F5/F6/F8 (the hub saw a 6-player Pyre scenario flip with it on).
 - Whether F1/F2-type sweeps with high judge path scores (3.0-3.3) would split with more replays: 5 replays cannot
   separate "talk matters but one side usually wins" from talk-live.
 - The effect of the hub's newer rules (opening statements, pack covers, census variants) at 5 players: these games
