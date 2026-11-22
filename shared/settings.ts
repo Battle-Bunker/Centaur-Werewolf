@@ -17,6 +17,8 @@ export interface Rules {
   biteNamesBiter: boolean;
   /** When nobody holds the role the Eavesdropper names, it gets a real result of its own as if it held it. Off: nothing. */
   eavesdropGhost: boolean;
+  /** With a Phoenix held, eliminating a non-Phoenix Pyre card (and no Werewolf) voids the main result instead of being a wolf win. */
+  kindlerDeathVoids: boolean;
   /** The Lure may not dress the card dealt as a Phoenix (it may still dress any other card). */
   lureSparesPhoenix: boolean;
   /** The discussion opens with simultaneous opening statements (held, revealed together in seat order). */
@@ -55,6 +57,7 @@ export const DEFAULT_RULES: Rules = {
   dawnProclamations: true,
   biteNamesBiter: true,
   eavesdropGhost: true,
+  kindlerDeathVoids: false,
   lureSparesPhoenix: false,
   openingStatements: false,
   openingSeconds: 60,
@@ -112,6 +115,11 @@ export const RULE_DEFS: RuleDef[] = [
     id: "eavesdropGhost", kind: "boolean", title: "Eavesdropper's own result", tooltip: "What the Eavesdropper gets when nobody holds the role it names.",
     on: "If nobody was dealt the role the Eavesdropper names, it secretly gets a real result of its own as if it held that role (looks only, never moves), and is not told which case happened.",
     off: "If nobody was dealt the role the Eavesdropper names, it learns nothing.",
+  },
+  {
+    id: "kindlerDeathVoids", kind: "boolean", title: "A Kindler's fall voids the day", tooltip: "Whether eliminating a Kindler (while a Phoenix is held) can be a Werewolf-team win.",
+    on: "If a player holding a Pyre card that is not a Phoenix is eliminated while a Phoenix is held, and no Werewolf falls, no main team wins (and the Pyre does not win either). Eliminating a Kindler is no longer a free win for the wolves.",
+    off: "Eliminating a Kindler while a Phoenix is held is, like any elimination without a Werewolf, a Werewolf-team win.",
   },
   {
     id: "lureSparesPhoenix", kind: "boolean", title: "The Lure spares the Phoenix", tooltip: "Whether the Lure may dress the card dealt as the Phoenix.",

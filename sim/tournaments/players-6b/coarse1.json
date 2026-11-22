@@ -1,0 +1,178 @@
+{
+ "about": "players-6b coarse pass 1: natural deals",
+ "timers": {
+  "dusk": 120,
+  "turn": 10,
+  "day": 240,
+  "vote": 60
+ },
+ "agents": {
+  "model": "opus",
+  "effort": "medium"
+ },
+ "redeal": "wolfDealt",
+ "tables": [
+  {
+   "label": "PYH6#1",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "sage",
+    "hollowsage",
+    "rustler",
+    "centaur",
+    "pickpocket"
+   ],
+   "rules": {
+    "openingStatements": true,
+    "bloodPriceCondemned": true
+   }
+  },
+  {
+   "label": "PYH6#2",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "sage",
+    "hollowsage",
+    "rustler",
+    "centaur",
+    "pickpocket"
+   ],
+   "rules": {
+    "openingStatements": true,
+    "bloodPriceCondemned": true
+   }
+  },
+  {
+   "label": "PYS6#1",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "sage",
+    "stalkinghorse",
+    "rustler",
+    "centaur",
+    "pickpocket"
+   ],
+   "rules": {
+    "openingStatements": true,
+    "bloodPriceCondemned": true
+   }
+  },
+  {
+   "label": "PYS6#2",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "lure",
+    "sage",
+    "stalkinghorse",
+    "rustler",
+    "centaur",
+    "pickpocket"
+   ],
+   "rules": {
+    "openingStatements": true,
+    "bloodPriceCondemned": true
+   }
+  },
+  {
+   "label": "HC6#1",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "hollowsage",
+    "duncentaur",
+    "sage",
+    "sage",
+    "centaur",
+    "centaur",
+    "rustler",
+    "pickpocket"
+   ],
+   "rules": {
+    "openingStatements": true,
+    "bloodPriceCondemned": true
+   }
+  },
+  {
+   "label": "HC6#2",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "hollowsage",
+    "duncentaur",
+    "sage",
+    "sage",
+    "centaur",
+    "centaur",
+    "rustler",
+    "pickpocket"
+   ],
+   "rules": {
+    "openingStatements": true,
+    "bloodPriceCondemned": true
+   }
+  }
+ ]
+}

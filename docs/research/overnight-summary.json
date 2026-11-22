@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-22T13:37:45.167Z",
+ "generatedAt": "2026-11-22T13:43:58.884Z",
  "top3": [
   {
    "rank": 1,
@@ -31,7 +31,247 @@
   "players": 8,
   "why": "of 10 fixed scenarios 1 talk-live, 2 borderline, 7 swept; 63 games Centaurs 52, wolves 6, Pyre 5 (first 8-player session)"
  },
+ "confirmation": [
+  {
+   "roster": "P7",
+   "scenario": "F-P7-ember",
+   "arm": "off",
+   "rules": {},
+   "newN": 2,
+   "newWinners": {
+    "werewolf": 1,
+    "pyre": 1
+   },
+   "newMinority": 1,
+   "newC": [
+    0.67,
+    0.5
+   ],
+   "newJudges": {
+    "tom": 2,
+    "deception": 2.5,
+    "path": 3,
+    "noise": 1
+   },
+   "pooled": {
+    "n": 7,
+    "winners": {
+     "centaur": 1,
+     "pyre": 3,
+     "werewolf": 3
+    },
+    "judges": null
+   }
+  },
+  {
+   "roster": "K7",
+   "scenario": "F-K7-duel",
+   "arm": "off",
+   "rules": null,
+   "newN": 0,
+   "newWinners": {},
+   "newMinority": 0,
+   "newC": [],
+   "newJudges": {
+    "tom": null,
+    "deception": null,
+    "path": null,
+    "noise": null
+   },
+   "pooled": {
+    "n": 5,
+    "winners": {
+     "centaur": 4,
+     "werewolf": 1
+    },
+    "judges": null
+   }
+  },
+  {
+   "roster": "Q3",
+   "scenario": "F6-Q3-two-wolves-lure",
+   "arm": "off",
+   "rules": null,
+   "newN": 0,
+   "newWinners": {},
+   "newMinority": 0,
+   "newC": [],
+   "newJudges": {
+    "tom": null,
+    "deception": null,
+    "path": null,
+    "noise": null
+   },
+   "pooled": {
+    "n": 10,
+    "winners": {
+     "werewolf": 5,
+     "centaur": 4,
+     "pyre": 1
+    },
+    "judges": null
+   }
+  },
+  {
+   "roster": "Q3",
+   "scenario": "F6-Q3-two-wolves-lure",
+   "arm": "open",
+   "rules": {
+    "openingStatements": true
+   },
+   "newN": 2,
+   "newWinners": {
+    "werewolf": 2
+   },
+   "newMinority": 0,
+   "newC": [
+    0.75,
+    1
+   ],
+   "newJudges": {
+    "tom": 2,
+    "deception": 2,
+    "path": 3,
+    "noise": 3
+   },
+   "pooled": null
+  },
+  {
+   "roster": "Q3",
+   "scenario": "F5-Q3-pyre-burn",
+   "arm": "off",
+   "rules": null,
+   "newN": 0,
+   "newWinners": {},
+   "newMinority": 0,
+   "newC": [],
+   "newJudges": {
+    "tom": null,
+    "deception": null,
+    "path": null,
+    "noise": null
+   },
+   "pooled": {
+    "n": 5,
+    "winners": {
+     "centaur": 3,
+     "pyre": 2
+    },
+    "judges": null
+   }
+  },
+  {
+   "roster": "PY6",
+   "scenario": "PY6-S1-fakesage",
+   "arm": "off",
+   "rules": {
+    "bloodPriceCondemned": true
+   },
+   "newN": 2,
+   "newWinners": {
+    "pyre": 2
+   },
+   "newMinority": 0,
+   "newC": [
+    0.8,
+    0.8
+   ],
+   "newJudges": {
+    "tom": 3,
+    "deception": 3.75,
+    "path": 3.5,
+    "noise": 1
+   },
+   "pooled": {
+    "n": 7,
+    "winners": {
+     "pyre": 6,
+     "werewolf": 1
+    },
+    "judges": null
+   }
+  },
+  {
+   "roster": "PY6",
+   "scenario": "PY6-S1-fakesage",
+   "arm": "open",
+   "rules": null,
+   "newN": 0,
+   "newWinners": {},
+   "newMinority": 0,
+   "newC": [],
+   "newJudges": {
+    "tom": null,
+    "deception": null,
+    "path": null,
+    "noise": null
+   },
+   "pooled": {
+    "n": 5,
+    "winners": {
+     "centaur": 3,
+     "pyre": 1,
+     "werewolf": 1
+    },
+    "judges": null
+   }
+  },
+  {
+   "roster": "PY6",
+   "scenario": "PY6-S2-twowolfreads",
+   "arm": "off",
+   "rules": null,
+   "newN": 0,
+   "newWinners": {},
+   "newMinority": 0,
+   "newC": [],
+   "newJudges": {
+    "tom": null,
+    "deception": null,
+    "path": null,
+    "noise": null
+   },
+   "pooled": {
+    "n": 5,
+    "winners": {
+     "centaur": 2,
+     "pyre": 3
+    },
+    "judges": null
+   }
+  },
+  {
+   "roster": "PY6",
+   "scenario": "PY6-S2-twowolfreads",
+   "arm": "open",
+   "rules": null,
+   "newN": 0,
+   "newWinners": {},
+   "newMinority": 0,
+   "newC": [],
+   "newJudges": {
+    "tom": null,
+    "deception": null,
+    "path": null,
+    "noise": null
+   },
+   "pooled": {
+    "n": 5,
+    "winners": {
+     "centaur": 3,
+     "pyre": 2
+    },
+    "judges": null
+   }
+  }
+ ],
  "sessions": [
+  {
+   "file": "confirm.json",
+   "games": 6,
+   "usd": 24,
+   "note": ""
+  },
   {
    "file": "hub.json",
    "games": 89,
@@ -63,7 +303,7 @@
    "note": "from players-8.md: $317 games + $17 judging"
   }
  ],
- "totalGames": 363,
+ "totalGames": 369,
  "unparsed": [],
  "strategies": {
   "hub-strategies.json": {
@@ -877,6 +1117,7 @@
   }
  },
  "sources": [
+  "confirm.json",
   "hub.json",
   "players-5.json",
   "players-6.json",
