@@ -1,0 +1,193 @@
+{
+ "timers": {
+  "dusk": 8,
+  "turn": 2,
+  "day": 240,
+  "vote": 60
+ },
+ "agents": {
+  "model": "opus",
+  "effort": "medium"
+ },
+ "tables": [
+  {
+   "label": "H1o-M1H-duel-opening",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "hollowsage",
+    "duncentaur",
+    "sage",
+    "sage",
+    "centaur",
+    "centaur",
+    "rustler",
+    "sentry",
+    "pickpocket",
+    "drifter"
+   ],
+   "center": 4,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fen",
+    "Gale",
+    "Hale"
+   ],
+   "replays": 5,
+   "scenario": {
+    "seed": 11,
+    "cards": [
+     "sage",
+     "hollowsage",
+     "centaur",
+     "werewolf",
+     "duncentaur",
+     "rustler",
+     "sentry",
+     "pickpocket",
+     "sage",
+     "werewolf",
+     "centaur",
+     "drifter"
+    ],
+    "plans": {
+     "Alder": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 3
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Bryn": [
+      {
+       "step": "read",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 2
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Cass": [
+      {
+       "step": "glance",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "c",
+           "i": 0
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Dov": [
+      {
+       "step": "scent",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 1
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Esme": [
+      {
+       "step": "glance",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "c",
+           "i": 1
+          }
+         ]
+        }
+       }
+      }
+     ],
+     "Fen": [
+      {
+       "step": "peek",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 7
+          }
+         ]
+        }
+       }
+      },
+      {
+       "step": "trade",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "skip"
+        }
+       }
+      }
+     ],
+     "Hale": [
+      {
+       "step": "lift",
+       "plan": {
+        "branches": [],
+        "otherwise": {
+         "kind": "pick",
+         "targets": [
+          {
+           "k": "p",
+           "i": 5
+          }
+         ]
+        }
+       }
+      }
+     ]
+    }
+   },
+   "rules": {
+    "openingStatements": true
+   }
+  }
+ ]
+}

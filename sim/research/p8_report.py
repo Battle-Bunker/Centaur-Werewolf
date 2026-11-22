@@ -14,7 +14,7 @@ DECK = {
  "M4": (["werewolf","glamour","poacher","cutpurse","pickpocket","latecomer","sage","sage","sentry","centaur","rustler"], 3, {}),
  "M5": (["werewolf","werewolf","wisp","fogbank","sage","sage","centaur","centaur","rustler","sentry","drifter"], 3, {}),
 }
-GROUPS = {"M1": ["M1", "F1-M1-duel", "F2-M1-pair"], "M1H": ["H1-M1H-duel", "H2-M1H-pair", "H2c-M1H-pair-covers"],
+GROUPS = {"M1": ["M1", "F1-M1-duel", "F2-M1-pair"], "M1H": ["H1-M1H-duel", "H1o-M1H-duel-opening", "H2-M1H-pair", "H2c-M1H-pair-covers"],
           "M1HS": ["N-M1HS", "S2-M1HS-pair-spooker", "S3-M1HS-duel-spooker"], "M2": ["M2", "F3-M2-lure", "F4-M2-ember"],
           "M3": ["M3"], "M4": ["M4"], "M5": ["M5"]}
 def judges(games):

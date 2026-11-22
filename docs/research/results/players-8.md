@@ -5,17 +5,17 @@ Log with prediction against outcome and the lessons: [players-8-log.md](players-
 [players-8-requests.md](players-8-requests.md). Machine-readable: [players-8.json](players-8.json), built by
 `python3 sim/research/p8_report.py`. Tournament files: sim/tournaments/research/p8/.
 
-**Method.** 58 full games, all seats Opus (medium effort): one isolated `claude -p` per seat, vote timer 60 s, default
-rules unless stated. That is 12 natural deals (redealt until a Werewolf card was held), 1 setup game, and 9 fixed
-scenarios x 5 replays. In a fixed scenario the deal, the night seed and every night plan are fixed, so only the day
+**Method.** 63 full games, all seats Opus (medium effort): one isolated `claude -p` per seat, vote timer 60 s, default
+rules unless stated. That is 12 natural deals (redealt until a Werewolf card was held), 1 setup game, and 10 fixed
+scenarios x 5 replays. **Opening statements OFF in every game except H1o** (labelled). In a fixed scenario the deal, the night seed and every night plan are fixed, so only the day
 differs; every group's fingerprints matched. Two neutral judges scored each game, and one tagger listed the
-strategies used. Cost: $294 for games, $15 for judging and tagging. **These are counts, not rates: no group has 10 games.**
+strategies used. Cost: $317 for games, $17 for judging and tagging. **These are counts, not rates: no group has 10 games.**
 
 ## Headline
 
-1. **No 8-player roster meets the owner's target yet.** Of 9 fixed scenarios, 1 is talk-live by the charter (H1), 1
-   is borderline (S2: minority 1 but mean path 1.9), and 7 swept 5-0. Across all 58 games: Centaurs 48, wolves 5,
-   Pyre 5 (all in one scenario).
+1. **No 8-player roster meets the owner's target yet.** Of 10 fixed scenarios, 1 is talk-live by the charter (H1), 2
+   are borderline (S2 and H1o: minority 1 but mean path 1.9), and 7 swept 5-0. Across all 63 games: Centaurs 52,
+   wolves 6, Pyre 5 (all in one scenario).
 2. **The Centaurs win at 8 seats by counting claims.** Six or seven honest claims arrive within 30 s. Each
    unclaimed role boxes the remaining seats in, and the wolf, who needs 30-40 s to compose a lie, claims last. The
    claim count appeared in 57 of 58 tagged games, and the latency tell in 53. The opening Sage read stood in almost
@@ -25,7 +25,7 @@ strategies used. Cost: $294 for games, $15 for judging and tagging. **These are 
    under Blood Price, so the accused is always the right vote. F1 swept 5-0. My new variant card, the **Hollow Sage**
    (a Sage twin that counts as a Werewolf), turned the same scenario into **Centaurs 4, wolves 1** (H1). The wolf win
    was a judged path-4 frame of the true Sage.
-4. **Vote concentration is in the owner's band:** median c 0.71-0.86. Unanimous in 3 of 58, scattered 0, plurality
+4. **Vote concentration is in the owner's band:** median c 0.71-0.86. Unanimous in 4 of 63, scattered 0, plurality
    in 10. But fixed scenarios give almost identical tallies every replay (the 3 wolf-team votes against the 5
    Centaur votes).
 5. **The cleverest wins came from the Pyre and swept anyway.** In F3 the Lure dressed the Phoenix as a Werewolf and
@@ -48,11 +48,14 @@ Sage passes as a Sage; the Dun Centaur shows itself), and a Spooker.
 
 ### 2. M1H "Mirror Hall with the Hollow Sage" (the one talk-live scenario)
 `werewolf, werewolf, hollowsage, duncentaur, sage, sage, centaur, centaur, rustler, sentry, pickpocket, drifter`, centre 4.
-- Games: 15, all fixed (H1 x5, H2 x5, H2c x5 with `packCovers` on). Winners: **Centaurs 14, wolves 1.** No natural
+- Games: 20, all fixed (H1 x5, H1o x5 with opening statements ON, H2 x5, H2c x5 with `packCovers` on). Winners:
+  **Centaurs 18, wolves 2.** No natural
   deals of this exact deck: its natural-deal behaviour is untested; the M1 coarse games are the nearest.
 - c: 0.71 (H1, 4 of 5), 1.00 (H1#3), 0.86 (H2 x5), 0.71-0.86 (H2c). Bands: majority 14, unanimous 1.
 - Judges (30 verdicts): ToM 1.80, deception 2.07, path 1.80, noise 0.47. Agreement 0.00-0.13; `howWon` exact 15/15.
-- **H1 is talk-live** (C4 W1; path 2.3). H2 and H2c are degenerate (C5 each). `packCovers` did not help, because the
+- **H1 is talk-live** (C4 W1; path 2.3). **H1o** (the same scenario, opening statements ON): also C4 W1, path 1.9,
+  noise 0.9. Its wolf win was a blind opening guess ("centre 2 = Werewolf") that happened to match the Dun Centaur's
+  true look, sold as proof: the latency tell went, a lucky-collision route came in. H2 and H2c are degenerate (C5 each). `packCovers` did not help, because the
   covers named a role whose other copy an honest player held (request R8-2).
 
 ### 3. M2 "Pyre Eight" (three teams; the cleverest play, and the least stable)
@@ -67,12 +70,28 @@ Sage passes as a Sage; the Dun Centaur shows itself), and a Spooker.
   become live.
 
 ### Also tried (coarse only, 2 natural games each)
-- **M3 Seals and Silence** (Signet, Counterfeiter, Hush): C2. No seal was ever posted. The Hush cut the Sage once,
-  and his vote then went random.
+- **M3 Seals and Silence** (Signet, Counterfeiter, Hush): C2. One seal was posted (M3#2: the real Signet sealed
+  "any OTHER Signet seal is forged", which pre-empted the Counterfeiter, whose debrief says it did not dare forge then;
+  in M3#1 the Counterfeiter did not forge because the Signet claim was already taken and it did not know its team).
+  The Hush cut the Sage once; his vote then went random. That is the known harness artefact (a cut agent drops its MCP
+  server), fixed upstream after these games: M3's Hush result is not evidence about the card.
 - **M4 Glamour Market** (four card-stealers plus Glamour): C2. Talk-dead (path 1.0): Opus tables rebuild a 4-swap
   chain exactly.
 - **M5 Fog** (random distortions; I predicted it bad): C2. Clean (ToM 2, path 3.0, noise 1.5), so my prediction was
   falsified. A Wisp aimed at its own card is a chosen lie.
+
+## Latency, parity and opening statements (diagnostics the coordinator asked for)
+- **Latency:** median first day message, Centaur-dealt seats 15.4 s (n 302), wolf-team 25.4 s (138), Pyre 27.8 s
+  (24); the last seat to speak for the first time held a wolf-team card in **49 of 58** games (opening statements off;
+  `sim/research/latency.ts`). Two wolf-side debriefs (M3#1) say their first message appeared later than sent, so part of
+  the gap may be transport, not composition.
+- **Parity** (wolf-team cards held at the count >= half the table): 2 games, wolves won both (M1#2 by 4-4 tie,
+  N-M1HS#1 by 4-4 tie). **Non-parity: Centaurs 52, wolves 4, Pyre 5 (61 games).** The deliberate Centaur 3-3 split
+  in M3#1 was rational: the claim count left exactly two unclaimed seats against four wolf-team cards, so both were
+  wolf-team in every consistent world and W 1 > C 0 was guaranteed if the count was right. `bloodPriceCondemned` was
+  not tested (no budget left); H1/H1o never tied, so it could not have changed them.
+- **Opening statements** (one test, H1o): did not change the result distribution of the one live scenario (4-1 both
+  ways); judged path fell from 2.3 to 1.9 and noise rose from 0.5 to 0.9.
 
 ## Talk-live scenarios
 Only **H1-M1H-duel** (C4 W1, path 2.3, noise 0.5). It has a Sage and a Hollow Sage, each with a read that cannot be
@@ -113,7 +132,7 @@ place... that Werewolf card is now in BRYN's hands."* The votes went 4 on Dov, 4
 eliminated, so the wolves won by Blood Price. Judge: "no reasonable argument could [turn the Hollow Sage], so in
 practice nothing they said would have changed the result" (H8-7).
 
-## Strategies observed (58 tagged games: in how many games each was used, by team, and how many of those that team won)
+## Strategies observed (the first 58 tagged games; the 63-game counts are in players-8.json: in how many games each was used, by team, and how many of those that team won)
 
 | Strategy | Games | Centaurs (won) | Wolves (won) | Pyre (won) |
 | --- | --- | --- | --- | --- |
@@ -154,7 +173,7 @@ Lure frame and double bluff won almost every time they were tried.
    honest (R8-6, H8-5; S3 against H1).
 
 ## What is not yet known
-- Whether H1's liveness holds with more replays (4-1 in 5; one more wolf win would make it 3-2).
+- Whether H1's liveness holds with more replays (4-1 in 5, and 4-1 again with opening statements: 8-2 over 10).
 - The natural-deal behaviour of M1H; and whether M1HS's 2 natural games (1-1) are typical.
 - Whether the Hollow Sage makes Sage duels live in other rosters (M2 untested), and at 6-7 seats.
 - Any of proposals 4-6 (untested).
