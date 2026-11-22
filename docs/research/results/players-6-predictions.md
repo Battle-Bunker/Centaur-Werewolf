@@ -110,3 +110,14 @@ Deck: werewolf x2, spooker, pickpocket, latecomer, cutpurse, drifter, centaur, s
 - Fine: the 3 best rosters, 2-3 constructed scenarios each (at least one predicted talk-live, one predicted sweep as a
   control), 5 replays each.
 - Not testing: unpaired Herald/Notary/Herder (violate the evidence principle), Moon-Thief day swap (after-talk).
+
+## Addendum (11:50, after merging the evidence amendment dd55c9d/5d14fc1; still before any research game)
+
+- **SE6 changes meaning.** The Notary now looks at TWO players and seals "at least one of A's and B's cards was a
+  <role>" (one of the two roles it saw, its choice), signed "the Notary" with no name; the Counterfeiter forges the
+  same pair report. A pair report on a Werewolf points at two seats, one possibly innocent: it is now framing material
+  for both sides. Revised SE6 prediction: Centaurs 45% (down from 50%); the crux becomes "which of the pair", decided by
+  the two named players' own claims; talk-live more often (path 2.5). The uncontested-real-report sweep (5-0) I
+  predicted for the old one-card report should now be a split (3-2) when the pair contains a Centaur with no
+  corroborator. Falsified if the pair report is still decisive 5-0 whenever it is real.
+- Other rosters contain no Herald, Notary or Signet: predictions unchanged.
