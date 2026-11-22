@@ -122,3 +122,13 @@ non-`room_wait` call immediately (no per-seat queue). Measured from agent stream
 trip median 0.13 s, p90 0.20-0.22 s for every team. The first `chat_send` is ISSUED later by the wolf side (median
 13.8 s after day start for Centaur-team players, 19.2 s Werewolf team, 22.4 s Pyre). The gap is the model composing
 (and choosing to wait), not transport.
+
+## CR-15. "A Kindler's death is not a free wolf win" [proposal, untested]
+With the Phoenix held, eliminating a Kindler is neither a burning nor a Werewolf death, so under Blood Price it is a wolf
+win: every Kindler is a free decoy for the wolves (S5c: wolves 4 of 5 once the Lure fix exposed the Lure; PY6-S1#3:
+the wolf talked the table into eliminating the Lure). This default, not the Lure, is what turns the Lure fix into a
+wolf gift. **Proposed option `kindlerDeathVoids`** (default off): if a player holding a non-Phoenix Pyre card is
+eliminated while a Phoenix is held, and no Werewolf is eliminated, no main team wins (the Pyre does not win either);
+with a Werewolf also eliminated the Blood Price applies as usual. Effect on incentives: the wolves no longer gain from a
+Kindler's elimination, the Centaurs still lose by it (no main win), so the table must find the wolf; the Pyre is not
+helped. Prediction on S5c (Lure fix, openings off): from wolves 4 / Centaurs 1 to Centaurs 3-4 / wolves 1-2, path >= 2.5.

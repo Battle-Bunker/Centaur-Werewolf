@@ -76,7 +76,15 @@ for (const { file, json } of rosterFiles) for (const [id, r0] of Object.entries(
 const ranked = out.filter(r => r.fixedScenarios > 0).sort((a, b) =>
   b.talkLive / b.fixedScenarios - a.talkLive / a.fixedScenarios || (b.judgesFixed.tom ?? 0) - (a.judgesFixed.tom ?? 0) ||
   b.concentration.inBand / b.games - a.concentration.inBand / a.games || (a.judgesFixed.noise ?? 9) - (b.judgesFixed.noise ?? 9));
-writeFileSync(OUT, JSON.stringify({ generatedAt: new Date().toISOString(), sources: files, rankingRule: "talk-live share of fixed scenarios, then judge ToM, then share of games with 0.6 <= c < 1, then lower noise", ranked: ranked.map(r => `${r.source}:${r.roster}`), rosters: out }, null, 1));
+/** The hub's choice for the owner (judgment on the ranking above; see overnight-summary.md for the reasons). */
+const TOP3 = [
+  { rank: 1, key: "players-5.json:Q3 Little Pyre", players: 5, weakness: "Lure-dressed Phoenix read by the Sage: Pyre 4 of 5 (F8); Pyre share inflated by Pyre-centred scenarios" },
+  { rank: 2, key: "players-7.json:P7", players: 7, weakness: "one fixed scenario only (confirmation at n=10 running); noise 1.5; two plurality votes of five" },
+  { rank: 3, key: "hub.json:D6 + players-6 PY6", players: 6, weakness: "Pyre too strong when the Lure dresses the Phoenix; wolves near-spectators in lone-wolf deals; opening statements shift it per scenario" },
+];
+const notSolved = { players: 8, why: "of 10 fixed scenarios 1 talk-live, 2 borderline, 7 swept; 63 games Centaurs 52, wolves 6, Pyre 5 (first 8-player session)" };
+const strategies = Object.fromEntries(readdirSync(DIR).filter(f => /^(hub-strategies|players-\d\w*)\.json$/.test(f)).map(f => [f, f.startsWith("hub") ? JSON.parse(readFileSync(`${DIR}/${f}`, "utf8")) : JSON.parse(readFileSync(`${DIR}/${f}`, "utf8")).strategies]).filter(([, v]) => v));
+writeFileSync(OUT, JSON.stringify({ generatedAt: new Date().toISOString(), top3: TOP3, notSolved, strategies, sources: files, rankingRule: "talk-live share of fixed scenarios, then judge ToM, then share of games with 0.6 <= c < 1, then lower noise", ranked: ranked.map(r => `${r.source}:${r.roster}`), rosters: out }, null, 1));
 console.log(`sources: ${files.join(", ")}`);
 for (const r of ranked) console.log(`${(r.source.replace(".json", "") + ":" + r.roster).padEnd(16)} ${r.players}p  fixed ${r.talkLive}/${r.fixedScenarios} talk-live (${r.fixedReplays} replays)  ToM ${r.judgesFixed.tom} path ${r.judgesFixed.path} dec ${r.judgesFixed.deception} noise ${r.judgesFixed.noise}  c-in-band ${r.concentration.inBand}/${r.games}  wins ${JSON.stringify(r.winsFixed)}`);
 for (const r of out.filter(r => !r.fixedScenarios)) console.log(`  (unranked, coarse only) ${r.source}:${r.roster} ${r.players}p ${r.games} games ${JSON.stringify(r.winsAll)}`);

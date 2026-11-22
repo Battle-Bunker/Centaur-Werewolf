@@ -80,6 +80,10 @@ npx tsx sim/research/judge.ts sim/runs/research/<name> [--only label,...] [--jud
 npx tsx sim/research/metrics.ts sim/runs/research/<name> [more dirs] --json <out>.json > <out>.txt
 npx tsx sim/research/classes.ts 6 werewolf,werewolf,phoenix,lure,sage,rustler,sentry,centaur,herder --require tag:wolf --key werewolf,phoenix,lure,sage
 ```
+- Strategy taggers: `sim/research/strategies-hub.ts` (the hub's taxonomy; `--json` for the prevalence table) and
+  `sim/research/strategies.ts` (the 8-player session's taxonomy). Both write `<game>/strategies.json`: use one per run.
+- Overnight summary data: `npx tsx sim/research/overnight.ts` merges `docs/research/results/*.json` (group-shaped
+  files from `sim/research/export.ts`, and roster-shaped files) into docs/research/overnight-summary.json.
 - Judges: two independent `claude -p` calls per game, public transcript + post-game truth only, fixed rubric (charter
   I3); ~$0.05-0.08 each; writes `<game>/judge-1.json`, `judge-2.json`; skips games already judged.
 - metrics.ts prints per group: I1 winners/eliminated/how-won with entropy and minority count, I2 concentration c and

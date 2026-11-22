@@ -1,5 +1,776 @@
 {
- "generatedAt": "2026-11-22T13:29:35.768Z",
+ "generatedAt": "2026-11-22T13:31:45.297Z",
+ "top3": [
+  {
+   "rank": 1,
+   "key": "players-5.json:Q3 Little Pyre",
+   "players": 5,
+   "weakness": "Lure-dressed Phoenix read by the Sage: Pyre 4 of 5 (F8); Pyre share inflated by Pyre-centred scenarios"
+  },
+  {
+   "rank": 2,
+   "key": "players-7.json:P7",
+   "players": 7,
+   "weakness": "one fixed scenario only (confirmation at n=10 running); noise 1.5; two plurality votes of five"
+  },
+  {
+   "rank": 3,
+   "key": "hub.json:D6 + players-6 PY6",
+   "players": 6,
+   "weakness": "Pyre too strong when the Lure dresses the Phoenix; wolves near-spectators in lone-wolf deals; opening statements shift it per scenario"
+  }
+ ],
+ "notSolved": {
+  "players": 8,
+  "why": "of 10 fixed scenarios 1 talk-live, 2 borderline, 7 swept; 63 games Centaurs 52, wolves 6, Pyre 5 (first 8-player session)"
+ },
+ "strategies": {
+  "hub-strategies.json": {
+   "taxonomy": {
+    "safe-centre-claim": "A defector claims a role it knows (census) or guesses lies in the centre, so nobody can counter-claim it.",
+    "counter-claim-info-role": "A defector claims the same information role as an honest player (a Sage duel, a Herder duel...).",
+    "fake-read": "A false report of a night look at a player (true role claimed or not).",
+    "frame-ally": "A defector accuses or lets the table eliminate its own team-mate who is not a Werewolf (a decoy whose elimination wins).",
+    "false-movement-story": "A false account of night card movement (a rotation's direction or targets, a swap that did not happen).",
+    "fake-confession": "A player falsely admits to a role or a team to steer the vote.",
+    "vote-split-or-tie-plan": "Someone proposes splitting votes or engineering a tie.",
+    "phoenix-baiting": "A Pyre player acts or is presented as a wolf to draw the votes onto a Phoenix/Kindler.",
+    "census-backward-induction": "Someone argues from what a wolf's census would have told it (\"a wolf would never claim X\").",
+    "motive-analysis": "Someone argues from who benefits / why a player would lie (incentive reasoning beyond the mechanics).",
+    "claim-timing-tell": "Someone argues from when or how a player claimed (late, hedged, changed claim).",
+    "claim-count-collision": "A contradiction in role counts (two players claim a single card, more claims than copies) exposed someone.",
+    "corroboration-chain": "Two or more honest results are lined up to confirm a player or a card.",
+    "team-collision": "Two members of the same defecting team told incompatible stories, hurting their team.",
+    "retarget-the-swapper": "The table chooses to eliminate a player who could act after the talk, rather than the obvious suspect."
+   },
+   "games": 89,
+   "rows": [
+    {
+     "strategy": "safe-centre-claim",
+     "team": "werewolf",
+     "games": 87,
+     "won": 23,
+     "decisive": 14
+    },
+    {
+     "strategy": "motive-analysis",
+     "team": "werewolf",
+     "games": 79,
+     "won": 19,
+     "decisive": 2
+    },
+    {
+     "strategy": "motive-analysis",
+     "team": "centaur",
+     "games": 75,
+     "won": 46,
+     "decisive": 25
+    },
+    {
+     "strategy": "claim-count-collision",
+     "team": "centaur",
+     "games": 72,
+     "won": 47,
+     "decisive": 26
+    },
+    {
+     "strategy": "claim-timing-tell",
+     "team": "centaur",
+     "games": 70,
+     "won": 45,
+     "decisive": 21
+    },
+    {
+     "strategy": "corroboration-chain",
+     "team": "centaur",
+     "games": 69,
+     "won": 40,
+     "decisive": 22
+    },
+    {
+     "strategy": "claim-timing-tell",
+     "team": "werewolf",
+     "games": 66,
+     "won": 21,
+     "decisive": 2
+    },
+    {
+     "strategy": "census-backward-induction",
+     "team": "centaur",
+     "games": 52,
+     "won": 37,
+     "decisive": 21
+    },
+    {
+     "strategy": "corroboration-chain",
+     "team": "werewolf",
+     "games": 41,
+     "won": 11,
+     "decisive": 4
+    },
+    {
+     "strategy": "fake-read",
+     "team": "werewolf",
+     "games": 38,
+     "won": 15,
+     "decisive": 15
+    },
+    {
+     "strategy": "counter-claim-info-role",
+     "team": "werewolf",
+     "games": 35,
+     "won": 4,
+     "decisive": 4
+    },
+    {
+     "strategy": "census-backward-induction",
+     "team": "werewolf",
+     "games": 31,
+     "won": 8,
+     "decisive": 1
+    },
+    {
+     "strategy": "team-collision",
+     "team": "werewolf",
+     "games": 27,
+     "won": 4,
+     "decisive": 8
+    },
+    {
+     "strategy": "fake-read",
+     "team": "pyre",
+     "games": 27,
+     "won": 9,
+     "decisive": 8
+    },
+    {
+     "strategy": "phoenix-baiting",
+     "team": "pyre",
+     "games": 25,
+     "won": 11,
+     "decisive": 11
+    },
+    {
+     "strategy": "motive-analysis",
+     "team": "pyre",
+     "games": 25,
+     "won": 11,
+     "decisive": 8
+    },
+    {
+     "strategy": "vote-split-or-tie-plan",
+     "team": "centaur",
+     "games": 23,
+     "won": 11,
+     "decisive": 4
+    },
+    {
+     "strategy": "false-movement-story",
+     "team": "werewolf",
+     "games": 19,
+     "won": 9,
+     "decisive": 13
+    },
+    {
+     "strategy": "claim-count-collision",
+     "team": "werewolf",
+     "games": 19,
+     "won": 10,
+     "decisive": 4
+    },
+    {
+     "strategy": "vote-split-or-tie-plan",
+     "team": "pyre",
+     "games": 17,
+     "won": 6,
+     "decisive": 4
+    },
+    {
+     "strategy": "counter-claim-info-role",
+     "team": "pyre",
+     "games": 16,
+     "won": 9,
+     "decisive": 5
+    },
+    {
+     "strategy": "claim-timing-tell",
+     "team": "pyre",
+     "games": 16,
+     "won": 9,
+     "decisive": 0
+    },
+    {
+     "strategy": "vote-split-or-tie-plan",
+     "team": "werewolf",
+     "games": 14,
+     "won": 4,
+     "decisive": 2
+    },
+    {
+     "strategy": "fake-read",
+     "team": "centaur",
+     "games": 12,
+     "won": 6,
+     "decisive": 1
+    },
+    {
+     "strategy": "fake-confession",
+     "team": "werewolf",
+     "games": 11,
+     "won": 2,
+     "decisive": 2
+    },
+    {
+     "strategy": "frame-ally",
+     "team": "pyre",
+     "games": 11,
+     "won": 7,
+     "decisive": 8
+    },
+    {
+     "strategy": "safe-centre-claim",
+     "team": "centaur",
+     "games": 10,
+     "won": 4,
+     "decisive": 1
+    },
+    {
+     "strategy": "fake-confession",
+     "team": "pyre",
+     "games": 8,
+     "won": 3,
+     "decisive": 3
+    },
+    {
+     "strategy": "safe-centre-claim",
+     "team": "pyre",
+     "games": 7,
+     "won": 5,
+     "decisive": 2
+    },
+    {
+     "strategy": "claim-count-collision",
+     "team": "pyre",
+     "games": 7,
+     "won": 5,
+     "decisive": 2
+    },
+    {
+     "strategy": "census-backward-induction",
+     "team": "pyre",
+     "games": 7,
+     "won": 2,
+     "decisive": 0
+    },
+    {
+     "strategy": "frame-ally",
+     "team": "werewolf",
+     "games": 6,
+     "won": 4,
+     "decisive": 4
+    },
+    {
+     "strategy": "corroboration-chain",
+     "team": "pyre",
+     "games": 6,
+     "won": 4,
+     "decisive": 3
+    },
+    {
+     "strategy": "false-movement-story",
+     "team": "pyre",
+     "games": 4,
+     "won": 0,
+     "decisive": 0
+    },
+    {
+     "strategy": "false-movement-story",
+     "team": "centaur",
+     "games": 3,
+     "won": 1,
+     "decisive": 0
+    },
+    {
+     "strategy": "retarget-the-swapper",
+     "team": "centaur",
+     "games": 3,
+     "won": 3,
+     "decisive": 3
+    },
+    {
+     "strategy": "retarget-the-swapper",
+     "team": "werewolf",
+     "games": 3,
+     "won": 0,
+     "decisive": 2
+    },
+    {
+     "strategy": "counter-claim-info-role",
+     "team": "centaur",
+     "games": 2,
+     "won": 2,
+     "decisive": 0
+    },
+    {
+     "strategy": "team-collision",
+     "team": "pyre",
+     "games": 2,
+     "won": 0,
+     "decisive": 2
+    }
+   ]
+  },
+  "players-5.json": {
+   "games": 71,
+   "rows": {
+    "censusClaim": {
+     "games": 41,
+     "byTeam": {
+      "werewolf": {
+       "games": 40,
+       "won": 14,
+       "decisive": 11
+      },
+      "centaur": {
+       "games": 2,
+       "won": 2,
+       "decisive": 0
+      }
+     }
+    },
+    "allyDecoy": {
+     "games": 12,
+     "byTeam": {
+      "werewolf": {
+       "games": 12,
+       "won": 11,
+       "decisive": 10
+      }
+     }
+    },
+    "mirrorClaim": {
+     "games": 26,
+     "byTeam": {
+      "werewolf": {
+       "games": 21,
+       "won": 8,
+       "decisive": 2
+      },
+      "pyre": {
+       "games": 5,
+       "won": 2,
+       "decisive": 2
+      }
+     }
+    },
+    "fakeLook": {
+     "games": 44,
+     "byTeam": {
+      "werewolf": {
+       "games": 35,
+       "won": 17,
+       "decisive": 13
+      },
+      "pyre": {
+       "games": 11,
+       "won": 7,
+       "decisive": 7
+      }
+     }
+    },
+    "dominantVote": {
+     "games": 28,
+     "byTeam": {
+      "centaur": {
+       "games": 28,
+       "won": 20,
+       "decisive": 20
+      }
+     }
+    },
+    "eliminateNobody": {
+     "games": 11,
+     "byTeam": {
+      "werewolf": {
+       "games": 8,
+       "won": 1,
+       "decisive": 3
+      },
+      "centaur": {
+       "games": 3,
+       "won": 0,
+       "decisive": 0
+      }
+     }
+    },
+    "moverLie": {
+     "games": 10,
+     "byTeam": {
+      "werewolf": {
+       "games": 10,
+       "won": 8,
+       "decisive": 6
+      }
+     }
+    },
+    "turnedConfession": {
+     "games": 16,
+     "byTeam": {
+      "centaur": {
+       "games": 15,
+       "won": 9,
+       "decisive": 9
+      },
+      "werewolf": {
+       "games": 2,
+       "won": 2,
+       "decisive": 1
+      }
+     }
+    },
+    "claimTiming": {
+     "games": 17,
+     "byTeam": {
+      "centaur": {
+       "games": 13,
+       "won": 12,
+       "decisive": 8
+      },
+      "werewolf": {
+       "games": 5,
+       "won": 2,
+       "decisive": 1
+      }
+     }
+    },
+    "pyreBait": {
+     "games": 18,
+     "byTeam": {
+      "pyre": {
+       "games": 18,
+       "won": 8,
+       "decisive": 9
+      }
+     }
+    },
+    "tieEngineering": {
+     "games": 9,
+     "byTeam": {
+      "werewolf": {
+       "games": 8,
+       "won": 2,
+       "decisive": 2
+      },
+      "pyre": {
+       "games": 1,
+       "won": 0,
+       "decisive": 0
+      }
+     }
+    },
+    "censusSlip": {
+     "games": 6,
+     "byTeam": {
+      "werewolf": {
+       "games": 6,
+       "won": 1,
+       "decisive": 4
+      }
+     }
+    }
+   }
+  },
+  "players-8.json": {
+   "games": 63,
+   "rows": {
+    "early-seer-accusation": {
+     "games": 58,
+     "byTeam": {
+      "centaur": {
+       "games": 57,
+       "won": 46,
+       "decisive": 51
+      },
+      "werewolf": {
+       "games": 1,
+       "won": 0,
+       "decisive": 1
+      }
+     }
+    },
+    "claim-count": {
+     "games": 62,
+     "byTeam": {
+      "centaur": {
+       "games": 61,
+       "won": 51,
+       "decisive": 47
+      },
+      "werewolf": {
+       "games": 10,
+       "won": 2,
+       "decisive": 1
+      }
+     }
+    },
+    "latency-tell": {
+     "games": 56,
+     "byTeam": {
+      "centaur": {
+       "games": 53,
+       "won": 45,
+       "decisive": 31
+      },
+      "pyre": {
+       "games": 2,
+       "won": 1,
+       "decisive": 1
+      },
+      "werewolf": {
+       "games": 6,
+       "won": 0,
+       "decisive": 0
+      }
+     }
+    },
+    "claim-collision": {
+     "games": 44,
+     "byTeam": {
+      "centaur": {
+       "games": 27,
+       "won": 20,
+       "decisive": 18
+      },
+      "werewolf": {
+       "games": 17,
+       "won": 1,
+       "decisive": 12
+      },
+      "pyre": {
+       "games": 1,
+       "won": 0,
+       "decisive": 0
+      }
+     }
+    },
+    "frame-the-true-seer": {
+     "games": 60,
+     "byTeam": {
+      "werewolf": {
+       "games": 55,
+       "won": 6,
+       "decisive": 5
+      },
+      "pyre": {
+       "games": 8,
+       "won": 4,
+       "decisive": 0
+      }
+     }
+    },
+    "census-safe-claim": {
+     "games": 49,
+     "byTeam": {
+      "werewolf": {
+       "games": 49,
+       "won": 3,
+       "decisive": 4
+      },
+      "pyre": {
+       "games": 1,
+       "won": 0,
+       "decisive": 0
+      }
+     }
+    },
+    "fake-movement-story": {
+     "games": 32,
+     "byTeam": {
+      "werewolf": {
+       "games": 32,
+       "won": 4,
+       "decisive": 5
+      },
+      "pyre": {
+       "games": 1,
+       "won": 0,
+       "decisive": 0
+      }
+     }
+    },
+    "twin-true-description": {
+     "games": 21,
+     "byTeam": {
+      "werewolf": {
+       "games": 20,
+       "won": 4,
+       "decisive": 2
+      },
+      "centaur": {
+       "games": 1,
+       "won": 1,
+       "decisive": 0
+      }
+     }
+    },
+    "confession": {
+     "games": 22,
+     "byTeam": {
+      "centaur": {
+       "games": 4,
+       "won": 2,
+       "decisive": 4
+      },
+      "pyre": {
+       "games": 8,
+       "won": 5,
+       "decisive": 6
+      },
+      "werewolf": {
+       "games": 12,
+       "won": 1,
+       "decisive": 4
+      }
+     }
+    },
+    "decision-theoretic-vote": {
+     "games": 54,
+     "byTeam": {
+      "werewolf": {
+       "games": 18,
+       "won": 5,
+       "decisive": 4
+      },
+      "centaur": {
+       "games": 47,
+       "won": 41,
+       "decisive": 35
+      },
+      "pyre": {
+       "games": 3,
+       "won": 2,
+       "decisive": 1
+      }
+     }
+    },
+    "engineered-tie": {
+     "games": 10,
+     "byTeam": {
+      "werewolf": {
+       "games": 7,
+       "won": 3,
+       "decisive": 3
+      },
+      "pyre": {
+       "games": 3,
+       "won": 0,
+       "decisive": 0
+      }
+     }
+    },
+    "phoenix-exposure": {
+     "games": 12,
+     "byTeam": {
+      "centaur": {
+       "games": 6,
+       "won": 6,
+       "decisive": 6
+      },
+      "werewolf": {
+       "games": 7,
+       "won": 1,
+       "decisive": 0
+      }
+     }
+    },
+    "census-slip": {
+     "games": 11,
+     "byTeam": {
+      "werewolf": {
+       "games": 10,
+       "won": 1,
+       "decisive": 8
+      },
+      "centaur": {
+       "games": 1,
+       "won": 1,
+       "decisive": 0
+      }
+     }
+    },
+    "pyre-double-bluff": {
+     "games": 6,
+     "byTeam": {
+      "pyre": {
+       "games": 6,
+       "won": 5,
+       "decisive": 5
+      }
+     }
+    },
+    "deliberate-centaur-split": {
+     "games": 2,
+     "byTeam": {
+      "centaur": {
+       "games": 2,
+       "won": 2,
+       "decisive": 1
+      }
+     }
+    },
+    "hush-cut": {
+     "games": 1,
+     "byTeam": {
+      "werewolf": {
+       "games": 1,
+       "won": 0,
+       "decisive": 0
+      }
+     }
+    },
+    "seal-use": {
+     "games": 1,
+     "byTeam": {
+      "centaur": {
+       "games": 1,
+       "won": 1,
+       "decisive": 0
+      }
+     }
+    },
+    "lure-or-glamour-frame": {
+     "games": 8,
+     "byTeam": {
+      "werewolf": {
+       "games": 3,
+       "won": 1,
+       "decisive": 1
+      },
+      "pyre": {
+       "games": 5,
+       "won": 5,
+       "decisive": 5
+      }
+     }
+    },
+    "decoy-sacrifice": {
+     "games": 6,
+     "byTeam": {
+      "werewolf": {
+       "games": 6,
+       "won": 0,
+       "decisive": 1
+      },
+      "pyre": {
+       "games": 1,
+       "won": 1,
+       "decisive": 1
+      }
+     }
+    }
+   }
+  }
+ },
  "sources": [
   "hub.json",
   "players-5.json",
