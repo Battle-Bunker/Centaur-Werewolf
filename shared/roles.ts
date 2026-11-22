@@ -44,7 +44,7 @@ export type Effect =
   | { kind: "learnSeats"; tag: string; label: string; limit?: number }
   /** The actor learns whether their own and each neighbour's card has been moved tonight. */
   | { kind: "learnMoved"; scope: "selfAndNeighbours" }
-  /** Everyone is shown what card lies at each pick right now, but not who showed it (at dawn, with that table rule). */
+  /** Everyone is shown "at least one of the two picked centre cards is a <role>" (one of the two, at random), not who showed it, at dawn. */
   | { kind: "announce" }
   /** The actor learns how many cards with `tag` are in the centre right now: a number, never which. Sees the truth. */
   | { kind: "count"; zone: "center"; tag: string; label: string }
@@ -199,10 +199,10 @@ export const ROLES: RoleDef[] = [
   {
     id: "forger", name: "Forger", team: "werewolf", tags: [], max: 12, wake: 42,
     blurb: "A wolf ally who sees the Herald's proclamation, then forges one of their own.",
-    rules: "You are not a Werewolf, but you side with them. You see what the Herald proclaimed tonight, or that nothing was. Then you name centre cards (as many as the Herald proclaims at this table) and a role in the deck for each: at dawn your forgery is published exactly like a Herald's proclamation, and nobody can tell which is which. A deck with a Forger must have a Herald. You win when the Werewolf team wins.",
+    rules: "You are not a Werewolf, but you side with them. You see what the Herald proclaimed tonight, or that nothing was. Then you choose two centre cards and a role in the deck: at dawn \"at least one of these two centre cards is a <role>\" is published exactly like a Herald's proclamation, and nobody can tell which is which until the results. A deck with a Forger has a Herald, and a deck with a Herald has a Forger. You win when the Werewolf team wins.",
     steps: [
       { id: "witness", title: "See the Herald's proclamation", effects: [{ kind: "witness", by: "herald" }] },
-      { id: "forge", title: "Forge a proclamation", names: "deck", pick: { pools: ["center"], count: 1, wideCenter: [5, 2] }, effects: [{ kind: "forge", as: "herald" }] },
+      { id: "forge", title: "Forge a proclamation", names: "deck", pick: { pools: ["center"], count: 2 }, effects: [{ kind: "forge", as: "herald" }] },
     ],
   },
   {
@@ -254,7 +254,7 @@ export const ROLES: RoleDef[] = [
   {
     id: "counterfeiter", name: "Counterfeiter", team: "werewolf", tags: [], max: 12, chat: "forge",
     blurb: "A wolf ally who can post one sealed message as if from a sealing role, indistinguishable from the real thing.",
-    rules: "You are not a Werewolf, but you side with them. You do nothing at night. Once during the day you may post one sealed message carrying the seal of a role in the deck that can seal (Signet: free text; Notary: \"at night, <player>'s card was <role>\" with the player and role of your choosing). Until the game ends it is identical, in every view, to a real one. You win when the Werewolf team wins.",
+    rules: "You are not a Werewolf, but you side with them. You do nothing at night. Once during the day you may post one sealed message carrying the seal of a role in the deck that can seal (Signet: free text; Notary: \"at night, at least one of <A>'s and <B>'s cards was a <role>\" with the players and role of your choosing). Seals carry no name, and until the game ends yours is identical, in every view, to a real one. You win when the Werewolf team wins.",
   },
   {
     id: "hush", name: "Hush", team: "werewolf", tags: [], max: 12, dayPower: "cut",
@@ -276,15 +276,15 @@ export const ROLES: RoleDef[] = [
   },
   {
     id: "herald", name: "Herald", team: "centaur", tags: ["seer"], max: 12, wake: 40,
-    blurb: "Proclaims to everyone what one centre card is (two, with five or more in the centre).",
-    rules: "Choose a centre card. Everyone, you included, is shown what it is at that moment, but not who showed it: at dawn, under the table's rule, together with any other proclamation. With five or six centre cards you choose two. The cards stay face down and may still be moved later.",
-    steps: [{ id: "proclaim", title: "Proclaim a centre card", pick: { pools: ["center"], count: 1, wideCenter: [5, 2] }, effects: [{ kind: "announce" }] }],
+    blurb: "Proclaims to everyone that at least one of two centre cards is a certain role. A Forger's proclamation looks the same.",
+    rules: "Choose two centre cards. At dawn everyone, you included, is shown \"at least one of these two centre cards is a <role>\", the role being what one of the two (chosen at random) showed at that moment. It does not say which of the two, nor who proclaimed it. A deck with a Herald always holds a Forger, whose forged proclamations look exactly the same; only the results tell them apart. The cards stay face down and may still be moved later.",
+    steps: [{ id: "proclaim", title: "Proclaim two centre cards", pick: { pools: ["center"], count: 2 }, effects: [{ kind: "announce" }] }],
   },
   {
     id: "notary", name: "Notary", team: "centaur", tags: ["seer"], max: 12, wake: 32, chat: "report",
-    blurb: "Reads a player's card; once in the day, posts a sealed report of what they saw.",
-    rules: "Look at one other player's card. Once during the day you may post a sealed report the game composes from what you saw: \"at night, <player>'s card was <role>\". The game marks it as sent by the player dealt Notary (a Counterfeiter can forge such a seal).",
-    steps: [{ id: "read", title: "Read a player's card", pick: { pools: ["others"], count: 1 }, effects: [look("picks")] }],
+    blurb: "Reads two players' cards; once in the day, posts a sealed report that at least one of them was a certain role.",
+    rules: "Look at two other players' cards. Once during the day you may post a sealed report the game composes from what you saw: \"at night, at least one of <A>'s and <B>'s cards was a <role>\", naming one of the two roles you saw (your choice). It is sealed \"the Notary\" and carries no name: nobody learns who posted it until the game ends. A deck with a Notary always holds a seal forger (Counterfeiter or False Witness), whose forged reports look exactly the same.",
+    steps: [{ id: "read", title: "Read two players' cards", pick: { pools: ["others"], count: 2 }, effects: [look("picks")] }],
   },
   {
     id: "rustler", name: "Rustler", team: "centaur", tags: [], max: 12, wake: 45,
@@ -348,8 +348,8 @@ export const ROLES: RoleDef[] = [
   },
   {
     id: "signet", name: "Signet", team: "centaur", tags: [], max: 12, chat: "signed",
-    blurb: "May post one message the table knows came from the player dealt Signet.",
-    rules: "You do nothing at night. Once during the day you may post a message that the game itself marks as sent by the player who was dealt Signet. It proves the card you were dealt, not the card you hold now.",
+    blurb: "May post one nameless message sealed \"the Signet\". A forger's seal looks the same.",
+    rules: "You do nothing at night. Once during the day you may post a message sealed \"the Signet\". The seal names the role, never you: nobody learns who posted it until the game ends. A deck with a Signet always holds a seal forger (Counterfeiter or False Witness), whose forged Signet messages look exactly the same.",
   },
   // ── The Pyre: a third team. The Phoenix must burn (be eliminated) for its Kindlers to win. ──
   {
@@ -373,7 +373,7 @@ export const ROLES: RoleDef[] = [
   {
     id: "falsewitness", name: "False Witness", team: "pyre", tags: ["kindler"], max: 12, wake: 5, turnOf: "kindler", chat: "forge",
     blurb: "A Kindler who can post one forged seal, e.g. a Notary's report naming the Phoenix as a Werewolf.",
-    rules: `${KINDLER_RULE} Once during the day you may post one forged sealed message (a Signet message, or a Notary's report \"at night, <player>'s card was <role>\" of your choosing), identical to a real one until the game ends. The sealing role must be in the deck.`,
+    rules: `${KINDLER_RULE} Once during the day you may post one forged sealed message (a Signet message, or a Notary's report \"at night, at least one of <A>'s and <B>'s cards was a <role>\" of your choosing), identical to a real one until the game ends. The sealing role must be in the deck.`,
     steps: [GATHER],
   },
   {
@@ -433,7 +433,7 @@ export const ROLES: RoleDef[] = [
 const TWINS: { id: RoleId; name: string; of: RoleId; team: Team; wolf: boolean; passes: boolean; blurb: string }[] = [
   { id: "moonsage", name: "Moonsage", of: "sage", team: "werewolf", wolf: false, passes: true, blurb: "A wolf ally who reads a card in the Sage's turn, exactly as the Sage does, and shows as a Sage to every look." },
   { id: "duncentaur", name: "Dun Centaur", of: "centaur", team: "werewolf", wolf: true, passes: false, blurb: "A Werewolf (outside the pack) who looks at a centre card in the Centaur's turn." },
-  { id: "paleherald", name: "Pale Herald", of: "herald", team: "werewolf", wolf: false, passes: true, blurb: "A wolf ally who makes a true proclamation in the Herald's turn and shows as a Herald to every look." },
+  { id: "paleherald", name: "Pale Herald", of: "herald", team: "werewolf", wolf: false, passes: true, blurb: "A wolf ally who makes a Herald's proclamation in the Herald's turn and shows as a Herald to every look." },
   { id: "duskrustler", name: "Dusk Rustler", of: "rustler", team: "werewolf", wolf: true, passes: false, blurb: "A Werewolf (outside the pack) who peeks and may trade in the Rustler's turn." },
   { id: "strayherder", name: "Stray Herder", of: "herder", team: "werewolf", wolf: false, passes: true, blurb: "A wolf ally who counts the centre's wolves in the Herder's turn and shows as a Herder to every look." },
 ];
@@ -447,6 +447,8 @@ for (const t of TWINS) {
 
 export const ROLE: Record<RoleId, RoleDef> = Object.fromEntries(ROLES.map(r => [r.id, r]));
 export const roleName = (id: RoleId) => ROLE[id]?.name ?? id;
+/** "a Sage", "an Eavesdropper": a role name with its article, for the texts the game composes. */
+export const aRole = (id: RoleId) => `${/^[AEIOU]/i.test(roleName(id)) ? "an" : "a"} ${roleName(id)}`;
 export const TEAM_NAME: Record<Team, string> = { centaur: "Centaur team", werewolf: "Werewolf team", pyre: "Pyre", loner: "Loner (wins alone)" };
 
 /** Roles that take a night turn, in wake order. */
@@ -473,6 +475,6 @@ export function legalRoles(step: StepDef, deck: RoleId[], actor?: RoleId): RoleI
 
 /** A sensible deck for a table: wolves and their allies scale with its size, the rest mixes information, movement and vote roles. */
 export function recommendedDeck(players: number, center: number = CENTER_DEFAULT): RoleId[] {
-  const order = ["werewolf", "werewolf", "sage", "rustler", "centaur", "farrier", "herald", "sentry", "centaur", "herder", "whisperer", "chiron", "cuckoo", "spooker", "notary", "centaur", "tracker", "oxpecker"];
+  const order = ["werewolf", "werewolf", "sage", "rustler", "centaur", "farrier", "drifter", "sentry", "centaur", "herder", "whisperer", "chiron", "cuckoo", "spooker", "latecomer", "centaur", "tracker", "oxpecker"];
   return order.slice(0, Math.min(order.length, players + center));
 }

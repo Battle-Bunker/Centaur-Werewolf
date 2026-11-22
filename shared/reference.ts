@@ -24,14 +24,14 @@ function effectWords(e: Effect, s: StepDef): string {
     case "rotate": return "moves the chosen cards one place along (first to second's place, second to third's, third to first's), seeing none of them";
     case "learnSeats": return `learns which other seats were DEALT a card tagged "${e.tag}"${e.limit ? ` (only ${e.limit}, chosen at random)` : ""} (journal label "${e.label}")`;
     case "learnMoved": return "learns, for their own seat and each neighbour, whether that card has been moved so far tonight (not by whom, not to where, not what it is)";
-    case "announce": return "publishes to everyone what the chosen card(s) show right now (at dawn under the Proclamations-at-dawn rule), without saying who proclaimed";
+    case "announce": return "publishes to everyone \"at least one of these two centre cards is a <role>\", the role being what one of the two (chosen at random) shows right now; at dawn, without saying who proclaimed, indistinguishable from a Forger's";
     case "count": return `learns how many cards tagged "${e.tag}" lie in the centre right now (the truth: never distorted)`;
     case "census": return "learns the roles DEALT to the centre (not where, not what is there now), per the Den Census rule";
     case "distort": return e.target === "card"
       ? `distorts the chosen card: until dawn every look at it (except Werewolf-team looks) shows ${e.value === "chosen" ? "the role they name" : "one random other role from the deck, drawn once"}; it travels with the card`
       : `veils the chosen player: tonight every centre card they look at shows ${e.value === "chosen" ? "the role named" : "a random wrong role, drawn at each look"}`;
     case "witness": return `sees what the ${ROLE[e.by]?.name ?? e.by} proclaimed so far tonight (or that nothing was)`;
-    case "forge": return `adds a forged proclamation of the named role at the chosen centre card(s), published at dawn exactly as the ${ROLE[e.as]?.name ?? e.as}'s, in random order with the real ones`;
+    case "forge": return `adds a forged proclamation "at least one of the two chosen centre cards is a <named role>", published at dawn exactly as the ${ROLE[e.as]?.name ?? e.as}'s, in random order with the real ones`;
     case "overhear": return "names a role; receives a copy of everything the first player clockwise who was DEALT it learned tonight (or, if nobody was, a ghost result per the table rule)";
     case "bite": return "bites the player at the looked-at seat: unless their card is on the Werewolf team, they join the Werewolf team at dawn (told privately)";
     case "adopt": return "becomes a copy of that card for the rest of the game (its TRUE current identity, not a distortion): team, Werewolf or not, win rule, vote/chat/day powers, and its night action, performed in that role's own turn";
@@ -69,8 +69,8 @@ function card(r: RoleDef, turnPos: Map<string, number>): string {
   if (r.vote?.weight) powers.push(`the holder's vote counts ${r.vote.weight} times`);
   if (r.vote?.protectsTarget) powers.push("the holder's vote target cannot be eliminated");
   if (r.vote?.takesTargetDown) powers.push("if the holder is eliminated, their vote target is too");
-  if (r.chat === "signed") powers.push("once, the player DEALT it posts a free-text message sealed \"sent by the player DEALT Signet\" (chat_sendSigned)");
-  if (r.chat === "report") powers.push("once, the player DEALT it posts a sealed report the game composes from its night look (chat_sendReport)");
+  if (r.chat === "signed") powers.push("once, the player DEALT it posts a free-text message sealed \"the Signet\", with no name on it (chat_sendSigned)");
+  if (r.chat === "report") powers.push("once, the player DEALT it posts a sealed report the game composes from its night look, \"at least one of <A>'s and <B>'s cards was a <role>\", with no name on it (chat_sendReport)");
   if (r.chat === "forge") powers.push("once, the player DEALT it posts a forged Signet or Notary seal, identical to a real one until the end (chat_forgeSeal)");
   if (r.dayPower === "swap") powers.push("the player DEALT it may queue a swap of two other players' cards during discussion or the vote; it happens as the vote ends, before counting (day_queueSwap)");
   if (r.dayPower === "cut") powers.push("once, the player DEALT it may cut another player off for the cut length, exactly as a dropped connection (day_cutLine)");
@@ -140,10 +140,16 @@ ${ruleRows.join("\n")}
   role; Fogbank: a random wrong role at each look). **Werewolf-team looks and the Herder's count always see the truth.**
   Team-only looks show the team of the role seen. Proclamations publish what their maker saw. Conditional plans branch
   on what the actor saw. Distortions last until dawn.
-- **Proclamations** (Herald, Pale Herald) are anonymous; a Forger adds forged ones indistinguishable from them.
-- **Seals**: a sealed chat message reads "The game confirms this was sent by the player DEALT <role>". A Counterfeiter's
-  forgery is identical until the game ends. The seal proves the claimed DEALT role of the sender, nothing about the card
-  held now.
+- **The evidence amendment**: the game never publishes a pure, easy confirmation. Everything it vouches for in public is
+  indirect (a pair, a relation), ambiguous, and fakeable: a defector card in the deck can produce the identical artefact,
+  and the deck rules guarantee one is in the deck (it may lie in the centre). Private looks are unaffected.
+- **Proclamations** (Herald, Pale Herald) say "at least one of these two centre cards is a <role>", published at dawn,
+  anonymous. A deck with a proclamation must hold a Forger, whose forged proclamations are identical (any two centre
+  cards, any role in the deck). Only the results tell them apart.
+- **Seals**: a sealed chat message is signed by a ROLE only ("Sealed: the Signet"), never by a player: no name, seat,
+  avatar or assistant marker until the game ends (the poster sees it is theirs). Real and forged seals are identical;
+  a deck with a sealing card (Signet, Notary) must hold a seal forger (Counterfeiter, False Witness). A Notary's report is
+  indirect: "at least one of <A>'s and <B>'s cards was a <role>".
 - **Presence**: a player shows offline after 16 s without a heartbeat. A Hush's cut makes its victim's connection fail for
   the cut length; others see exactly what a real drop looks like. Nothing a cut player sends goes through; a vote they
   could not cast becomes random. Only the results reveal cuts.

@@ -63,6 +63,12 @@ describe("deal", () => {
     expect(deckProblem([...base, "forger"], 5, 3)).toMatch(/Forger needs a Herald/);
     expect(deckProblem([...base.slice(1), "forger", "herald"], 5, 3)).toBeNull();
     expect(deckProblem([...base.slice(1), "forger", "herald"], 5, 3, { dawnProclamations: false })).toMatch(/Proclamations at dawn/);
+    // The evidence amendment: every public artefact must be one a defector could have made.
+    expect(deckProblem([...base.slice(1), "sentry", "herald"], 5, 3)).toMatch(/Herald needs a Forger/);
+    expect(deckProblem([...base.slice(1), "sentry", "paleherald"], 5, 3)).toMatch(/Herald needs a Forger/);
+    expect(deckProblem([...base.slice(1), "sentry", "signet"], 5, 3)).toMatch(/forges seals/);
+    expect(deckProblem([...base.slice(1), "notary", "falsewitness"], 5, 3)).toBeNull();
+    expect(deckProblem([...base.slice(1), "signet", "counterfeiter"], 5, 3)).toBeNull();
     expect(deckProblem([...base, "moonthief"], 5, 3)).toBeNull(); // the day swap is off by default
     expect(deckProblem([...base, "moonthief"], 5, 3, { daySwap: true })).toMatch(/Moon-Thief needs 7 or more/);
     expect(deckProblem([...base, "moonthief"], 5, 3, { daySwap: true, thiefMinPlayers: 5 })).toBeNull();
@@ -195,19 +201,23 @@ describe("night", () => {
     expect(act(state(dealt, centre, { census: "off" }), 0).map(e => e.ev.kind)).toEqual(["seats"]);
   });
   it("publishes proclamations at dawn by default, in random order, and at once under the legacy rule", () => {
-    const s = state(["herald", "sage", "centaur"], ["werewolf", "centaur", "rustler"]);
-    act(s, 0, { proclaim: always(C(0)) }, 4);
-    expect(s.shown).toEqual([{ slot: C(0), role: "werewolf", by: "herald", turn: 4, atDawn: true }]);
+    const s = state(["herald", "sage", "centaur"], ["werewolf", "werewolf", "rustler"]);
+    expect(validPlan(ROLE.herald, "proclaim", 0, { players: 3, center: 3 }, always(C(0)))).toMatch(/Choose 2/);
+    const ev = act(s, 0, { proclaim: always(C(0), C(1)) }, 4)[0];
+    // Never one card's identity: "at least one of these two is a Werewolf", published as the Herald's.
+    expect(s.shown).toEqual([{ slots: [C(0), C(1)], role: "werewolf", by: "herald", turn: 4, atDawn: true }]);
+    expect(ev.ev).toEqual({ kind: "announce", slots: [C(0), C(1)], roles: ["werewolf"], atDawn: true });
     expect(visibleShown(s)).toEqual([]);
     dawn(s, [...s.dealt, ...s.dealtCenter], 9, rng());
     expect(visibleShown(s)).toHaveLength(1);
     const now = state(["herald", "sage", "centaur"], ["werewolf", "centaur", "rustler"], { dawnProclamations: false });
-    act(now, 0, { proclaim: always(C(0)) }, 4);
+    act(now, 0, { proclaim: always(C(0), C(2)) }, 4);
     expect(visibleShown(now)).toHaveLength(1);
-    const wide = state(["herald", "sage", "centaur"], ["werewolf", "centaur", "rustler", "sentry", "chiron"]);
-    expect(validPlan(ROLE.herald, "proclaim", 0, { players: 3, center: 5 }, always(C(0)))).toMatch(/Choose 2/);
-    act(wide, 0, { proclaim: always(C(0), C(4)) }, 4);
-    expect(wide.shown.map(x => x.role)).toEqual(["werewolf", "chiron"]);
+    expect(["werewolf", "rustler"]).toContain(now.shown[0].role);
+    // A Pale Herald's proclamation is labelled the Herald's too: nothing tells them apart.
+    const pale = state(["paleherald", "sage", "centaur"], ["werewolf", "centaur", "rustler"]);
+    act(pale, 0, { proclaim: always(C(0), C(1)) }, 4);
+    expect(pale.shown[0].by).toBe("herald");
   });
   it("stampedes three cards one place along, and the Herder counts wolves left in the centre", () => {
     const s = state(["spooker", "werewolf", "herder", "sage"], ["werewolf", "centaur", "tracker"]);
@@ -256,8 +266,9 @@ describe("Glamour", () => {
   it("fools a proclamation, and travels with the card when it moves", () => {
     const s = state(["glamour", "herald", "rustler", "sage"], ["werewolf", "centaur", "sentry"]);
     act(s, 0, glam(C(1), "werewolf"));
-    act(s, 1, { proclaim: always(C(1)) });
-    expect(s.shown[0]).toMatchObject({ slot: C(1), role: "werewolf" });
+    const made = act(s, 1, { proclaim: always(C(1), C(2)) })[0];
+    expect(made.hidden).toEqual({ cards: ["werewolf", "sentry"], truth: ["centaur", "sentry"] });
+    expect(["werewolf", "sentry"]).toContain(s.shown[0].role);
     act(s, 0, glam(P(0), "centaur"));
     act(s, 2, { peek: always(P(0)), trade: decide({ kind: "do" }) }); // the Rustler takes the glamoured card
     expect(s.cards[2]).toBe("glamour");
@@ -276,20 +287,21 @@ describe("Glamour", () => {
 
 describe("Forger", () => {
   it("sees the Herald's proclamation, then forges one that is published with it at dawn, flagged only after the game", () => {
-    const s = state(["herald", "forger", "sage"], ["werewolf", "centaur", "rustler"]);
-    act(s, 0, { proclaim: always(C(0)) }, 5);
-    const f = act(s, 1, { forge: decide({ kind: "pick", targets: [C(2)], role: "sage" }) }, 6);
-    expect(f.map(e => e.ev)).toEqual([{ kind: "witness", by: "herald", slots: [C(0)], roles: ["werewolf"] }, { kind: "forge", slots: [C(2)], roles: ["sage"], as: "herald" }]);
-    expect(s.shown[1]).toEqual({ slot: C(2), role: "sage", by: "herald", turn: 6, atDawn: true, forged: true });
+    const s = state(["herald", "forger", "sage"], ["werewolf", "werewolf", "rustler"]);
+    act(s, 0, { proclaim: always(C(0), C(1)) }, 5);
+    const f = act(s, 1, { forge: decide({ kind: "pick", targets: [C(1), C(2)], role: "sage" }) }, 6);
+    expect(f.map(e => e.ev)).toEqual([{ kind: "witness", by: "herald", slots: [C(0), C(1)], roles: ["werewolf"] }, { kind: "forge", slots: [C(1), C(2)], roles: ["sage"], as: "herald" }]);
+    // The forgery is the same artefact as a real proclamation; only the hidden flag differs.
+    expect(s.shown[1]).toEqual({ slots: [C(1), C(2)], role: "sage", by: "herald", turn: 6, atDawn: true, forged: true });
     expect(visibleShown(s)).toEqual([]);
     dawn(s, [...s.dealt, ...s.dealtCenter], 9, rng());
     expect(visibleShown(s).map(x => x.role).sort()).toEqual(["sage", "werewolf"]);
   });
-  it("forges as many cards as the Herald proclaims, and sees that nothing was proclaimed when the Herald is unheld", () => {
+  it("forges a pair of centre cards, and sees that nothing was proclaimed when the Herald is unheld", () => {
     const s = state(["forger", "sage", "centaur"], ["herald", "centaur", "rustler", "sentry", "chiron"]);
     expect(validPlan(ROLE.forger, "forge", 0, { players: 3, center: 5, deck: [...s.dealt, ...s.dealtCenter] }, decide({ kind: "pick", targets: [C(0)], role: "sage" }))).toMatch(/Choose 2/);
     expect(act(s, 0, { forge: decide({ kind: "pick", targets: [C(0), C(1)], role: "sage" }) })[0].ev).toEqual({ kind: "witness", by: "herald", slots: [], roles: [] });
-    expect(s.shown).toHaveLength(2);
+    expect(s.shown).toHaveLength(1);
   });
 });
 
@@ -467,7 +479,7 @@ describe("distortion", () => {
     const shown = cast.hidden!.role!;
     expect(shown).not.toBe("werewolf");
     expect(act(s, 1, { read: always(P(3)) })[0].ev).toMatchObject({ roles: [shown] });
-    expect(act(s, 2, { read: always(P(3)) })[0].ev).toMatchObject({ roles: [shown] });
+    expect(act(s, 2, { read: always(P(3), P(1)) })[0].ev).toMatchObject({ roles: [shown, "sage"] });
   });
   it("Mistweaver: one viewer's centre looks show the named role; player reads, team-only looks too, and conditional plans follow what was seen", () => {
     const s = state(["mistweaver", "farrier", "centaur", "werewolf"], ["sage", "centaur", "sentry"]);
@@ -729,7 +741,7 @@ describe("commands", () => {
     expect(availability(COMMAND["game.start"], { ...lobby, players: 3, host: false })).toMatchObject({ ok: false, reason: "Only the host can do this." });
   });
   it("checks the deck against the table's rules before starting", () => {
-    const deck = ["werewolf", "moonthief", "sage", "centaur", "centaur", "rustler", "sentry", "herald"];
+    const deck = ["werewolf", "moonthief", "sage", "centaur", "centaur", "rustler", "sentry", "farrier"];
     expect(availability(COMMAND["game.start"], { ...lobby, players: 5, deck, rules: { ...DEFAULT_RULES, daySwap: true } })).toMatchObject({ ok: false, reason: expect.stringMatching(/Moon-Thief needs 7/) });
     expect(availability(COMMAND["game.start"], { ...lobby, players: 5, deck, rules: { ...DEFAULT_RULES, daySwap: true, thiefMinPlayers: 5 } })).toEqual({ ok: true });
   });
@@ -783,7 +795,9 @@ describe("commands", () => {
   it("offers seals and the cut only to the cards that have them", () => {
     const day = { ...lobby, phase: "day" as const, seated: true, deck: ["signet", "notary", "counterfeiter", "hush", "werewolf"] };
     expect(availability(COMMAND["chat.sendReport"], { ...day, chatPower: "report" })).toEqual({ ok: true });
-    expect(availability(COMMAND["chat.forgeSeal"], { ...day, chatPower: "forge" }, { as: "notary", seat: 1, card: "werewolf" })).toEqual({ ok: true });
+    expect(availability(COMMAND["chat.forgeSeal"], { ...day, chatPower: "forge" }, { as: "notary", seat: 1, seat2: 2, card: "werewolf" })).toEqual({ ok: true });
+    expect(availability(COMMAND["chat.forgeSeal"], { ...day, chatPower: "forge" }, { as: "notary", seat: 1, card: "werewolf" })).toMatchObject({ ok: false, reason: expect.stringMatching(/seat2/) });
+    expect(availability(COMMAND["chat.forgeSeal"], { ...day, chatPower: "forge" }, { as: "notary", seat: 1, seat2: 1, card: "werewolf" })).toMatchObject({ ok: false, reason: expect.stringMatching(/two different/) });
     expect(availability(COMMAND["chat.forgeSeal"], { ...day, chatPower: "forge", deck: ["werewolf"] }, { as: "signet", text: "x" })).toMatchObject({ ok: false, reason: expect.stringMatching(/no Signet in this deck/) });
     expect(availability(COMMAND["chat.forgeSeal"], { ...day, chatPower: "report" })).toMatchObject({ ok: false, hidden: true });
     expect(availability(COMMAND["day.cutLine"], { ...day, dayPower: "cut" })).toEqual({ ok: true });
