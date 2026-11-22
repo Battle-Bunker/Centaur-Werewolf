@@ -33,14 +33,17 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync, createWriteStream }
 import { basename, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import { nightTurns } from "../shared/engine";
+import { ROLE } from "../shared/roles";
 import { MCP_URL, run, setupTable, tool, type Table, type TableConfig } from "./lib";
 import { startShim } from "./mcp-shim";
 
 // ── configuration ──
 interface AgentSpec { model?: string; effort?: string }
 interface AgentsConfig extends AgentSpec { seats?: Record<string, AgentSpec>; byTeam?: Record<string, AgentSpec> }
-interface TableSpec { label: string; deck: string[]; center: number; players: string[]; timers?: TableConfig["timers"]; agents?: AgentsConfig }
-interface Tournament { timers: TableConfig["timers"]; agents?: AgentsConfig; tables: TableSpec[] }
+/** redeal "wolfDealt": the runner starts each game itself and, before launching any agent, abandons and reopens the table until at least one wolf card was dealt to a player. */
+interface TableSpec { label: string; deck: string[]; center: number; players: string[]; timers?: TableConfig["timers"]; agents?: AgentsConfig; redeal?: "wolfDealt" }
+/** prompt: another player-prompt file in sim/ (default arena-player.md). */
+interface Tournament { timers: TableConfig["timers"]; agents?: AgentsConfig; redeal?: "wolfDealt"; prompt?: string; tables: TableSpec[] }
 
 const argv = process.argv.slice(2);
 const flag = (name: string, dflt?: string) => { const i = argv.indexOf(`--${name}`); return i >= 0 ? argv[i + 1] : dflt; };
@@ -55,7 +58,8 @@ const TIMERS = flag("timers") ? (([dusk, turn, day]) => ({ dusk, turn, day }))(f
 const LOBBY_MAX = 100; // seconds before the runner starts a game the host agent has not started
 const DEBRIEF_MAX = 180; // seconds after the game ends for agents to finish their debrief
 const RELAUNCHES = 2; // times an agent that stops before the game ends is resumed
-const SYSTEM = readFileSync(new URL("./arena-player.md", import.meta.url), "utf8");
+const PROMPT_FILE = spec.prompt ?? "arena-player.md";
+const SYSTEM = readFileSync(new URL(`./${PROMPT_FILE}`, import.meta.url), "utf8");
 const PROMPT_VERSION = createHash("sha256").update(SYSTEM).digest("hex").slice(0, 12); // recorded per table in run.json
 const SANDBOX = resolve(tmpdir(), "cw-arena", basename(OUT)); // working dirs and HOMEs of the agents: outside the repo
 const ALLOWED = "mcp__werewolf__*";
@@ -147,9 +151,21 @@ async function playTable(t: TableSpec) {
   if (existsSync(`${dir}/result.json`)) { log(label, "already played: skipping"); return; }
   mkdirSync(dir, { recursive: true });
   const timers = TIMERS ?? t.timers ?? spec.timers, cfg = t.agents ?? spec.agents;
-  const table: Table = await setupTable({ label, deck: t.deck, center: t.center, players: t.players, timers });
+  const redeal = t.redeal ?? spec.redeal, prestart = !!cfg?.byTeam || !!redeal;
+  let table: Table = await setupTable({ label, deck: t.deck, center: t.center, players: t.players, timers });
+  // With a pre-start, the runner deals before any agent exists; with redeal it keeps only deals that put a wolf card in a player's hand.
+  const dealt: Record<string, { id: string; team: string }> = {};
+  let discarded = 0;
+  if (prestart) for (;;) {
+    await run("game.start", table.seats[0].token, table.code);
+    for (const s of table.seats) dealt[s.name] = (await tool<View>(s.key, "room_view")).you.dealt!;
+    if (redeal !== "wolfDealt" || Object.values(dealt).some(d => ROLE[d.id]?.tags.includes("wolf"))) break;
+    if (++discarded > 40) throw new Error("40 deals without a wolf dealt");
+    log(label, `room ${table.code}: no wolf card dealt to a player, discarded`);
+    table = await setupTable({ label, deck: t.deck, center: t.center, players: t.players, timers });
+  }
   writeFileSync(`${dir}/table.json`, JSON.stringify(table, null, 1));
-  writeFileSync(`${dir}/run.json`, JSON.stringify({ tournament: file, prompt: PROMPT_VERSION, timers, transport: DIRECT ? "direct" : "shim", agents: cfg ?? null, default: DEFAULT, cli: argv.join(" "), at: new Date().toISOString() }, null, 1));
+  writeFileSync(`${dir}/run.json`, JSON.stringify({ tournament: file, prompt: PROMPT_VERSION, promptFile: PROMPT_FILE, redeal: redeal ?? null, discardedDeals: discarded, timers, transport: DIRECT ? "direct" : "shim", agents: cfg ?? null, default: DEFAULT, cli: argv.join(" "), at: new Date().toISOString() }, null, 1));
   registerTable(table);
   const host = table.seats[0];
   const turns = nightTurns(t.deck).length;
@@ -181,9 +197,8 @@ async function playTable(t: TableSpec) {
   };
 
   const agents: Promise<void>[] = [];
-  if (cfg?.byTeam) {
-    await run("game.start", host.token, table.code);
-    for (const s of table.seats) { const v = await tool<View>(s.key, "room_view"); agents.push(startAgent(s, agentSpec(cfg, s.name, v.you.dealt!.team.startsWith("Werewolf") ? "werewolf" : v.you.dealt!.team.startsWith("Centaur") ? "centaur" : "lone"), true)); }
+  if (prestart) {
+    for (const s of table.seats) { const d = dealt[s.name]; agents.push(startAgent(s, agentSpec(cfg, s.name, d.team.startsWith("Werewolf") ? "werewolf" : d.team.startsWith("Centaur") ? "centaur" : "lone"), true)); }
   } else for (const s of table.seats) agents.push(startAgent(s, agentSpec(cfg, s.name), false));
 
   // Watch the table through the host's view (and, at night, each seat's own view of its plan) to measure timing.

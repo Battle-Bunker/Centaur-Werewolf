@@ -1,0 +1,141 @@
+{
+ "timers": {
+  "dusk": 60,
+  "turn": 8,
+  "day": 240
+ },
+ "redeal": "wolfDealt",
+ "prompt": "arena-player-mechanics.md",
+ "agents": {
+  "model": "sonnet",
+  "effort": "medium"
+ },
+ "tables": [
+  {
+   "label": "B-movement/mechanics#1",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "rustler",
+    "farrier",
+    "spooker",
+    "sentry",
+    "sage",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ]
+  },
+  {
+   "label": "B-movement/mechanics#2",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "rustler",
+    "farrier",
+    "spooker",
+    "sentry",
+    "sage",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ]
+  },
+  {
+   "label": "B-movement/mechanics#3",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "rustler",
+    "farrier",
+    "spooker",
+    "sentry",
+    "sage",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ]
+  },
+  {
+   "label": "B-movement/mechanics#4",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "rustler",
+    "farrier",
+    "spooker",
+    "sentry",
+    "sage",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ]
+  },
+  {
+   "label": "B-movement/mechanics#5",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "rustler",
+    "farrier",
+    "spooker",
+    "sentry",
+    "sage",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ]
+  },
+  {
+   "label": "B-movement/mechanics#6",
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "rustler",
+    "farrier",
+    "spooker",
+    "sentry",
+    "sage",
+    "centaur"
+   ],
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme"
+   ]
+  }
+ ]
+}
