@@ -27,13 +27,13 @@ scenarios). Raw runs: sim/runs/confirm/ (git-ignored). Strategy tags: sim/resear
 ## Results (auto-generated)
 
 <!-- auto:start (sim/research/confirm-report.ts; do not edit by hand) -->
-_Generated 2026-11-22T13:42 UTC; session spend on counted games so far: $23.61._
+_Generated 2026-11-22T13:43 UTC; session spend on counted games so far: $23.61._
 
 ### P7 Pyre (7 players): werewolf x2, phoenix, lure, embercarrier, sage, rustler, sentry, centaur, pickpocket; 3 centre
 
 | Scenario ~ arm | New n | New winners | Earlier (n) | Pooled winners (n) | Talk-live (new / pooled) | c new (median) | Judges new ToM / dec / path / noise | Agreement \|diff\| t/d/p/n · howWon | Ties |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| F-P7-ember~off | 2 | W 1, P 1 | P 2, W 2, C 1 (5) | P 3, W 3, C 1 (7) | yes / yes | 0.67 0.5 (0.58) | 2.0 / 2.5 / 3.0 / 1.0 | 0.0/1.0/0.0/0.0 · 1/1 | 0 |
+| F-P7-ember~off | 2 | W 1, P 1 | P 2, W 2, C 1 (5) | P 3, W 3, C 1 (7) | yes / yes | 0.67 0.5 (0.58) | 2.5 / 3.0 / 3.25 / 1.0 | 0.0/1.0/0.5/0.0 · 2/2 | 0 |
 
 Eliminated (new games): **F-P7-ember~off**: Bryn(Centaur) 1, Fen(Phoenix) 1
 
@@ -86,7 +86,7 @@ Eliminated (new games): **F-K7-duel~off**: –
 | Scenario ~ arm | New n | New winners | Earlier (n) | Pooled winners (n) | Talk-live (new / pooled) | c new (median) | Judges new ToM / dec / path / noise | Agreement \|diff\| t/d/p/n · howWon | Ties |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | F6-Q3-two-wolves-lure~off | 0 |  | W 5, C 4, P 1 (10) | W 5, C 4, P 1 (10) | – / yes |  (–) | – / – / – / – | –/–/–/– · 0/0 | 0 |
-| F6-Q3-two-wolves-lure~open | 2 | W 2 | – | – | no / – | 0.75 1 (0.88) | 2.0 / 2.0 / 3.0 / 3.0 | 0.0/0.0/0.0/0.0 · 1/1 | 0 |
+| F6-Q3-two-wolves-lure~open | 2 | W 2 | – | – | no / – | 0.75 1 (0.88) | 2.0 / 2.5 / 3.0 / 2.25 | 0.0/0.0/0.0/0.5 · 1/2 | 0 |
 | F5-Q3-pyre-burn~off | 0 |  | C 3, P 2 (5) | C 3, P 2 (5) | – / yes |  (–) | – / – / – / – | –/–/–/– · 0/0 | 0 |
 
 Eliminated (new games): **F6-Q3-two-wolves-lure~off**: –; **F6-Q3-two-wolves-lure~open**: Alder(Centaur) 2; **F5-Q3-pyre-burn~off**: –
