@@ -420,3 +420,15 @@ packCovers result before this is affected.
   a Werewolf) turned a 5-0 duel into 4-1, which matches heuristic 15.
 - **Lone-wolf scenarios starve the wolves** (6-player session: 1 wolf win in 18 replays, all four of its scenarios had
   a lone wolf). Scenario choice matters as much as the roster: report per scenario class, not per roster.
+
+## 2026-11-22 Hush harness fix (owned by the hub from 13:45)
+
+Bug: a headless AI client drops an MCP server for good after an HTTP failure, and a Hush cut answers the cut player
+with a bare 503, so a cut AI never came back (random vote, discussion run to the timer). Fix in sim/mcp-shim.ts: every
+upstream failure (non-2xx or no answer) on a JSON-RPC request becomes HTTP 200 with one fixed retryable wording ("the
+game server could not be reached... wait a few seconds and try again"): a tool-level error for `tools/call` (including
+the shim's own `room_wait`), a JSON-RPC error otherwise; notifications get 202. A genuine outage and a cut give the
+identical answer; nothing names a cause. sim/arena-player.md tells players connections can drop and to keep retrying.
+The runner already resumes an agent that stops early. Verified without AI players (sim/research/hush-check.mts, 7
+checks: before / during (tools/call, room_wait, tools/list) / identical to a genuine outage / no cause named / recovers
+~15 s after a 15 s cut). Not yet verified with a full Opus table.
