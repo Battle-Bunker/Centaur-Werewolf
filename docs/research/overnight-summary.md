@@ -33,54 +33,55 @@ instead of into the talk.
 - Unless stated, games ran **without opening statements** (free-for-all first messages, where AI liars speak later;
   see artefacts). Results with the option on are labelled.
 
-## Top 3 rosters (ranked on the primary target: talk-live fixed scenarios, then ToM, then consensus in band)
+## Top 3 rosters (all of the owner's criteria, trade-offs shown)
 
-### 1. "Little Pyre", 5 players (5-player session, roster Q3)
-- **Deck** (8 cards, 3 centre): werewolf, werewolf, phoenix, lure, sage, rustler, sentry, centaur. **Rules**: defaults.
-- **Games**: 21 = 6 natural + 3 fixed scenarios x 5. **Talk-live: 3 of 3.**
-- **Wins**: fixed F5 Centaurs 3 / Pyre 2; F6 wolves 2 / Centaurs 2 / Pyre 1; F8 Pyre 4 / wolves 1. Natural: Centaurs 3,
-  wolves 2, Pyre 1. All 21: Centaurs 8, wolves 5, Pyre 8.
-- **Vote concentration** (21 games): majority 16, plurality 3, unanimous 2, scattered 0 (median 0.75).
-- **Judges** (42 verdicts): ToM 2.45, deception 2.76, path 2.86, noise 1.19; agreement 0.14-0.29 per scale, "how won"
-  17 of 21.
-- **Weakness**: when the Lure dresses the Phoenix as a Werewolf and the Sage reads it (F8), the Pyre won 4 of 5. My
-  `lureSparesPhoenix` option removes that line (tested at 6 players: Pyre 0 of 8) but without opening statements it
-  handed the wolves a decoy (see "proposed changes"). The Pyre total (8 of 21) is inflated by Pyre-centred scenarios.
+Leading candidates on every criterion (fixed scenarios unless stated; "in band" = games with 0.6 <= c < 1):
 
-### 2. "Pyre seven", 7 players (7-player session, roster P7)
-- **Deck** (10 cards, 3 centre): werewolf, werewolf, phoenix, lure, embercarrier, sage, rustler, sentry, centaur,
-  pickpocket. **Rules**: defaults (the Ember-Carrier as redesigned: a blind swap at night).
-- **Games**: 7 = 2 natural + 1 fixed scenario x 5. **Talk-live: 1 of 1**, and the only scenario of the night where all
-  three teams won: **Pyre 2, wolves 2, Centaurs 1**. Natural: Pyre 1, Centaurs 1.
-- **Vote concentration**: fixed 0.67 0.67 0.50 0.50 0.83 (two plurality: three agendas split the vote).
-- **Judges** (fixed, 10 verdicts): ToM 2.7, deception 3.1, path 3.3, noise 1.5; agreement within 0.0-0.4.
-- **Why it works**: the Ember-Carrier carries the Lure-dressed Phoenix to a player who does not know it; the honest Sage
-  sincerely reads "Werewolf" on him; the lone wolf, who scented him as Pyre, must stop the burning without revealing
-  how he knows; a Pickpocket in the deck gives every moved card an innocent explanation.
-- **Weakness**: one fixed scenario only (a confirmation run at n=10 is under way); noise at the limit; vote
-  concentration low in 2 of 5. The same ember scenario at 6 players (no Pickpocket, the Sentry watching both swapped
-  seats) swept 5-0 for the Centaurs: the player dealt the Phoenix honestly said so and the swap was decoded.
-- The 7-player session's other rosters are also talk-live in their one scenario each and more Centaur-leaning: K7
-  "Shadow Court" (twins duel, Centaurs 4 / wolves 1, path 3.4), S7 (Spooker confession, 4-1, path 3.8), G7 (Glamour
-  frame, 3-2, path 3.0).
+| Roster (players) | Talk-live fixed scenarios | Replays | Fixed wins C / W / Pyre | ToM | Path | Noise | Votes in band | Main weakness |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **Little Pyre (5)** | **3 of 3** | 20 | 7 / 6 / 7 | 2.45 | 3.18 | 1.27 | 20 of 26 | Lure-dressed Phoenix read by the Sage: Pyre 4 of 5 |
+| **Pyre six PY6 (6)** | **6 of 8** | 38 | 21 / 2 / 15 | 2.47 | 2.87 | **0.92** | 31 of 41 | wolves near-spectators (2 of 38) in its lone-wolf scenarios |
+| Pyre six D6 (6, hub) | 4 of 5 | 23 | 8 (+2 with a burning) / 4 / 9 | **2.6** | **3.28** | 1.11 | 22 of 25 | same Lure problem; Herder (uncontestable count) |
+| **Shadow Court K7 (7)** | **2 of 2** | 10 | 8 / 2 / - | 2.2 | 2.95 | 1.05 | 12 of 14 | Centaur-leaning (twins and wolves collide); 2 scenarios only |
+| Pyre seven P7 (7) | 2 of 3 | 15 | 10 / 2 / 3 | 2.1 | 2.87 | 1.5 | **5 of 19** | misses the consensus criterion (plurality votes, 2 scattered) |
+| Veils G7/M7 (7) | 1 of 1 | 5 | 3 / 2 / - | 2.2 | 3.0 | 1.2 | 7 of 7 | one scenario |
+| best 8-player (M1H) | 1 of 4 | 20 | 18 / 2 / - | 1.8 | 1.83 | 0.57 | 18 of 20 | Centaurs win by counting claims |
 
-### 3. "Pyre six", 6 players (hub roster D6 and the 6-player session's PY6)
-- **Decks** (9 cards, 3 centre): D6 = werewolf, werewolf, phoenix, lure, sage, rustler, sentry, centaur, herder;
-  PY6 = werewolf, werewolf, phoenix, lure, sage, moonsage, rustler, centaur, pickpocket. **Rules**: defaults.
-- **Games**: D6 25 (2 natural + 5 fixed scenarios, 23 replays incl. rule variants); PY6 21 (3 natural + 4 fixed
-  scenarios, 18 replays) plus 15 replays with opening statements.
-- **Talk-live**: D6 4 of 5 fixed scenarios; PY6 2 of 4 (one borderline, one predicted control).
-- **Wins** (fixed, defaults): D6 S5 Centaurs 4 (one with a side burning) / Pyre 1; D6 S9 Pyre 4 / Centaurs 1;
-  PY6 S1 Pyre 4 / wolves 1; S2 Pyre 3 / Centaurs 2; S4 Centaurs 4 / Pyre 1; S3 Centaurs 3 (control).
-- **Judges**: the highest of the night: PY6 S1 ToM 3.0, deception 3.6, path 3.4; D6 fixed ToM 2.6, path 3.3, noise 1.1.
-  Concentration: D6 22 of 25 in band; PY6 median 0.8, no scattered vote.
-- **Weakness**: the Pyre is too strong when the Lure dresses the Phoenix (two scenarios at 4 of 5), and the WOLVES are
-  near-spectators in lone-wolf deals (PY6: 1 wolf win in 18 replays; all its scenarios had one wolf held). Opening
-  statements moved PY6 toward balance (S1 Pyre 4 / W 1 -> Centaurs 3 / Pyre 1 / W 1) but moved D6's S5 the other way
-  (Centaurs 4 -> Pyre 4); see the lesson on simultaneous claims below.
+Choice: one roster per player count where the evidence allows, at least one two-team roster, and no roster that misses
+a criterion outright. 8 players: not solved.
 
-**Not recommendable yet**: 8 players (both 8-player sessions so far: of 10 fixed scenarios 1 talk-live, 2 borderline,
-7 swept; 63 games Centaurs 52, wolves 6, Pyre 5), and every 5-6 player roster without a third team except as noted.
+### 1. "Little Pyre", 5 players (5-player session, Q3) — passes every criterion
+- **Deck** (8, centre 3): werewolf, werewolf, phoenix, lure, sage, rustler, sentry, centaur. **Rules**: defaults.
+- **Games**: 26 = 6 natural + 20 fixed replays (3 scenarios, one also with opening statements). Natural: Centaurs 3,
+  wolves 2, Pyre 1. Fixed: F5 Centaurs 3 / Pyre 2; F6 wolves 2 / Centaurs 2 / Pyre 1; F8 Pyre 4 / wolves 1.
+- **Judges** (two per game): ToM 2.45, deception 2.9, path 3.2, noise 1.3; agreement 0.14-0.29 per scale.
+- **Votes**: mostly majority (median 0.75), none scattered.
+- **Weakness**: the Lure-dresses-Phoenix line (F8: Pyre 4 of 5); the fix I built (`lureSparesPhoenix`) removes it but,
+  with opening statements off, hands the wolves a Kindler decoy (proposed fix CR-15).
+
+### 2. "Pyre six", 6 players (6-player session PY6; hub D6 is the same idea with a Herder)
+- **Deck PY6** (9, centre 3): werewolf, werewolf, phoenix, lure, sage, moonsage, rustler, centaur, pickpocket.
+  **Rules**: defaults; tested with opening statements off and on.
+- **Games**: PY6 41 (3 natural + 38 fixed replays over 8 scenarios incl. variants); D6 25 (2 natural + 23).
+- **Talk-live**: PY6 6 of 8, D6 4 of 5. The night's top judge scores (PY6 S1: ToM 3.0, deception 3.6, path 3.4).
+- **Wins (fixed)**: PY6 Centaurs 21, Pyre 15, wolves 2; D6 Centaurs 8 (+2 with a burning), Pyre 9, wolves 4.
+- **Weakness**: in lone-wolf deals the wolves are spectators; with the Lure dressing the Phoenix the Pyre is too strong
+  (two scenarios at 4 of 5). Opening statements moved PY6 toward balance (S1: Pyre 4 / W 1 -> Centaurs 3 / Pyre 1 /
+  W 1) but D6's S5 the other way (Centaurs 4 -> Pyre 4).
+
+### 3. "Shadow Court", 7 players (7-player session K7) — the two-team candidate
+- **Deck** (10, centre 3): werewolf, werewolf, moonsage, strayherder, sage, herder, rustler, sentry, centaur, centaur.
+  **Rules**: defaults. Every information claim has a wolf-side twin that can make it truthfully (the Moonsage passes as
+  a Sage, so an honest Rustler's peek "confirms" it; the Stray Herder knows the true count).
+- **Games**: 14 = 4 natural + 2 fixed scenarios x 5. Natural: wolves 2, Centaurs 2. Fixed: Centaurs 4 / wolves 1 twice.
+- **Judges** (28 verdicts): ToM 2.1, deception 2.6, path 2.6, noise 1.0; agreement <= 0.6; "how won" 13 of 14.
+- **Votes**: 12 majority, 1 plurality, 1 unanimous, 0 scattered (median 0.67): the cleanest consensus of the leaders.
+- **Weakness**: Centaur-leaning in fixed scenarios (the lone wolf and the twins, who do not know each other, collide on
+  claims); candidate fixes `packCovers` (now fixed) or the Hollow Sage, untested on K7.
+
+**Why not Pyre seven (P7), the best single scenario of the study** (ember: Pyre 2 / wolves 2 / Centaurs 1, ToM 2.7,
+deception 3.1): across its 19 games only 5 votes fell in the consensus band (12 plurality, 2 scattered) and noise is
+1.5-1.6. Three agendas at 7 split the vote. It is the most dynamic table and the weakest on target 2.
 
 ## Interesting games (3-4 per top roster)
 
@@ -95,16 +96,24 @@ instead of into the talk.
 - **F5 (Centaurs 3, Pyre 2)**: the same deal split on whether the table took the Phoenix's resistance as a wolf's or a
   Phoenix's: the talk, not the night, decided each replay.
 
-### Pyre seven (7 players)
-- **P7#1, Pyre wins: the mover's lie turned a wolf.** The Ember-Carrier lied about which two cards it swapped
-  ("Gale and Fen"; truly Cass and Bryn). A wolf believed his card had gone to Gale, confessed *"I was dealt
-  Werewolf... I'm sitting on the Lure"*, and the table eliminated Gale, who held the Lure (Phoenix in the centre, so a
-  Kindler's elimination burned): Pyre win, wolves denied. Judges path 4.
-- **P7#2, Centaurs win: a fake confession caught.** A player carried the Phoenix, read as "Phoenix" by the Sage, claimed
-  *"I was dealt WEREWOLF, my peek was invented"* to get voted out; the Sage caught it: *"Gale named me Sage at msg 1,
-  before I had said anything."*
-- **F-P7-ember (the fixed scenario)**: replays ended Centaurs ("deduced the only possible wolf"), Pyre twice ("fake
-  Rustler look framed the Phoenix holder"), wolves twice ("a late fake Pickpocket claim hid the lone wolf").
+### Shadow Court (7 players)
+- **K7#1 (natural), wolves win by a false confession.** The Sage was in the centre, so the Moonsage's Sage claim was
+  exposed, and both wolves had claimed Centaur (three Centaur claims for two cards). With the table on the wolf Fen,
+  Fen claimed to be the Moonsage (voting a non-wolf loses); then the real Moonsage "confessed": *"I'm a Werewolf. I
+  grabbed the Sage claim and 'confirmed' Alder after he claimed. Fen really is the Moonsage... killing him loses."*
+  The votes split 3-3 between Fen and a Centaur: a Blood Price tie, a wolf win. Judges ToM 3, deception 3.
+- **K7#2 (natural), wolves win with a decoy.** Both Sage claims were held; the table correctly said a Moonsage's
+  elimination loses, and still voted the Moonsage 5-2 because "Alder could be the werewolf faking Sage" (he had claimed
+  after the Rustler's peek, a timing slip).
+- **F-K7-duel (fixed)**: Sage v. a Moonsage corroborated by an honest Rustler, Herder v. Stray Herder; Centaurs 4,
+  wolves 1, path 3.4: decided each time by who backed whom and when.
+
+### Pyre seven (7 players; best single scenario, misses consensus)
+- **P7#1, Pyre wins: the mover's lie turned a wolf.** The Ember-Carrier lied about which cards it swapped; a wolf
+  believed his card had gone, confessed *"I was dealt Werewolf... I'm sitting on the Lure"*, and the table eliminated
+  the Lure's holder (Phoenix in the centre: a Kindler's elimination burns). Judges path 4.
+- **F-P7-ember (fixed)**: Centaurs once, Pyre twice ("fake Rustler look framed the Phoenix holder"), wolves twice
+  ("a late fake Pickpocket claim hid the lone wolf").
 
 ### Pyre six (6 players)
 - **D6 S5#5, Centaurs win by motive analysis.** The Lure dressed the Phoenix (Bryn) as a Werewolf, the Sage read
@@ -177,7 +186,11 @@ appeared in 57 of 58 games and the **latency tell** in 53.
    Phoenix and the Centaurs' reading of it (toward the Pyre). Predict it per scenario.
 10. **A fix can move power instead of creating talk**: the Lure fix removed the Pyre's unanswerable line and gave the
     wolves a decoy; partial census and opening statements did not touch the S3 sweep.
-11. **Ambiguity must exist in the holder's own knowledge**, not only in the public artefact (6-player session: the
+11. **Census variants are scenario-specific**: census "allButOne" turned a swept 7-player Pyre night (5-0, ToM 1.4)
+    into 4-1 talk-live (ToM 2.2), but did nothing for the 5-player duel (above). A pack-waking twin (the 7-player
+    session's Grey Herder) was falsified (Centaurs 5-0): shared knowledge without communication becomes a tell
+    ("whoever Gale shields is the wolf"), the same principle as lesson 2.
+12. **Ambiguity must exist in the holder's own knowledge**, not only in the public artefact (6-player session: the
     Notary's sealed pair report was ambiguous, but the Notary had seen both cards and simply said which).
 
 **Falsified predictions** (as useful as the confirmed ones): the Moon-Thief's after-talk swap was NOT degenerate (the
