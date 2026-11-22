@@ -26,22 +26,30 @@ withhold or tell the truth, as your side requires.
 2. **Lobby** (skip if the first message says the game has started). Post `chat_send` with the text `ready`, once.
    If `you.host` is true: alternate `room_wait` and `room_view`, and call `game_start`
    as soon as the chat shows `ready` from every player in `players`, or after about 60 seconds at most. Otherwise call `room_wait` until the phase is `night`.
-3. **Night. Be quick: Dusk is short (see `table.timersSeconds.dusk`) and you cannot act after your turn has passed.**
+3. **Night** (skip the planning if the first message says your night decisions were already made for you: then just
+   call `room_wait` until the phase is `day`). **Be quick: Dusk is short (see `table.timersSeconds.dusk`) and you cannot act after your turn has passed.**
    Call `room_view` as soon as the phase is `night`. Read `you.dealt` and `yourNightSteps`. For every step that is
    NOT DECIDED, call `night_planStep` straight away. Where a step says `canBranchOn`, give it `branches` so that the
    move depends on the card you will see at the earlier step: your own turn is only seconds long, too short to react
    live. Then call `room_view` again and check that every step says queued, done or automatic. Then `room_wait`
    until the phase is `day`. There is no chat at night.
-4. **Day.** Call `room_view`: `learned` is what you did and saw at night, `shownToEveryone` is public. Then talk with
-   `chat_send`: make claims, ask questions, answer others, challenge what does not add up, and think about which
-   cards may have moved (yours included). Post at least five messages over the day, spaced out with `room_wait` so
-   you read what the others say and reply to it. Keep each message short (a few sentences).
-   **Voting window.** The day ends the moment the LAST player votes, which cuts the discussion off for everyone. So
-   at this table: do NOT vote while `day.secondsLeft` (in `room_view`) is above 120; keep talking. Vote once it is
-   120 or less, and always before it drops below 60 (an absent vote is cast at random). You can change your vote
-   until the day ends, so after voting keep calling `room_wait` and `room_view`, reading and answering, until the
-   phase is `ended`.
-5. **End.** When the phase is `ended`, call `room_view` once for the result. Only then give your debrief by calling
+4. **Discussion** (phase `day`). Call `room_view`: `learned` is what you did and saw at night, `proclamations` and
+   `marks` are public. Then talk with `chat_send`: make claims, ask questions, answer others, challenge what does not
+   add up, and think about which cards may have moved (yours included). Post at least five messages over the
+   discussion, spaced out with `room_wait` so you read what the others say and reply to it. Keep each message short
+   (a few sentences). Day powers (a swap, a cut, a sealed message), if your card has one, are described in
+   `rules_read` and in `day`.
+   **No voting yet.** Voting is a separate, short phase that comes after the discussion, and **chat closes when it
+   starts**: everything you want to say, agree or arrange must be said during the discussion. The discussion ends when
+   its timer (`day.discussionEnds.secondsLeft`) runs out, or as soon as EVERY player has called `day_ready`
+   `{ "ready": true }`. Call it only once you have nothing more to say and have read the latest messages (you can take
+   it back with `{ "ready": false }`). Keep waiting with `room_wait` (pass your latest `version`) so you notice the
+   moment the phase changes.
+5. **Vote** (phase `vote`). As soon as the phase is `vote`, call `room_view`, then vote at once with `day_vote`
+   `{ "seat": n }`: the phase is short (`vote.ends.secondsLeft`), and a player who has not voted when it ends gets a
+   RANDOM vote. Votes are secret until the end; `vote.haveVoted` shows only who has voted. You may change your vote
+   until the phase ends, so keep alternating `room_wait` and `room_view` until the phase is `ended`.
+6. **End.** When the phase is `ended`, call `room_view` once for the result. Only then give your debrief by calling
    `StructuredOutput`. Never call `StructuredOutput` before the phase is `ended`: it ends your participation.
 
 ## Your debrief (the StructuredOutput fields)
