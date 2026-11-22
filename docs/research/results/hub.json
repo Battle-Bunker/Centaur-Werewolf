@@ -5571,7 +5571,62 @@
        "pivot": "Bryn: \"My Spooker cycle was blind: Alder (seat 1) → centre card 2, centre 2 → centre 3, centre 3 → Alder... Alder now holds a Werewolf.\" This broke the vote ring, which would otherwise have given the wolves the win."
       }
      ],
-     "strategies": null
+     "strategies": [
+      {
+       "strategy": "safe-centre-claim",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "safe-centre-claim",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "fake-read",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "false-movement-story",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "false-movement-story",
+       "team": "werewolf",
+       "who": "Bryn",
+       "decisive": true
+      },
+      {
+       "strategy": "vote-split-or-tie-plan",
+       "team": "centaur",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "vote-split-or-tie-plan",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "centaur",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      }
+     ]
     },
     {
      "label": "S1b-A5-direction-covers#2",
@@ -5603,7 +5658,68 @@
        "pivot": "Bryn: \"I rotated Alder (seat 1) → centre card 3 → Dov (seat 4) → back to Alder... centre 3 was a Werewolf, and Dov now holds it... Vote Dov.\" Cass then backed it up: \"a lying Spooker would just name seats nowhere near Alder.\""
       }
      ],
-     "strategies": null
+     "strategies": [
+      {
+       "strategy": "false-movement-story",
+       "team": "werewolf",
+       "who": "Bryn",
+       "decisive": true
+      },
+      {
+       "strategy": "safe-centre-claim",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "safe-centre-claim",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "fake-read",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": true
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "centaur",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": true
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "centaur",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      }
+     ]
     },
     {
      "label": "S1b-A5-direction-covers#3",
@@ -5635,7 +5751,110 @@
        "pivot": "Bryn: \"I picked centre 2 → centre 1 → Alder → back to centre 2... centre card 1 was a Werewolf and Alder is holding it now.\" Then Cass: \"Your card is the only one we KNOW moved... I'm voting Alder.\""
       }
      ],
-     "strategies": null
+     "strategies": [
+      {
+       "strategy": "safe-centre-claim",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "safe-centre-claim",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "fake-read",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "fake-read",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "false-movement-story",
+       "team": "werewolf",
+       "who": "Bryn",
+       "decisive": true
+      },
+      {
+       "strategy": "vote-split-or-tie-plan",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "vote-split-or-tie-plan",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "centaur",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "centaur",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "werewolf",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "centaur",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "centaur",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "census-backward-induction",
+       "team": "centaur",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "census-backward-induction",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      }
+     ]
     },
     {
      "label": "S1b-A5-direction-covers#4",
@@ -5667,7 +5886,74 @@
        "pivot": "Bryn: \"Cass (seat 0)'s card → Alder (seat 1), Alder's card → centre card 1, centre card 1 → Cass.\" Later, after Cass's confession, Bryn: \"my cycle never touched Dov, so Dov is the ONE seat certain to still hold a Werewolf... Everyone vote Dov.\""
       }
      ],
-     "strategies": null
+     "strategies": [
+      {
+       "strategy": "false-movement-story",
+       "team": "werewolf",
+       "who": "Bryn",
+       "decisive": true
+      },
+      {
+       "strategy": "safe-centre-claim",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "safe-centre-claim",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "fake-read",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "centaur",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "census-backward-induction",
+       "team": "centaur",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "census-backward-induction",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "werewolf",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      }
+     ]
     },
     {
      "label": "S1b-A5-direction-covers#5",
@@ -5699,7 +5985,92 @@
        "pivot": "Alder: \"Dov just outed himself... Retracting the ring — I'm voting Dov (4)\", backed by Bryn's second false cycle: \"Dov's card was NEVER touched... Vote Dov (4).\""
       }
      ],
-     "strategies": null
+     "strategies": [
+      {
+       "strategy": "false-movement-story",
+       "team": "werewolf",
+       "who": "Bryn",
+       "decisive": true
+      },
+      {
+       "strategy": "fake-confession",
+       "team": "werewolf",
+       "who": "Bryn",
+       "decisive": true
+      },
+      {
+       "strategy": "safe-centre-claim",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "vote-split-or-tie-plan",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "census-backward-induction",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": true
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "safe-centre-claim",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "fake-read",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "vote-split-or-tie-plan",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "centaur",
+       "who": "Esme",
+       "decisive": false
+      }
+     ]
     }
    ]
   },
@@ -5803,7 +6174,74 @@
        "pivot": "Alder: \"A Moonsage KNOWS he isn't the Sage, so the moment I claimed Sage he knew I was real… his win depends on saving you.\" Esme: \"Alder's point settles it for me.\""
       }
      ],
-     "strategies": null
+     "strategies": [
+      {
+       "strategy": "safe-centre-claim",
+       "team": "werewolf",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "counter-claim-info-role",
+       "team": "werewolf",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "werewolf",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "werewolf",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "census-backward-induction",
+       "team": "werewolf",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "werewolf",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "centaur",
+       "who": "Alder",
+       "decisive": true
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "centaur",
+       "who": "Alder",
+       "decisive": true
+      },
+      {
+       "strategy": "census-backward-induction",
+       "team": "centaur",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "centaur",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "centaur",
+       "who": "Alder",
+       "decisive": false
+      }
+     ]
     },
     {
      "label": "S3b-B5-duel-allButOne#2",
@@ -5835,7 +6273,74 @@
        "pivot": "Esme: \"In B, Alder would likely know the Sage is held and still claimed Sage blind, first? Bad bluff. In A, Bryn's census shows Centaur in the centre, so Centaur is a safe fake.\" Cass: \"Esme's census point convinces me... Switching: I vote Bryn (seat 1).\""
       }
      ],
-     "strategies": null
+     "strategies": [
+      {
+       "strategy": "safe-centre-claim",
+       "team": "werewolf",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "counter-claim-info-role",
+       "team": "werewolf",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "werewolf",
+       "who": "Bryn, Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "census-backward-induction",
+       "team": "werewolf",
+       "who": "Dov, Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "werewolf",
+       "who": "Dov, Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "werewolf",
+       "who": "Dov, Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "census-backward-induction",
+       "team": "centaur",
+       "who": "Esme, Cass, Alder",
+       "decisive": true
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "centaur",
+       "who": "Alder, Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "centaur",
+       "who": "Esme, Alder, Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "centaur",
+       "who": "Alder, Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "centaur",
+       "who": "Alder",
+       "decisive": false
+      }
+     ]
     },
     {
      "label": "S3b-B5-duel-allButOne#3",
@@ -5867,7 +6372,68 @@
        "pivot": "Cass: \"a Moonsage hearing Alder claim Sage would know Alder is either the real Sage (so Bryn is the wolf) or the wolf himself — attacking Alder is the right play for a Moonsage either way. So that doesn't clear you. I'm going with Esme and Alder: Bryn\" (backed by Esme's \"Bryn is the wolf in 2 of 3 worlds\")"
       }
      ],
-     "strategies": null
+     "strategies": [
+      {
+       "strategy": "safe-centre-claim",
+       "team": "werewolf",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "counter-claim-info-role",
+       "team": "werewolf",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "werewolf",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "centaur",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "werewolf",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "werewolf",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "werewolf",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "centaur",
+       "who": "Cass",
+       "decisive": true
+      },
+      {
+       "strategy": "census-backward-induction",
+       "team": "centaur",
+       "who": "Cass",
+       "decisive": true
+      },
+      {
+       "strategy": "census-backward-induction",
+       "team": "werewolf",
+       "who": "Dov",
+       "decisive": false
+      }
+     ]
     },
     {
      "label": "S3b-B5-duel-allButOne#4",
@@ -5899,7 +6465,68 @@
        "pivot": "Cass (+56s): \"If Alder were the wolf in (C), he'd most likely KNOW the Moonsage sits in the centre... Claiming Sage then is suicide.\" Esme (+68s): \"Cass's point moves me... I'm now voting Bryn.\""
       }
      ],
-     "strategies": null
+     "strategies": [
+      {
+       "strategy": "safe-centre-claim",
+       "team": "werewolf",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "counter-claim-info-role",
+       "team": "werewolf",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "census-backward-induction",
+       "team": "werewolf",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "werewolf",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "werewolf",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "werewolf",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "census-backward-induction",
+       "team": "centaur",
+       "who": "Cass",
+       "decisive": true
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "centaur",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "centaur",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "centaur",
+       "who": "Alder",
+       "decisive": false
+      }
+     ]
     },
     {
      "label": "S3b-B5-duel-allButOne#5",
@@ -5931,7 +6558,68 @@
        "pivot": "Esme: \"Bryn and Dov's FIRST move was to push the wolf onto me... only flipped to Alder once I pointed out the simpler alternative\" and \"a Moonsage Dov had to counter-claim Sage... So that proves nothing.\" Cass: \"the 'blind defence' argument doesn't clear Dov. I'm going with Bryn.\""
       }
      ],
-     "strategies": null
+     "strategies": [
+      {
+       "strategy": "safe-centre-claim",
+       "team": "werewolf",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "counter-claim-info-role",
+       "team": "werewolf",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "census-backward-induction",
+       "team": "centaur",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "census-backward-induction",
+       "team": "werewolf",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "centaur",
+       "who": "Esme, Alder, Cass",
+       "decisive": true
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "werewolf",
+       "who": "Bryn, Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "centaur",
+       "who": "Cass, Alder, Esme",
+       "decisive": true
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "werewolf",
+       "who": "Bryn, Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "werewolf",
+       "who": "Dov, Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "centaur",
+       "who": "Cass, Esme",
+       "decisive": false
+      }
+     ]
     }
    ]
   },
@@ -6039,7 +6727,98 @@
        "pivot": "Bryn: \"If Esme is the dressed Phoenix, the Lure is Cass... the count would be 2, not 1... Esme is the wolf.\" Dov: \"I'm changing my mind, and Bryn is right... I'm voting Esme (seat 4).\""
       }
      ],
-     "strategies": null
+     "strategies": [
+      {
+       "strategy": "safe-centre-claim",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "safe-centre-claim",
+       "team": "pyre",
+       "who": "Fen",
+       "decisive": false
+      },
+      {
+       "strategy": "safe-centre-claim",
+       "team": "pyre",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "fake-confession",
+       "team": "werewolf",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "vote-split-or-tie-plan",
+       "team": "pyre",
+       "who": "Cass",
+       "decisive": true
+      },
+      {
+       "strategy": "phoenix-baiting",
+       "team": "pyre",
+       "who": "Fen",
+       "decisive": true
+      },
+      {
+       "strategy": "census-backward-induction",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "centaur",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "pyre",
+       "who": "Fen",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "pyre",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": true
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "pyre",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "centaur",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "centaur",
+       "who": "Bryn",
+       "decisive": false
+      }
+     ]
     },
     {
      "label": "S9-D6-double-read#2",
@@ -6071,7 +6850,104 @@
        "pivot": "Alder: \"I'm voting Fen\" → Bryn: \"change: Dov, Fen and I ALL vote Cass (2)\", which moved the honest votes off the real wolf Esme and onto the dressed Phoenix."
       }
      ],
-     "strategies": null
+     "strategies": [
+      {
+       "strategy": "safe-centre-claim",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "safe-centre-claim",
+       "team": "pyre",
+       "who": "Fen",
+       "decisive": true
+      },
+      {
+       "strategy": "team-collision",
+       "team": "werewolf",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "centaur",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "census-backward-induction",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "fake-read",
+       "team": "pyre",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "vote-split-or-tie-plan",
+       "team": "pyre",
+       "who": "Fen",
+       "decisive": true
+      },
+      {
+       "strategy": "vote-split-or-tie-plan",
+       "team": "centaur",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "phoenix-baiting",
+       "team": "pyre",
+       "who": "Fen",
+       "decisive": true
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "pyre",
+       "who": "Fen",
+       "decisive": true
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "fake-confession",
+       "team": "werewolf",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "pyre",
+       "who": "Fen",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "pyre",
+       "who": "Cass",
+       "decisive": false
+      }
+     ]
     },
     {
      "label": "S9-D6-double-read#3",
@@ -6103,7 +6979,74 @@
        "pivot": "Fen: \"every Centaur-team role is accounted for... So Cass CANNOT be Centaur team... let's take BOTH: a 3-3 tie\", then Esme: \"OK, Dov's logic holds... I'll vote Cass\" and Alder: \"Esme moving to Cass changes the math... I'll put mine on Cass too.\""
       }
      ],
-     "strategies": null
+     "strategies": [
+      {
+       "strategy": "phoenix-baiting",
+       "team": "pyre",
+       "who": "Fen",
+       "decisive": true
+      },
+      {
+       "strategy": "vote-split-or-tie-plan",
+       "team": "pyre",
+       "who": "Cass, Fen",
+       "decisive": true
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "pyre",
+       "who": "Fen",
+       "decisive": false
+      },
+      {
+       "strategy": "safe-centre-claim",
+       "team": "werewolf",
+       "who": "Alder, Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "team-collision",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "werewolf",
+       "who": "Esme, Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "centaur",
+       "who": "Bryn, Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "centaur",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": true
+      },
+      {
+       "strategy": "vote-split-or-tie-plan",
+       "team": "centaur",
+       "who": "Dov, Bryn",
+       "decisive": false
+      }
+     ]
     },
     {
      "label": "S9-D6-double-read#4",
@@ -6135,7 +7078,74 @@
        "pivot": "Fen: \"A Phoenix wants to burn: why fake Centaur, fake a Herder in the centre, and beg not to be voted? That's survival play, i.e. a wolf.\" Dov echoed it: \"Cass is fighting to survive, so Cass is the wolf I saw.\""
       }
      ],
-     "strategies": null
+     "strategies": [
+      {
+       "strategy": "phoenix-baiting",
+       "team": "pyre",
+       "who": "Fen",
+       "decisive": true
+      },
+      {
+       "strategy": "frame-ally",
+       "team": "pyre",
+       "who": "Fen",
+       "decisive": true
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "pyre",
+       "who": "Fen",
+       "decisive": true
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "pyre",
+       "who": "Fen",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": true
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "census-backward-induction",
+       "team": "centaur",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "safe-centre-claim",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "fake-confession",
+       "team": "werewolf",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "pyre",
+       "who": "Cass",
+       "decisive": false
+      }
+     ]
     },
     {
      "label": "S9-D6-double-read#5",
@@ -6167,7 +7177,98 @@
        "pivot": "Fen: \"I looked at centre card 2 and saw the Lure... nobody dressed anything tonight\", together with Cass's reverse-psychology \"a Phoenix would just take the wolf read and smile, not fight it\", and Bryn switching from his own Esme read to \"FINAL: Cass (seat 2)\"."
       }
      ],
-     "strategies": null
+     "strategies": [
+      {
+       "strategy": "safe-centre-claim",
+       "team": "werewolf",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "team-collision",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "counter-claim-info-role",
+       "team": "pyre",
+       "who": "Cass",
+       "decisive": true
+      },
+      {
+       "strategy": "fake-read",
+       "team": "pyre",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "phoenix-baiting",
+       "team": "pyre",
+       "who": "Fen",
+       "decisive": true
+      },
+      {
+       "strategy": "frame-ally",
+       "team": "pyre",
+       "who": "Fen",
+       "decisive": true
+      },
+      {
+       "strategy": "vote-split-or-tie-plan",
+       "team": "pyre",
+       "who": "Fen",
+       "decisive": false
+      },
+      {
+       "strategy": "vote-split-or-tie-plan",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "census-backward-induction",
+       "team": "centaur",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "centaur",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": true
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "pyre",
+       "who": "Fen",
+       "decisive": true
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "pyre",
+       "who": "Fen",
+       "decisive": false
+      }
+     ]
     }
    ]
   },
@@ -6278,7 +7379,74 @@
        "pivot": "Alder: \"Fine, I'll come clean: I'm not the Sage, I bluffed\" → Fen: \"Centaur-team players have no reason to fake Sage, so that lie points to Alder as a wolf... I'm staying on Cass.\""
       }
      ],
-     "strategies": null
+     "strategies": [
+      {
+       "strategy": "safe-centre-claim",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "counter-claim-info-role",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "fake-read",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "team-collision",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "centaur",
+       "who": "Fen",
+       "decisive": true
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "centaur",
+       "who": "Fen",
+       "decisive": true
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "centaur",
+       "who": "Fen",
+       "decisive": true
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      }
+     ]
     },
     {
      "label": "P6-parity-condemned#2",
@@ -6311,7 +7479,74 @@
        "pivot": "Bryn: \"Alder, Esme (and surely Cass) now pile on Dov — that's the wolf bloc... if we three (Bryn, Dov, Fen) hold Cass, it's 3–3 and Cass + Dov both go... Dov only counts against us if a non-wolf votes him\" — and Fen holding Cass despite Esme's swap theory."
       }
      ],
-     "strategies": null
+     "strategies": [
+      {
+       "strategy": "counter-claim-info-role",
+       "team": "werewolf",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "counter-claim-info-role",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "fake-read",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "safe-centre-claim",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "werewolf",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "team-collision",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "vote-split-or-tie-plan",
+       "team": "centaur",
+       "who": "Bryn",
+       "decisive": true
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "centaur",
+       "who": "Fen",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "centaur",
+       "who": "Fen",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "centaur",
+       "who": "Fen",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "centaur",
+       "who": "Bryn",
+       "decisive": false
+      }
+     ]
     },
     {
      "label": "P6-parity-condemned#3",
@@ -6344,7 +7579,92 @@
        "pivot": "Fen: \"Cass says Dov's card showed SAGE... Esme says Dov's card showed WEREWOLF... Both say nothing moved. Those can't both be true\" — followed by Dov: \"consolidating is what matters most... I'll join: Alder (seat 0).\""
       }
      ],
-     "strategies": null
+     "strategies": [
+      {
+       "strategy": "safe-centre-claim",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "counter-claim-info-role",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "counter-claim-info-role",
+       "team": "werewolf",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "fake-read",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "fake-read",
+       "team": "werewolf",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "team-collision",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "vote-split-or-tie-plan",
+       "team": "centaur",
+       "who": "Bryn",
+       "decisive": true
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "centaur",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "centaur",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "centaur",
+       "who": "Fen",
+       "decisive": false
+      }
+     ]
     },
     {
      "label": "P6-parity-condemned#4",
@@ -6376,7 +7696,74 @@
        "pivot": "Bryn at +84s: \"Switch to ALDER (seat 0), please.\" Dov followed and voted Alder, while Bryn and Fen stayed on Cass, splitting the Centaur votes."
       }
      ],
-     "strategies": null
+     "strategies": [
+      {
+       "strategy": "safe-centre-claim",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "counter-claim-info-role",
+       "team": "werewolf",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "false-movement-story",
+       "team": "werewolf",
+       "who": "Alder, Cass, Esme",
+       "decisive": true
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "vote-split-or-tie-plan",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": true
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "centaur",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "centaur",
+       "who": "Fen",
+       "decisive": false
+      },
+      {
+       "strategy": "vote-split-or-tie-plan",
+       "team": "centaur",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "census-backward-induction",
+       "team": "centaur",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "centaur",
+       "who": "Bryn",
+       "decisive": false
+      }
+     ]
     },
     {
      "label": "P6-parity-condemned#5",
@@ -6409,7 +7796,74 @@
        "pivot": "Fen: \"In the swap world, who holds wolf #2? ... Cass is lying in every world.\" Bryn: \"Fen's count settles it... Staying on Cass (seat 2).\""
       }
      ],
-     "strategies": null
+     "strategies": [
+      {
+       "strategy": "counter-claim-info-role",
+       "team": "werewolf",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "safe-centre-claim",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "false-movement-story",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "centaur",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "centaur",
+       "who": "Fen",
+       "decisive": true
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "centaur",
+       "who": "Fen",
+       "decisive": false
+      },
+      {
+       "strategy": "vote-split-or-tie-plan",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": true
+      },
+      {
+       "strategy": "team-collision",
+       "team": "werewolf",
+       "who": "Esme",
+       "decisive": false
+      }
+     ]
     }
    ]
   },
@@ -6507,7 +7961,56 @@
        "pivot": "Esme: \"I'm the Sage, and I looked at Dov... WEREWOLF\" gave the wolf bloc its target; Fen: \"a Cass vote can't win in any world where it's needed. ... I'm voting Dov.\""
       }
      ],
-     "strategies": null
+     "strategies": [
+      {
+       "strategy": "counter-claim-info-role",
+       "team": "werewolf",
+       "who": "Esme",
+       "decisive": true
+      },
+      {
+       "strategy": "fake-read",
+       "team": "werewolf",
+       "who": "Esme",
+       "decisive": true
+      },
+      {
+       "strategy": "safe-centre-claim",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": true
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "centaur",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "centaur",
+       "who": "Fen",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "werewolf",
+       "who": "Esme",
+       "decisive": false
+      }
+     ]
     },
     {
      "label": "P6-parity-off#2",
@@ -6540,7 +8043,122 @@
        "pivot": "Esme switched from \"Two wolves = Bryn + Cass per Dov's look\" to \"I'm voting Dov (seat 3)\" after Alder's counter-claim, \"Bryn is lying. *I* am the Sage... Vote Dov.\""
       }
      ],
-     "strategies": null
+     "strategies": [
+      {
+       "strategy": "counter-claim-info-role",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": true
+      },
+      {
+       "strategy": "counter-claim-info-role",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": true
+      },
+      {
+       "strategy": "counter-claim-info-role",
+       "team": "werewolf",
+       "who": "Esme",
+       "decisive": true
+      },
+      {
+       "strategy": "fake-read",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": true
+      },
+      {
+       "strategy": "fake-read",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": true
+      },
+      {
+       "strategy": "fake-read",
+       "team": "werewolf",
+       "who": "Esme",
+       "decisive": true
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "werewolf",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "vote-split-or-tie-plan",
+       "team": "centaur",
+       "who": "Bryn",
+       "decisive": false
+      },
+      {
+       "strategy": "vote-split-or-tie-plan",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "centaur",
+       "who": "Fen",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "werewolf",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "centaur",
+       "who": "Fen",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "centaur",
+       "who": "Fen",
+       "decisive": false
+      },
+      {
+       "strategy": "team-collision",
+       "team": "werewolf",
+       "who": "Esme",
+       "decisive": false
+      }
+     ]
     },
     {
      "label": "P6-parity-off#3",
@@ -6570,6 +8188,547 @@
        "howWon": "framing-or-decoy",
        "label": "Honest Rustler framed with invented swap",
        "pivot": "Esme: \"If Dov saw a Werewolf on Cass and swapped, Dov now holds the Werewolf... and would say exactly this\" + Cass: \"I was dealt the Werewolf... Dov SWAPPED with me.\""
+      }
+     ],
+     "strategies": [
+      {
+       "strategy": "counter-claim-info-role",
+       "team": "werewolf",
+       "who": "Esme",
+       "decisive": true
+      },
+      {
+       "strategy": "safe-centre-claim",
+       "team": "werewolf",
+       "who": "Alder",
+       "decisive": false
+      },
+      {
+       "strategy": "team-collision",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-count-collision",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "false-movement-story",
+       "team": "werewolf",
+       "who": "Cass",
+       "decisive": true
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "werewolf",
+       "who": "Esme",
+       "decisive": true
+      },
+      {
+       "strategy": "motive-analysis",
+       "team": "centaur",
+       "who": "Dov",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "centaur",
+       "who": "Fen",
+       "decisive": false
+      },
+      {
+       "strategy": "claim-timing-tell",
+       "team": "werewolf",
+       "who": "Esme",
+       "decisive": false
+      },
+      {
+       "strategy": "vote-split-or-tie-plan",
+       "team": "centaur",
+       "who": "Bryn",
+       "decisive": true
+      },
+      {
+       "strategy": "census-backward-induction",
+       "team": "centaur",
+       "who": "Fen",
+       "decisive": false
+      },
+      {
+       "strategy": "corroboration-chain",
+       "team": "centaur",
+       "who": "Fen",
+       "decisive": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "group": "S3c-B5-duel-opening",
+   "roster": "B5",
+   "fixedScenario": true,
+   "games": 5,
+   "deck": [
+    "centaur",
+    "herder",
+    "moonsage",
+    "rustler",
+    "sage",
+    "sentry",
+    "werewolf",
+    "werewolf"
+   ],
+   "centre": 3,
+   "rules": {
+    "openingStatements": true
+   },
+   "fingerprints": 1,
+   "winners": {
+    "centaur": 5
+   },
+   "minority": 0,
+   "entropyWinner": 0,
+   "eliminated": {
+    "Bryn": 5
+   },
+   "concentration": [
+    {
+     "c": 0.75,
+     "band": "majority"
+    },
+    {
+     "c": 0.75,
+     "band": "majority"
+    },
+    {
+     "c": 0.75,
+     "band": "majority"
+    },
+    {
+     "c": 0.75,
+     "band": "majority"
+    },
+    {
+     "c": 0.75,
+     "band": "majority"
+    }
+   ],
+   "judges": {
+    "verdicts": 10,
+    "tom": 2.6,
+    "deception": 2.8,
+    "path": 2.9,
+    "noise": 0.9,
+    "howWon": {
+     "honest-info-converged": 10
+    },
+    "agreement": {
+     "tom": 0.4,
+     "deception": 0.4,
+     "path": 0.2,
+     "noise": 0.2,
+     "howWonExact": "5/5"
+    }
+   },
+   "talkLive": "swept-by-argument",
+   "costUsd": 13.22,
+   "perGame": [
+    {
+     "label": "S3c-B5-duel-opening#1",
+     "code": "ASYR",
+     "winner": "centaur",
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 0.75,
+     "band": "majority",
+     "messages": 26,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Census logic broke the Sage counterclaim tie",
+       "pivot": "Alder: \"a Werewolf gets the census, so wolf-me would know Sage is dealt to a player... claiming Sage would be suicide\" → Cass: \"a wolf with the census picks a claim that's in the centre... I'm voting Bryn\""
+      },
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Census logic broke the Sage-claim tie",
+       "pivot": "Alder: \"a Werewolf gets the census, so wolf-me would know Sage is dealt to a player... claiming Sage would be suicide... Bryn as wolf knows the centre roles, so naming 'Sentry in centre' costs him nothing.\" Cass: \"Decisive point for me: a wolf with the census picks a claim that's in the centre.\""
+      }
+     ],
+     "strategies": null
+    },
+    {
+     "label": "S3c-B5-duel-opening#2",
+     "code": "XXYJ",
+     "winner": "centaur",
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 0.75,
+     "band": "majority",
+     "messages": 26,
+     "judges": [
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Census reasoning broke the Sage-claim tie",
+       "pivot": "Cass: \"World B: centre = Werewolf, Moonsage, Sentry, so wolf-Alder KNOWS the real Sage is a live player and claims Sage anyway? He'd claim Sentry instead.\" Esme then made the same census argument and backed it."
+      },
+      {
+       "tom": 2,
+       "deception": 2,
+       "path": 3,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Census reasoning broke the Sage counterclaim tie",
+       "pivot": "Cass: \"World B: centre = Werewolf, Moonsage, Sentry, so wolf-Alder KNOWS the real Sage is a live player and claims Sage anyway? He'd claim Sentry instead. World A is far more natural.\" Esme then agreed."
+      }
+     ],
+     "strategies": null
+    },
+    {
+     "label": "S3c-B5-duel-opening#3",
+     "code": "WSNC",
+     "winner": "centaur",
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 0.75,
+     "band": "majority",
+     "messages": 33,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 2,
+       "path": 3,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Census argument broke the Sage-vs-Sage tie",
+       "pivot": "Esme: \"In world B, Alder-wolf would know the Sage is in play and that Sentry is in the centre, so claiming Sage invites a sure counterclaim; Sentry would be the safe claim... I lean towards A: Bryn is the wolf.\" Cass then switched from \"I lean toward Dov being the real Sage\" to voting Bryn."
+      },
+      {
+       "tom": 2,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Census reasoning exposed wolf's safe Centaur claim",
+       "pivot": "Esme: \"In world B, Alder-wolf would know the Sage is in play and that Sentry is in the centre, so claiming Sage invites a sure counterclaim... In world A, Bryn-wolf would know Centaur is in the centre, so claiming Centaur is perfectly safe.\" Cass then changed her lean from Dov to Bryn."
+      }
+     ],
+     "strategies": null
+    },
+    {
+     "label": "S3c-B5-duel-opening#4",
+     "code": "JSNL",
+     "winner": "centaur",
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 0.75,
+     "band": "majority",
+     "messages": 28,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Census logic and Bryn's slip swayed Esme",
+       "pivot": "Bryn: \"Alder is the Moonsage framing a Centaur... Real wolf is hidden elsewhere\" → Esme: \"then NO player would hold a wolf\" ; Alder: \"Why would I claim SAGE, knowing a live Sage exists to call me out?\" → Esme: \"Alder's point is strong... I'm locking in Bryn.\""
+      },
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Census logic exposed wolf's safe Centaur claim",
+       "pivot": "Bryn: \"Alder is the Moonsage framing a Centaur... Real wolf is hidden elsewhere\" → Esme: \"then NO player would hold a wolf\"; Alder: \"Why would I claim SAGE, knowing a live Sage exists to call me out?... the free, uncontradictable claim is Sentry.\""
+      }
+     ],
+     "strategies": null
+    },
+    {
+     "label": "S3c-B5-duel-opening#5",
+     "code": "FVXC",
+     "winner": "centaur",
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 0.75,
+     "band": "majority",
+     "messages": 29,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 2,
+       "noise": 0,
+       "howWon": "honest-info-converged",
+       "label": "True Sage read plus census logic",
+       "pivot": "Bryn: \"The unclaimed Sentry sitting in the centre with Centaur+Wolf also fits B\" → Esme: \"Bryn's 'typo' is the tell… that's exactly what the wolf census shows\"; Alder: \"claiming Sage would be suicide when Sentry (sitting in the centre) is a free safe claim.\""
+      },
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Census logic plus wolf's slip exposed Bryn",
+       "pivot": "Bryn: \"The unclaimed Sentry sitting in the centre with Centaur+Wolf also fits B\" → Esme: \"A real Centaur would never put his own card in the middle\"; Alder: \"claiming Sage would be suicide when Sentry (sitting in the centre) is a free safe claim.\""
+      }
+     ],
+     "strategies": null
+    }
+   ]
+  },
+  {
+   "group": "S5b-D6-lure-opening",
+   "roster": "D6",
+   "fixedScenario": true,
+   "games": 5,
+   "deck": [
+    "centaur",
+    "herder",
+    "lure",
+    "phoenix",
+    "rustler",
+    "sage",
+    "sentry",
+    "werewolf",
+    "werewolf"
+   ],
+   "centre": 3,
+   "rules": {
+    "openingStatements": true
+   },
+   "fingerprints": 1,
+   "winners": {
+    "pyre": 4,
+    "centaur": 1
+   },
+   "minority": 1,
+   "entropyWinner": 0.72,
+   "eliminated": {
+    "Bryn": 4,
+    "Cass": 1
+   },
+   "concentration": [
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 1,
+     "band": "unanimous"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    },
+    {
+     "c": 0.6,
+     "band": "plurality"
+    },
+    {
+     "c": 0.8,
+     "band": "majority"
+    }
+   ],
+   "judges": {
+    "verdicts": 10,
+    "tom": 3,
+    "deception": 3.4,
+    "path": 3.2,
+    "noise": 1,
+    "howWon": {
+     "lie-believed": 8,
+     "honest-info-converged": 2
+    },
+    "agreement": {
+     "tom": 0,
+     "deception": 0,
+     "path": 0,
+     "noise": 0,
+     "howWonExact": "5/5"
+    }
+   },
+   "talkLive": "talk-live",
+   "costUsd": 16.71,
+   "perGame": [
+    {
+     "label": "S5b-D6-lure-opening#1",
+     "code": "HFFB",
+     "winner": "pyre",
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 0.8,
+     "band": "majority",
+     "messages": 37,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 4,
+       "path": 4,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Lure's fallback Rustler claim burned Phoenix",
+       "pivot": "Dov: \"OK, I'll come clean: I'm the Rustler, not the Sage... looked at Bryn, saw Werewolf, and didn't swap\", then \"Esme, run your maths for my world too... Centre = Werewolf, Phoenix, Lure... a perfect fit\"."
+      },
+      {
+       "tom": 3,
+       "deception": 4,
+       "path": 4,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Lure's fake Rustler world burned the Phoenix",
+       "pivot": "Dov: \"OK, I'll come clean: I'm the Rustler, not the Sage... looked at Bryn, saw Werewolf, and didn't swap\" followed by \"Centre = Werewolf, Phoenix, Lure. That's exactly 1 wolf in the centre, a perfect fit\". Together with the point that \"a Phoenix WANTS to be voted out\" but Bryn was fighting the vote, this flipped Fen, Esme and Alder onto Bryn."
+      }
+     ],
+     "strategies": null
+    },
+    {
+     "label": "S5b-D6-lure-opening#2",
+     "code": "VHVQ",
+     "winner": "pyre",
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 1,
+     "band": "unanimous",
+     "messages": 29,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 4,
+       "path": 3,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Phoenix faked wolf resistance; Lure's fake corroboration",
+       "pivot": "Bryn: \"I'm voting Esme (seat 4)... Cass, thanks, but 'Phoenix' is a stretch. I'm Herder, period.\" Fen, Dov, Esme and Alder then rebutted Cass: \"a Phoenix WANTS to be voted out, yet Bryn is fighting hard... That's wolf behaviour.\""
+      },
+      {
+       "tom": 3,
+       "deception": 4,
+       "path": 3,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Phoenix faked wolf resistance, Lure corroborated",
+       "pivot": "Bryn: \"This is a pile-on... I'm voting Esme (seat 4)\" vs Cass: \"Bryn = Phoenix dressed up. Voting Bryn burns the Pyre\", answered by Alder: \"a Phoenix dressed as a wolf would want to be voted out, not fight it the way you are.\""
+      }
+     ],
+     "strategies": null
+    },
+    {
+     "label": "S5b-D6-lure-opening#3",
+     "code": "QTBK",
+     "winner": "pyre",
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 0.8,
+     "band": "majority",
+     "messages": 31,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 4,
+       "path": 3,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Phoenix faked resistance; Lure corroborated wolf look",
+       "pivot": "Bryn: \"If you vote me, you're voting off the Sage.\" / Alder: \"a Phoenix wants to be voted out and wouldn't fight it with a fake Sage claim\"; Dov: \"I'm actually the RUSTLER. I looked at Bryn (seat 1) and saw WEREWOLF\"; Esme: \"The 'Lure dressed Bryn' theory needs a Lure AND Phoenix among us, which the count doesn't allow.\""
+      },
+      {
+       "tom": 3,
+       "deception": 4,
+       "path": 3,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Fake Rustler claim and fake Sage resistance sold the frame",
+       "pivot": "Dov: \"I'm actually the RUSTLER. I looked at Bryn (seat 1) and saw WEREWOLF\" + Alder/Dov: \"a Phoenix wants to be voted out and would never fake-claim Sage\", then Esme: \"If Dov is the Rustler, the Lure and Phoenix are BOTH in the centre\"."
+      }
+     ],
+     "strategies": null
+    },
+    {
+     "label": "S5b-D6-lure-opening#4",
+     "code": "EAPF",
+     "winner": "centaur",
+     "eliminated": [
+      "Cass (seat 2)"
+     ],
+     "c": 0.6,
+     "band": "plurality",
+     "messages": 41,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 2,
+       "path": 3,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Sage deduced Lure from matching fake claim",
+       "pivot": "Alder: \"Dov ALSO claims Sage and names the same Werewolf on Bryn, in a blind opening statement. How did Dov know Bryn would look like a wolf? Most likely Dov is the LURE\" — plus the census argument that converted Fen and then Esme (\"Switching: Cass (seat 2)\")."
+      },
+      {
+       "tom": 3,
+       "deception": 2,
+       "path": 3,
+       "noise": 1,
+       "howWon": "honest-info-converged",
+       "label": "Sage deduced Lure frame, isolated the wolf",
+       "pivot": "Alder: \"Dov ALSO claims Sage and names the same Werewolf on Bryn, in a blind opening statement. How did Dov know Bryn would look like a wolf? Most likely Dov is the LURE\". Esme then switched: \"I'm convinced by Alder and Fen... Switching: Cass (seat 2).\""
+      }
+     ],
+     "strategies": null
+    },
+    {
+     "label": "S5b-D6-lure-opening#5",
+     "code": "EKPZ",
+     "winner": "pyre",
+     "eliminated": [
+      "Bryn (seat 1)"
+     ],
+     "c": 0.8,
+     "band": "majority",
+     "messages": 32,
+     "judges": [
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Lure-dressed Phoenix acts like a wolf",
+       "pivot": "Dov: \"I'll come clean: I'm the Rustler, not the Sage... did NOT swap\" → Alder: \"OK Dov, Rustler is plausible... Bryn keeps fighting the vote, which a Phoenix wouldn't do. I'm voting Bryn.\""
+      },
+      {
+       "tom": 3,
+       "deception": 3,
+       "path": 3,
+       "noise": 1,
+       "howWon": "lie-believed",
+       "label": "Lure-framed Phoenix, fake Rustler pivot accepted",
+       "pivot": "Dov: \"I'll come clean: I'm the Rustler, not the Sage... did NOT swap\" → Alder: \"OK Dov, Rustler is plausible and fills the gap... I'm voting Bryn\""
       }
      ],
      "strategies": null

@@ -277,3 +277,48 @@ that sweeps (8p Lure-Phoenix 5-0 with path 3.6; my S3 5-0 with path 3.0). Per-ga
 was pivotal in this game", not "a different talk would have changed this scenario". The charter's talk-live test
 already requires a minority outcome, so a sweep is never talk-live; report "path high but swept" separately as
 "decided by a reliable argument" (heuristic 9).
+
+## 2026-11-22 CR-10 opening statements, tested (10 games, ~$30)
+
+| Scenario | Without (fine pass 1) | Predicted with | Result with `openingStatements` | Judges ToM / dec / path / noise |
+| --- | --- | --- | --- | --- |
+| S3c B5 Moonsage duel | Centaurs 5-0 | Centaurs 4, wolves 1 | **Centaurs 5-0** | 2.6 / 2.8 / 2.9 / 0.9 |
+| S5b D6 Lure-dressed Phoenix | Centaurs 4 (1 with side burning), Pyre 1 | C 3, Pyre 1-2 | **Pyre 4, Centaurs 1** | **3.0 / 3.4** / 3.2 / 1.0 (agreement 0.0 on every scale) |
+
+**S3c: claim order was not the cause; the census is.** All five opening rounds were simultaneous (Sage and Moonsage
+both claimed Sage blind) and all five were again decided by the census argument: "a Werewolf gets the census, so
+wolf-me would know Sage is dealt to a player... claiming Sage would be suicide" (#1); "World B: centre = Werewolf,
+Moonsage, Sentry, so wolf-Alder KNOWS the real Sage is a live player and claims Sage anyway? He'd claim Sentry
+instead" (#2). Three tests now point at one cause (S3 full census, S3b partial census, S3c simultaneous claims): the
+Den Census makes the "Alder is the lying wolf" world implausible, because a wolf that knows the centre would not choose
+the one claim guaranteed to be contested. The 8-player session's decision-theory point (eliminating a Moonsage never
+wins for anyone voting it) narrows the table's choice to "Bryn or Alder", and the census settles that choice.
+**Smallest remaining fix to test (CR-12): S3 with `census: "off"`** (prediction: Centaurs 3, wolves 2): a wolf that
+cannot know whether the Sage is held may well claim Sage. Cost: wolves elsewhere lose their safe claims and collide
+with honest ones more (the coarse pass showed census-safe claims in 43 of 43 games). Alternative: the 8-player
+session's `hollowsage` (a twin that counts as a Werewolf) makes "the counter-claimer is a wolf" true in more worlds.
+
+**S5b: simultaneous openings help the Pyre and hurt the reading side.** In fine pass 1 the lone wolf could wait, see
+the Sage's "Werewolf" read on the dressed Phoenix, and defend the Phoenix obliquely, and the Centaurs read that
+defence ("why would a non-wolf need to lie?"). With openings, every role commits blind; the Lure's fake corroborating
+Rustler claim and the Phoenix's staged resistance are on the table before anyone can react, and four of five tables
+burned the Phoenix. The judges rate these the cleverest defector wins of the night (deception 3.4). So CR-10 is not a
+neutral harness fix: it shifts power to whoever profits from a pre-committed story (Pyre, framers) and away from
+whoever profits from reacting (the wolf who defends, the Centaurs who read reactions).
+*Heuristic 14: simultaneous commitment rewards teams whose plan is fixed at dawn and punishes teams that win by
+reacting. Predict its effect per team by asking who needs to see others' claims first.*
+**Recommendation:** keep `openingStatements` as an option, not a default; at 6 players with the Lure + Phoenix, it
+makes the Pyre too strong (Pyre 4 of 5 in both S9 and S5b).
+
+**My view on the Pyre (requested): what should let the Centaurs beat the reverse bluff through talk.** The reverse
+bluff works because the table has no way to tell "a wolf fighting a true read" from "a Phoenix pretending to fight a
+dressed read": both are consistent with every mechanic, and the one player who knows the truth (the wolf, via the
+census and the pack) cannot say so without exposing itself. Smallest changes that leave the Centaurs a counter-story:
+(1) make the Lure's dress visible to its target: the Phoenix holder is told "your card was dressed as X tonight", so a
+Phoenix's denial "I'm not the Phoenix" is now a claim the Phoenix KNOWS to be risky; weak. (2) Better: the dress shows
+the chosen role only to looks taken BEFORE the Sage's turn ends... no: too fiddly. (3) Best, and simplest: the Lure
+must dress a card OTHER than a Phoenix-dealt seat (it may still dress any other card, e.g. frame a Centaur so the Pyre
+gains through chaos, or dress a Kindler), so the Pyre's route to a burning is talk (the Phoenix acting guilty) rather
+than an honest seer's sincere testimony. Prediction for (3): the Pyre's share in Lure scenarios falls from about 4 of 5
+to about 1-2 of 5; path stays >= 3. Also: `burningDeniesWolves` makes doomed wolves kingmake the Pyre (S9#4); with it
+off, wolves would rather tie a Centaur than burn the Phoenix. Worth one test at 6 players.
