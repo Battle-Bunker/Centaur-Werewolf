@@ -1,16 +1,14 @@
 /**
- * Reads a tournament played by arena.ts and reports, per deck and overall, set against random play:
+ * Reads a tournament played by arena.ts and reports, per deck (or deck/arm) and overall:
  * winners, wolves caught, moved cards, forced moves and votes, talk, claim honesty, what decided games, the
  * Werewolf team's wins and losses with the chat around the vote, agent cost and timing, and the agents' confusions.
- *   npx tsx sim/analyze.ts <outDir> [--baseline-games 5000]
+ *   npx tsx sim/analyze.ts <outDir>
  * Writes <outDir>/analysis.json and prints a readable report.
  */
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { randomPlay, type Baseline } from "./random-play";
 import { ROLE } from "../shared/roles";
 
 const out = process.argv[2];
-const bi = process.argv.indexOf("--baseline-games"), BG = bi > 0 ? Number(process.argv[bi + 1]) : 5000;
 const read = (p: string) => JSON.parse(readFileSync(p, "utf8"));
 const pct = (n: number, d: number) => (d ? `${Math.round((100 * n) / d)}%` : "n/a");
 const fp = (x: number) => (Number.isFinite(x) ? `${Math.round(100 * x)}%` : "n/a");
@@ -71,30 +69,25 @@ const measures = (gs: Game[]) => {
     messagesPerGame: gs.reduce((a, g) => a + day(g).length, 0) / (gs.length || 1),
   };
 };
-const baselines = new Map<string, Baseline>();
 
 say(`# ${games.length} games from ${out}\n`);
-say("## Per deck: play-test vs random play (baseline)");
+say("## Per deck (or deck/arm)");
 const decks = [...new Set(games.map(g => g.deck))];
 const perDeck: Record<string, unknown> = {};
 for (const deck of decks) {
   const gs = games.filter(g => g.deck === deck), m = measures(gs);
-  const b = randomPlay(gs[0].cards, gs[0].players, BG, { requireWolfDealt: gs[0].run?.redeal === "wolfDealt" }); baselines.set(deck, b);
-  perDeck[deck] = { ...m, baseline: b };
+  perDeck[deck] = m;
   say(`\n### ${deck} (${m.games} games, ${gs[0].players} players, ${gs[0].center} centre)`);
   say(`  winners    played: Centaur ${m.win.centaur} · Werewolf ${m.win.werewolf} · nobody ${m.win.nobody} · extra wins ${m.extraWins}`);
-  say(`             random: Centaur ${fp(b.win.centaur)} · Werewolf ${fp(b.win.werewolf)} · nobody ${fp(b.win.nobody)} · prophecy ${fp(b.prophecyWins)}`);
-  say(`  wolf eliminated when one held at the end: played ${m.wolfEliminated}/${m.wolfAtTable} · random ${fp(b.wolfDeadWhenPresent)}`);
-  say(`  eliminated seat held a moved card: played ${m.eliminatedHeldMoved}/${m.games} · random ${fp(b.eliminatedHeldMoved)} · cards moved/game ${m.movedPerGame.toFixed(1)} (random ${b.movedPerGame.toFixed(1)})`);
-  say(`  forced night moves ${m.forcedMoves} · random votes ${m.randomVotes} · day messages/game ${m.messagesPerGame.toFixed(0)} · conditional plans ${gs.reduce((a, g) => a + g.branched, 0)}/${gs.reduce((a, g) => a + g.planSteps, 0)} plan steps · chosen moves of a player's card ${gs.reduce((a, g) => a + g.chosenMoves, 0)}${gs[0].run?.redeal ? ` · deals discarded ${gs.reduce((a, g) => a + (g.run?.discardedDeals ?? 0), 0)} (baseline conditioned on a wolf dealt)` : ""}`);
+  say(`  wolf eliminated when one held at the end: ${m.wolfEliminated}/${m.wolfAtTable}`);
+  say(`  eliminated seat held a moved card: ${m.eliminatedHeldMoved}/${m.games} · cards moved/game ${m.movedPerGame.toFixed(1)}`);
+  say(`  forced night moves ${m.forcedMoves} · random votes ${m.randomVotes} · day messages/game ${m.messagesPerGame.toFixed(0)} · conditional plans ${gs.reduce((a, g) => a + g.branched, 0)}/${gs.reduce((a, g) => a + g.planSteps, 0)} plan steps · chosen moves of a player's card ${gs.reduce((a, g) => a + g.chosenMoves, 0)}${gs[0].run?.redeal ? ` · deals discarded ${gs.reduce((a, g) => a + (g.run?.discardedDeals ?? 0), 0)}` : ""}`);
   for (const g of gs) say(`    ${g.label} ${g.code}: ${g.headline}${g.notes.length ? " " + g.notes.join(" ") : ""}`);
 }
 const all = measures(games);
 say(`\n## Overall (${all.games} games)`);
 say(`  winners: Centaur ${all.win.centaur} · Werewolf ${all.win.werewolf} · nobody ${all.win.nobody} · extra wins ${all.extraWins}`);
-const bAvg = (k: (b: Baseline) => number) => games.reduce((a, g) => a + k(baselines.get(g.deck)!), 0) / (games.length || 1);
-say(`  random play, same mix of decks: Centaur ${fp(bAvg(b => b.win.centaur))} · Werewolf ${fp(bAvg(b => b.win.werewolf))} · nobody ${fp(bAvg(b => b.win.nobody))}`);
-say(`  wolf eliminated when present: ${all.wolfEliminated}/${all.wolfAtTable} (random ≈ ${fp(bAvg(b => b.wolfDeadWhenPresent))}) · eliminated held a moved card ${all.eliminatedHeldMoved}/${all.games} · forced moves ${all.forcedMoves} · random votes ${all.randomVotes} · messages/game ${all.messagesPerGame.toFixed(1)}`);
+say(`  wolf eliminated when present: ${all.wolfEliminated}/${all.wolfAtTable} · eliminated held a moved card ${all.eliminatedHeldMoved}/${all.games} · forced moves ${all.forcedMoves} · random votes ${all.randomVotes} · messages/game ${all.messagesPerGame.toFixed(1)}`);
 
 // ── split: was any wolf card DEALT to a player? (the server's deal is under suspicion; see sim/deal-check.ts) ──
 say("\n## Games with and without a wolf dealt to a player");
