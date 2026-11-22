@@ -435,6 +435,7 @@ const TWINS: { id: RoleId; name: string; of: RoleId; team: Team; wolf: boolean; 
   { id: "duncentaur", name: "Dun Centaur", of: "centaur", team: "werewolf", wolf: true, passes: false, blurb: "A Werewolf (outside the pack) who looks at a centre card in the Centaur's turn." },
   { id: "paleherald", name: "Pale Herald", of: "herald", team: "werewolf", wolf: false, passes: true, blurb: "A wolf ally who makes a Herald's proclamation in the Herald's turn and shows as a Herald to every look." },
   { id: "duskrustler", name: "Dusk Rustler", of: "rustler", team: "werewolf", wolf: true, passes: false, blurb: "A Werewolf (outside the pack) who peeks and may trade in the Rustler's turn." },
+  { id: "hollowsage", name: "Hollow Sage", of: "sage", team: "werewolf", wolf: true, passes: true, blurb: "A Werewolf (outside the pack) who reads a card in the Sage's turn, exactly as the Sage does, and shows as a Sage to every look." },
   { id: "strayherder", name: "Stray Herder", of: "herder", team: "werewolf", wolf: false, passes: true, blurb: "A wolf ally who counts the centre's wolves in the Herder's turn and shows as a Herder to every look." },
 ];
 for (const t of TWINS) {
@@ -443,6 +444,23 @@ for (const t of TWINS) {
     id: t.id, name: t.name, team: t.team, tags: t.wolf ? ["wolf"] : [], max: 12, wake: o.wake, steps: o.steps, twinOf: o.id, ...(t.passes ? { looksAs: o.id } : {}), blurb: t.blurb,
     rules: `You act in the ${o.name}'s turn and do exactly what the ${o.name} does: ${o.rules} But you are on the Werewolf team${t.wolf ? " and you count as a Werewolf (you do not wake with the pack, and the pack does not know you)" : ", and you are not a Werewolf"}. ${t.passes ? `Any look at your card shows a ${o.name}.` : `A look at your card shows the ${t.name}.`} You win when the Werewolf team wins.`,
   });
+}
+// Research variants (players-7 study, docs/research/results/players-7-log.md): additive, the originals are unchanged.
+{
+  const herder = ROLES.find(r => r.id === "herder")!;
+  ROLES.push(
+    {
+      id: "mirage", name: "Mirage", team: "werewolf", tags: ["wolf", "pack"], max: 12, wake: 18,
+      blurb: "A Werewolf who must disguise ANOTHER card (never its own) as any role until dawn.",
+      rules: `You are a Werewolf. ${PACK_RULE} Then choose one card that is not yours (another player's, or a centre card) and any role in the deck: until dawn, every look at that card shows the role you chose and its team, wherever the card moves. You cannot disguise your own card. The Werewolf team's own looks and the Herder's count see the truth.`,
+      steps: [pack, { id: "mirage", title: "Cast a mirage", names: "deck", pick: { pools: ["others", "center"], count: 1 }, effects: [{ kind: "distort", target: "card", value: "chosen" }] }],
+    },
+    {
+      id: "greyherder", name: "Grey Herder", team: "werewolf", tags: ["pack"], max: 12, wake: herder.wake, steps: [pack, ...herder.steps!], twinOf: "herder", looksAs: "herder",
+      blurb: "A Stray Herder that wakes with the pack: it knows the pack and the census, and the pack knows it.",
+      rules: `You act in the Herder's turn and do exactly what the Herder does: ${herder.rules} You also wake with the pack: you learn which players were dealt cards of the pack and, under the Den Census rule, which roles lie in the centre (not where), and the pack learns your seat. You are on the Werewolf team, and you are not a Werewolf. Any look at your card shows a Herder. You win when the Werewolf team wins.`,
+    },
+  );
 }
 
 export const ROLE: Record<RoleId, RoleDef> = Object.fromEntries(ROLES.map(r => [r.id, r]));
