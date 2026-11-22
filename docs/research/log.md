@@ -370,3 +370,27 @@ openings on.
 a duplicated role (one Centaur in the centre, one held) the pack was handed a claim an honest player would contest
 (5-0 in their test). Now a cover must be a role with no copy in any hand; test added (105 green). Any 8-player
 packCovers result before this is affected.
+
+## Cross-session lessons integrated (afternoon)
+
+- **Evidence principle, refined (6-player session, sealed pair reports 5-0, path 1.0):** making the public ARTEFACT
+  ambiguous is not enough if its holder privately has the unambiguous fact and can simply say it. The Notary saw both
+  cards, sealed the ambiguous pair statement, and then said in its opening exactly which card was which. *Heuristic 17:
+  ambiguity must exist in the holder's own knowledge, not only in the artefact.* Requested variant: a Notary that learns
+  only the pair statement it seals (the engine picks; it never sees the individual cards). Same test for the Herald:
+  under the amendment the Herald proclaims "at least one of two cards is X" and learns no more than the table: passes.
+  The Herder's private count fails the same test (an uncontestable private fact): CR-6.
+- **Ember at 6 v. 7.** 6 players: the ember-carried Phoenix scenario swept 5-0 for the Centaurs (path 1.6) because the
+  player DEALT the Phoenix, left holding a Centaur card, honestly said "I was dealt Phoenix", and with the Sage and the
+  Sentry that decoded the swap. 7 players (the most balanced scenario of the night: Pyre 2, wolves 2, Centaurs 1): the
+  deck also had a Pickpocket (a Centaur mover), so a moved card had a second, innocent explanation, and the Sentry did
+  not watch both swapped seats. *Heuristic 18: a hidden swap stays hidden only if the deck offers another plausible
+  mover and no single honest witness sees both ends.* Requested variant (triage: build if cheap): an Ember-Carrier
+  swap after which the dealt Phoenix holder stays on the Pyre (it wins if the carried card burns), so it has no reason to
+  out the swap.
+- **8 players (first session, 58 games): no roster meets the target**: of 9 fixed scenarios, 1 talk-live, 1 borderline,
+  7 swept; Centaurs 48, wolves 5, Pyre 5; claim counting decided 57 of 58 and the latency tell 53 of 58 (opening
+  statements untested there). With 7 honest claims the claim space fills in 30 s. Its Hollow Sage (a twin that counts as
+  a Werewolf) turned a 5-0 duel into 4-1, which matches heuristic 15.
+- **Lone-wolf scenarios starve the wolves** (6-player session: 1 wolf win in 18 replays, all four of its scenarios had
+  a lone wolf). Scenario choice matters as much as the roster: report per scenario class, not per roster.
