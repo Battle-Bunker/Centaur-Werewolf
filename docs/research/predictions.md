@@ -237,3 +237,16 @@ invalidate their running experiments. To activate after their current fine passe
   unread. Two honest "Werewolf" reports, one false. A tie Esme+Cass would be a Centaur win AND a burning; Cass alone a
   Pyre win; Esme alone a Centaur win. The wolves know Cass is not a wolf (pack). Prediction: Centaurs 3, Pyre 1,
   wolves 1; talk-live; ToM >= 2.5; c 0.5-0.8.
+
+## Pre-registration 2026-11-22: CR-9 parity test (before any replay)
+
+Scenario P6 (6 players; deck werewolf x2, moonsage, sage, rustler, centaur, sentry, herder, strayherder; centre:
+Sentry, Herder, Stray Herder, so no count): wolf team in hands = 3 of 6 (Werewolves Alder 0 and Cass 2, Moonsage
+Esme 4, who does not know the wolves). Sage Bryn 1 read Alder = Werewolf; Rustler Dov 3 peeked Cass = Werewolf
+(kept); Moonsage read Dov = Rustler; Centaur Fen 5 glanced centre 1 = Sentry.
+- **Rule off (control, 3 replays):** if the wolf side finds each other and blocs on one Centaur while the three Centaurs
+  converge on one wolf, a 3-3 tie wins for the wolves. Predict wolves 2-3 of 3 (the bloc needs the Moonsage to join).
+- **Rule on (`bloodPriceCondemned`, 5 replays):** the same tie wins for the Centaurs; the wolves win only by splitting
+  the Centaurs (two honest reads point at two different wolves, so the Centaurs must agree on ONE) or by pulling a
+  Centaur vote onto their target. Predict Centaurs 3-4 of 5; path >= 2.5; judges see the deciding factor in talk
+  (Centaur coordination on one wolf, the Moonsage duel), not in arithmetic.

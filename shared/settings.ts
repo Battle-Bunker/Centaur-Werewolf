@@ -17,6 +17,8 @@ export interface Rules {
   biteNamesBiter: boolean;
   /** When nobody holds the role the Eavesdropper names, it gets a real result of its own as if it held it. Off: nothing. */
   eavesdropGhost: boolean;
+  /** Blood Price counts an eliminated Centaur against the Centaurs only if a non-Werewolf-team player voted for them. */
+  bloodPriceCondemned: boolean;
   /** The census also hands each pack member a different Centaur-team role from the centre as a cover to claim. */
   packCovers: boolean;
   /** The Moon-Thief has its day swap (a vote-lock swap). Off by default: it rewrites the outcome after the talking. */
@@ -47,6 +49,7 @@ export const DEFAULT_RULES: Rules = {
   dawnProclamations: true,
   biteNamesBiter: true,
   eavesdropGhost: true,
+  bloodPriceCondemned: false,
   packCovers: false,
   daySwap: false,
   thiefMinPlayers: 7,
@@ -100,6 +103,11 @@ export const RULE_DEFS: RuleDef[] = [
     id: "eavesdropGhost", kind: "boolean", title: "Eavesdropper's own result", tooltip: "What the Eavesdropper gets when nobody holds the role it names.",
     on: "If nobody was dealt the role the Eavesdropper names, it secretly gets a real result of its own as if it held that role (looks only, never moves), and is not told which case happened.",
     off: "If nobody was dealt the role the Eavesdropper names, it learns nothing.",
+  },
+  {
+    id: "bloodPriceCondemned", kind: "boolean", title: "Blood Price counts the condemned", tooltip: "Whether a Centaur eliminated by Werewolf-team votes alone counts against the Centaurs under the Blood Price.",
+    on: "Under the Blood Price, an eliminated Centaur-team player counts against the Centaurs only if at least one player NOT on the Werewolf team voted for them: a Werewolf-team bloc cannot buy a tie with its own votes alone (a Centaur hedge still costs the Centaurs).",
+    off: "Every eliminated Centaur-team player counts against the Centaurs under the Blood Price, whoever voted for them.",
   },
   {
     id: "packCovers", kind: "boolean", title: "Pack covers", tooltip: "Whether the census also gives each pack member a different cover role to claim.",

@@ -700,7 +700,12 @@ export function resolveVote(cards: RoleId[], votes: (number | null)[], input: Re
   const seatsOf = (team: Team) => teams.flatMap((t, i) => (t === team ? [i] : []));
   const isWolf = (i: number) => ROLE[cards[i]].tags.includes("wolf");
   const wolvesHeld = cards.some((_, i) => isWolf(i));
-  const W = deaths.filter(isWolf).length, C = deaths.filter(i => teams[i] === "centaur").length;
+  // Condemned Blood Price (rule bloodPriceCondemned): a Centaur-team death counts in C only if someone NOT on the
+  // Werewolf team voted for them, so a wolf bloc cannot buy a Blood Price tie with its own votes alone.
+  const condemned = (i: number) => votes.some((v, j) => v === i && teams[j] !== "werewolf");
+  const uncondemned = rules.bloodPriceCondemned ? deaths.filter(i => teams[i] === "centaur" && !condemned(i)) : [];
+  const W = deaths.filter(isWolf).length, C = deaths.filter(i => teams[i] === "centaur" && !uncondemned.includes(i)).length;
+  if (uncondemned.length) notes.push(`Only Werewolf-team players voted for ${uncondemned.length === 1 ? "one eliminated Centaur" : `${uncondemned.length} eliminated Centaurs`}, so under "Blood Price counts the condemned" ${uncondemned.length === 1 ? "that death does" : "those deaths do"} not count against the Centaurs.`);
   const winners = new Set<number>();
   const why: string[] = Array(n).fill("");
 
@@ -812,4 +817,9 @@ export function packCovers(state: GameState): { seat: number; role: RoleId | nul
   const pool = [...new Set(state.dealtCenter.filter(r => ROLE[r].team === "centaur"))].sort();
   const offset = pool.length ? pack.reduce((a, i) => a + i, 0) % pool.length : 0;
   return pack.map((seat, k) => ({ seat, role: k < pool.length ? pool[(offset + k) % pool.length] : null }));
+}
+
+/** The roles a copier may become, as shown to it before it copies: every distinct role of the DECK except its own, in deck order. Never derived from the deal (that would leak the centre). */
+export function copierOptions(deck: RoleId[], self: RoleId): RoleId[] {
+  return [...new Set(deck)].filter(r => r !== self);
 }
