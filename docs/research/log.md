@@ -103,3 +103,44 @@ unanimous; unanimous 4; scattered 0 (G2 held: Opus tables concentrate). Judges a
   drawn from the centre roles (told privately: "your cover: Rustler"; each pack member learns the others' covers too).
   Prediction: wolf-wolf claim collisions (4 of 14 coarse games) disappear; wolves' win share in 2-wolf deals rises;
   judges' deception score unchanged or higher because lies must now survive positional checks rather than counts.
+
+## 2026-11-22 Fine pass 1, part 1 (fixed scenarios, 5 replays each, every replay the same fingerprint)
+
+| Scenario | Predicted | Result | H(win) | c values | Judges ToM / dec / path / noise (agreement) |
+| --- | --- | --- | --- | --- | --- |
+| S1 A5 Spooker direction | wolves 3, C 2; talk-live | **wolves 3, Centaurs 2**; eliminated Dov 2, Alder 2, Esme 1 | 0.97 | .75 1 .75 1 1 | 1.6 / 3.0 / 2.9 / 1.7 (path within 0.2; ToM within 0.8) |
+| S2 A5 frame own Spooker | wolves 4, C 1; weakly talk-live | **wolves 4, Centaurs 1** | 0.72 | 1 1 .5 1 1 | 2.4 / 3.3 / 3.1 / 1.0 (howWon 5/5) |
+| S3 B5 Moonsage duel | C 2, wolves 3; talk-live | **Centaurs 5-0** (always the wolf, always 3-1 on him) | 0.00 | .75 x5 | 2.7 / 2.9 / 3.0 / 0.7 |
+
+**S1 (talk-live, but partly noise).** Same night five times: the Spooker's rotation left the Sage (Alder) holding a
+Werewolf and Dov holding the Sage. Three times the Spooker's false cycle got Dov (holding the Sage) or Esme eliminated;
+twice the wolf side's lies collided and framed Alder, who unknowingly held a wolf, so the Centaurs won by accident
+(judges: "unseen night movement", "blunder"). The variability is real and comes from talk, but the Centaur wins did not
+come from Centaur insight: ToM 1.6, noise 1.7 (above the 1.5 target). Cause: the Werewolves do not know where the
+Spooker sent their cards, and the Spooker does not know where the wolves are; three wolf-side players each lie from a
+different partial picture (heuristic 5 again).
+
+**S2 (talk-live, wolf-favoured as predicted).** The lone wolf knows from the census that the Sage is in the centre and
+from its scent that Dov is wolf-team; it fake-claims Sage and "reads" Dov as a Werewolf. Dov, the Spooker, wins by
+being eliminated (no Werewolf down = wolf win). 4 of 5: Dov or another non-wolf went out; 1 of 5 the Spooker's own
+counter-claim accidentally exposed the wolf. Unanswerable element: an uncontestable Sage claim (Sage in the centre,
+known only to the wolves) pointed at a wolf-team non-wolf, who is a free decoy.
+
+**S3 (swept 5-0 Centaurs, yet talk mattered: path 3.0).** Why one story was unanswerable: the real Sage claimed first
+("Bryn is a Werewolf"); the Moonsage counter-claimed Sage, and was even corroborated by an honest Rustler's peek; in
+#2 four players were about to vote the real Sage. Each time the table was turned by a SECOND-ORDER census argument
+(quotes: "If Alder were the Werewolf, the centre would hold WW + Moonsage + Sentry, so he'd know a real Sage is
+sitting at the table. He'd never claim Sage"; "Bryn claimed CENTAUR, a role his census told him nobody holds"). The
+census, meant to help the wolves lie, is common knowledge, so it lets the Centaurs reason about what a wolf WOULD
+have claimed. The wolf's safe claim is itself the tell.
+**Smallest change that leaves a counter-story (CR-8):** a partial census at small centres: at 3 centre cards the pack
+learns 2 of the 3 centre roles (a new census option "two", or "three" generalised to "all but one"). Then a lone wolf
+might not know whether the Sage is held, so "a wolf would never claim Sage" is no longer a proof, and "Centaur is the
+safe claim" no longer singles the wolf out. Prediction for S3 under CR-8: Centaurs 3, wolves 2; path stays ~3; ToM
+stays >= 2.5. Risk: wolves collide more with honest claims (more talk-dead "caught by collision" games elsewhere).
+
+*Heuristic 8: any information the wolves get "for lying" is common knowledge of the rules, so the Centaurs can run the
+wolves' decision problem backwards. Information that makes one claim strictly safe makes that claim a tell. Give the
+liars uncertainty they share with the table, not certainty.*
+*Heuristic 9: on a fixed scenario, a 5-0 sweep with high path dependence is not talk-dead: it means the discussion had
+a reliable winning argument. Ask whether that argument rests on a rule (fixable) or on a player's slip (skill).*
