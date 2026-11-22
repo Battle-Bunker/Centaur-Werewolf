@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { availability, COMMAND, COMMANDS, grantAllows, HOME_CONTEXT, toolDefinitions } from "./commands";
-import { actingRole, advance, dawn, daySwap, deal, dealFixed, decisionCount, deckProblem, freshProgress, heldRoles, isPhoenix, legalTargets, nightTurns, publicMarks, randomDecision, resolvePlan, resolveVote, runTurn, secureRng, seededRng, shapeOf, shuffle, turnKey, uncovered, validDecision, validPlan, visibleShown, type GameState, type LogEntry, type NightSeat, type Plan, type StepPlan } from "./engine";
+import { actingRole, advance, copierOptions, dawn, daySwap, deal, dealFixed, decisionCount, deckProblem, freshProgress, heldRoles, isPhoenix, legalTargets, nightTurns, publicMarks, randomDecision, resolvePlan, resolveVote, runTurn, secureRng, seededRng, shapeOf, shuffle, turnKey, uncovered, validDecision, validPlan, visibleShown, type GameState, type LogEntry, type NightSeat, type Plan, type StepPlan } from "./engine";
 import { CENTER_MAX, CENTER_MIN, legalRoles, recommendedDeck, ROLE, ROLES, type RoleId, type Slot } from "./roles";
 import { DEFAULT_RULES, describeRules, LEGACY_RULES, RULE_DEFS, ruleValueProblem, rulesOf, type Rules } from "./settings";
 import { describe as say, revealHidden } from "./text";
@@ -168,6 +168,42 @@ describe("night", () => {
     const forced = advance(s, 0, {}, p, 2, rng(), { force: true });
     expect(p.done).toBe(true);
     expect(forced.every(e => e.via === "forced")).toBe(true);
+  });
+  it("Blood Price counts the condemned: a wolf bloc's tie no longer wins, a Centaur hedge still costs", () => {
+    // 6 seats: 0,2,4 hold wolf-team cards (bloc), 1,3,5 Centaurs. Bloc votes seat 1, Centaurs vote seat 0: 3-3 tie.
+    const cards = ["werewolf", "sage", "werewolf", "rustler", "moonsage", "herder"] as RoleId[];
+    const bloc = [1, 0, 1, 0, 1, 0];
+    expect(resolveVote(cards, bloc).winningTeam).toBe("werewolf");
+    const ruled = resolveVote(cards, bloc, { rules: { bloodPriceCondemned: true } });
+    expect(ruled.winningTeam).toBe("centaur");
+    expect(ruled.deaths).toEqual([0, 1]);
+    expect(ruled.notes.join(" ")).toMatch(/counts the condemned/);
+    // One Centaur (seat 3) joins the bloc on seat 1: seat 1 is condemned by a non-wolf, the tie is a wolf win again.
+    expect(resolveVote(cards, [1, 0, 1, 1, 1, 0], { rules: { bloodPriceCondemned: true } }).winningTeam).toBe("werewolf");
+    // A Centaur hedge (Centaurs split between wolf 0 and Centaur 3) still costs the Centaurs.
+    const hedge = resolveVote(cards, [3, 0, 5, 3, 1, 0], { rules: { bloodPriceCondemned: true } });
+    expect(hedge.deaths).toEqual([0, 3]);
+    expect(hedge.winningTeam).toBe("werewolf");
+  });
+  it("a copier's pre-copy options come from the deck, never the deal", () => {
+    const deck = ["gleaner", "werewolf", "werewolf", "sage", "rustler", "centaur", "sentry", "herder"] as RoleId[];
+    expect(copierOptions(deck, "gleaner")).toEqual(["werewolf", "sage", "rustler", "centaur", "sentry", "herder"]);
+    expect(copierOptions([...deck].reverse(), "gleaner").sort()).toEqual(copierOptions(deck, "gleaner").sort());
+  });
+  it("census allButOne leaves one centre role out; pack covers give each pack seat a different centre Centaur role", () => {
+    const s = state(["werewolf", "sage", "werewolf", "centaur"], ["rustler", "centaur", "sentry"], { census: "allButOne", packCovers: true });
+    const a = act(s, 0, {}), b = act(s, 2, {});
+    const ca = a.find(e => e.ev.kind === "census")!.ev as { roles: string[]; of: number; covers: { seat: number; role: string | null }[] };
+    const cb = b.find(e => e.ev.kind === "census")!.ev as typeof ca;
+    expect(ca.roles).toHaveLength(2);
+    expect(ca.of).toBe(3);
+    expect(ca.covers).toEqual(cb.covers);
+    expect(ca.covers.map(c => c.seat)).toEqual([0, 2]);
+    expect(new Set(ca.covers.map(c => c.role)).size).toBe(2);
+    expect(ca.covers.every(c => ["centaur", "rustler", "sentry"].includes(c.role!))).toBe(true);
+    expect(say(a.find(e => e.ev.kind === "census")!, names, 0)).toMatch(/2 of the 3 roles .* Pack covers .*you: /);
+    const off = act(state(["werewolf", "sage", "werewolf"], ["rustler", "centaur", "sentry"]), 0, {});
+    expect(off.find(e => e.ev.kind === "census")!.ev).not.toHaveProperty("covers");
   });
   it("lets a lone pack card scent a team; in a pack the step does not happen, and a queued scent says so", () => {
     const lone = state(["werewolf", "sage", "centaur"], ["werewolf", "centaur", "herald"]);

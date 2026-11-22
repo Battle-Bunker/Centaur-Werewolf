@@ -10,13 +10,17 @@ export interface Rules {
   /** R1: the Centaurs win only if more Werewolves than Centaurs are eliminated. Off: any Werewolf eliminated wins. */
   bloodPrice: boolean;
   /** R2: what the pack learns of the centre at its turn: every role dealt there, three of them, or nothing. */
-  census: "all" | "three" | "off";
+  census: "all" | "three" | "allButOne" | "off";
   /** R3: proclamations are published together at dawn, in random order. Off: each is shown as it is made. */
   dawnProclamations: boolean;
   /** A bitten player is told which seat bit them. Off: only that they were bitten. */
   biteNamesBiter: boolean;
   /** When nobody holds the role the Eavesdropper names, it gets a real result of its own as if it held it. Off: nothing. */
   eavesdropGhost: boolean;
+  /** Blood Price counts an eliminated Centaur against the Centaurs only if a non-Werewolf-team player voted for them. */
+  bloodPriceCondemned: boolean;
+  /** The census also hands each pack member a different Centaur-team role from the centre as a cover to claim. */
+  packCovers: boolean;
   /** The Moon-Thief has its day swap (a vote-lock swap). Off by default: it rewrites the outcome after the talking. */
   daySwap: boolean;
   /** The Moon-Thief may be in the deck only at tables of at least this many players (with the day swap on). */
@@ -45,6 +49,8 @@ export const DEFAULT_RULES: Rules = {
   dawnProclamations: true,
   biteNamesBiter: true,
   eavesdropGhost: true,
+  bloodPriceCondemned: false,
+  packCovers: false,
   daySwap: false,
   thiefMinPlayers: 7,
   eliminationVotes: 2,
@@ -79,6 +85,7 @@ export const RULE_DEFS: RuleDef[] = [
     options: [
       { value: "all", means: "Every card of the pack (Werewolves and the cards that wake with them) learns which roles were dealt to the centre: the roles, not their positions." },
       { value: "three", means: "Every card of the pack learns three of the roles dealt to the centre, chosen at random: the roles, not their positions." },
+      { value: "allButOne", means: "Every card of the pack learns all but one of the roles dealt to the centre (the one left out is chosen at random, separately for each): the roles, not their positions." },
       { value: "off", means: "The pack learns nothing about the centre." },
     ],
   },
@@ -96,6 +103,16 @@ export const RULE_DEFS: RuleDef[] = [
     id: "eavesdropGhost", kind: "boolean", title: "Eavesdropper's own result", tooltip: "What the Eavesdropper gets when nobody holds the role it names.",
     on: "If nobody was dealt the role the Eavesdropper names, it secretly gets a real result of its own as if it held that role (looks only, never moves), and is not told which case happened.",
     off: "If nobody was dealt the role the Eavesdropper names, it learns nothing.",
+  },
+  {
+    id: "bloodPriceCondemned", kind: "boolean", title: "Blood Price counts the condemned", tooltip: "Whether a Centaur eliminated by Werewolf-team votes alone counts against the Centaurs under the Blood Price.",
+    on: "Under the Blood Price, an eliminated Centaur-team player counts against the Centaurs only if at least one player NOT on the Werewolf team voted for them: a Werewolf-team bloc cannot buy a tie with its own votes alone (a Centaur hedge still costs the Centaurs).",
+    off: "Every eliminated Centaur-team player counts against the Centaurs under the Blood Price, whoever voted for them.",
+  },
+  {
+    id: "packCovers", kind: "boolean", title: "Pack covers", tooltip: "Whether the census also gives each pack member a different cover role to claim.",
+    on: "With the census, every pack card is also told a cover for each pack seat: a different Centaur-team role among those dealt to the centre (the same assignment for the whole pack), so the pack's claims need not collide.",
+    off: "The pack gets no cover roles: each pack member chooses its own claim.",
   },
   {
     id: "daySwap", kind: "boolean", title: "Moon-Thief's day swap", tooltip: "Whether the Moon-Thief may swap two players' cards as the votes lock.",

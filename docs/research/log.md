@@ -1,5 +1,22 @@
 # Research log
 
+## DESIGN PRINCIPLE (from fine pass 1, S3): information handed to liars becomes a tell
+
+The rules are common knowledge, so the table can run any defector's decision problem backwards. If a mechanic makes
+one defector option strictly SAFE, and the table can compute which option that is, then choosing it is evidence.
+In S3 (5 replays of one fixed night, Centaurs 5-0) the honest side won every time with exactly this argument about the
+Den Census, which was designed to help the wolves lie:
+- "If Alder were the Werewolf, the centre would hold WW + Moonsage + Sentry, so he'd know a real Sage is sitting at the
+  table. He'd never claim Sage." (S3#4, the swing voter)
+- "No wolf would claim Sage into a guaranteed counterclaim when Sentry is a safe unclaimed role... Bryn claimed
+  CENTAUR, a role his census told him nobody holds." (S3#2: this reversed a four-player consensus on the real Sage)
+- "Alder pointed out that the wolves' Den Census made Bryn's 'Centaur, saw Sentry' claim cost him nothing." (S3#5)
+**Steer design toward mechanics where the defector's safe option is NOT computable by the table**: private randomness
+in what the pack learns (census "allButOne"), covers assigned rather than chosen (packCovers), twins that make the
+"impossible" claim possible. Corollary (S5): a rule that aligns the wolves with the Centaurs against a third party
+(burningDeniesWolves) makes the wolf's private knowledge visible when it acts on it ("If Bryn were a real wolf, why
+would a non-wolf Dov need to lie?").
+
 ## Heuristics for predicting balance (running; the in-context learning is itself a deliverable)
 
 1. **Classify scenarios by whether an unrefutable claim is in play.** If every defector claim can be refuted by a
@@ -144,3 +161,51 @@ wolves' decision problem backwards. Information that makes one claim strictly sa
 liars uncertainty they share with the table, not certainty.*
 *Heuristic 9: on a fixed scenario, a 5-0 sweep with high path dependence is not talk-dead: it means the discussion had
 a reliable winning argument. Ask whether that argument rests on a rule (fixable) or on a player's slip (skill).*
+
+## 2026-11-22 Fine pass 1, part 2 (S5, S7, X1'); totals
+
+| Scenario | Predicted | Result | H(win) | c values | Judges ToM / dec / path / noise |
+| --- | --- | --- | --- | --- | --- |
+| S5 D6 Lure-dressed Phoenix | Pyre 2, C 2, W 1 | **Centaurs 4 (one with a side burning), Pyre 1** | 0.72 | .6 .8 .4 .6 .8 | 2.6 / 2.4 / **3.5** / 1.2 |
+| S7 F7 Echo chain (new Heavy Hand) | W 3, C 2 | **wolves 3, Pyre 2** (Centaurs 0) | 0.97 | .5 .5 .5 .67 .5 | 2.5 / 2.8 / 2.9 / 1.1 |
+| X1' Moon-Thief daySwap control | wolves 3-0, DEGENERATE | **Centaurs 3-0**; path 2.7 | 0.00 | .75 x3 | 2.0 / 1.5 / 2.7 / 0.7 |
+
+Fine pass 1 overall: 28 games, ~$95 (5p ~$2.7, 6p ~$4, 7p ~$5). 6 scenarios, every replay matched its fingerprint.
+Talk-live by the charter's test: S1, S2, S5, S7 (4 of 6). Sweeps: S3 (5-0, but path 3.0: a winning argument) and X1'
+(3-0, path 2.7). No scenario was talk-dead in the I4 sense (path < 2).
+
+**S5 (the best scenario so far).** The Lure dressed the Phoenix as a Werewolf, the honest Sage sincerely called it a
+Werewolf, and the lone real wolf (who knew from the census that the "Werewolf" read was false) had to defend the Phoenix
+without saying how he knew. 4 of 5 the Centaurs found the real wolf by MOTIVE reasoning: "If Bryn were a real wolf, why
+would a non-wolf Dov need to lie? That's the Lure propping up a Phoenix it dressed as Werewolf... the one wolf is Cass"
+(#5); "The only story where everyone acts rationally: Bryn is the Phoenix, Dov is the Lure... Cass is the wolf" (#1).
+In #2 the Phoenix, cornered, claimed Phoenix and was disbelieved ("a wolf grabbing a safe claim") and burned. Judges'
+highest path dependence (3.5) with consensus in the target band (median c 0.6). Prediction error: I over-rated the Pyre;
+the wolf's need to defend the Phoenix is itself the tell (heuristic 8 again: the rule that aligns wolves with Centaurs
+against the Phoenix makes the wolf's knowledge visible).
+
+**S7 (talk-live but low consensus).** Three wolf-side seats (two Werewolves + an Echo that copied one) against two
+Centaurs and two Pyre: the wolves won 3 by fake-Sage frames of the honest Rustler and a forced 3-3 tie under Blood
+Price; the Pyre won 2 by a staged feud: with the Phoenix in the centre (fallback burning), the Lure fake-claimed Sage and
+"read" its own partner as a Werewolf (#5 "Kindlers' fake feud gets Gale burned"). Centaurs never won: 2 Centaurs of 7
+seats is too few voters. Concentration below target (4 of 5 plurality, c 0.5): three agendas at 7 split the vote.
+Lesson: count VOTERS per team in a scenario, not just cards: with two honest voters the Centaurs cannot form a
+majority even when they are right.
+
+**X1' (my degeneracy prediction falsified).** I predicted the Moon-Thief's after-talk swap would win 3-0 whatever was
+said. The Centaurs won 3-0 instead: each time they identified the Thief (its cover claim collided: a second "Centaur"
+when both were accounted for; a Herder count it could only know from the census) and voted the THIEF, not the read wolf,
+"because the Thief can't swap its own card". So an after-talk swap is NOT degenerate when (a) its user's card is immune
+to itself and (b) the user can be identified by talk: the table simply re-targets. Caveat: in all three the Thief
+blundered its cover; with a clean cover claim the structural argument still stands. The owner's original Ember-Carrier
+was worse than the Moon-Thief in exactly this respect: eliminating the Ember-Carrier does not win for the Centaurs (it
+is not a Werewolf), so re-targeting it gains them nothing. *Heuristic 10: an after-talk power is degenerate only if
+its holder cannot be profitably targeted instead; check what eliminating the power's holder wins for the other side.*
+
+### Cross-cutting lessons from fine pass 1
+- Opus tables reach second- and third-order reasoning when the rules give them something to reason about (census
+  backward-induction in S3, motive analysis in S5). ToM is highest where incentives are three-way.
+- Wolf-side coordination failures (heuristic 5) produced 2 of S1's Centaur wins, the S2 Centaur win, and X1' losses:
+  the single most common way the defectors lose. CR-7 (pack covers) addresses it.
+- Discussions stay short (46-156 s) even when the table is split; the closing "ready" is triggered by perceived
+  consensus, and secret ballots then show splits nobody discussed (S7 3-3).

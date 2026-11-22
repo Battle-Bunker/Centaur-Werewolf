@@ -53,7 +53,7 @@ function sentence(ev: LogEvent, role: RoleId, step: string, who: string, self: n
     case "rotate": return `${who} stampeded three cards: ${ev.slots.map(s => own(s)).join(" → ")} → back to the first.`;
     case "announce": return `${who} proclaimed: at least one of ${ev.slots.map(own).join(" and ")} is ${aRole(ev.roles[0])}. ${ev.atDawn ? "Everyone is shown this at dawn, with any other proclamation (a Forger's looks the same)." : "Everyone was shown this."}`;
     case "count": return mine ? `${ev.label}: ${ev.n}.` : `${who} counted ${ev.n} ${ev.label.toLowerCase()}.`;
-    case "census": return `${who === "You" ? "The census" : `${who}'s census`}: ${ev.roles.length < ev.of ? `${ev.roles.length} of the ${ev.of} roles dealt to the centre` : `the ${ev.of} roles dealt to the centre`} are ${ev.roles.map(roleName).join(", ")} (not where).`;
+    case "census": return `${who === "You" ? "The census" : `${who}'s census`}: ${ev.roles.length < ev.of ? `${ev.roles.length} of the ${ev.of} roles dealt to the centre` : `the ${ev.of} roles dealt to the centre`} are ${ev.roles.map(roleName).join(", ")} (not where).${ev.covers ? ` Pack covers (claim these so the pack's claims do not collide): ${ev.covers.map(c => `${seatWord(c.seat, v, viewer)}: ${c.role ? roleName(c.role) : "no cover"}`).join("; ")}.` : ""}`;
     case "distort":
       if (ev.slot) return `${who} distorted ${own(ev.slot)}: until dawn every look at it shows ${ev.role ? roleName(ev.role) : "a random wrong role"}.`;
       return `${who} veiled ${seatWord(ev.viewer!, v, viewer)}'s eyes: tonight every centre card they look at shows ${ev.role ? roleName(ev.role) : "a random wrong role"}.`;
