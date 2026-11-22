@@ -14,7 +14,7 @@ import { recommendedDeck } from "../../shared/roles";
 import { LEGACY_RULES } from "../../shared/settings";
 
 const PER_ARM = Number(process.argv[2] ?? 4);
-const FIVE = ["Alder", "Bryn", "Cass", "Dov", "Esme"], SEVEN = [...FIVE, "Fen", "Greer"];
+const FIVE = ["Alder", "Bryn", "Cass", "Dov", "Esme"], SIX = [...FIVE, "Fen"], SEVEN = [...SIX, "Greer"], EIGHT = [...SEVEN, "Hale"];
 const timers = { dusk: 120, turn: 12, day: 420, vote: 20 };
 interface Arm { label: string; deck: string[]; center: number; players: string[]; rules?: Record<string, unknown> }
 const ARMS_RULES: [string, Record<string, unknown>][] = [["legacy", { ...LEGACY_RULES }], ["bp", { ...LEGACY_RULES, bloodPrice: true }], ["bp-census", {}]];
@@ -41,14 +41,14 @@ const stage2: Arm[] = [
   { label: "T3-eavesdropper7x4", center: 4, players: SEVEN, deck: ["werewolf", "eavesdropper", "tracker", "sage", "centaur", "centaur", "herald", "rustler", "farrier", "herder", "sentry"] },
   { label: "T4-biter7x3", center: 3, players: SEVEN, deck: ["werewolf", "biter", "sage", "herald", "centaur", "centaur", "rustler", "farrier", "herder", "sentry"] },
   { label: "T5-thief-forger5x5", center: 5, players: FIVE, deck: ["werewolf", "moonthief", "forger", "herald", "sage", "centaur", "centaur", "rustler", "farrier", "sentry"], rules: { thiefMinPlayers: 5 } },
-  { label: "T6-wildwood5x4", center: 4, players: FIVE, deck: ["werewolf", "werewolf", "sage", "centaur", "rustler", "sentry", "sporeling", "cuckoo", "elderbark"] },
+  { label: "T6-loners5x4", center: 4, players: FIVE, deck: ["werewolf", "werewolf", "sage", "centaur", "rustler", "sentry", "herald", "cuckoo", "oxpecker"] },
 ];
 write("stage2-mechanics", "One defector mechanic (or the Wildwood) per deck, default rules. T5 lowers the Moon-Thief table size to 5.", tables(stage2, a => 10 + stage2.indexOf(a)));
 
 // ── stage 3: combinations ──
 const stage3: Arm[] = [
-  { label: "X1-combo5x3", center: 3, players: FIVE, deck: ["werewolf", "glamour", "stalkinghorse", "sage", "centaur", "herald", "sentry", "sporeling"] },
-  { label: "X2-combo7x6", center: 6, players: SEVEN, deck: ["werewolf", "eavesdropper", "biter", "stalkinghorse", "sage", "herald", "centaur", "centaur", "farrier", "sentry", "moth", "cuckoo", "oxpecker"] },
+  { label: "X1-combo5x3", center: 3, players: FIVE, deck: ["werewolf", "glamour", "stalkinghorse", "sage", "centaur", "herald", "sentry", "cuckoo"] },
+  { label: "X2-combo7x6", center: 6, players: SEVEN, deck: ["werewolf", "eavesdropper", "biter", "stalkinghorse", "sage", "herald", "centaur", "centaur", "farrier", "sentry", "phoenix", "cuckoo", "oxpecker"] },
 ];
 write("stage3-combos", "Combinations: X1 at 5/3 and the full ecosystem X2 at 7/6, default rules.", tables(stage3, a => 20 + stage3.indexOf(a)));
 // ── stage 4: the owner's families, each against the same control (7 players, 4 centre) ──
@@ -64,4 +64,19 @@ const stage4: Arm[] = [
   { label: "O7-control-mandatory7x4", center: 4, players: SEVEN, rules: { mandatorySteps: true }, deck: control7 },
 ];
 write("stage4-owner", "The owner's families, each isolated against a 7/4 control deck, then combined; O7 is the control under the mandatory-night-steps rule. Default rules unless stated.", tables(stage4, a => 30 + stage4.indexOf(a)));
-console.log("wrote stage1-controls.json, stage2-mechanics.json, stage3-combos.json, stage4-owner.json");
+// ── stage 5: the Pyre and the copiers ──
+const control5 = ["werewolf", "werewolf", "sage", "notary", "centaur", "herald", "rustler", "sentry"];
+const withPhoenix = (kind: string): Arm => ({ label: `P2-${kind}5x4`, center: 4, players: FIVE, deck: ["werewolf", "werewolf", "phoenix", kind, "sage", "notary", "centaur", "herald", "sentry"] });
+const stage5: Arm[] = [
+  { label: "P0-control5x3", center: 3, players: FIVE, deck: control5 },
+  { label: "P1-pyre5x4", center: 4, players: FIVE, deck: ["werewolf", "werewolf", "phoenix", "kindler", "sage", "notary", "centaur", "herald", "sentry"] },
+  ...["lure", "falsewitness", "embercarrier", "heavyhand", "heir"].map(withPhoenix),
+  { label: "P3-threeteams5x4", center: 4, players: FIVE, deck: ["werewolf", "glamour", "phoenix", "lure", "embercarrier", "sage", "notary", "centaur", "rustler"] },
+  { label: "P3-threeteams6x4", center: 4, players: SIX, deck: ["werewolf", "werewolf", "phoenix", "lure", "heir", "sage", "notary", "centaur", "cutpurse", "herald"] },
+  { label: "P3-threeteams7x5", center: 5, players: SEVEN, deck: ["werewolf", "werewolf", "moonsage", "phoenix", "lure", "embercarrier", "falsewitness", "sage", "notary", "centaur", "cutpurse", "herald"] },
+  { label: "P3-threeteams8x5", center: 5, players: EIGHT, deck: ["werewolf", "werewolf", "hush", "moonsage", "phoenix", "lure", "embercarrier", "heavyhand", "sage", "notary", "centaur", "cutpurse", "herald"] },
+  { label: "P4-copiers5x4", center: 4, players: FIVE, deck: ["werewolf", "werewolf", "gleaner", "echo", "sage", "notary", "centaur", "herald", "sentry"] },
+  { label: "P4-copiers7x4", center: 4, players: SEVEN, deck: ["werewolf", "werewolf", "gleaner", "echo", "sage", "notary", "centaur", "centaur", "herald", "rustler", "sentry"] },
+];
+write("stage5-pyre-copiers", "The Pyre against a control, each Kindler kind alone with a Phoenix, three-team decks at 5, 6, 7 and 8 players, and the two copiers isolated. Default rules.", tables(stage5, a => 40 + stage5.indexOf(a)));
+console.log("wrote stage1-controls.json, stage2-mechanics.json, stage3-combos.json, stage4-owner.json, stage5-pyre-copiers.json");

@@ -5,9 +5,9 @@
 `players + centre` cards are dealt (3 to 6 centre cards, a room setting): one to each seat, the rest face down in the
 centre. The night runs as a fixed public timetable of equal-length turns: dusk, then every night role in the deck in
 wake order, whether a player holds it or not. Dawn publishes the proclamations and the egg and tells a bitten player or
-an Imago. Then the **discussion** (chat, ready toggles, a Moon-Thief may queue a swap, a Hush may cut a player off),
+an Heir whose card became a Phoenix. Then the **discussion** (chat, ready toggles, a Moon-Thief may queue a swap, a Hush may cut a player off),
 then a separate timed **vote** phase, then the count. You win or lose by the card you **hold** at the count (unless you
-were bitten or became an Imago), which may not be the card you were dealt.
+were bitten), which may not be the card you were dealt.
 
 Phases: `lobby → night → day (discussion) → vote → ended`. Discussion ends by its timer, the host, or when every
 seated human is ready; the vote by its timer (20 s default) or when every seated human has voted.
@@ -20,14 +20,13 @@ seals, the vote phase, the Hush and presence). Any card may appear up to 12 time
 
 | Wake | Role | Team | Tags | Night | Win / notes |
 | --- | --- | --- | --- | --- | --- |
-| 8 | Elderbark | Wildwood | wild | Learns which seats were dealt creatures (Moth included) | Wins if not eliminated and no other creature or Imago is; eliminated, no other creature wins |
 | 10 | Werewolf (×3) | Werewolf | wolf pack | Pack + census; alone: scents a team | Team |
 | 11 | Stalking Horse | Werewolf | pack | Pack + census; alone: scents a team | Not a Werewolf. Eliminated: the Werewolf team wins (`decoy`) |
 | 12 | Glamour | Werewolf | wolf pack | Pack + census; one card shows a chosen deck role to every look until dawn | Team |
 | 13 | Moon-Thief | Werewolf | wolf pack | Pack + census | Day: queues a swap of two other players' cards, made as the votes lock (`dayPower`) |
 | 15 | Tracker | Werewolf | wolf pack | Pack + census; one information role's seat | Team |
 | 20 | Whisperer | Werewolf | | Told one Werewolf's seat | Team |
-| 25 | Cuckoo | Wildwood | wild | Looks at a card; lays a public egg on a seat (random at dawn if unheld) | Holder wins if the egged seat falls and they do not |
+| 25 | Cuckoo | Loner | | Looks at a card; lays a public egg on a seat (random at dawn if unheld) | Holder wins if the egged seat falls and they do not |
 | 30 | Sage | Centaur | seer | Reads a player's card | Team |
 | 35 | Centaur (×4) | Centaur | | Looks at a centre card | Team |
 | 40 | Herald | Centaur | seer | Proclaims a centre card (two with 5+ centre), published at dawn | Team |
@@ -36,14 +35,15 @@ seals, the vote phase, the Hush and presence). Any card may appear up to 12 time
 | 50 | Farrier | Centaur | | Peeks at a centre card; may give it to self or clockwise | Team |
 | 55 | Spooker | Werewolf | | Rotates three cards, unseen | Team |
 | 80 | Herder | Centaur | seer | Counts wolf cards in the centre (truth, never glamoured) | Team |
-| 85 | Oxpecker | Wildwood | wild | Looks at a player and bonds to that seat | Holder wins exactly when the bonded seat wins (after the curse) |
+| 85 | Oxpecker | Loner | | Looks at a player and bonds to that seat | Holder wins exactly when the bonded seat wins (after the curse) |
 | 90 | Sentry | Centaur | | Learns whether own/neighbours' cards moved | Team |
 | 93 | Eavesdropper | Werewolf | wolf pack | Pack + census; names a non-pack night role and copies its holder's night (or a ghost result) | Team |
 | 96 | Biter | Werewolf | wolf pack | Pack + census; looks at a true card, may bite (conditional): the seat joins the Werewolf team at dawn | Team |
 | – | Chiron | Centaur | | – | Vote counts twice |
 | – | Signet | Centaur | | – | One signed chat message |
-| – | Moth | Centaur | wild | – | If its dealt seat's card moved: that seat is an Imago (wins only if eliminated) (`metamorph`) |
-| – | Sporeling | Wildwood | wild | – | Holder wins if eliminated; their voters lose (`curse`) |
+| 2 / 3 | Gleaner / Echo | Centaur (until copying) | | Copies a centre card / a player's card (`adopt`), then acts in the copied role's turn | As the copied role |
+| 5 | Phoenix | Pyre | phoenix | (Only under `phoenixKnowsKindlers`: learns the Kindlers) | The Pyre wins if its holder is eliminated |
+| 5 | Kindler, Lure, False Witness, Ember-Carrier, Heavy Hand, Heir | Pyre | kindler | Shared turn "The brood gathers": where the Phoenix was dealt, who the Kindlers are; Lure: a chosen card distortion | Pyre; day/vote powers per kind (forge, ember, double vote against the Phoenix, Heir becomes Phoenix) |
 | 14 | Will-o'-Wisp | Werewolf | | Distorts a card: a random wrong role to every look | Team |
 | 16 / 17 | Mistweaver / Fogbank | Werewolf | | Veils a player's centre looks: a chosen / random wrong role | Team |
 | 32 | Notary | Centaur | seer | Reads a player's card | Day: one sealed report composed from that look (`chat: "report"`) |
@@ -71,7 +71,6 @@ the lobby, shown in both views and described in the MCP rules text. A game copie
 | `bloodPrice` | true | bool | Centaurs win only if more wolf cards than Centaur-team players are eliminated |
 | `census` | `"all"` | all / three / off | What the pack learns of the roles dealt to the centre |
 | `dawnProclamations` | true | bool | Proclamations published together at dawn in random order (required with a Forger) |
-| `randomVotesCurse` | false | bool | Whether a vote cast at random triggers the Sporeling's curse |
 | `biteNamesBiter` | true | bool | Whether the bitten player is told the Biter's seat |
 | `eavesdropGhost` | true | bool | Unheld named role: a ghost result from the Eavesdropper's seat, or nothing |
 | `thiefMinPlayers` | 7 | 3–12 | Smallest table that may hold a Moon-Thief |
@@ -80,6 +79,9 @@ the lobby, shown in both views and described in the MCP rules text. A game copie
 | `chatDuringVote` | false | bool | Chat stays open during the vote phase |
 | `cutSeconds` | 60 | 15–180 | Length of a Hush's cut |
 | `cutDuringVote` | true | bool | A Hush may cut during the vote, and a cut may run into it |
+| `phoenixKnowsKindlers` | false | bool | The Phoenix learns the Kindlers' seats |
+| `burningDeniesWolves` | true | bool | A burning denies the Werewolf team; Centaurs keep only a Blood-Price win |
+| `pyreFallback` | `"kindler"` | kindler / none | With no Phoenix held, a Kindler's elimination is the burning, or the Pyre cannot win |
 
 Timers (`setup.setTimer`): dusk, each night turn, discussion, vote (default 20 s, 5–120).
 
@@ -87,17 +89,11 @@ Timers (`setup.setTimer`): dusk, each night turn, discussion, vote (default 20 s
 
 ### How a game is decided (`resolveVote`)
 
-1. **Swap.** The Moon-Thief's queued swap is applied (`endDay`, before counting).
-2. **Tally.** Votes weighted by the voter's held card; eliminated = all seats tied on the most votes, if ≥ `eliminationVotes`.
-3. **Teams.** Bitten seat → Werewolf team, no creature rules; Imago → Wildwood; everyone else → their held card's team.
-4. **Main result.** (a) a held `decoy` (Stalking Horse) eliminated → its team wins; (b) no wolf card held → Centaurs win
-   if nobody fell, else surviving Werewolf-team players win (or nobody); (c) Centaurs win iff W > C under Blood Price
-   (W ≥ 1 without), W = wolf cards eliminated, C = Centaur-team players eliminated; otherwise the Werewolf team wins.
-5. **Creatures.** Sporeling holder / Imago win if eliminated; Cuckoo holder if the egged seat fell and they did not;
-   Elderbark holder if alive and no other creature fell; Elderbark eliminated → no other creature wins.
-6. **Curse.** Seats whose own vote (random ones only under `randomVotesCurse`) went to an eliminated Sporeling holder lose.
-7. **Oxpecker.** Wins if its bonded seat is a winner after step 6 and the Elderbark did not fall; then the curse applies to it.
-8. **Report.** `Outcome.why[seat]`: one sentence per seat, "Won: …" or "Lost: …".
+The exact, current order and every card's entry are in [docs/rules-reference.md](rules-reference.md) (generated from
+the engine). In short: swaps (Moon-Thief, then Ember-Carriers) → tally (held-card weights, Heavy Hand) → teams (bitten
+→ Werewolf) → main result (decoy; no Werewolf held; Blood Price) → the burning (a Phoenix holder eliminated: the Pyre
+wins; by default it denies the Werewolf team, and the Centaurs keep only a Blood-Price win) → loners (Cuckoo, then
+Oxpecker) → one "why" sentence per seat. Copies are applied first: `resolveVote(heldRoles(state), …)`.
 
 ## Roles are data
 
@@ -126,12 +122,12 @@ distortion, viewer veil; the Werewolf team's looks and counts see the truth.
 Role flags the resolution reads: `win` (`eliminated`, `markEliminated`, `markWins`, `keystone`), `decoy`, `curse`,
 `metamorph`, `vote` (weight; `protectsTarget` and `takesTargetDown` remain primitives no card uses), `chat`, `dayPower`.
 Tags: `wolf` counts as a Werewolf at the count; `pack` wakes with the pack and gets the census; `seer` is the
-Tracker's quarry; `wild` is on the Elderbark's map.
+Tracker's quarry; `phoenix` and `kindler` mark the Pyre (the brood learns them).
 
 Slots are named relative to the actor (`self`, the nth pick of this step, the nth pick of an earlier step, the next
 seat clockwise from another slot), so one engine runs every role. Because steps are data, the plan builder, the
 forced-random mover, the journal, the table's click targets and the post-game log need no role-specific code.
-`dawn()` runs after the last turn: random egg for an unheld Cuckoo, Imagos, the bite notice, shuffled proclamations.
+`dawn()` runs after the last turn: random egg for an unheld Cuckoo, Heir conversions, the bite notice, shuffled proclamations.
 
 **To add a role:** add an entry to `ROLES` in `shared/roles.ts` and a `public/art/<id>.webp` (512×512). If it needs a
 new primitive, add an `Effect` kind, its case in `applyEffect` (`shared/engine.ts`) and a sentence in `shared/text.ts`.
@@ -193,7 +189,7 @@ Outcomes no branch or Otherwise covers are asked live.
 
 The game lives in one document (`rooms.game`). `convex/rooms.ts` `view` (the app) and `convex/agent.ts` `view` (MCP)
 are the only readers, both behind the presence gate, filtered for the caller: your dealt role, plan, progress and own log entries (with `hidden`
-stripped), dawn notices addressed to you (bitten, Imago), proclamations once published (without the forged flag or
+stripped), dawn notices addressed to you (bitten, Heir), proclamations once published (without the forged flag or
 real turn), public marks after dawn, and your own queued day swap. Other roles, the centre, glamours, forgeries,
 the eavesdrop source, the day swap, the full log and who voted for whom are returned only once the phase is `ended`.
 

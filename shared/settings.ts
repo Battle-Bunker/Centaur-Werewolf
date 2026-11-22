@@ -13,8 +13,6 @@ export interface Rules {
   census: "all" | "three" | "off";
   /** R3: proclamations are published together at dawn, in random order. Off: each is shown as it is made. */
   dawnProclamations: boolean;
-  /** R4 reversed: a vote the game cast at random also triggers the Sporeling's curse. */
-  randomVotesCurse: boolean;
   /** A bitten player is told which seat bit them. Off: only that they were bitten. */
   biteNamesBiter: boolean;
   /** When nobody holds the role the Eavesdropper names, it gets a real result of its own as if it held it. Off: nothing. */
@@ -31,13 +29,18 @@ export interface Rules {
   cutSeconds: number;
   /** A Hush may cut during the vote phase too (not only during discussion), and a cut may run on into it. */
   cutDuringVote: boolean;
+  /** The Phoenix wakes with the brood and learns the Kindlers' seats. */
+  phoenixKnowsKindlers: boolean;
+  /** A burning (a Phoenix holder eliminated) denies the Werewolf team its win, and the Centaurs win only if a Werewolf also fell (Blood Price as usual). */
+  burningDeniesWolves: boolean;
+  /** What the Pyre needs when no player holds a Phoenix at the count: any Kindler eliminated, or nothing (it cannot win). */
+  pyreFallback: "kindler" | "none";
 }
 
 export const DEFAULT_RULES: Rules = {
   bloodPrice: true,
   census: "all",
   dawnProclamations: true,
-  randomVotesCurse: false,
   biteNamesBiter: true,
   eavesdropGhost: true,
   thiefMinPlayers: 7,
@@ -46,6 +49,9 @@ export const DEFAULT_RULES: Rules = {
   chatDuringVote: false,
   cutSeconds: 60,
   cutDuringVote: true,
+  phoenixKnowsKindlers: false,
+  burningDeniesWolves: true,
+  pyreFallback: "kindler",
 };
 
 /** The rules as they were before the defector mechanics: for control arms. */
@@ -77,11 +83,6 @@ export const RULE_DEFS: RuleDef[] = [
     id: "dawnProclamations", kind: "boolean", title: "Proclamations at dawn", tooltip: "Whether the Herald's proclamations are published together at dawn or as they are made.",
     on: "Every proclamation (the Herald's, and a Forger's) is published together at dawn, in random order, each marked \"Herald's turn\" and true at that moment of the night.",
     off: "The Herald's proclamation is shown to everyone during the Herald's turn.",
-  },
-  {
-    id: "randomVotesCurse", kind: "boolean", title: "Random votes curse", tooltip: "Whether a vote the game cast at random can trigger the Sporeling's curse.",
-    on: "A vote the game cast for a player who did not vote counts for the Sporeling's curse like any other.",
-    off: "A vote the game cast at random never triggers the Sporeling's curse.",
   },
   {
     id: "biteNamesBiter", kind: "boolean", title: "The bitten know the Biter", tooltip: "Whether a bitten player is told which seat bit them.",
@@ -118,6 +119,23 @@ export const RULE_DEFS: RuleDef[] = [
     id: "cutDuringVote", kind: "boolean", title: "Hush during the vote", tooltip: "Whether a Hush may cut during the vote phase, and a cut may run on into it.",
     on: "A Hush may cut during discussion or the vote phase, and a cut may run on into the vote.",
     off: "A Hush may cut only during discussion, and a cut ends when the vote phase begins.",
+  },
+  {
+    id: "phoenixKnowsKindlers", kind: "boolean", title: "Phoenix knows its kin", tooltip: "Whether the Phoenix learns where the Kindlers sit.",
+    on: "The Phoenix wakes with the brood and learns which seats were dealt Kindler cards.",
+    off: "The Phoenix does not know who the Kindlers are; the Kindlers know where the Phoenix was dealt.",
+  },
+  {
+    id: "burningDeniesWolves", kind: "boolean", title: "A burning denies the wolves", tooltip: "Whether the Phoenix's burning takes the win from the main teams.",
+    on: "When a Phoenix holder is eliminated (a burning), the Werewolf team cannot win, and the Centaurs win only if a Werewolf was eliminated too (with Blood Price deciding ties as usual).",
+    off: "A burning wins for the Pyre alongside whatever main result the vote gives.",
+  },
+  {
+    id: "pyreFallback", kind: "choice", title: "When no Phoenix is held", tooltip: "What the Pyre needs if no player holds a Phoenix at the count.",
+    options: [
+      { value: "kindler", means: "If no player holds a Phoenix card at the count, the Pyre wins if any player holding a Kindler card is eliminated (that counts as a burning)." },
+      { value: "none", means: "If no player holds a Phoenix card at the count, the Pyre cannot win." },
+    ],
   },
 ];
 export const RULE_DEF: Record<RuleId, RuleDef> = Object.fromEntries(RULE_DEFS.map(r => [r.id, r])) as Record<RuleId, RuleDef>;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { availability, COMMAND, COMMANDS, grantAllows, HOME_CONTEXT, toolDefinitions } from "./commands";
-import { advance, dawn, daySwap, deal, dealFixed, decisionCount, deckProblem, freshProgress, legalTargets, nightTurns, publicMarks, randomDecision, resolvePlan, resolveVote, secureRng, seededRng, shapeOf, shuffle, turnKey, uncovered, validDecision, validPlan, visibleShown, type GameState, type LogEntry, type Plan, type StepPlan } from "./engine";
+import { actingRole, advance, dawn, daySwap, deal, dealFixed, decisionCount, deckProblem, emberSwap, freshProgress, heldRoles, isPhoenix, legalTargets, nightTurns, publicMarks, randomDecision, resolvePlan, resolveVote, runTurn, secureRng, seededRng, shapeOf, shuffle, turnKey, uncovered, validDecision, validPlan, visibleShown, type GameState, type LogEntry, type NightSeat, type Plan, type StepPlan } from "./engine";
 import { CENTER_MAX, CENTER_MIN, legalRoles, recommendedDeck, ROLE, ROLES, type RoleId, type Slot } from "./roles";
 import { DEFAULT_RULES, describeRules, LEGACY_RULES, RULE_DEFS, ruleValueProblem, rulesOf, type Rules } from "./settings";
 import { describe as say, revealHidden } from "./text";
@@ -17,10 +17,11 @@ const names = { players: ["Ada", "Bo", "Cy", "Di", "Ed", "Fy", "Gus"].map(name =
 /** Runs one actor's whole script with this plan, forcing nothing. */
 const act = (s: GameState, seat: number, plan: Plan = {}, turn = 1, history: LogEntry[] = []) => advance(s, seat, plan, freshProgress(), turn, rng(), { history });
 /** Runs the whole night in wake order with these plans (undecided steps forced at random), then dawn. */
-function night(s: GameState, plans: Record<number, Plan> = {}, seed = 7): LogEntry[] {
+function night(s: GameState, plans: Record<number, Plan> = {}, seed = 7, adoptPlans: Record<number, Record<string, Plan>> = {}): LogEntry[] {
   const log: LogEntry[] = [];
   const r = rng(seed);
-  nightTurns([...s.dealt, ...s.dealtCenter]).forEach((role, turn) => s.dealt.forEach((d, seat) => { if (turnKey(d) === role) log.push(...advance(s, seat, plans[seat] ?? {}, freshProgress(), turn + 1, r, { force: true, history: log })); }));
+  const seats: NightSeat[] = s.dealt.map((_, i) => ({ plan: plans[i] ?? {}, progress: freshProgress(), adoptPlans: adoptPlans[i] ?? {} }));
+  nightTurns([...s.dealt, ...s.dealtCenter]).forEach((role, turn) => log.push(...runTurn(s, role, seats, turn + 1, r, log, { force: true })));
   log.push(...dawn(s, [...s.dealt, ...s.dealtCenter], 99, r));
   return log;
 }
@@ -38,15 +39,18 @@ describe("deal", () => {
   });
   it("gives every night role in the deck one turn, in wake order, dealt or not", () => {
     expect(nightTurns(["centaur", "sentry", "werewolf", "werewolf", "farrier", "sage", "chiron"])).toEqual(["werewolf", "sage", "centaur", "farrier", "sentry"]);
-    expect(nightTurns(ROLES.map(r => r.id))).toEqual(["elderbark", "werewolf", "stalkinghorse", "glamour", "moonthief", "wisp", "tracker", "mistweaver", "fogbank", "whisperer", "cuckoo", "sage", "notary", "centaur", "herald", "forger", "poacher", "rustler", "cutpurse", "pickpocket", "drifter", "farrier", "spooker", "herder", "oxpecker", "latecomer", "sentry", "eavesdropper", "biter"]);
+    expect(nightTurns(ROLES.map(r => r.id))).toEqual(["gleaner", "echo", "kindler", "werewolf", "stalkinghorse", "glamour", "moonthief", "wisp", "tracker", "mistweaver", "fogbank", "whisperer", "cuckoo", "sage", "notary", "centaur", "herald", "forger", "poacher", "rustler", "cutpurse", "pickpocket", "drifter", "farrier", "spooker", "herder", "oxpecker", "latecomer", "sentry", "eavesdropper", "biter"]);
     // A twin acts in its original's turn: one public turn for the pair, and the original's turn even if only the twin is in the deck.
     expect(nightTurns(["sage", "moonsage", "centaur"])).toEqual(["sage", "centaur"]);
     expect(nightTurns(["moonsage", "centaur"])).toEqual(["sage", "centaur"]);
   });
-  it("retires Sagittarius, the Augur and the Hybrid, and every creature is on the Wildwood but the Moth", () => {
-    for (const id of ["sagittarius", "augur", "hybrid"]) expect(ROLE[id]).toBeUndefined();
-    expect(ROLES.filter(r => r.tags.includes("wild")).map(r => [r.id, r.team])).toEqual([["moth", "centaur"], ["elderbark", "wild"], ["cuckoo", "wild"], ["oxpecker", "wild"], ["sporeling", "wild"]]);
+  it("retires Sagittarius, the Augur, the Hybrid and the Wildwood creatures; the Pyre is a team, Cuckoo and Oxpecker are loners", () => {
+    for (const id of ["sagittarius", "augur", "hybrid", "sporeling", "moth", "elderbark"]) expect(ROLE[id]).toBeUndefined();
+    expect(ROLES.filter(r => r.team === "pyre").map(r => r.id)).toEqual(["phoenix", "kindler", "lure", "falsewitness", "embercarrier", "heavyhand", "heir"]);
+    expect(ROLES.filter(r => r.team === "loner").map(r => r.id)).toEqual(["cuckoo", "oxpecker"]);
     expect(ROLES.every(r => r.max >= 12)).toBe(true); // any number of copies of any card
+    // Every Kindler kind (and the Phoenix) acts in one shared turn, so the timetable never tells them apart.
+    expect(nightTurns(["phoenix", "lure", "heir", "centaur"])).toEqual(["kindler", "centaur"]);
   });
   it("recommends a valid deck for 3 to 12 players and 3 to 6 centre cards", () => {
     for (let n = 3; n <= 12; n++) for (let c = CENTER_MIN; c <= CENTER_MAX; c++) expect(deckProblem(recommendedDeck(n, c), n, c), `${n}p ${c}c`).toBeNull();
@@ -82,7 +86,7 @@ describe("rule settings", () => {
   it("defaults to the synthesis's recommendation and fills in what is missing or invalid", () => {
     expect(rulesOf(undefined)).toEqual(DEFAULT_RULES);
     expect(rulesOf({ bloodPrice: false, census: "nonsense", thiefMinPlayers: 99 })).toEqual({ ...DEFAULT_RULES, bloodPrice: false });
-    expect(DEFAULT_RULES).toMatchObject({ bloodPrice: true, census: "all", dawnProclamations: true, randomVotesCurse: false });
+    expect(DEFAULT_RULES).toMatchObject({ bloodPrice: true, census: "all", dawnProclamations: true, burningDeniesWolves: true, phoenixKnowsKindlers: false, pyreFallback: "kindler" });
     expect(LEGACY_RULES).toEqual({ bloodPrice: false, census: "off", dawnProclamations: false });
   });
   it("describes every rule in one sentence and validates values", () => {
@@ -340,9 +344,34 @@ describe("Biter", () => {
 });
 
 describe("creatures at night", () => {
-  it("lets the Elderbark learn which seats were dealt creatures, the Moth included", () => {
-    const s = state(["elderbark", "moth", "sage", "sporeling", "werewolf"], ["cuckoo", "herald", "sentry"]);
-    expect(act(s, 0)[0].ev).toEqual({ kind: "seats", label: "Creatures", seats: [1, 3] });
+  it("gathers the brood: every Kindler learns where the Phoenix was dealt and who the Kindlers are; the Phoenix only under the rule", () => {
+    const s = state(["phoenix", "kindler", "lure", "werewolf", "sage"], ["heir", "centaur", "sentry"]);
+    expect(act(s, 1).map(e => e.ev)).toEqual([{ kind: "seats", label: "The Phoenix (as dealt)", seats: [0] }, { kind: "seats", label: "Fellow Kindlers", seats: [2] }]);
+    expect(act(s, 0)).toEqual([]);
+    const told = state(["phoenix", "kindler", "lure", "werewolf", "sage"], ["heir", "centaur", "sentry"], { phoenixKnowsKindlers: true });
+    expect(act(told, 0).map(e => e.ev)).toEqual([{ kind: "seats", label: "Your Kindlers", seats: [1, 2] }]);
+  });
+  it("lets the Lure dress the Phoenix as a Werewolf, so an honest read accuses it", () => {
+    const s = state(["phoenix", "lure", "sage", "werewolf"], ["centaur", "herald", "sentry"]);
+    act(s, 1, { lure: decide({ kind: "pick", targets: [P(0)], role: "werewolf" }) });
+    expect(act(s, 2, { read: always(P(0)) })[0].ev).toMatchObject({ roles: ["werewolf"] });
+  });
+  it("turns an Heir's card into a Phoenix at dawn when no player holds one, and tells its holder", () => {
+    const s = state(["heir", "sage", "werewolf"], ["phoenix", "centaur", "sentry"]);
+    const notes = dawn(s, [], 9, rng());
+    expect(notes).toEqual([{ turn: 9, seat: 0, role: "heir", step: "dawn", via: "auto", ev: { kind: "heir" } }]);
+    expect(isPhoenix(s, 0)).toBe(true);
+    const held = state(["heir", "phoenix", "werewolf"], ["sage", "centaur", "sentry"]);
+    expect(dawn(held, [], 9, rng())).toEqual([]);
+  });
+  it("carries the ember: a Phoenix card (held, else from the centre) swaps with the target seat's card", () => {
+    const s = state(["embercarrier", "phoenix", "werewolf", "sage"], ["centaur", "herald", "sentry"]);
+    expect(emberSwap(s, 2)).toEqual({ kind: "ember", seat: 2, from: P(1) });
+    expect(s.cards).toEqual(["embercarrier", "werewolf", "phoenix", "sage"]);
+    const c = state(["embercarrier", "sage", "werewolf"], ["centaur", "phoenix", "sentry"]);
+    expect(emberSwap(c, 2)).toEqual({ kind: "ember", seat: 2, from: C(1) });
+    expect(c.cards[2]).toBe("phoenix");
+    expect(c.center[1]).toBe("werewolf");
   });
   it("lays the Cuckoo's egg (public at dawn) and the Oxpecker's bond (private); an unheld Cuckoo's egg is laid at random", () => {
     const s = state(["cuckoo", "oxpecker", "sage", "werewolf"], ["herald", "centaur", "sentry"]);
@@ -357,36 +386,21 @@ describe("creatures at night", () => {
     expect(notes[0]).toMatchObject({ seat: -1, role: "cuckoo", ev: { kind: "mark", unheld: true, public: true } });
     expect(unheld.marks[3]).toBeGreaterThanOrEqual(0); // the first centre card is instance 3
   });
-  it("turns the Moth's seat into an Imago at dawn if the card dealt to it was moved, unless bitten", () => {
-    const moved = state(["moth", "rustler", "sage"], ["werewolf", "herald", "sentry"]);
-    act(moved, 1, { peek: always(P(0)), trade: decide({ kind: "do" }) });
-    const notes = dawn(moved, [], 9, rng());
-    expect(moved.imago).toEqual([0]);
-    expect(notes.map(e => [e.seat, e.ev.kind])).toEqual([[0, "imago"]]);
-    const still = state(["moth", "rustler", "sage"], ["werewolf", "herald", "sentry"]);
-    dawn(still, [], 9, rng());
-    expect(still.imago).toEqual([]);
-    const bit = state(["moth", "rustler", "biter"], ["werewolf", "herald", "sentry"]);
-    act(bit, 1, { peek: always(P(0)), trade: decide({ kind: "do" }) });
-    act(bit, 2, { sniff: always(P(0)), bite: decide({ kind: "do" }) });
-    dawn(bit, [], 9, rng());
-    expect(bit.imago).toEqual([]);
-  });
-  it("swaps two seats' cards for the Moon-Thief, and does not change an Imago", () => {
-    const s = state(["moonthief", "sporeling", "centaur", "moth"], ["werewolf", "herald", "sentry"]);
-    s.imago = [3];
+  it("swaps two seats' cards (and card instances) for the Moon-Thief", () => {
+    const s = state(["moonthief", "phoenix", "centaur", "sage"], ["werewolf", "herald", "sentry"]);
     expect(daySwap(s, 1, 2)).toEqual({ kind: "daySwap", a: 1, b: 2 });
-    expect(s.cards).toEqual(["moonthief", "centaur", "sporeling", "moth"]);
-    expect(s.imago).toEqual([3]);
+    expect(s.cards).toEqual(["moonthief", "centaur", "phoenix", "sage"]);
+    expect(s.inst).toEqual([0, 2, 1, 3]);
   });
   it("plays a whole night of the full ecosystem without breaking, at every seed", () => {
     for (let seed = 1; seed <= 40; seed++) {
-      const deck = shuffle(["werewolf", "eavesdropper", "biter", "stalkinghorse", "sage", "herald", "centaur", "centaur", "farrier", "sentry", "moth", "cuckoo", "oxpecker"], rng(seed));
+      const deck = shuffle(["werewolf", "eavesdropper", "biter", "stalkinghorse", "sage", "herald", "centaur", "echo", "gleaner", "phoenix", "lure", "cuckoo", "oxpecker"], rng(seed));
       const s = dealFixed(deck, 7);
       night(s, {}, seed);
       expect(s.dawn).toBe(true);
       expect([...s.cards, ...s.center].sort()).toEqual([...deck].sort());
       expect(Object.keys(s.marks).length).toBeGreaterThanOrEqual(1);
+      for (const c of ["echo", "gleaner"]) { const seat = s.dealt.indexOf(c); if (seat >= 0) expect(s.adopted[String(seat)], `${seed} ${c}`).toBeDefined(); }
     }
   });
 });
@@ -503,6 +517,70 @@ describe("table rules for passivity", () => {
   });
 });
 
+describe("copiers (adopt)", () => {
+  const go = (dealt: string[], center: string[], plans: Record<number, Plan> = {}, adoptPlans: Record<number, Record<string, Plan>> = {}, rules = {}) => { const s = state(dealt, center, rules); const log = night(s, plans, 3, adoptPlans); return { s, log }; };
+  it("Gleaner copies a centre card and acts in that role's turn with the plan queued for it", () => {
+    const { s, log } = go(["gleaner", "werewolf", "centaur"], ["sage", "herald", "sentry"], { 0: { glean: always(C(0)) } }, { 0: { sage: { read: always(P(1)) } } });
+    expect(s.adopted).toEqual({ 0: "sage" });
+    const mine = log.filter(e => e.seat === 0).map(e => [e.role, e.ev.kind]);
+    expect(mine).toEqual([["gleaner", "look"], ["gleaner", "adopt"], ["sage", "look"]]);
+    expect(log.find(e => e.seat === 0 && e.role === "sage")!.ev).toMatchObject({ roles: ["werewolf"] });
+    expect(actingRole(s, 0)).toBe("sage");
+  });
+  it("Echo copies a player's card; copying a Werewolf counts as one at the count, sees the pack, and the pack does not see it", () => {
+    const { s, log } = go(["echo", "werewolf", "centaur", "sage"], ["herald", "centaur", "sentry"], { 0: { echo: always(P(1)) } });
+    expect(s.adopted).toEqual({ 0: "werewolf" });
+    expect(log.find(e => e.seat === 1 && e.ev.kind === "seats")!.ev).toMatchObject({ seats: [] }); // the pack does not learn the copier
+    expect(log.find(e => e.seat === 0 && e.role === "werewolf" && e.ev.kind === "seats")!.ev).toMatchObject({ seats: [1] });
+    expect(resolveVote(heldRoles(s), [1, 0, 0, 0]).winningTeam).toBe("centaur"); // the original Werewolf falls
+    expect(resolveVote(heldRoles(s), [2, 0, 0, 0]).wolvesDown).toBe(1); // the copier itself counts as a Werewolf
+  });
+  it("copies the TRUE card under a distortion (the log keeps what was seen)", () => {
+    // Every distortion card wakes after the copiers, so the distortion is laid by hand here.
+    const s = state(["echo", "werewolf", "centaur"], ["sage", "herald", "sentry"]);
+    s.tokens.p1 = { distort: "sage" };
+    const log = act(s, 0, { echo: always(P(1)) });
+    expect(log[0].ev).toMatchObject({ roles: ["sage"] });
+    expect(log[0].hidden?.truth).toEqual(["werewolf"]);
+    expect(log[1].ev).toEqual({ kind: "adopt", role: "werewolf" });
+  });
+  it("copying a role with no night action gives its powers and win, nothing more at night", () => {
+    const { s } = go(["echo", "phoenix", "centaur"], ["sage", "herald", "kindler"], { 0: { echo: always(P(1)) } });
+    expect(s.adopted["0"]).toBe("phoenix");
+    expect(isPhoenix(s, 0)).toBe(true);
+    const o = resolveVote(heldRoles(s), [1, 0, 0], { phoenix: s.inst.map(i => isPhoenix(s, i)) });
+    expect(o).toMatchObject({ deaths: [0], burned: true, teams: ["pyre", "pyre", "centaur"] });
+    expect(o.winners).toEqual([0, 1]);
+  });
+  it("copying a copier takes what it became (or a spent copier); copying a twin takes the twin", () => {
+    const a = go(["gleaner", "echo", "werewolf"], ["herald", "sage", "sentry"], { 0: { glean: always(C(1)) }, 1: { echo: always(P(0)) } }).s;
+    expect(a.adopted).toEqual({ 0: "sage", 1: "sage" });
+    const b = go(["echo", "moonsage", "centaur"], ["herald", "werewolf", "sentry"], { 0: { echo: always(P(1)) } }).s;
+    expect(b.adopted["0"]).toBe("moonsage");
+    expect(heldRoles(b)[0]).toBe("moonsage");
+  });
+  it("the copy is on the card: if it moves, its new holder holds the copy; a look at it shows the copier's face", () => {
+    const { s } = go(["echo", "rustler", "werewolf", "sage"], ["herald", "centaur", "sentry"], { 0: { echo: always(P(2)) }, 1: { peek: always(P(0)), trade: decide({ kind: "do" }) } });
+    expect(s.cards[1]).toBe("echo");
+    expect(heldRoles(s)[1]).toBe("werewolf");
+    const read = act(s, 3, { read: always(P(1)) })[0].ev;
+    expect(read).toMatchObject({ roles: ["echo"] });
+  });
+  it("copies of cards with per-card state get their own: a copied Cuckoo lays its own egg", () => {
+    const { s } = go(["echo", "cuckoo", "sage", "werewolf"], ["herald", "centaur", "sentry"], { 0: { echo: always(P(1)) }, 1: { peek: always(P(2)), egg: always(P(2)) } }, { 0: { cuckoo: { peek: always(P(3)), egg: always(P(3)) } } });
+    expect(s.marks).toEqual({ 0: 3, 1: 2 });
+  });
+  it("forced random moves cover every adopted step", () => {
+    for (let seed = 1; seed <= 20; seed++) {
+      const s = state(["echo", "rustler", "werewolf", "sage"], ["herald", "centaur", "sentry"]);
+      const log = night(s, {}, seed);
+      const became = s.adopted["0"];
+      const steps = ROLE[became].steps?.filter(st => !st.onlyIfAlone).length ?? 0;
+      expect(log.filter(e => e.seat === 0 && e.role === became).length, `${seed} ${became}`).toBeGreaterThanOrEqual(Math.min(1, steps));
+    }
+  });
+});
+
 describe("vote", () => {
   it("eliminates the most voted and gives the Centaurs the win over a dead wolf", () => {
     expect(resolveVote(["werewolf", "centaur", "sage"], [1, 0, 0])).toMatchObject({ deaths: [0], winningTeam: "centaur", winners: [1, 2] });
@@ -544,26 +622,64 @@ describe("vote", () => {
     });
     it("does not count allies, creatures or the bitten as Centaurs", () => {
       expect(resolveVote(["werewolf", "whisperer", "centaur", "sage"], [1, 0, 0, 1]).winningTeam).toBe("centaur");
-      expect(resolveVote(["werewolf", "sporeling", "centaur", "sage"], [1, 0, 0, 1]).winningTeam).toBe("centaur");
+      expect(resolveVote(["werewolf", "phoenix", "centaur", "sage"], [1, 0, 0, 1], { rules: { burningDeniesWolves: false } }).winningTeam).toBe("centaur");
+      expect(resolveVote(["werewolf", "cuckoo", "centaur", "sage"], [1, 0, 0, 1]).winningTeam).toBe("centaur");
       expect(resolveVote(["werewolf", "sage", "centaur", "centaur"], [1, 0, 0, 1], { bitten: { seat: 1, by: 0 } }).winningTeam).toBe("centaur");
     });
   });
 
-  describe("the synthesis's worked edge cases", () => {
-    it("Sporeling and Werewolf tied and eliminated: Centaurs win, Sporeling wins, its Centaur voters lose, wolves lose", () => {
-      // seats: 0 Sporeling, 1 Werewolf, 2 Centaur (votes Sporeling), 3 Sage (votes Werewolf), 4 Centaur (votes Sporeling)
-      const o = resolveVote(["sporeling", "werewolf", "centaur", "sage", "centaur"], [1, 0, 0, 1, 3]);
-      expect(o).toMatchObject({ deaths: [0, 1], winningTeam: "centaur", cursed: [1, 2] });
-      expect(o.winners).toEqual([0, 3, 4]);
-      expect(o.why[2]).toMatch(/^Lost: .*curse/);
-      expect(o.why[0]).toMatch(/^Won: held the Sporeling and won by being eliminated/);
+  describe("the Pyre and loners: one ordered list, each pair tested", () => {
+    it("a burning wins for every Pyre card's holder, alive or dead", () => {
+      const o = resolveVote(["phoenix", "kindler", "werewolf", "centaur", "sage"], [4, 0, 0, 0, 0]);
+      expect(o).toMatchObject({ deaths: [0], burned: true });
+      expect(o.winners).toEqual([0, 1]);
+      expect(o.why[1]).toMatch(/^Won: .*Pyre.*a player holding a Phoenix was eliminated/);
     });
-    it("Sporeling and Centaur tied, with a wolf at the table: wolves win, Sporeling wins, wolves who voted for it lose", () => {
-      const o = resolveVote(["sporeling", "centaur", "werewolf", "werewolf", "sage"], [1, 0, 0, 1, 2]);
-      expect(o).toMatchObject({ deaths: [0, 1], winningTeam: "werewolf", wolvesDown: 0, cursed: [1, 2] });
-      expect(o.winners).toEqual([0, 3]);
+    it("burning v. Werewolf win: denied by default, alongside when the rule is off", () => {
+      const cards = ["phoenix", "kindler", "werewolf", "centaur", "sage"], votes = [4, 0, 0, 0, 0];
+      expect(resolveVote(cards, votes)).toMatchObject({ winningTeam: "nobody", winners: [0, 1] });
+      expect(resolveVote(cards, votes, { rules: { burningDeniesWolves: false } })).toMatchObject({ winningTeam: "werewolf", winners: [0, 1, 2] });
     });
-    it("Werewolf and Centaur tied: the Werewolves win", () => {
+    it("burning v. Centaur win: kept when a Werewolf also fell (Blood Price as usual)", () => {
+      const o = resolveVote(["phoenix", "werewolf", "centaur", "sage", "kindler"], [1, 0, 0, 1, 2]);
+      expect(o).toMatchObject({ deaths: [0, 1], winningTeam: "centaur", burned: true, wolvesDown: 1, centaursDown: 0 });
+      expect(o.winners).toEqual([0, 2, 3, 4]);
+      // A Werewolf and a Centaur fell with the Phoenix: Blood Price makes it no Centaur win, and the burning denies the wolves.
+      const tie = resolveVote(["phoenix", "werewolf", "centaur", "sage"], [1, 2, 0, 0], { rules: { eliminationVotes: 1 } });
+      expect(tie).toMatchObject({ winningTeam: "nobody", burned: true, winners: [0] });
+    });
+    it("burning v. Stalking Horse: the burning denies the decoy's win", () => {
+      expect(resolveVote(["phoenix", "stalkinghorse", "centaur", "werewolf"], [1, 0, 0, 1])).toMatchObject({ deaths: [0, 1], winningTeam: "nobody", winners: [0] });
+      expect(resolveVote(["phoenix", "stalkinghorse", "centaur", "werewolf"], [1, 0, 0, 1], { rules: { burningDeniesWolves: false } })).toMatchObject({ winningTeam: "werewolf" });
+    });
+    it("burning v. no Werewolf held: the Centaurs cannot win (someone fell), the Pyre does", () => {
+      expect(resolveVote(["phoenix", "centaur", "sage"], [1, 0, 0])).toMatchObject({ winningTeam: "nobody", winners: [0] });
+    });
+    it("Pyre cards are not Centaurs under Blood Price", () => {
+      expect(resolveVote(["werewolf", "kindler", "centaur", "sage"], [1, 0, 0, 1], { rules: { burningDeniesWolves: false } })).toMatchObject({ deaths: [0, 1], winningTeam: "centaur", centaursDown: 0 });
+    });
+    it("no Phoenix held: by default a Kindler's elimination counts as the burning; under the other rule the Pyre cannot win", () => {
+      expect(resolveVote(["kindler", "werewolf", "centaur"], [1, 0, 0])).toMatchObject({ deaths: [0], burned: true, winners: [0] });
+      expect(resolveVote(["kindler", "werewolf", "centaur"], [1, 0, 0], { rules: { pyreFallback: "none" } })).toMatchObject({ burned: false, winningTeam: "werewolf", winners: [1] });
+    });
+    it("an Heir's card turned Phoenix burns like one (passed as phoenix seats)", () => {
+      expect(resolveVote(["heir", "werewolf", "centaur"], [1, 0, 0], { phoenix: [true, false, false] })).toMatchObject({ burned: true, winners: [0] });
+    });
+    it("the Heavy Hand's vote counts double only against a Phoenix holder", () => {
+      expect(resolveVote(["heavyhand", "phoenix", "werewolf", "centaur"], [1, 2, 1, 2]).tally).toEqual([0, 3, 2, 0]);
+      expect(resolveVote(["heavyhand", "phoenix", "werewolf", "centaur"], [2, 2, 1, 1]).tally).toEqual([0, 2, 2, 0]);
+    });
+    it("a bitten Pyre card's holder plays for the wolves; the card still burns", () => {
+      const o = resolveVote(["phoenix", "werewolf", "kindler", "centaur"], [3, 0, 0, 0], { bitten: { seat: 0, by: 1 } });
+      expect(o).toMatchObject({ deaths: [0], burned: true, teams: ["werewolf", "werewolf", "pyre", "centaur"], winners: [2] });
+    });
+    it("loners after everything: the Cuckoo by its egg, then the Oxpecker with its host (even a Pyre host)", () => {
+      const o = resolveVote(["cuckoo", "phoenix", "kindler", "oxpecker", "werewolf", "centaur"], [1, 0, 1, 1, 1, 1], { marks: { cuckoo: 1, oxpecker: 2 } });
+      expect(o.winners).toEqual([0, 1, 2, 3]);
+      expect(resolveVote(["cuckoo", "werewolf", "centaur"], [1, 2, 1], { marks: { cuckoo: 1 } }).winners).toEqual([0, 2]);
+      expect(resolveVote(["cuckoo", "werewolf", "centaur"], [2, 0, 0], { marks: { cuckoo: 1 } }).winners).toEqual([1]);
+    });
+    it("Werewolf and Centaur tied: the Werewolves win (the case Blood Price exists for)", () => {
       expect(resolveVote(["werewolf", "centaur", "sage"], [1, 0, 1]).winningTeam).toBe("werewolf");
     });
     it("Stalking Horse and Werewolf tied: the Werewolf team wins by rule (a)", () => {
@@ -571,88 +687,18 @@ describe("vote", () => {
       expect(o).toMatchObject({ deaths: [0, 1], winningTeam: "werewolf", winners: [0, 1] });
       expect(o.headline).toMatch(/Stalking Horse was eliminated.*even though a Werewolf fell too/);
     });
-    it("Nobody eliminated: wolves win, the Elderbark wins, the Sporeling, Imago and Cuckoo lose, the Oxpecker follows its host", () => {
-      const cards = ["werewolf", "elderbark", "sporeling", "cuckoo", "oxpecker", "moth", "centaur"];
-      const o = resolveVote(cards, [1, 2, 3, 4, 5, 6, 0], { imago: [5], marks: { cuckoo: 0, oxpecker: 0 } });
-      expect(o.deaths).toEqual([]);
-      expect(o.winningTeam).toBe("werewolf");
-      expect(o.winners).toEqual([0, 1, 4]);
-      expect(resolveVote(cards, [1, 2, 3, 4, 5, 6, 0], { imago: [5], marks: { cuckoo: 0, oxpecker: 6 } }).winners).toEqual([0, 1]);
-    });
-    it("a moved Sporeling: whoever holds it at the count is the Sporeling and curses their voters", () => {
-      // The Sage's seat (2) now holds the Sporeling without knowing it.
-      const o = resolveVote(["werewolf", "centaur", "sporeling", "centaur"], [2, 2, 0, 2]);
-      expect(o).toMatchObject({ deaths: [2], winningTeam: "werewolf", cursed: [0, 1, 3] });
-      expect(o.winners).toEqual([2]);
-    });
-    it("creature cards in the centre: no curse, an egg that benefits nobody, a bond held by nobody", () => {
-      const o = resolveVote(["werewolf", "centaur", "sage", "centaur"], [1, 0, 0, 1], { marks: { cuckoo: 1, oxpecker: 2 } });
-      expect(o).toMatchObject({ cursed: [], winningTeam: "werewolf", winners: [0] });
-    });
-    it("the Moon-Thief moves the Sporeling onto the table's target: the target wins as the Sporeling, its voters are cursed", () => {
-      const s = state(["moonthief", "sporeling", "werewolf", "centaur", "sage", "centaur", "centaur"], ["herald", "sentry", "farrier"], { thiefMinPlayers: 7 });
-      daySwap(s, 1, 2); // the table votes for seat 2, the obvious wolf
-      const o = resolveVote(s.cards, [2, 2, 1, 2, 2, 2, 2], { rules: s.rules });
-      expect(o).toMatchObject({ deaths: [2], winningTeam: "werewolf", cursed: [0, 1, 3, 4, 5, 6] });
-      expect(o.winners).toEqual([2]);
-    });
-    it("an Imago holding a Werewolf card is eliminated: the Centaurs win and the Imago wins too", () => {
-      const o = resolveVote(["werewolf", "centaur", "sage", "centaur"], [1, 0, 0, 0], { imago: [0] });
-      expect(o).toMatchObject({ deaths: [0], winningTeam: "centaur", winners: [0, 1, 2, 3], teams: ["wild", "centaur", "centaur", "centaur"] });
-      expect(o.why[0]).toMatch(/became an Imago .* won by being eliminated/);
-    });
     it("an Oxpecker bonded to a seat later bitten wins with the wolves, unknowingly", () => {
       const o = resolveVote(["oxpecker", "sage", "werewolf", "centaur"], [3, 3, 3, 1], { bitten: { seat: 1, by: 2 }, marks: { oxpecker: 1 } });
       expect(o).toMatchObject({ deaths: [3], winningTeam: "werewolf", winners: [0, 1, 2] });
-      expect(o.why[0]).toMatch(/won with the seat it bonded to \(seat 1\)/);
-      expect(o.why[1]).toMatch(/was bitten, so played for the Werewolf team, which won/);
-    });
-  });
-
-  describe("creatures", () => {
-    it("the Elderbark eliminated: no other creature wins", () => {
-      const o = resolveVote(["elderbark", "sporeling", "werewolf", "oxpecker", "centaur"], [1, 0, 0, 1, 2], { marks: { oxpecker: 2 } });
-      expect(o.deaths).toEqual([0, 1]);
-      expect(o.winners).toEqual([2]); // the wolves win (W=0); Sporeling, Elderbark and Oxpecker lose
-      expect(o.why[1]).toMatch(/Elderbark was eliminated/);
-      expect(o.why[3]).toMatch(/Elderbark was eliminated/);
-    });
-    it("the Elderbark loses when another creature (or an Imago) is eliminated", () => {
-      expect(resolveVote(["elderbark", "sporeling", "werewolf", "centaur"], [1, 2, 1, 1]).winners).toContain(1);
-      expect(resolveVote(["elderbark", "sporeling", "werewolf", "centaur"], [1, 2, 1, 1]).winners).not.toContain(0);
-      expect(resolveVote(["elderbark", "moth", "werewolf", "centaur"], [1, 2, 1, 1], { imago: [1] }).winners).not.toContain(0);
-    });
-    it("the Cuckoo holder wins if the egged seat falls and they do not", () => {
-      expect(resolveVote(["cuckoo", "sage", "werewolf", "centaur"], [2, 2, 1, 2], { marks: { cuckoo: 2 } }).winners).toEqual([0, 1, 3]);
-      expect(resolveVote(["cuckoo", "sage", "werewolf", "centaur"], [2, 0, 0, 2], { marks: { cuckoo: 2 } }).winners).not.toContain(0);
-    });
-    it("the Oxpecker loses with a cursed host, and is itself cursed for voting for the Sporeling", () => {
-      const hostCursed = resolveVote(["oxpecker", "centaur", "sporeling", "werewolf", "sage"], [3, 2, 3, 2, 2], { marks: { oxpecker: 3 } });
-      expect(hostCursed.cursed).toContain(3);
-      expect(hostCursed.winners).not.toContain(0);
-      const selfCursed = resolveVote(["oxpecker", "centaur", "sporeling", "werewolf", "sage"], [2, 2, 3, 2, 3], { marks: { oxpecker: 2 } });
-      expect(selfCursed.why[0]).toMatch(/won with the seat it bonded to.*curse/);
-      expect(selfCursed.cursed).toContain(0);
-      expect(selfCursed.winners).not.toContain(0);
-    });
-    it("a random vote never curses, unless the table rule says it does", () => {
-      const cards = ["sporeling", "werewolf", "centaur", "sage"];
-      expect(resolveVote(cards, [1, 0, 0, 0], { forced: [2] }).cursed).toEqual([1, 3]);
-      expect(resolveVote(cards, [1, 0, 0, 0], { forced: [2], rules: { randomVotesCurse: true } }).cursed).toEqual([1, 2, 3]);
-    });
-    it("a bitten creature loses its creature rules: no win by elimination, no curse", () => {
-      const o = resolveVote(["sporeling", "werewolf", "centaur", "sage"], [1, 0, 0, 0], { bitten: { seat: 0, by: 1 } });
-      expect(o).toMatchObject({ deaths: [0], cursed: [], winningTeam: "werewolf", teams: ["werewolf", "werewolf", "centaur", "centaur"] });
-      expect(o.winners).toEqual([0, 1]);
     });
   });
 
   it("explains every seat's result in one sentence that starts with Won or Lost", () => {
     for (let seed = 1; seed <= 50; seed++) {
       const r = rng(seed);
-      const cards = shuffle(["werewolf", "stalkinghorse", "sage", "centaur", "sporeling", "cuckoo", "oxpecker", "elderbark", "moth"], r).slice(0, 7);
+      const cards = shuffle(["werewolf", "stalkinghorse", "sage", "centaur", "phoenix", "kindler", "cuckoo", "oxpecker", "heavyhand"], r).slice(0, 7);
       const votes = cards.map((_, i) => { let v = Math.floor(r() * 6); if (v >= i) v++; return v; });
-      const o = resolveVote(cards, votes, { marks: { cuckoo: 1, oxpecker: 2 }, imago: [3], bitten: seed % 3 ? null : { seat: 4, by: 0 } });
+      const o = resolveVote(cards, votes, { marks: { cuckoo: 1, oxpecker: 2 }, bitten: seed % 3 ? null : { seat: 4, by: 0 } });
       o.why.forEach((w, i) => expect(w, `${seed}:${i}`).toMatch(o.winners.includes(i) ? /^Won: .+\.$/ : /^Lost: .+\.$/));
     }
   });

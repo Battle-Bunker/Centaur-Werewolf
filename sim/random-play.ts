@@ -3,7 +3,7 @@
  * chosen at random (the votes count as the players' own, so the Sporeling's curse applies), under a table's rules.
  * Used by baseline.ts (printed) and analyze.ts (set against the play-test results).
  */
-import { advance, dawn, daySwap, deal, freshProgress, nightTurns, resolveVote, turnKey, type LogEntry } from "../shared/engine";
+import { dawn, daySwap, deal, freshProgress, heldRoles, isPhoenix, nightTurns, resolveVote, runTurn, type LogEntry, type NightSeat } from "../shared/engine";
 import { ROLE } from "../shared/roles";
 import { rulesOf, type Rules } from "../shared/settings";
 
@@ -42,9 +42,9 @@ export function randomPlay(deck: string[], players: number, games = 20000, rules
   const turns = nightTurns(deck);
   for (let g = 0; g < games; g++) {
     const state = deal(deck, players, Math.random, rules);
-    const progress = state.dealt.map(r => ({ ...freshProgress(), done: !ROLE[r].steps }));
+    const seats: NightSeat[] = state.dealt.map(r => ({ plan: {}, progress: { ...freshProgress(), done: !ROLE[r].steps } }));
     const log: LogEntry[] = [];
-    turns.forEach((role, turn) => state.dealt.forEach((r, seat) => { if (turnKey(r) === role) log.push(...advance(state, seat, {}, progress[seat], turn + 1, Math.random, { force: true, history: log })); }));
+    turns.forEach((role, turn) => log.push(...runTurn(state, role, seats, turn + 1, Math.random, log, { force: true })));
     dawn(state, deck, turns.length + 1, Math.random);
     // A Moon-Thief swaps two other seats at random, half the time.
     state.dealt.forEach((r, seat) => {
@@ -53,7 +53,7 @@ export function randomPlay(deck: string[], players: number, games = 20000, rules
       daySwap(state, others[0], others[1]);
     });
     const votes = state.cards.map((_, i) => { let v = Math.floor(Math.random() * (players - 1)); if (v >= i) v++; return v; });
-    const o = resolveVote(state.cards, votes, { bitten: state.bitten, imago: state.imago, marks: state.marks, held: state.inst, rules });
+    const o = resolveVote(heldRoles(state), votes, { bitten: state.bitten, marks: state.marks, held: state.inst, phoenix: state.inst.map(i => isPhoenix(state, i)), rules });
     win[o.winningTeam] = (win[o.winningTeam] ?? 0) + 1;
     const wolves = state.cards.flatMap((r, i) => (ROLE[r].tags.includes("wolf") ? [i] : []));
     if (wolves.length) { wolfAtTable++; if (wolves.some(w => o.deaths.includes(w))) wolfDead++; }
@@ -62,11 +62,11 @@ export function randomPlay(deck: string[], players: number, games = 20000, rules
     if (o.wolvesDown > 0 && o.centaursDown >= o.wolvesDown) ties++;
     if (o.deaths.some(i => state.cards[i] !== state.dealt[i])) elimMoved++;
     moved += state.cards.filter((r, i) => r !== state.dealt[i]).length;
-    const creatures = o.teams.flatMap((t, i) => (t === "wild" ? [i] : []));
-    if (creatures.length || deck.some(r => ROLE[r].team === "wild")) { creatureGames++; if (creatures.some(i => o.winners.includes(i))) creatureWin++; }
+    const creatures = o.teams.flatMap((t, i) => (t === "pyre" || t === "loner" ? [i] : []));
+    if (creatures.length || deck.some(r => ROLE[r].team === "pyre" || ROLE[r].team === "loner")) { creatureGames++; if (creatures.some(i => o.winners.includes(i))) creatureWin++; }
     cursed += o.cursed.length;
     if (state.bitten.length) bitten++;
-    if (state.imago.length) imago++;
+    if (o.burned) imago++;
     const wolfWon = o.winningTeam === "werewolf";
     for (const r of ids) { const h = heldStats[r]; if (state.cards.includes(r)) { h.games++; if (wolfWon) h.wolfWins++; } else { h.notGames++; if (wolfWon) h.notWolfWins++; } }
   }

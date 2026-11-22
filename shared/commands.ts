@@ -39,11 +39,13 @@ export interface CommandContext {
   deck: RoleId[];
   /** Night: the ids of the viewer's own steps that still take a decision. */
   openSteps: string[];
+  /** Night, copiers: the roles the viewer may still plan for ("any" before copying; the copy's role while its script is open). */
+  adoptOpen: RoleId[] | "any";
   voted: boolean;
   /** The unused once-per-game chat power of the card the viewer was dealt, if any. */
   chatPower: "signed" | "unsigned" | "report" | "forge" | null;
   /** The unused day power of the card the viewer was dealt, if any (the Moon-Thief's swap, the Hush's cut). */
-  dayPower: "swap" | "cut" | null;
+  dayPower: "swap" | "cut" | "ember" | null;
   /** Day: the viewer has said they are ready to vote. */
   ready: boolean;
   /** The viewer has a day swap queued. */
@@ -53,7 +55,7 @@ export interface CommandContext {
   /** The table's rule settings. */
   rules: Rules;
 }
-export const HOME_CONTEXT: CommandContext = { phase: "home", member: false, seated: false, host: false, players: 0, center: CENTER_DEFAULT, deck: [], openSteps: [], voted: false, chatPower: null, dayPower: null, ready: false, swapQueued: false, playtest: false, rules: DEFAULT_RULES };
+export const HOME_CONTEXT: CommandContext = { phase: "home", member: false, seated: false, host: false, players: 0, center: CENTER_DEFAULT, deck: [], openSteps: [], adoptOpen: [], voted: false, chatPower: null, dayPower: null, ready: false, swapQueued: false, playtest: false, rules: DEFAULT_RULES };
 
 export type Availability = { ok: true } | { ok: false; reason: string; hidden?: boolean };
 const OK: Availability = { ok: true };
@@ -334,9 +336,17 @@ export const COMMANDS = [
     id: "night.planStep", perceivable: false, title: "Queue a night move", group: "play", runs: "server", effect: "write", confirm: "none", caller: "seated", contexts: ["night"],
     description: `Sets the caller's decision for one step of their night action, before or during their turn. Arguments: { "step": <step id from yourNightSteps>, "plan": { "branches": [], "otherwise": <decision> } } for an unconditional decision, or with branches [{ "roles": [<role ids>], "decision": <decision> }] tried in order against the card you see at the earlier step (only where the step says canBranchOn). A decision is one of ${DECISION_SHAPES}. It runs by itself when the turn comes; during the caller's own turn it runs at once. Steps left undecided when the turn ends get a random legal move.`,
     tooltip: "Decide a step of your night action now; it plays by itself when your turn comes.", keywords: ["plan", "decide", "move", "action", "target", "swap", "look"],
-    params: z.object({ step: z.string().describe("The step id, from your role's steps."), plan: stepPlan }).strict(),
+    params: z.object({
+      step: z.string().describe("The step id, from your role's steps (or, with \"as\", from that role's steps)."),
+      plan: stepPlan,
+      as: roleId.optional().describe("Copiers only (Gleaner, Echo): the plan for when you have become this role. Queue one per role you might become; the one for the role you become runs in that role's turn."),
+    }).strict(),
     available: (ctx, args) => {
-      if (!ctx.openSteps.length) return no("You have nothing left to decide tonight.");
+      if (args?.as !== undefined) {
+        if (ctx.adoptOpen === "any") return OK;
+        return ctx.adoptOpen.includes(String(args.as)) ? OK : no(ctx.adoptOpen.length ? `You became a ${ROLE[ctx.adoptOpen[0]]?.name ?? ctx.adoptOpen[0]}: plan for that role.` : "Only a copier (Gleaner, Echo) can plan for a role it may become, until its copy has acted.");
+      }
+      if (!ctx.openSteps.length) return no(ctx.adoptOpen === "any" || ctx.adoptOpen.length ? "Your own steps are done: plan your copied role's steps with \"as\"." : "You have nothing left to decide tonight.");
       if (args?.step && !ctx.openSteps.includes(String(args.step))) return no("That step is already done.");
       return OK;
     },
@@ -345,8 +355,8 @@ export const COMMANDS = [
     id: "night.clearStep", perceivable: false, title: "Clear a queued move", group: "play", runs: "server", effect: "write", confirm: "none", caller: "seated", contexts: ["night"],
     description: "Removes the caller's queued decision for a step that has not happened yet. Arguments: { \"step\": <step id> }.",
     tooltip: "Undo a queued decision that has not played yet.", keywords: ["undo", "unqueue", "reset", "plan"],
-    params: z.object({ step: z.string().describe("The step id, from yourNightSteps.") }).strict(),
-    available: (ctx, args) => (args?.step && !ctx.openSteps.includes(String(args.step)) ? no("That step is already done.") : ctx.openSteps.length ? OK : no("You have nothing queued.")),
+    params: z.object({ step: z.string().describe("The step id, from yourNightSteps."), as: roleId.optional().describe("Copiers: clear the plan for this possible role.") }).strict(),
+    available: (ctx, args) => (args?.as !== undefined ? (ctx.adoptOpen === "any" || ctx.adoptOpen.includes(String(args.as)) ? OK : no("You cannot change that plan now.")) : args?.step && !ctx.openSteps.includes(String(args.step)) ? no("That step is already done.") : ctx.openSteps.length ? OK : no("You have nothing queued.")),
   }),
   define({
     id: "day.vote", perceivable: true, title: "Vote to eliminate", group: "play", runs: "server", effect: "write", confirm: "none", caller: "seated", contexts: ["vote"],
@@ -371,6 +381,18 @@ export const COMMANDS = [
     id: "day.clearSwap", perceivable: false, title: "Cancel your day swap", group: "play", runs: "server", effect: "write", confirm: "none", caller: "seated", contexts: ["day", "vote"],
     description: "Only for the player DEALT the Moon-Thief: cancels the queued day swap.", tooltip: "Cancel your queued swap.", keywords: ["moon-thief", "undo", "swap"], params: none,
     available: ctx => (ctx.dayPower !== "swap" ? no("Only the player dealt the Moon-Thief can do this.", true) : ctx.swapQueued ? OK : no("You have no swap queued.")),
+  }),
+  define({
+    id: "day.queueEmber", perceivable: false, title: "Carry the ember", group: "play", runs: "server", effect: "write", confirm: "none", caller: "seated", contexts: ["day", "vote"],
+    description: "Only for the player DEALT an Ember-Carrier (or a copy of one): queues the seat that receives a Phoenix card the instant the vote ends (after any Moon-Thief swap, before counting): that Phoenix card and the seat's card swap places. Arguments: { \"seat\": <another player's seat> }. Call again to change it; day_clearEmber to cancel. Secret until the game ends.",
+    tooltip: "Secretly send the Phoenix card to a player as the vote ends.", keywords: ["ember", "pyre", "phoenix", "kindler"],
+    params: z.object({ seat: seatNo("The player who is to receive the Phoenix card") }).strict(), seatArgs: ["seat"],
+    available: ctx => (ctx.dayPower === "ember" ? OK : no("Only an Ember-Carrier can do this.", true)),
+  }),
+  define({
+    id: "day.clearEmber", perceivable: false, title: "Put the ember down", group: "play", runs: "server", effect: "write", confirm: "none", caller: "seated", contexts: ["day", "vote"],
+    description: "Only for an Ember-Carrier: cancels its queued ember.", tooltip: "Cancel your queued ember.", keywords: ["ember", "undo"], params: none,
+    available: ctx => (ctx.dayPower === "ember" ? OK : no("Only an Ember-Carrier can do this.", true)),
   }),
   define({
     id: "day.ready", perceivable: true, title: "Say you are ready to vote", group: "play", runs: "server", effect: "write", confirm: "none", caller: "seated", contexts: ["day"],

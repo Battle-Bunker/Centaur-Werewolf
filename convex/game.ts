@@ -2,7 +2,7 @@
 import type { MutationCtx } from "./_generated/server";
 import type { Doc, Id } from "./_generated/dataModel";
 import { internal } from "./_generated/api";
-import { advance, dawn, daySwap, resolveVote, secureRng, shapeOf, turnKey, type GameState, type LogEntry, type Outcome, type Plan, type Progress } from "../shared/engine";
+import { dawn, daySwap, emberSwap, heldRoles, isPhoenix, resolveVote, runTurn, secureRng, shapeOf, type GameState, type LogEntry, type NightSeat, type Outcome, type Plan, type Progress } from "../shared/engine";
 import type { RoleId } from "../shared/roles";
 import type { SeatEffect } from "./presence";
 
@@ -17,6 +17,9 @@ export interface Game {
   turn: number;
   plans: Plan[];
   progress: Progress[];
+  /** Copiers: a plan per role they may become, and the adopted script's progress. */
+  adoptPlans?: Record<RoleId, Plan>[];
+  adoptProgress?: (Progress | null)[];
   log: LogEntry[];
   dayEndsAt?: number;
   voteEndsAt?: number;
@@ -33,6 +36,8 @@ export interface Game {
   seatEffects?: SeatEffect[];
   /** The Moon-Thief's queued swap: two seats, and the seat that queued it. Secret until the game ends. */
   daySwap?: { a: number; b: number; by: number } | null;
+  /** Ember-Carriers' queued moves: the seat that is to receive the Phoenix card, by the carrier's seat. Secret. */
+  embers?: Record<string, number>;
   /** The seed of this game's seating and shuffle. Shown only after the game ends. */
   dealSeed?: number;
   /** The deal was fixed at a play-test table. */
@@ -41,20 +46,28 @@ export interface Game {
 }
 
 export const VOTE_SECONDS_DEFAULT = 20;
-const ACTORS = (game: Game, turnRole: RoleId) => game.state.dealt.flatMap((r, seat) => (turnKey(r) === turnRole ? [seat] : []));
-
-/** The actors of the turn that just began run whatever they have queued. */
-export function beginTurn(game: Game) {
+/** The game's night seats as the engine's runTurn wants them (shared objects, so progress is kept). */
+export function nightSeats(game: Game): NightSeat[] {
+  game.adoptPlans ??= game.seats.map(() => ({}));
+  game.adoptProgress ??= game.seats.map(() => null);
+  return game.seats.map((_, i) => ({ plan: game.plans[i], progress: game.progress[i], adoptPlans: game.adoptPlans![i], adoptProgress: game.adoptProgress![i] ?? undefined }));
+}
+/** Runs a turn's actors and writes back any adopted-script progress the engine created. */
+export function playTurn(game: Game, opts: { force?: boolean } = {}) {
   const role = game.turns[game.turn]?.role;
   if (!role) return;
-  for (const seat of ACTORS(game, role)) game.log.push(...advance(game.state, seat, game.plans[seat], game.progress[seat], game.turn, secureRng, { history: game.log }));
+  const seats = nightSeats(game);
+  game.log.push(...runTurn(game.state, role, seats, game.turn, secureRng, game.log, opts));
+  seats.forEach((s, i) => { game.adoptProgress![i] = s.adoptProgress ?? null; });
 }
+
+/** The actors of the turn that just began run whatever they have queued. */
+export function beginTurn(game: Game) { playTurn(game); }
 
 /** The turn's time is up: anything its actors left undecided is decided at random. Then the next turn, or dawn and the day. */
 export async function endTurn(ctx: MutationCtx, room: Doc<"rooms">) {
   const game = room.game as Game;
-  const role = game.turns[game.turn]?.role;
-  if (role) for (const seat of ACTORS(game, role)) game.log.push(...advance(game.state, seat, game.plans[seat], game.progress[seat], game.turn, secureRng, { force: true, history: game.log }));
+  playTurn(game, { force: true });
   game.turn++;
   if (game.turn < game.turns.length) {
     beginTurn(game);
@@ -92,7 +105,8 @@ export async function endVote(ctx: MutationCtx, room: Doc<"rooms">) {
   });
   const s = game.state, after = game.turns.length + 1;
   if (game.daySwap) game.log.push({ turn: after, seat: game.daySwap.by, role: s.dealt[game.daySwap.by], step: "day", via: "live", ev: daySwap(s, game.daySwap.a, game.daySwap.b) });
+  for (const [by, target] of Object.entries(game.embers ?? {})) game.log.push({ turn: after, seat: Number(by), role: s.dealt[Number(by)], step: "day", via: "live", ev: emberSwap(s, target) });
   for (const e of game.seatEffects ?? []) game.log.push({ turn: after, seat: e.by, role: s.dealt[e.by], step: "day", via: "live", ev: { kind: "cut", seat: e.seat, from: e.from, until: e.until } });
-  game.outcome = resolveVote(s.cards, game.votes, { forced: game.forcedVotes, bitten: s.bitten, imago: s.imago, marks: s.marks, held: s.inst, rules: s.rules });
+  game.outcome = resolveVote(heldRoles(s), game.votes, { forced: game.forcedVotes, bitten: s.bitten, marks: s.marks, held: s.inst, phoenix: s.inst.map(i => isPhoenix(s, i)), rules: s.rules });
   await ctx.db.patch(room._id, { phase: "ended", game });
 }

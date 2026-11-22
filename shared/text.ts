@@ -29,7 +29,7 @@ export function decisionLabel(d: Decision, step: StepDef, v: Names, viewer: numb
 const VIA: Record<LogEntry["via"], string> = { auto: "", queued: "queued", live: "chosen live", forced: "random, out of time" };
 export const viaLabel = (e: LogEntry) => VIA[e.via];
 
-const teamWords = (t: keyof typeof TEAM_NAME) => (t === "wild" ? "a Wildwood creature" : `on the ${TEAM_NAME[t]}`);
+const teamWords = (t: keyof typeof TEAM_NAME) => (t === "loner" ? "a loner (wins alone)" : t === "pyre" ? "of the Pyre" : `on the ${TEAM_NAME[t]}`);
 const seatWord = (i: number, v: Names, viewer: number) => (i === viewer ? "you" : seatName(i, v));
 
 /**
@@ -71,7 +71,9 @@ function sentence(ev: LogEvent, role: RoleId, step: string, who: string, self: n
       if (ev.unheld) return `Nobody held the ${roleName(role)}, so the game laid ${ev.label.toLowerCase()} on ${seatWord(ev.seat, v, viewer)} at random. It benefits nobody.`;
       return `${who} ${ev.public ? "laid" : "made"} ${ev.label.toLowerCase().replace(/^your /, mine ? "your " : "their ")} on ${seatWord(ev.seat, v, viewer)}${ev.public ? ". Everyone sees the egg at dawn, but not who laid it" : ""}.`;
     case "bitten": return mine ? `At dawn: you were bitten${ev.by === null ? "" : ` by ${seatWord(ev.by, v, viewer)}`}. You now win only with the Werewolf team. You are not a Werewolf, and you lose any creature rules.` : `${who} ${who === "You" ? "were" : "was"} bitten${ev.by === null ? "" : ` by ${seatWord(ev.by, v, viewer)}`} and joined the Werewolf team.`;
-    case "imago": return mine ? "At dawn: the card you were dealt was moved in the night, so you have become an Imago. You now win only by being eliminated, whatever card you hold." : `${who} became an Imago: the card they were dealt was moved in the night.`;
+    case "heir": return mine ? "At dawn: no player held a Phoenix, so the card you hold (an Heir's) has become a Phoenix. If you are eliminated, the Pyre wins." : `${who} held an Heir's card, which became a Phoenix at dawn (no player held one).`;
+    case "adopt": return `${who} became a copy of the ${roleName(ev.role)}${mine ? ": from now on you are that role (team, win, powers) and act in its turn" : ""}.`;
+    case "ember": return `${who} carried the ember: a Phoenix card went to ${seatWord(ev.seat, v, viewer)}${ev.from ? ` from ${ev.from.k === "c" ? `centre card ${ev.from.i + 1}` : seatWord(ev.from.i, v, viewer)}` : " (nothing moved)"} as the vote ended.`;
     case "void": return mine ? ev.why : `${who}: ${ev.why.replace(/\byou were\b/g, "they were").replace(/\byou\b/g, "they")}`;
     case "daySwap": return `${who} swapped the cards of ${seatWord(ev.a, v, viewer)} and ${seatWord(ev.b, v, viewer)} as the vote phase ended.`;
     case "skip": {

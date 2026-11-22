@@ -90,7 +90,10 @@ export const view = query({
           journal: game.log.filter(e => e.seat === seat).map(e => (ended ? e : redact(e))),
           vote: game.votes[seat],
           /** Told at dawn. */
-          status: { bitten: game.state.dawn && game.state.bitten.some(b => b.seat === seat), imago: game.state.imago.includes(seat) },
+          status: { bitten: game.state.dawn && game.state.bitten.some(b => b.seat === seat), heir: game.log.some(e => e.seat === seat && e.ev.kind === "heir"), became: game.state.adopted[String(seat)] ?? null },
+          adoptPlans: game.adoptPlans?.[seat] ?? {},
+          adoptProgress: game.adoptProgress?.[seat] ?? null,
+          ember: game.embers?.[String(seat)] ?? null,
           daySwap: game.daySwap?.by === seat ? { a: game.daySwap.a, b: game.daySwap.b } : null,
         } : null,
         /** Play-test tables: the deal, for the host only. */
@@ -105,7 +108,9 @@ export const view = query({
           outcome: game.outcome!,
           marks: game.state.marks,
           bitten: game.state.bitten,
-          imago: game.state.imago,
+          adopted: game.state.adopted,
+          phoenixInst: game.state.phoenixInst,
+          embers: game.embers ?? {},
           shown: game.state.shown,
           daySwap: game.daySwap ?? null,
           seatEffects: game.seatEffects ?? [],
