@@ -187,3 +187,51 @@ weaker invisible ones. Applied:
 - The Heir (dawn, before the talk) and the Hush (during the talk, revealed at the end) were judged consistent with the
   principle; several supporters may stack, each acting at night or through talk.
 - Scenario replay (rules reference section 7) exists to measure exactly this target: many days per fixed scenario.
+
+## 12. The evidence amendment
+
+**Direction (owner, binding).** The game never gives pure, easy confirmation. Everything it vouches for in public must be
+INDIRECT (a pair, a count, a relation), FAKEABLE (a defector card can emit the identical artefact, and the rules say
+so) or AMBIGUOUS. No engine-vouched public fact may be something a defector could not have produced. Private looks and
+the wolf side's distortions stay as they are.
+
+**1. Seals are signed by a role, never a player.** A sealed message reads "Sealed: the Signet" (or "the Notary"). Until
+the game ends no view carries its poster: in the app view `name`, `seat` and `via` (the assistant marker) are null and
+`mine` is false for everyone but the poster; over MCP `from` is "sealed: the Signet", `seat` is null, and only the
+poster's own view adds `yours: true`. Real and forged seals are the same row shape, the same text format and the same
+note; the post updates nothing else anyone can see. The results page names the poster and flags forgeries.
+
+**2. Hard public confirmation removed.** Audit of everything the engine publishes:
+
+| Artefact | Before | After |
+|---|---|---|
+| Herald's proclamation | one centre card's identity (two with 5+ centre) | "at least one of these two centre cards is a <role>", the role one of the two showed (chosen at random); the Herald learns no more than the table |
+| Pale Herald | a true single-card proclamation, labelled with its own card | the same pair proclamation, labelled the Herald's (the label used to give a Pale Herald or a copier away) |
+| Forger | forged one card's identity | forges "at least one of <any two centre cards> is a <any role in the deck>", the identical artefact |
+| Notary's report | "at night, <player>'s card was <role>", signed by the player dealt Notary | looks at two players; "at night, at least one of <A>'s and <B>'s cards was a <role>" (one of the two roles it saw, its choice), signed by the role only |
+| Signet | "sent by the player DEALT Signet" (named the poster's dealt card) | "Sealed: the Signet", no name |
+| Counterfeiter / False Witness | forged a one-card report | forge the two-player report (any two seats, any role) or Signet text |
+| Cuckoo's egg | public mark on a seat, layer unknown | unchanged: not a role fact, and an unheld Cuckoo's egg is laid at random, so it is already ambiguous |
+| Hush's cut | indistinguishable from a dropped connection | unchanged |
+
+Deck rules make the fakeability real: a deck with a proclamation (Herald, Pale Herald) must hold a Forger, a Forger
+needs a proclaimer, and both need "Proclamations at dawn" (with proclamations shown as made, the timing would tell a
+forgery from a real one); a deck with a Signet or Notary must hold a seal forger (Counterfeiter or False Witness). The
+forging card may lie in the centre: the table cannot know. No card was retired; ids are unchanged. The recommended deck
+no longer includes the Herald or the Notary (a Drifter and a Latecomer take their places).
+
+**3. Softer leaks swept.**
+- Night timetable: fixed at the deal, one turn per role in the deck whether or not anyone holds it, never ended early:
+  no leak (checked). The vote and the discussion end early only on everyone's ready/vote, which says nothing of cards.
+- Proclamation labels: every proclamation is now published "the Herald's turn", whoever made it (fixed, see above).
+- Presence: another seat's `lastSeenAt` is rounded down to the heartbeat interval (5 s), so it says online or not,
+  never the timing of a burst of activity (an assistant planning in its own turn). The viewer's own is exact.
+- Once-per-game powers: whether a seat has used its seal or cut is in no view but its own (checked); a cut looks like a
+  dropped connection.
+- Has-voted and ready indicators: public by design, never for whom; they reveal no card (checked, kept).
+- Error messages: the refusals for powers (already used, wrong card) are returned to the caller only (checked).
+- MCP per-phase fields: `proclamations` now carry `cards`, `atLeastOneIs`, `says` and a note that a Forger's looks the
+  same; chat entries for seals carry `sealed` (the note) instead of `verified`. The app view's proclamations keep a
+  `slot` field (the first of the two) only so older clients do not break; `slots` is the truth.
+- Tournament stage files are regenerated through the amended deck rules (sim/tournaments/make-stages.ts amends older
+  decks: a lone Herald gives way to a Farrier, a lone Notary to a Herder, a lone Signet to a Sentry).

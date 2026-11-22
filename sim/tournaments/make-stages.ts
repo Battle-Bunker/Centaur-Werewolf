@@ -10,7 +10,8 @@
  * For the strong/weak pairings of the test plan, add "agents": { "byTeam": { ... } } to a file or table (see arena.ts).
  */
 import { writeFileSync } from "node:fs";
-import { recommendedDeck } from "../../shared/roles";
+import { deckProblem } from "../../shared/engine";
+import { recommendedDeck, ROLE } from "../../shared/roles";
 import { LEGACY_RULES } from "../../shared/settings";
 
 const PER_ARM = Number(process.argv[2] ?? 4);
@@ -19,8 +20,25 @@ const timers = { dusk: 120, turn: 12, day: 420, vote: 20 };
 interface Arm { label: string; deck: string[]; center: number; players: string[]; rules?: Record<string, unknown> }
 const ARMS_RULES: [string, Record<string, unknown>][] = [["legacy", { ...LEGACY_RULES }], ["bp", { ...LEGACY_RULES, bloodPrice: true }], ["bp-census", {}]];
 
+/**
+ * The evidence amendment (docs/design/owner-directions.md section 12): a proclamation needs a Forger in the deck and a
+ * seal needs a seal forger. Decks written before it keep their shape: a lone Herald gives way to a Farrier (or, beside a
+ * Pale Herald, to the Forger the pair needs), a lone Notary to a Herder and a lone Signet to a Sentry.
+ */
+function amend(deck: string[], rules: Record<string, unknown>): string[] {
+  let d = [...deck];
+  const proclaims = d.some(id => id === "herald" || ROLE[id]?.twinOf === "herald");
+  if (proclaims && (!d.includes("forger") || rules.dawnProclamations === false)) d = d.map(id => (id === "herald" ? (d.includes("paleherald") && rules.dawnProclamations !== false ? "forger" : "farrier") : id));
+  if (!d.some(id => ROLE[id]?.chat === "forge")) d = d.map(id => (id === "notary" ? "herder" : id === "signet" ? "sentry" : id));
+  return d;
+}
 function tables(arms: Arm[], deckNo: (a: Arm) => number) {
-  return arms.flatMap(a => Array.from({ length: PER_ARM }, (_, n) => ({ ...a, label: `${a.label}#${n + 1}`, seed: 1000 * deckNo(a) + n + 1, ...(a.rules && Object.keys(a.rules).length ? {} : { rules: undefined }) })));
+  return arms.flatMap(a => {
+    const deck = amend(a.deck, a.rules ?? {});
+    const problem = deckProblem(deck, a.players.length, a.center, a.rules ?? {});
+    if (problem) throw new Error(`${a.label}: ${problem}`);
+    return Array.from({ length: PER_ARM }, (_, n) => ({ ...a, deck, label: `${a.label}#${n + 1}`, seed: 1000 * deckNo(a) + n + 1, ...(a.rules && Object.keys(a.rules).length ? {} : { rules: undefined }) }));
+  });
 }
 const write = (name: string, about: string, ts: unknown[]) => writeFileSync(new URL(`./${name}.json`, import.meta.url), JSON.stringify({ about, timers, tables: ts }, null, 1) + "\n");
 

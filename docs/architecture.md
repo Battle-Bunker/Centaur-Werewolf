@@ -29,8 +29,8 @@ seals, the vote phase, the Hush and presence). Any card may appear up to 12 time
 | 25 | Cuckoo | Loner | | Looks at a card; lays a public egg on a seat (random at dawn if unheld) | Holder wins if the egged seat falls and they do not |
 | 30 | Sage | Centaur | seer | Reads a player's card | Team |
 | 35 | Centaur (×4) | Centaur | | Looks at a centre card | Team |
-| 40 | Herald | Centaur | seer | Proclaims a centre card (two with 5+ centre), published at dawn | Team |
-| 42 | Forger | Werewolf | | Sees the Herald's proclamation; forges as many, published with it | Needs a Herald and dawn proclamations |
+| 40 | Herald | Centaur | seer | Proclaims "at least one of these two centre cards is a <role>", published at dawn | Needs a Forger |
+| 42 | Forger | Werewolf | | Sees the Herald's proclamation; forges one of the same form, published with it | Needs a Herald and dawn proclamations |
 | 45 | Rustler | Centaur | | Peeks at a player; may trade (conditional) | Team |
 | 50 | Farrier | Centaur | | Peeks at a centre card; may give it to self or clockwise | Team |
 | 55 | Spooker | Werewolf | | Rotates three cards, unseen | Team |
@@ -40,19 +40,19 @@ seals, the vote phase, the Hush and presence). Any card may appear up to 12 time
 | 93 | Eavesdropper | Werewolf | wolf pack | Pack + census; names a non-pack night role and copies its holder's night (or a ghost result) | Team |
 | 96 | Biter | Werewolf | wolf pack | Pack + census; looks at a true card, may bite (conditional): the seat joins the Werewolf team at dawn | Team |
 | – | Chiron | Centaur | | – | Vote counts twice |
-| – | Signet | Centaur | | – | One signed chat message |
+| – | Signet | Centaur | | – | One nameless message sealed "the Signet" |
 | 2 / 3 | Gleaner / Echo | Centaur (until copying) | | Copies a centre card / a player's card (`adopt`), then acts in the copied role's turn | As the copied role |
 | 5 | Phoenix | Pyre | phoenix | (Only under `phoenixKnowsKindlers`: learns the Kindlers) | The Pyre wins if its holder is eliminated |
 | 5 | Kindler, Lure, False Witness, Ember-Carrier, Heavy Hand, Heir | Pyre | kindler | Shared turn "The brood gathers": where the Phoenix was dealt, who the Kindlers are; Lure: a chosen card distortion | Pyre; per kind: Lure (card distortion), False Witness (forged seal), Ember-Carrier (blind night swap of two players' cards), Heavy Hand (double vote), Heir (becomes Phoenix if none is held at dawn) |
 | 14 | Will-o'-Wisp | Werewolf | | Distorts a card: a random wrong role to every look | Team |
 | 16 / 17 | Mistweaver / Fogbank | Werewolf | | Veils a player's centre looks: a chosen / random wrong role | Team |
-| 32 | Notary | Centaur | seer | Reads a player's card | Day: one sealed report composed from that look (`chat: "report"`) |
+| 32 | Notary | Centaur | seer | Reads two players' cards | Day: one nameless sealed report "at least one of A's and B's cards was a <role>" (`chat: "report"`) |
 | 44 | Poacher | Werewolf | | Must swap with a player, then looks at the new card | Team (its card's team goes to the victim) |
 | 46 / 47 / 48 | Cutpurse / Pickpocket / Drifter | Centaur | | Must swap (then look) / swap blind / swap with a centre card (then look) | Team |
 | 88 | Latecomer | Centaur | | Must swap blind with a player, late | Team |
 | (Sage) | Moonsage | Werewolf | | The Sage's action in the Sage's turn | Ally; looks show a Sage |
 | (Centaur) | Dun Centaur | Werewolf | wolf | The Centaur's action in its turn | A Werewolf outside the pack |
-| (Herald) | Pale Herald | Werewolf | | A true proclamation in the Herald's turn | Ally; looks show a Herald |
+| (Herald) | Pale Herald | Werewolf | | A Herald's proclamation in the Herald's turn | Ally; looks show a Herald |
 | (Rustler) | Dusk Rustler | Werewolf | wolf | The Rustler's action in its turn | A Werewolf outside the pack |
 | (Herder) | Stray Herder | Werewolf | | The Herder's count in its turn | Ally; looks show a Herder |
 | – | Counterfeiter | Werewolf | | – | Day: one forged seal (Signet text or Notary report) |
@@ -70,7 +70,7 @@ the lobby, shown in both views and described in the MCP rules text. A game copie
 | --- | --- | --- | --- |
 | `bloodPrice` | true | bool | Centaurs win only if more wolf cards than Centaur-team players are eliminated |
 | `census` | `"all"` | all / three / off | What the pack learns of the roles dealt to the centre |
-| `dawnProclamations` | true | bool | Proclamations published together at dawn in random order (required with a Forger) |
+| `dawnProclamations` | true | bool | Proclamations published together at dawn in random order (required with a Herald or Forger) |
 | `biteNamesBiter` | true | bool | Whether the bitten player is told the Biter's seat |
 | `eavesdropGhost` | true | bool | Unheld named role: a ghost result from the Eavesdropper's seat, or nothing |
 | `daySwap` | false | bool | The Moon-Thief's vote-lock swap (off: abilities should not rewrite the result after the talk) |
@@ -107,7 +107,7 @@ A role's night action is a script of **steps**; a step may ask for targets (`pic
 | `swap`, `rotate` | Cards move, carrying their tokens (glamour) with them |
 | `learnSeats` | Which other seats were dealt a tagged role (all, or a random few) |
 | `learnMoved` | Whether nearby cards moved tonight |
-| `announce` | A public proclamation (at dawn under `dawnProclamations`) |
+| `announce` | A public proclamation "at least one of these two centre cards is a <role>" (at dawn under `dawnProclamations`) |
 | `count` | How many tagged cards lie in the centre (truth) |
 | `census` | The roles dealt to the centre, per the `census` rule |
 | `distort` | target card (a token that travels with it) or viewer (their centre looks), value chosen or random: looks show a wrong role tonight |
