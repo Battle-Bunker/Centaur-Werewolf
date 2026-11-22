@@ -36,7 +36,7 @@ export function loadGames(dirs: string[]): Game[] {
       seats: r.seats, centre: r.centre ?? [], dealtCentre: r.dealtCentre ?? [], nightLog: r.nightLog ?? [], votes: r.votes ?? [], daySwap: r.daySwap ?? null,
       proclamations: v.proclamations ?? [], marks: v.marks ?? [], chat: v.chat ?? [], timeline,
       agents: existsSync(`${dir}/agents.json`) ? read(`${dir}/agents.json`) : [], run: existsSync(`${dir}/run.json`) ? read(`${dir}/run.json`) : {}, table,
-      fingerprint: timeline.fingerprint ?? null, judges,
+      fingerprint: r.scenario?.fingerprint ?? timeline.fingerprint ?? null, judges,
     });
   }
   return games;

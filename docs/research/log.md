@@ -35,3 +35,16 @@
 - Main output of the fine pass: when a scenario sweeps, say WHY (what made one story unanswerable) and propose the smallest
   card or rule change that would have left a credible counter-story.
 - Fine pass must include, per roster, at least one scenario chosen because it is predicted talk-live.
+
+### Handover from the build session (recorded)
+- shared/ and convex/ are now mine (pre-registered prediction + log entry per card change; npm test, tsc -p convex, smoke
+  green; rules reference regenerated; src/ off limits; breaking changes listed under "for the UI").
+- Reported landed upstream (to verify after merging at the next break): CR-1, CR-2 (cutDuringVote off), CR-3 (Ember-Carrier
+  a blind night swap), CR-4 (Moon-Thief day swap behind `daySwap`, off), CR-5 (seeded replay; fingerprint incl.
+  proclamation order).
+- **Decision on X2 (owner's Ember-Carrier prediction).** The after-talk ember was removed on calibration grounds before it
+  could be tested. I will not reintroduce it: the Moon-Thief with `daySwap` ON is the same structure (a swap chosen after
+  the discussion has shown where the votes go) and is still a rule setting, so it serves as the empirical degeneracy
+  control X1' (one fixed 5-player scenario, 3 replays). If X1' sweeps with low path dependence, the owner's prediction
+  about the ember is confirmed by its structural twin; if not, my structural argument is wrong and the ember question
+  reopens.

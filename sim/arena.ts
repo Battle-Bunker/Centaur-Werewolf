@@ -53,6 +53,7 @@ interface AgentSpec { model?: string; effort?: string }
 interface AgentsConfig extends AgentSpec { seats?: Record<string, AgentSpec>; byTeam?: Record<string, AgentSpec> }
 /** redeal "wolfDealt": the runner starts each game itself and, before launching any agent, abandons and reopens the table until at least one wolf card was dealt to a player. rules/seed/playtest: see sim/lib.ts TableConfig. */
 type Redeal = "wolfDealt" | { dealtAnyOf: string[] };
+/** seed: the night seed (every random draw of the night and the count). */
 interface Scenario { cards: string[]; seed?: number; plans: Record<string, { step: string; plan: unknown }[]> }
 interface TableSpec { label: string; deck: string[]; center: number; players: string[]; timers?: TableConfig["timers"]; agents?: AgentsConfig; redeal?: Redeal; rules?: TableConfig["rules"]; seed?: number; playtest?: boolean; scenario?: Scenario; replays?: number }
 /** prompt: another player-prompt file in sim/ (default arena-player.md). rules: rule variants for every table (a table's own rules override them). */
@@ -158,7 +159,7 @@ function launch(dir: string, sr: SeatRun, key: string, prompt: string, deadline:
   return new Promise(res => child.on("exit", code => { clearInterval(timer); live.delete(child); out.end(); err.end(); res(code); }));
 }
 
-interface View { version: string; phase: string; you: { seat: number | null; dealt?: { id: string; team: string } }; players: { seat: number; name: string }[]; chat: { from: string; text: string; phase: string }[]; yourNightSteps?: { step: string; status: string }[]; night?: { now: { role: string } | null }; day?: { ready: string[] } | null; vote?: { haveVoted: string[] } | null; result?: { nightLog: string[]; seats: { dealt: string }[]; dealtCentre: string[] } | null }
+interface View { version: string; phase: string; you: { seat: number | null; dealt?: { id: string; team: string } }; players: { seat: number; name: string }[]; chat: { from: string; text: string; phase: string }[]; yourNightSteps?: { step: string; status: string }[]; night?: { now: { role: string } | null }; day?: { ready: string[] } | null; vote?: { haveVoted: string[] } | null; result?: { nightLog: string[]; seats: { dealt: string }[]; dealtCentre: string[]; scenario?: { fingerprint: string } } | null }
 
 async function playTable(t: TableSpec) {
   const label = t.label, dir = `${OUT}/${label.replace(/[^\w#-]/g, "_")}`;
@@ -275,7 +276,7 @@ function matchesRedeal(r: Redeal, id: string): boolean {
 /** Fixed scenario: seat the players in the listed order and fix the exact deal (and seed) on the play-test table. */
 async function fixScenario(table: Table, sc: Scenario) {
   if (sc.cards.length !== table.config.deck.length) throw new Error(`scenario has ${sc.cards.length} cards, deck has ${table.config.deck.length}`);
-  await run("setup.fixDeal", table.seats[0].token, table.code, { seed: sc.seed ?? 1, seats: table.seats.map(s => s.id), cards: sc.cards });
+  await run("setup.fixDeal", table.seats[0].token, table.code, { seats: table.seats.map(s => s.id), cards: sc.cards, nightSeed: sc.seed ?? 1 });
 }
 /** Fixed scenario: queue every seat's night plan with that seat's own key during Dusk, and check each is queued. */
 async function queuePlans(label: string, table: Table, sc: Scenario) {
@@ -290,6 +291,7 @@ async function queuePlans(label: string, table: Table, sc: Scenario) {
 /** What identifies a scenario's night: the deal and the full night log (random draws included). */
 function fingerprint(v: View): string {
   const r = v.result!;
+  if (r.scenario?.fingerprint) return r.scenario.fingerprint; // the server's canonical scenario fingerprint (seeded replay hook)
   return createHash("sha256").update(JSON.stringify([r.seats.map(s => s.dealt), r.dealtCentre, r.nightLog.filter(l => !l.startsWith("[Day]"))])).digest("hex").slice(0, 16);
 }
 

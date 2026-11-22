@@ -142,3 +142,23 @@ Thesis: the B5 twin duel and the D6 three-way at 8 players, with the Echo for a 
   predicted-degenerate control that checks my judgment and the I4 instrument.
 - Not spending games on: Moon-Thief, Hush-in-vote, Notary without a forger, Wisp/Fogbank, Poacher (predicted bad for
   stated reasons, and the Moon-Thief and the Ember-Carrier are being changed by the build session anyway).
+
+## Addendum 2026-11-22 (after the build session's calibration commit 3dd1da1; written before merging it here)
+
+Checked against the merged rules reference (origin/develop 5f62f40). Changes that touch batch 1:
+- **Heavy Hand** now counts double whoever it votes for (not only for a Phoenix holder). F7: my X5 worry (two
+  weighted votes on the Phoenix reach the threshold alone) still holds at 5-6 players, but the vote can now also be
+  wasted; at 7 the card becomes a Chiron for the Pyre. F7 prediction unchanged (C35/W35/P30) but noise lower (1.2).
+  The two F7 coarse games and the G8 games were played on the OLD Heavy Hand / old code (started before the merge).
+- **Ember-Carrier** is now a mandatory blind NIGHT swap of two other players' cards in the brood's turn (my CR-3, in a
+  slightly different form). X2 (the after-talk ember) no longer exists, so it cannot be the degeneracy control.
+  **Replacement control X1':** the Moon-Thief with the `daySwap` rule ON (`thiefMinPlayers` 5), one 5-player fixed
+  scenario where the Thief is held, the plain Werewolf is read by the Sage and nothing moved: predicted wolves 3-0,
+  judges' path < 2, I4 flags it degenerate. Falsified if the Centaurs win a replay by talk (e.g. they identify the Thief
+  and vote it, or bluff their target).
+- **New Ember-Carrier prediction (E1):** as a night card it is a Pyre Spooker with knowledge: it knows the dealt Phoenix
+  seat, so it can carry the Phoenix to a seat that does not know it now wants to burn, and claim anything about its own
+  swap. Fine (credibility power); the Sentry can see that the two seats moved.
+- **Moon-Thief** day swap off by default: without it the Moon-Thief is a plain pack Werewolf (W as a distinct card).
+- **cutDuringVote** is still on by default: CR-2 did not land; I will change it (prediction in log.md).
+- A5, B5, C6, D6, E7 and G8 cards are otherwise unchanged; their predictions stand.
