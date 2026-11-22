@@ -110,3 +110,94 @@ Deck: werewolf x2, spooker, pickpocket, latecomer, cutpurse, drifter, centaur, s
 - Fine: the 3 best rosters, 2-3 constructed scenarios each (at least one predicted talk-live, one predicted sweep as a
   control), 5 replays each.
 - Not testing: unpaired Herald/Notary/Herder (violate the evidence principle), Moon-Thief day swap (after-talk).
+
+## Addendum (11:50, after merging the evidence amendment dd55c9d/5d14fc1; still before any research game)
+
+- **SE6 changes meaning.** The Notary now looks at TWO players and seals "at least one of A's and B's cards was a
+  <role>" (one of the two roles it saw, its choice), signed "the Notary" with no name; the Counterfeiter forges the
+  same pair report. A pair report on a Werewolf points at two seats, one possibly innocent: it is now framing material
+  for both sides. Revised SE6 prediction: Centaurs 45% (down from 50%); the crux becomes "which of the pair", decided by
+  the two named players' own claims; talk-live more often (path 2.5). The uncontested-real-report sweep (5-0) I
+  predicted for the old one-card report should now be a split (3-2) when the pair contains a Centaur with no
+  corroborator. Falsified if the pair report is still decisive 5-0 whenever it is real.
+- Other rosters contain no Herald, Notary or Signet: predictions unchanged.
+
+## Fine pass 1: PY6 fixed scenarios (written 12:25, after the coarse pass, before these games)
+
+Roster PY6 (werewolf x2, phoenix, lure, sage, moonsage, rustler, centaur, pickpocket; 3 centre). Each scenario: deal,
+night plans and night seed fixed (sim/tournaments/players-6/fine1.json, built by sim/research/p6-fine1.mjs; nights
+checked with scenario-check.ts).
+
+- **PY6-S1-fakesage** (replay of coarse PY6#1; 5 replays). Both Sage cards are in the centre; the Lure dressed the
+  Phoenix as a Werewolf but nobody looks at it; a lone wolf knows (census) that every Sage claim is false; the Centaur
+  saw "Sage" in centre card 1. Crux: will the Lure fake a Sage read on the Phoenix (as in coarse), and can the lone wolf
+  expose it without exposing itself? Prediction: talk-live, **Pyre 3, wolves 1, Centaurs 1**; judges path >= 2.5.
+  Falsified if 5-0 for any team.
+- **PY6-S2-twowolfreads** (5 replays). Sage reads the dressed Phoenix: "Werewolf"; Rustler peeks the real wolf:
+  "Werewolf"; the Centaur saw a Werewolf in the centre, so only one held wolf exists: one read is a dress. The table
+  must decide which accused is the Phoenix; the wolf knows the other accused is not pack and can claim to be the
+  dressed Phoenix itself. Prediction: the most talk-live scenario of the night: **Centaurs 2, Pyre 2, wolves 1**,
+  path >= 3, ToM >= 2.5. Falsified if one team wins 5-0 (then the asymmetry between the accused's natural behaviours
+  decides it).
+- **PY6-S3-control** (3 replays, predicted SWEEP). Sage and Rustler both see the only held wolf; Phoenix in the
+  centre so the Lure is a Tanner (Kindler fallback). Prediction: **Centaurs 3-0, path < 2, I4 degenerate (talk-dead)**,
+  c >= 0.8. Falsified if the wolf or the Lure wins a replay.
+
+## Coarse pass 2 (written 12:35, after fine pass 1, before these games)
+
+Lessons applied: parity bloc (keep wolf-team cards <= 3 of 9, or use a third team); hub: full census makes a wolf's
+claim choice a tell, and pack members' independent "safe" claims collide.
+
+### PE6 "Ember Pyre" (Pyre with an unseen mover)
+Deck: werewolf x2, phoenix, embercarrier, sage, rustler, centaur, sentry, pickpocket (3 centre). Wolf-team 2 of 9: no
+parity deals. The Ember-Carrier knows the dealt Phoenix seat and, at wake 5 (before every look), must swap two other
+players' cards blind: it can carry the Phoenix to an unknowing player, so later looks show the Phoenix truly where it
+went, and the dealt Phoenix holder no longer is one but does not know. Only the Sentry sees that cards moved.
+- Expected play: the Ember carries the Phoenix to a seat it expects to be suspected (or away from a seat it expects to
+  be read). The original Phoenix player, unaware, pleads for votes (and is now holding a Centaur's card). The Ember
+  claims a Centaur role. A Sage that reads the new Phoenix holder reports "Phoenix", which the table then avoids.
+- Prediction: Centaurs 45%, wolves 30%, Pyre 25%; path 2.5; ToM 2.3; noise 1.5 (the unseen swap is the risk: if
+  nobody can reason about it, judges will call the burnings "unseen-night-movement"); c median 0.8.
+- Falsified if noise >= 2 in most games, or the Pyre wins 0 of 3 because the carried Phoenix is always read.
+
+### TW6c "Twin Sage, covered pack" (twins, with the hub's new rule options)
+Deck: werewolf x2, moonsage, sage, rustler, centaur, sentry, pickpocket, drifter (3 centre); rules census "allButOne",
+packCovers on. Wolf-team 3 of 9 (parity in about a quarter of deals).
+- Expected: packCovers ends wolf-wolf claim collisions; allButOne means the census no longer proves a Sage claim honest
+  ("a wolf would never claim a role it knows is held" fails when it may not know). The Sage/Moonsage duel is the crux.
+- Prediction: non-parity deals Centaurs 3 of 4-5, wolves 1-2; parity deals wolves. Path 2.3, ToM 2.3, noise 1.0,
+  c median 0.8.
+- Falsified if the wolves still collide on claims (packCovers ignored) or the duel is always settled by corroboration.
+
+## Fine pass 2 and coarse pass 3 (written 12:45, after coarse pass 2, before these games)
+
+- **PY6-S4-sagehits** (5 replays). The Sage reads the only held wolf; the Lure dressed the Phoenix but nobody looks at
+  it; Moonsage, a Werewolf and the Pickpocket in the centre; the lone wolf scented the Lure ("of the Pyre"), so it knows
+  a Pyre member's seat. Crux: will the Lure fake a Sage read on the Phoenix (as in S1) to make a two-Sage duel with two
+  "Werewolf" accusations, and can the wolf use what it knows (Dov is Pyre) without exposing itself? Prediction:
+  **Centaurs 3, Pyre 2, wolves 0** (the real Sage was first in S1-style tables only when it existed: here it does, and
+  the Rustler confirms the Centaur), path 2.5. Falsified if the Centaurs win 5-0 with path < 2 (then the real Sage's
+  read dominates whenever it exists, and the Pyre needs the dress to be READ, as in S2).
+- **GL6 "Glamour" coarse** (2 games): glamour, werewolf, sage, rustler, centaur, sentry, pickpocket, drifter, cutpurse;
+  3 centre; wolf-team 2 of 9 (no parity). Longer dusk (90 s, turn 10 s) so the agents queue their night (coarse PY6/PE6
+  lost their key Pyre moves to forced random moves). The Glamour can dress itself as a Centaur role (self-clear against
+  a read) or dress a Centaur as a Werewolf (frame). Prediction: wolves 1 of 2, path 2.3, deception 2.5; the Centaurs'
+  many looks (Sage, Rustler, Cutpurse, Drifter) are the risk to the wolves.
+
+## Fine pass 3 (written 13:00, after fine pass 2, before these games)
+
+Results so far for PY6 (opening statements OFF): S1 Pyre 4 / wolves 1; S2 Pyre 3 / Centaurs 2; S3 Centaurs 3-0
+(control); S4 Centaurs 4 / Pyre 1. Same deals and nights as fine1 (night logs identical; fingerprints differ only
+because the rules are part of the fingerprint).
+
+- **PY6-S1-open, PY6-S2-open** (opening statements ON, 5 replays each). Everyone's first claim is sealed and revealed
+  together, so no one can wait to see others' claims before choosing a lie, and no first-message timing tell exists.
+  Prediction: S1 (the Lure's fake Sage read is not contested by any real Sage, and the lone wolf can no longer hold back
+  its claim to the end, which was how it won S1#3) **Pyre 4-5, wolves 0-1**; S2 **Pyre 3, Centaurs 2** unchanged in
+  distribution, because the Phoenix's reverse bluff happens after the openings. Judges' path unchanged (about 3);
+  first-speaker asymmetry gone by construction. Falsified if S1 or S2 shifts by 3 or more toward the Centaurs.
+- **PY6-S2-nodenial** (opening statements ON, `burningDeniesWolves` OFF, 5 replays): a calibration test of the Pyre
+  requested by the hub. With the denial off, a burning no longer costs the wolves anything (no Werewolf eliminated means
+  the wolves also win), so the wolf stops defending the dressed Phoenix and joins the push to burn it. Prediction: the
+  Pyre gets STRONGER, **Pyre (with wolves co-winning) 4-5 of 5, Centaurs 0-1**, c higher (0.8+). Falsified if the
+  Centaurs win 3 or more (the hub's alternative theory: without denial the wolves stop kingmaking for the Pyre).

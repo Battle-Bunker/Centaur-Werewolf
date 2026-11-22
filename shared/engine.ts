@@ -152,7 +152,7 @@ export type LogEvent =
   /** "At least one of `slots` is `roles[0]`" (one role, two cards). */
   | { kind: "announce"; slots: Slot[]; roles: RoleId[]; atDawn: boolean }
   | { kind: "count"; label: string; n: number }
-  | { kind: "census"; roles: RoleId[]; of: number }
+  | { kind: "census"; roles: RoleId[]; of: number; covers?: { seat: number; role: RoleId | null }[] }
   /** A distortion cast: on a card (`slot`) or on a viewer (`viewer`); `role` null means a random wrong role per look. */
   | { kind: "distort"; slot?: Slot; viewer?: number; role: RoleId | null }
   /** Proclamation k named `slots[2k]` and `slots[2k+1]`, and said at least one of them is `roles[k]`. */
@@ -408,13 +408,20 @@ function applyEffect(e: Effect, c: Ctx): Applied {
       if (state.rules.census === "off") return null;
       let roles = [...state.dealtCenter];
       if (state.rules.census === "three") roles = shuffle(roles, c.rng).slice(0, 3);
-      return { ev: { kind: "census", roles: roles.sort(), of: state.dealtCenter.length } };
+      if (state.rules.census === "allButOne") roles = shuffle(roles, c.rng).slice(0, Math.max(0, roles.length - 1));
+      // Pack covers: each pack seat (by DEALT card) gets a different Centaur-team role from the centre to claim, the same
+      // assignment for every pack member (it depends only on the deal), so their claims cannot collide with each other.
+      const covers = state.rules.packCovers ? packCovers(state) : undefined;
+      return { ev: { kind: "census", roles: roles.sort(), of: state.dealtCenter.length, ...(covers ? { covers } : {}) } };
     }
     case "distort": {
       const slot = picks[0];
       // A random card distortion picks its wrong role once, when cast, so every look at that card agrees; a random
       // viewer distortion draws afresh at each look.
       if (e.target === "card") {
+        // Rule lureSparesPhoenix: a Lure's dress cannot land on the card DEALT as a Phoenix (wherever it lies now).
+        if (state.rules.lureSparesPhoenix && c.stepId === "lure" && ROLE[state.instRole[instAt(state, slot)]]?.tags.includes("phoenix"))
+          return { ev: { kind: "void", why: "Dress a card for the pyre: did not happen, because at this table the Lure may not dress the card dealt as the Phoenix" } };
         const role = e.value === "chosen" ? c.named! : wrongRole(state, cardAt(state, slot), c.rng);
         state.tokens[slotKey(slot)] = { ...state.tokens[slotKey(slot)], distort: role };
         return { ev: { kind: "distort", slot, role: e.value === "chosen" ? role : null }, hidden: e.value === "random" ? { role } : undefined };
@@ -696,7 +703,12 @@ export function resolveVote(cards: RoleId[], votes: (number | null)[], input: Re
   const seatsOf = (team: Team) => teams.flatMap((t, i) => (t === team ? [i] : []));
   const isWolf = (i: number) => ROLE[cards[i]].tags.includes("wolf");
   const wolvesHeld = cards.some((_, i) => isWolf(i));
-  const W = deaths.filter(isWolf).length, C = deaths.filter(i => teams[i] === "centaur").length;
+  // Condemned Blood Price (rule bloodPriceCondemned): a Centaur-team death counts in C only if someone NOT on the
+  // Werewolf team voted for them, so a wolf bloc cannot buy a Blood Price tie with its own votes alone.
+  const condemned = (i: number) => votes.some((v, j) => v === i && teams[j] !== "werewolf");
+  const uncondemned = rules.bloodPriceCondemned ? deaths.filter(i => teams[i] === "centaur" && !condemned(i)) : [];
+  const W = deaths.filter(isWolf).length, C = deaths.filter(i => teams[i] === "centaur" && !uncondemned.includes(i)).length;
+  if (uncondemned.length) notes.push(`Only Werewolf-team players voted for ${uncondemned.length === 1 ? "one eliminated Centaur" : `${uncondemned.length} eliminated Centaurs`}, so under "Blood Price counts the condemned" ${uncondemned.length === 1 ? "that death does" : "those deaths do"} not count against the Centaurs.`);
   const winners = new Set<number>();
   const why: string[] = Array(n).fill("");
 
@@ -800,4 +812,17 @@ export function deckProblem(deck: RoleId[], players: number, center: number, rul
   if (deck.some(id => ROLE[id].chat === "signed" || ROLE[id].chat === "report") && !deck.some(id => ROLE[id].chat === "forge")) return "A Signet or a Notary needs a card that forges seals (Counterfeiter or False Witness) in the deck: every seal must be one a defector could have made.";
   if (r.daySwap && deck.some(id => ROLE[id].dayPower === "swap") && players < r.thiefMinPlayers) return `The Moon-Thief needs ${r.thiefMinPlayers} or more players at this table (the "Moon-Thief table size" rule).`;
   return null;
+}
+
+/** The pack-covers assignment (rule packCovers): pack seats in seat order, each given a distinct Centaur-team role dealt to the centre, or null when there are fewer such roles than pack seats. Deterministic in the deal. */
+export function packCovers(state: GameState): { seat: number; role: RoleId | null }[] {
+  const pack = state.dealt.flatMap((r, i) => (ROLE[r].tags.includes("pack") ? [i] : []));
+  const pool = [...new Set(state.dealtCenter.filter(r => ROLE[r].team === "centaur"))].sort();
+  const offset = pool.length ? pack.reduce((a, i) => a + i, 0) % pool.length : 0;
+  return pack.map((seat, k) => ({ seat, role: k < pool.length ? pool[(offset + k) % pool.length] : null }));
+}
+
+/** The roles a copier may become, as shown to it before it copies: every distinct role of the DECK except its own, in deck order. Never derived from the deal (that would leak the centre). */
+export function copierOptions(deck: RoleId[], self: RoleId): RoleId[] {
+  return [...new Set(deck)].filter(r => r !== self);
 }

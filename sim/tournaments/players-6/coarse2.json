@@ -1,0 +1,166 @@
+{
+ "about": "players-6 coarse pass 2",
+ "timers": {
+  "dusk": 60,
+  "turn": 8,
+  "day": 240,
+  "vote": 60
+ },
+ "agents": {
+  "model": "opus",
+  "effort": "medium"
+ },
+ "redeal": "wolfDealt",
+ "tables": [
+  {
+   "label": "PE6#1",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "embercarrier",
+    "sage",
+    "rustler",
+    "centaur",
+    "sentry",
+    "pickpocket"
+   ]
+  },
+  {
+   "label": "PE6#2",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "embercarrier",
+    "sage",
+    "rustler",
+    "centaur",
+    "sentry",
+    "pickpocket"
+   ]
+  },
+  {
+   "label": "PE6#3",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "phoenix",
+    "embercarrier",
+    "sage",
+    "rustler",
+    "centaur",
+    "sentry",
+    "pickpocket"
+   ]
+  },
+  {
+   "label": "TW6c#1",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "moonsage",
+    "sage",
+    "rustler",
+    "centaur",
+    "sentry",
+    "pickpocket",
+    "drifter"
+   ],
+   "rules": {
+    "census": "allButOne",
+    "packCovers": true
+   }
+  },
+  {
+   "label": "TW6c#2",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "moonsage",
+    "sage",
+    "rustler",
+    "centaur",
+    "sentry",
+    "pickpocket",
+    "drifter"
+   ],
+   "rules": {
+    "census": "allButOne",
+    "packCovers": true
+   }
+  },
+  {
+   "label": "TW6c#3",
+   "center": 3,
+   "players": [
+    "Alder",
+    "Bryn",
+    "Cass",
+    "Dov",
+    "Esme",
+    "Fenn"
+   ],
+   "deck": [
+    "werewolf",
+    "werewolf",
+    "moonsage",
+    "sage",
+    "rustler",
+    "centaur",
+    "sentry",
+    "pickpocket",
+    "drifter"
+   ],
+   "rules": {
+    "census": "allButOne",
+    "packCovers": true
+   }
+  }
+ ]
+}

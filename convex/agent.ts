@@ -8,7 +8,7 @@
 import { v } from "convex/values";
 import { internalQuery, type QueryCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
-import { actingRole, freshProgress, isAuto, isPhoenix, legalTargets, publicMarks, seededRng, shapeOf, shuffle, turnKey, visibleShown, type Progress, type StepPlan } from "../shared/engine";
+import { actingRole, copierOptions, freshProgress, isAuto, isPhoenix, legalTargets, publicMarks, seededRng, shapeOf, shuffle, turnKey, visibleShown, type Progress, type StepPlan } from "../shared/engine";
 import { aRole, condSource, legalRoles, pickCount, ROLE, ROLES, TEAM_NAME, type RoleId, type Slot } from "../shared/roles";
 import { describeRules, rulesOf } from "../shared/settings";
 import { cardOf, describe, revealHidden, seatName, voteLine, type Names } from "../shared/text";
@@ -220,7 +220,8 @@ export const view = internalQuery({
             (out.yourNightSteps as unknown[]).push(...render(ROLE[became], game.adoptProgress?.[seat] ?? freshProgress(), plans[became] ?? {}, became));
             out.copier = { became: ROLE[became].name, note: `You are now a copy of the ${ROLE[became].name}. Its steps (marked "as") run in its own turn.` };
           } else {
-            const mayBecome = [...new Set(role.steps.some(st => st.pick?.pools.includes("center")) ? game.state.dealtCenter : shape.deck!)].filter(r => r !== role.id);
+            // Every role in the DECK, never the actual deal: listing the dealt centre would tell a Gleaner what lies there.
+            const mayBecome = copierOptions(shape.deck!, role.id);
             out.copier = {
               became: null,
               note: "You may queue, for each role you might become, what that role will do: night_planStep with \"as\": <role id>. Undecided steps of the role you become are asked live in its turn, else random.",
@@ -255,7 +256,13 @@ export const view = internalQuery({
     const dayPower = mine && !game.powerUsed?.[seat] ? ROLE[actingOf(seat)].dayPower : undefined;
     const swapInfo = mine && ROLE[actingOf(seat)].dayPower === "swap" && rules.daySwap ? (game.daySwap?.by === seat ? { a: who(game.daySwap.a), b: who(game.daySwap.b), note: "Made the instant the vote phase ends. Change it with day_queueSwap, cancel with day_clearSwap." } : { none: "You may queue a swap with day_queueSwap { a, b } (two other players' seats)." }) : null;
     if (room.phase === "day") {
+      const op = game.opening && !game.opening.done ? game.opening : null;
       out.day = {
+        opening: op ? {
+          ...timer(op.until),
+          yourStatement: seat >= 0 ? op.statements[seat]?.text ?? null : null,
+          note: seat >= 0 && op.statements[seat] ? "Your opening statement is in. All statements are revealed together, in seat order, once every player has posted or the window ends; then free chat opens. Nobody can see who has posted." : "OPENING STATEMENTS: post exactly ONE message now with chat_send (your claim). It is held unseen and revealed together with everyone's, in seat order, when all are in or the window ends. Free chat, day_ready and sealed messages open after the reveal.",
+        } : null,
         discussionEnds: timer(game.dayEndsAt),
         ready: game.seats.flatMap((_, i) => (game.ready?.[i] ? [who(i)] : [])),
         notReady: game.seats.flatMap((_, i) => (!game.ready?.[i] ? [who(i)] : [])),
@@ -303,6 +310,7 @@ export const view = internalQuery({
         marks: Object.entries(s.marks).map(([inst, i]) => ({ card: ROLE[s.instRole[Number(inst)]]?.name ?? inst, seat: i, on: who(i) })),
         daySwap: game.daySwap ? { by: who(game.daySwap.by), swapped: [who(game.daySwap.a), who(game.daySwap.b)] } : null,
         dealSeed: game.dealSeed ?? null,
+        heldInstances: { seats: s.inst, centre: s.cinst, note: "The physical card each seat (and centre slot) holds at the end: instance i < players was dealt to seat i, instance players + n to centre card n + 1." },
         scenario: { fingerprint: game.fingerprint ?? null, dealSeed: game.dealSeed ?? null, nightSeed: game.nightSeed ?? null, dealt: s.dealt.map(r => ROLE[r].name), dealtCentre: s.dealtCenter.map(r => ROLE[r].name), note: "Runs with the same fingerprint had the same deal, night seed and night (every action and result): only the day differed." },
         nightLog: game.log.map(e => `[${e.turn >= game.turns.length ? (e.step === "day" ? "Day" : "Dawn") : game.turns[e.turn]?.role ? ROLE[game.turns[e.turn].role!].name : "Dusk"}] ${describe(e, names, -1)}${revealHidden(e, names)}${e.via === "forced" ? " (random: out of time)" : ""}`),
       };
@@ -317,7 +325,7 @@ One night, one day of discussion, one vote.
 - Each player is dealt one card face down; extra cards lie face down in the centre. You know only your own card.
 - NIGHT. It begins with Dusk (read your card), then every role in the deck that acts at night gets one turn, in a fixed order, each exactly the same length, whether a player holds that card or it lies in the centre. Everyone sees which turn it is. You act on the turn of the card you were DEALT. A shadow twin acts in its original's turn (one public turn for both). A deck may hold several copies of a card; all their holders act in the same turn.
 - DAWN. Proclamations (and, with a Cuckoo, the egg) are published; a bitten player, or an Heir whose card became a Phoenix, is told privately.
-- DISCUSSION. Everyone talks in chat. Voting is not open yet. It ends when its timer runs out, when the host ends it, or as soon as every seated human is ready (day_ready { "ready": true }); everyone sees who is ready.
+- DISCUSSION. With the "Opening statements" rule, it opens with one held message from each player, all revealed together in seat order; then free chat. Everyone talks in chat. Voting is not open yet. It ends when its timer runs out, when the host ends it, or as soon as every seated human is ready (day_ready { "ready": true }); everyone sees who is ready.
 - VOTE. A separate timed phase (20 s by default). Vote for one other player with day_vote { "seat": n }; you may change it until the phase ends. It ends when its timer runs out or once every seated human has voted. A player who has not voted then gets a uniformly random vote (anyone but themselves), marked "did not vote in time: voted at random" in the results. Chat is closed during the vote unless the table rule opens it.
 - COUNT. All players tied on the most votes are eliminated (every one of them), if that is at least the table's "Votes to eliminate" (2 by default); otherwise nobody is. A Moon-Thief's queued swap happens the instant the vote phase ends, before anything is counted.
 

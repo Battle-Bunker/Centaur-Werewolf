@@ -34,7 +34,10 @@ withhold or tell the truth, as your side requires.
    live. Then call `room_view` again and check that every step says queued, done or automatic. Then `room_wait`
    until the phase is `day`. There is no chat at night.
 4. **Discussion** (phase `day`). Call `room_view`: `learned` is what you did and saw at night, `proclamations` and
-   `marks` are public. Then talk with `chat_send`: make claims, ask questions, answer others, challenge what does not
+   `marks` are public. **If `day.opening` is not null, this table opens with opening statements:** post exactly ONE
+   message with `chat_send` now (your opening claim); it stays hidden and is revealed together with everyone's, in
+   seat order, once all are in or `day.opening.secondsLeft` runs out (nobody sees who has posted). Then wait with
+   `room_wait` until the statements appear in the chat. Then talk with `chat_send`: make claims, ask questions, answer others, challenge what does not
    add up, and think about which cards may have moved (yours included). Post at least five messages over the
    discussion, spaced out with `room_wait` so you read what the others say and reply to it. Keep each message short
    (a few sentences). Day powers (a swap, a cut, a sealed message), if your card has one, are described in

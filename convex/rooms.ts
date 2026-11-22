@@ -112,6 +112,10 @@ export const view = query({
         final: ended ? {
           dealt: game.state.dealt,
           cards: game.state.cards,
+          /** The physical card (instance) each seat holds at the end; instance i < players was dealt to seat i, players + n to centre card n + 1. */
+          inst: game.state.inst,
+          /** The instance in each centre slot at the end. */
+          cinst: game.state.cinst,
           center: game.state.center,
           dealtCenter: game.state.dealtCenter,
           votes: game.votes,

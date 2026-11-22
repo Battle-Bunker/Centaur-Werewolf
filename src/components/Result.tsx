@@ -80,10 +80,10 @@ export function Result() {
             <p key={`c${i}`} className="reveal-cut"><IconScissors size={16} /><span><b>{name(c.seat)}</b> did not lose their connection{c.from ? ` at ${new Date(c.from).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}` : ""}: <b>{name(c.by)}</b> ({roleName(c.source)}) cut them off for {clock(c.until - c.from)}.</span></p>
           ))}
           {sealedMsgs.map(m => (
-            <p key={m.id} className={m.forged ? "reveal-forged" : "reveal-sealed"}><IconSeal size={16} /><span>The message sealed as the {m.seal ? roleName(m.seal) : ""} was posted by <b>{m.mine ? "you" : m.name}</b>{m.forged ? <>, and the seal was <b>forged</b></> : ", and the seal was genuine"}: “{m.text.length > 90 ? `${m.text.slice(0, 88)}…` : m.text}”</span></p>
+            <p key={m.id} className={m.forged ? "reveal-forged" : "reveal-sealed"}><IconSeal size={16} /><span>The message sealed as the {m.seal ? roleName(m.seal) : ""} was posted by <b>{m.mine ? "you" : m.name}</b>{m.forged ? <>, and the seal was <b>forged</b></> : ", and the seal was genuine"}: “{m.text.length > 180 ? `${m.text.slice(0, 178)}…` : m.text}”</span></p>
           ))}
           {forgedShown.map((s, i) => (
-            <p key={`s${i}`} className="reveal-forged"><IconSeal size={16} /><span>The proclamation that {s.slot.k === "c" ? `centre card ${s.slot.i + 1}` : name(s.slot.i)} was <b>{roleName(s.role)}</b> was <b>forged</b>, published as the {roleName(s.by)}'s.</span></p>
+            <p key={`s${i}`} className="reveal-forged"><IconSeal size={16} /><span>The proclamation that at least one of {s.slots.map(x => (x.k === "c" ? `centre card ${x.i + 1}` : name(x.i))).join(" and ")} was <b>{roleName(s.role)}</b> was <b>forged</b>, published as the {roleName(s.by)}'s.</span></p>
           ))}
         </section>
       )}

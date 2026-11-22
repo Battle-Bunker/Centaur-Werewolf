@@ -202,3 +202,66 @@ intended). 5 replays each (X1' 3). "Talk-live?" is my prediction of the charter'
   can safely claim a centre role (Herder/Sentry per census); the table will converge on Bryn; Cass swaps Bryn's card
   away at the vote's end. **Predict: wolves 3-0, judges' path < 2: DEGENERATE.** Falsified if the table targets Cass
   (reasoning that a consensus on Bryn is what the Thief wants).
+
+## Pre-registration 2026-11-22: two new rule OPTIONS (defaults unchanged)
+
+- **CR-8 `census: "allButOne"`**: each pack card learns all but one (random, seeded) of the roles dealt to the centre.
+  Prediction on S3 (B5 Moonsage duel): from Centaurs 5-0 to about 3-2; the census backward-induction argument
+  ("a wolf would know the Sage is held") loses its force; path stays about 3; noise rises slightly (<= 1.2). Elsewhere:
+  wolves collide with honest claims a little more often (a census-"safe" claim may hit the unknown role).
+- **CR-7 `packCovers: true`**: the census also hands each pack member a DIFFERENT cover role from the Centaur-team roles
+  in the centre (told privately, and each learns the others' covers). Prediction: wolf-wolf claim collisions (4 of 14
+  coarse games, 1-2 per 5 replays in S1/X1') go to about zero; in two-wolf deals the wolves' share rises by about a
+  quarter; deception scores unchanged or higher. Risk: a cover is "the safe claim", hence a tell (heuristic 8): the
+  table may learn "the wolves always claim centre roles"; combined with allButOne this risk falls.
+
+## Pre-registration 2026-11-22: CR-6 (Herder needs a contradicting card), NOT yet activated
+
+Proposed deck rule: "A Herder needs a Stray Herder in the deck" (same pattern as Herald needs Forger). Prediction: in
+5-6 player decks the Herder claim becomes contestable (a Stray Herder passes for a Herder and claims the true count, or
+a false one); the "count proves it" Centaur wins (about 6 of 9 coarse Centaur wins) become duels; Centaur share at 5-6
+players falls by about a fifth; path dependence rises. Not activated yet: all four per-count sessions pre-registered
+rosters with a Herder and no Stray Herder, and the recommended deck uses a Herder; a hard deck rule now would
+invalidate their running experiments. To activate after their current fine passes (coordinator to schedule).
+
+## Fine pass 2: pre-registered (2026-11-22, before any replay; scenarios checked with scenario-check.ts)
+
+- **S3b = S3 with `census: "allButOne"`** (the lone wolf's census: Centaur, Sentry, one role unknown, so it cannot know
+  whether the Sage is held). Prediction (as for CR-8): Centaurs 3, wolves 2 (S3 was 5-0); path about 3; the census
+  argument ("a wolf would never claim Sage") is no longer made, or is answered.
+- **S1b = S1 with `packCovers: true`** (covers: Cass Farrier, Dov Rustler). In S1 the wolf side's failures were
+  Spooker-vs-wolves collisions, not wolf-wolf ones, so I predict covers change little: wolves 3-4, Centaurs 1-2;
+  noise slightly lower (<= 1.5) because the two wolves now tell non-colliding stories.
+- **S9 D6 double read** (6p; Herder in the centre, so no count): the Lure dressed the Phoenix Cass as a Werewolf; the
+  Rustler Dov sincerely saw "Werewolf" on Cass; the Sage Bryn truly read the Werewolf Esme; the second wolf Alder is
+  unread. Two honest "Werewolf" reports, one false. A tie Esme+Cass would be a Centaur win AND a burning; Cass alone a
+  Pyre win; Esme alone a Centaur win. The wolves know Cass is not a wolf (pack). Prediction: Centaurs 3, Pyre 1,
+  wolves 1; talk-live; ToM >= 2.5; c 0.5-0.8.
+
+## Pre-registration 2026-11-22: CR-9 parity test (before any replay)
+
+Scenario P6 (6 players; deck werewolf x2, moonsage, sage, rustler, centaur, sentry, herder, strayherder; centre:
+Sentry, Herder, Stray Herder, so no count): wolf team in hands = 3 of 6 (Werewolves Alder 0 and Cass 2, Moonsage
+Esme 4, who does not know the wolves). Sage Bryn 1 read Alder = Werewolf; Rustler Dov 3 peeked Cass = Werewolf
+(kept); Moonsage read Dov = Rustler; Centaur Fen 5 glanced centre 1 = Sentry.
+- **Rule off (control, 3 replays):** if the wolf side finds each other and blocs on one Centaur while the three Centaurs
+  converge on one wolf, a 3-3 tie wins for the wolves. Predict wolves 2-3 of 3 (the bloc needs the Moonsage to join).
+- **Rule on (`bloodPriceCondemned`, 5 replays):** the same tie wins for the Centaurs; the wolves win only by splitting
+  the Centaurs (two honest reads point at two different wolves, so the Centaurs must agree on ONE) or by pulling a
+  Centaur vote onto their target. Predict Centaurs 3-4 of 5; path >= 2.5; judges see the deciding factor in talk
+  (Centaur coordination on one wolf, the Moonsage duel), not in arithmetic.
+
+## Pre-registration 2026-11-22: CR-10 `openingStatements` tests (before any replay)
+
+Built as a rule option (default off): each seated player's FIRST message is held unseen (no version change, no
+"has posted" indicator for others) and all are revealed together in SEAT order when all are in or after
+`openingSeconds` (default 60); ready and seals are refused until then. Verified live (sim/research/opening-check.mts).
+- **S3c = S3 + openingStatements.** The first-claim asymmetry goes (the real Sage and the Moonsage claim Sage
+  simultaneously, blind to each other). But the likelihood form of the census argument (heuristic 11) and the
+  decision-theory point from the 8-player session (eliminating a Moonsage can never win, so the Centaurs only weigh
+  "Bryn is the wolf" against "Alder is the wolf") remain. Prediction: Centaurs 4, wolves 1 (was 5-0); path stays >= 3.
+  Falsified as useless if 5-0 again with the timing tell still cited; falsified as a strong fix if wolves >= 3.
+- **S5b = S5 (D6 Lure-dressed Phoenix) + openingStatements** (check that it does not kill what works): stays talk-live;
+  Centaurs 3, Pyre 1-2; path >= 3; ToM >= 2.5.
+- **Strategy tagger:** "claim-timing-tell" (used by the Centaurs in 37 of 43 earlier games) appears in at most 4 of
+  these 10 games and is never decisive.

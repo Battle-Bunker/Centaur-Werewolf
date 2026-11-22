@@ -70,6 +70,7 @@ export function Setup() {
         </div>
         <p className="quiet small">One card per player plus {center} for the centre. Any card may appear more than once. {gap > 0 ? <b className="warn-text">Add {gap} more.</b> : gap < 0 ? <b className="warn-text">Take {-gap} out.</b> : "Just right."}</p>
         <div className="row"><CommandButton id="setup.useRecommended" variant="plain" icon={<IconShuffle size={16} />} /></div>
+        {problem && gap === 0 && <p className="foot-problem" role="status">{problem}</p>}
         <DeckBuilder v={v} host={ctx.host} />
       </section>
 

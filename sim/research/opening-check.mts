@@ -1,0 +1,30 @@
+/** Live check of the opening-statements rule (CR-10) against the running backend: hidden until reveal, no version change for others, seat-order reveal, refusals.  npx tsx sim/research/opening-check.mts */
+import { run, setupTable, tool, Refusal } from "../lib";
+const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
+const deck = ["werewolf", "sage", "centaur", "werewolf", "rustler", "sentry"];
+const t = await setupTable({ label: "open", deck, center: 3, players: ["A","B","C"], timers: { dusk: 1, turn: 1, day: 60, vote: 10 }, rules: { openingStatements: true, openingSeconds: 30 }, playtest: true });
+await run("setup.fixDeal", t.seats[0].token, t.code, { seats: t.seats.map(s => s.id), cards: deck, nightSeed: 1 });
+await run("game.start", t.seats[0].token, t.code);
+const [a, b, c] = t.seats;
+let v: any = await tool(a.key, "room_view"); for (let i = 0; i < 30 && v.phase !== "day"; i++) { await sleep(1000); v = await tool(a.key, "room_view"); }
+const ok = (n: string, x: boolean) => console.log(`${x ? "ok  " : "FAIL"} ${n}`);
+const refused = async (p: Promise<unknown>) => { try { await p; return ""; } catch (e) { return (e as Error).message; } };
+ok("day shows an opening window", !!v.day?.opening && v.day.opening.yourStatement === null);
+const bBefore: any = await tool(b.key, "room_view");
+await tool(c.key, "chat_send", { text: "C: I am the Centaur." });
+const bAfter: any = await tool(b.key, "room_view");
+ok("another player's version does not change when C posts", bBefore.version === bAfter.version);
+ok("nothing of C's statement is visible to B", !JSON.stringify(bAfter).includes("I am the Centaur") && bAfter.chatCount === bBefore.chatCount);
+const cv: any = await tool(c.key, "room_view");
+ok("C sees its own statement", cv.day.opening.yourStatement === "C: I am the Centaur.");
+ok("a second statement is refused", /opening statement is in/.test(await refused(tool(c.key, "chat_send", { text: "more" }))));
+ok("ready is refused during the opening", /Opening statements/.test(await refused(tool(a.key, "day_ready", { ready: true }))));
+await tool(a.key, "chat_send", { text: "A: I am the Werewolf hunter." });
+await tool(b.key, "chat_send", { text: "B: I read A." });
+const after: any = await tool(c.key, "room_view");
+const day = after.chat.filter((m: any) => m.phase === "day").map((m: any) => m.text);
+ok(`revealed in seat order when all are in: ${JSON.stringify(day)}`, day.join("|") === "A: I am the Werewolf hunter.|B: I read A.|C: I am the Centaur." && after.day.opening === null);
+await tool(a.key, "chat_send", { text: "free chat" });
+ok("free chat works after the reveal", (await tool<any>(b.key, "room_view")).chat.some((m: any) => m.text === "free chat"));
+await run("game.abandon", a.token, t.code).catch(() => {});
+process.exit(0);

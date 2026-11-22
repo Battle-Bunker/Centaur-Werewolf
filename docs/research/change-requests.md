@@ -48,3 +48,70 @@ fix: the night's random draws use the secure generator (Will-o'-Wisp/Fogbank dra
 the census "three" subset, the unheld Cuckoo's egg, the dawn order of several proclamations). Until the hook lands,
 fixed scenarios avoid those cards and states, and replays are checked by a fingerprint of the deal and night log.
 **Wanted from the hook:** the seed also drives every night draw, and the result carries the scenario fingerprint.
+
+## CR-9. Parity bloc: "Blood Price counts the condemned" [proposal, pre-registered 2026-11-22; new rule option, default off]
+
+**Problem (from the 6- and 8-player sessions).** When wolf-team holders are half the table (3 of 6, 4 of 8), the wolf
+team votes as a bloc for one Centaur while the Centaurs vote a wolf: a tie, both eliminated, W = 1, C = 1, and under
+Blood Price (Centaurs need W > C) the wolves win whatever is said. Deal-determined: excluded by the primary target.
+
+**Constraint.** Do not restore the free hedge Blood Price removed: a table unsure between suspects A and B must not be
+able to tie them both and win for free.
+
+**Options considered (a small game-theory check of each).**
+1. *A tie eliminates nobody.* At parity the bloc forces the tie, nobody is eliminated, a wolf is held: wolves still win.
+   Fails.
+2. *Elimination needs a majority of all votes.* 3-3 eliminates nobody: wolves win. Fails; it also raises scatter.
+3. *Allies count against the wolves in W v. C when they vote in the bloc.* Fixes only parity reached with non-Werewolf
+   allies; a parity of Werewolf cards (3 Werewolves of 6) is untouched. Partial.
+4. *Bloc caps / vote weighting.* Any cap the rules can state without hidden teams also caps an honest Centaur majority;
+   weighting by hidden team is option 5 in disguise. Rejected as blunter.
+5. **Condemned Blood Price (chosen).** "In the Blood Price comparison, an eliminated Centaur-team player counts in C
+   only if at least one vote on them came from a player NOT on the Werewolf team at the count." (Teams as for Blood
+   Price itself: held card, bitten = Werewolf team; Pyre and loners are not on it.)
+   - *Parity bloc:* the Centaur X received only wolf-team votes, so C = 0, W = 1: the Centaurs win. The bloc no longer
+     wins by arithmetic; the wolves must PERSUADE at least one non-wolf to vote X (talk decides).
+   - *Free hedge stays dead:* a deliberate Centaur hedge puts Centaur votes on both suspects, so the innocent counts:
+     W = 1, C = 1, a loss, exactly as now.
+   - *Secret ballot:* the rule reads the actual (secret) ballots at the count, like Blood Price reads the hidden cards;
+     nothing new is revealed before the result. Players reason "if every one of us votes the wolf, a bloc against one
+     of us cannot win": unanimity among the honest is rewarded, which also serves target 2 (consensus).
+   - *Non-parity games:* unchanged unless a Centaur is eliminated by wolf votes alone, which only happens in a tie the
+     wolves forced; the rule then sides with the Centaurs, as intended.
+   - *Exploits checked:* wolves cannot fake a "non-wolf vote" (team is read from the held card). A Centaur unknowingly
+     holding a wolf card votes as a wolf-team player for this purpose (consistent with Blood Price counting cards).
+     A Pyre player's vote does condemn (Pyre are not wolf team), so the Pyre can still make a Centaur count.
+**Prediction.** In a 6-player parity scenario where the Centaurs have correctly identified a wolf: rule OFF, wolves win
+4-5 of 5 (the reported pattern); rule ON, the wolves win only by pulling a Centaur vote: wolves about 1-2 of 5, path
+dependence >= 2.5. Elsewhere: no measurable change. Rule name: `bloodPriceCondemned` (boolean, default false).
+
+## CR-10. Speaking order artefact: "Opening statements" [proposal; pre-registered 2026-11-22]
+
+**Evidence (my 43 games: pilot, coarse 1, fine 1; 248 first messages).** Mean normalised rank of a seat's first
+message: Centaur team 0.29 (median first message 16 s into the day), wolf side 0.72 (25 s), Pyre 0.70 (28 s), Echo 0.77.
+The strategy tagger found the Centaurs using a "claim-timing tell" (late or hedged claims read as guilt) in 37 of 43
+games, decisive in 11. Part of this is a legitimate tactic (liars wait to fit their claim to others'), part is that an
+AI composing a lie takes longer than one reporting the truth. **Proposal (rule option `openingStatements`, default
+off):** the discussion opens with a statement round: each player's FIRST message is held and all are revealed together
+(in random order) once every seated player has posted one or after 45 s; ordinary chat follows. **Prediction:** the
+claim-timing tell drops out as decisive; the wolves' share in 5-player rosters rises by about a tenth; the census
+backward-induction argument becomes stronger (the wolf can no longer wait to see claims), so pair it with
+`census: "allButOne"`. Owner's taste question too: simultaneous claims are a known human mechanic.
+
+## CR-11. Hush cut at the transport level [noted, low priority]
+From the app session: during a Hush cut the app's WebSocket is not cut server-side, so a browser's devtools can still
+tell a cut from a real drop. Wish: cut the transport for the victim's session for the cut window. Not done; the AI
+harness sees only the MCP 503, which already matches a real drop.
+
+## CR-13. All-day chat latency floor for AI tables [measured; NOT needed]
+Measured from each agent's own stream (65 games: coarse 1, fine 1-2, parity): the thinking time between an agent's
+last tool result and each `chat_send`. Later messages: median 5.3 s (Centaur team), 5.9 s (Werewolf team), 5.8 s
+(Pyre); p90 16.0 / 15.0 / 12.7 s: no meaningful asymmetry. FIRST messages: Centaur 2.7 s, Werewolf 7.1 s, Pyre 7.3 s
+(medians): the whole latency asymmetry is in composing the opening claim (plus deliberate waiting). So no all-day floor
+in the shim; the opening is the only place that needs handling, and `openingStatements` (CR-10) does that, with the
+side effects recorded in log.md (it favours pre-committed stories). A cheaper harness-only alternative for comparison
+runs: the shim holds each agent's FIRST `chat_send` of the day until 15 s after the day starts (not built).
+
+## CR-12. Test the Den Census itself on the S3 duel [proposal]
+S3 swept 5-0 under the full census, a partial census and simultaneous claims: each time decided by "a wolf with the
+census would know the Sage is held". Test `census: "off"` on S3 (5 replays, ~$15). Prediction: Centaurs 3, wolves 2.

@@ -27,10 +27,15 @@ It states the game exactly as built. Design history: docs/design/synthesis.md an
 | Rule | Title | Default | Values | Meaning (at the default) |
 | --- | --- | --- | --- | --- |
 | `bloodPrice` | Blood Price | true | on / off | The Centaurs win only if more Werewolves than Centaurs are eliminated: a tie that takes down a Centaur along with a Werewolf is a loss for the Centaurs. |
-| `census` | Den Census | "all" | all / three / off | Every card of the pack (Werewolves and the cards that wake with them) learns which roles were dealt to the centre: the roles, not their positions. |
+| `census` | Den Census | "all" | all / three / allButOne / off | Every card of the pack (Werewolves and the cards that wake with them) learns which roles were dealt to the centre: the roles, not their positions. |
 | `dawnProclamations` | Proclamations at dawn | true | on / off | Every proclamation (the Herald's, and a Forger's) is published together at dawn, in random order, each marked "Herald's turn" and true at that moment of the night. |
 | `biteNamesBiter` | The bitten know the Biter | true | on / off | A bitten player is told which seat bit them. |
 | `eavesdropGhost` | Eavesdropper's own result | true | on / off | If nobody was dealt the role the Eavesdropper names, it secretly gets a real result of its own as if it held that role (looks only, never moves), and is not told which case happened. |
+| `lureSparesPhoenix` | The Lure spares the Phoenix | false | on / off | The Lure may dress any card, the Phoenix included. |
+| `openingStatements` | Opening statements | false | on / off | The discussion opens straight into free chat. |
+| `openingSeconds` | Opening window | 60 | 20 to 180 | With opening statements, the window for them lasts 60 seconds (it ends early once every player has posted). |
+| `bloodPriceCondemned` | Blood Price counts the condemned | false | on / off | Every eliminated Centaur-team player counts against the Centaurs under the Blood Price, whoever voted for them. |
+| `packCovers` | Pack covers | false | on / off | The pack gets no cover roles: each pack member chooses its own claim. |
 | `daySwap` | Moon-Thief's day swap | false | on / off | The Moon-Thief has no day swap: it is a Werewolf of the pack and nothing more. (Off by default: a swap after the talking makes the talking irrelevant.) |
 | `thiefMinPlayers` | Moon-Thief table size | 7 | 3 to 12 | With the day swap on, the Moon-Thief may be in the deck only with 7 or more players. |
 | `eliminationVotes` | Votes to eliminate | 2 | 2 to 4 | The player or players with the most votes are eliminated, if that is at least 2 votes; otherwise nobody is. |
@@ -93,8 +98,8 @@ It states the game exactly as built. Design history: docs/design/synthesis.md an
 6. **Loners.** The Cuckoo holder wins if its card's egged seat is eliminated and they are not; then the Oxpecker holder
    wins if its card's bonded seat is a winner.
 
-**Count as Werewolves:** Werewolf, Glamour, Moon-Thief, Tracker, Eavesdropper, Biter, Dun Centaur, Dusk Rustler.
-**Werewolf team but not Werewolves:** Stalking Horse, Whisperer, Forger, Spooker, Will-o'-Wisp, Mistweaver, Fogbank, Poacher, Counterfeiter, Hush, Moonsage, Pale Herald, Stray Herder.
+**Count as Werewolves:** Werewolf, Glamour, Moon-Thief, Tracker, Eavesdropper, Biter, Dun Centaur, Dusk Rustler, Hollow Sage, Mirage.
+**Werewolf team but not Werewolves:** Stalking Horse, Whisperer, Forger, Spooker, Will-o'-Wisp, Mistweaver, Fogbank, Poacher, Counterfeiter, Hush, Moonsage, Pale Herald, Stray Herder, Grey Herder.
 
 ## 6. Calibration: abilities act on beliefs, not on the result
 
@@ -136,26 +141,27 @@ To replay one scenario many times with only the day varying:
 9. Tracker (wake 15)
 10. Mistweaver (wake 16)
 11. Fogbank (wake 17)
-12. Whisperer (wake 20)
-13. Cuckoo (wake 25)
-14. Sage (wake 30) + Moonsage
-15. Notary (wake 32)
-16. Centaur (wake 35) + Dun Centaur
-17. Herald (wake 40) + Pale Herald
-18. Forger (wake 42)
-19. Poacher (wake 44)
-20. Rustler (wake 45) + Dusk Rustler
-21. Cutpurse (wake 46)
-22. Pickpocket (wake 47)
-23. Drifter (wake 48)
-24. Farrier (wake 50)
-25. Spooker (wake 55) + Drover
-26. Herder (wake 80) + Stray Herder
-27. Oxpecker (wake 85)
-28. Latecomer (wake 88)
-29. Sentry (wake 90)
-30. Eavesdropper (wake 93)
-31. Biter (wake 96)
+12. Mirage (wake 18)
+13. Whisperer (wake 20)
+14. Cuckoo (wake 25)
+15. Sage (wake 30) + Moonsage + Hollow Sage
+16. Notary (wake 32)
+17. Centaur (wake 35) + Dun Centaur
+18. Herald (wake 40) + Pale Herald
+19. Forger (wake 42)
+20. Poacher (wake 44)
+21. Rustler (wake 45) + Dusk Rustler
+22. Cutpurse (wake 46)
+23. Pickpocket (wake 47)
+24. Drifter (wake 48)
+25. Farrier (wake 50)
+26. Spooker (wake 55) + Drover
+27. Herder (wake 80) + Stray Herder + Grey Herder
+28. Oxpecker (wake 85)
+29. Latecomer (wake 88)
+30. Sentry (wake 90)
+31. Eavesdropper (wake 93)
+32. Biter (wake 96)
 
 Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 
@@ -220,7 +226,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Whisperer (`whisperer`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 20 (position 12 of the full roster's night order).
+- **Night:** has its own turn, wake 20 (position 13 of the full roster's night order).
   - *Hear a name* (automatic): learns which other seats were DEALT a card tagged "wolf" (only 1, chosen at random) (journal label "A Werewolf").
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -230,7 +236,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Forger (`forger`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 42 (position 18 of the full roster's night order).
+- **Night:** has its own turn, wake 42 (position 19 of the full roster's night order).
   - *See the Herald's proclamation* (automatic): sees what the Herald proclaimed so far tonight (or that nothing was).
   - *Forge a proclamation* (MANDATORY): chooses 2 different cards (each a centre card); names any role in the deck; adds a forged proclamation "at least one of the two chosen centre cards is a <named role>", published at dawn exactly as the Herald's, in random order with the real ones.
 - **A look at this card shows:** this card, unless distorted.
@@ -241,7 +247,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Spooker (`spooker`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 55 (position 25 of the full roster's night order).
+- **Night:** has its own turn, wake 55 (position 26 of the full roster's night order).
   - *Stampede three cards* (MANDATORY): chooses 3 different cards (each another player's card or a centre card); moves the chosen cards one place along (first to second's place, second to third's, third to first's), seeing none of them.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -251,7 +257,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Eavesdropper (`eavesdropper`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** yes. **Pack:** wakes knowing the other pack seats and gets the census. Tags: wolf, pack. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 93 (position 30 of the full roster's night order).
+- **Night:** has its own turn, wake 93 (position 31 of the full roster's night order).
   - *Meet the pack* (automatic): learns which other seats were DEALT a card tagged "pack" (journal label "The pack"); then learns the roles DEALT to the centre (not where, not what is there now), per the Den Census rule.
   - *Name a role to overhear* (MANDATORY): names a role in the deck that acts at night and is not of the pack (not itself); names a role; receives a copy of everything the first player clockwise who was DEALT it learned tonight (or, if nobody was, a ghost result per the table rule).
 - **A look at this card shows:** this card, unless distorted.
@@ -262,7 +268,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Biter (`biter`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** yes. **Pack:** wakes knowing the other pack seats and gets the census. Tags: wolf, pack. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 96 (position 31 of the full roster's night order).
+- **Night:** has its own turn, wake 96 (position 32 of the full roster's night order).
   - *Meet the pack* (automatic): learns which other seats were DEALT a card tagged "pack" (journal label "The pack"); then learns the roles DEALT to the centre (not where, not what is there now), per the Den Census rule.
   - *Look at a player's true card* (MANDATORY): chooses another player's card; sees the role of the chosen card.
   - *Bite them?* (OPTIONAL (may be declined, unless the Mandatory-night-steps rule is on)): bites the player at the looked-at seat: unless their card is on the Werewolf team, they join the Werewolf team at dawn (told privately).
@@ -304,7 +310,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Poacher (`poacher`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 44 (position 19 of the full roster's night order).
+- **Night:** has its own turn, wake 44 (position 20 of the full roster's night order).
   - *Swap with a player* (MANDATORY): chooses another player's card; swaps their own card with it; then sees the role of their own (new) card.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -332,7 +338,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Moonsage (`moonsage`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** acts in the Sage's turn (a shadow twin: one public turn for both), wake 30 (position 14 of the full roster's night order).
+- **Night:** acts in the Sage's turn (a shadow twin: one public turn for both), wake 30 (position 15 of the full roster's night order).
   - *Read a player's card* (MANDATORY): chooses another player's card; sees the role of the chosen card.
 - **A look at this card shows:** a Sage (it passes for its original), except to Werewolf-team looks.
 - **Day / vote / chat powers:** none.
@@ -342,7 +348,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Dun Centaur (`duncentaur`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** yes. Tags: wolf. Copies allowed: up to 12.
-- **Night:** acts in the Centaur's turn (a shadow twin: one public turn for both), wake 35 (position 16 of the full roster's night order).
+- **Night:** acts in the Centaur's turn (a shadow twin: one public turn for both), wake 35 (position 17 of the full roster's night order).
   - *Look at a centre card* (MANDATORY): chooses a centre card; sees the role of the chosen card.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -352,7 +358,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Pale Herald (`paleherald`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** acts in the Herald's turn (a shadow twin: one public turn for both), wake 40 (position 17 of the full roster's night order).
+- **Night:** acts in the Herald's turn (a shadow twin: one public turn for both), wake 40 (position 18 of the full roster's night order).
   - *Proclaim two centre cards* (MANDATORY): chooses 2 different cards (each a centre card); publishes to everyone "at least one of these two centre cards is a <role>", the role being what one of the two (chosen at random) shows right now; at dawn, without saying who proclaimed, indistinguishable from a Forger's.
 - **A look at this card shows:** a Herald (it passes for its original), except to Werewolf-team looks.
 - **Day / vote / chat powers:** none.
@@ -362,7 +368,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Dusk Rustler (`duskrustler`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** yes. Tags: wolf. Copies allowed: up to 12.
-- **Night:** acts in the Rustler's turn (a shadow twin: one public turn for both), wake 45 (position 20 of the full roster's night order).
+- **Night:** acts in the Rustler's turn (a shadow twin: one public turn for both), wake 45 (position 21 of the full roster's night order).
   - *Peek at a player's card* (MANDATORY): chooses another player's card; sees the role of the chosen card.
   - *Trade cards with them?* (OPTIONAL (may be declined, unless the Mandatory-night-steps rule is on)): swaps their own card with it.
 - **A look at this card shows:** this card, unless distorted.
@@ -370,22 +376,54 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 - **Win:** with the Werewolf team.
 - **Card text:** You act in the Rustler's turn and do exactly what the Rustler does: Look at one other player's card. Then decide whether to swap your card with it. If you swap, you are now on that card's team. But you are on the Werewolf team and you count as a Werewolf (you do not wake with the pack, and the pack does not know you). A look at your card shows the Dusk Rustler. You win when the Werewolf team wins.
 
+### Hollow Sage (`hollowsage`)
+
+- **Team:** Werewolf team. **Counts as a Werewolf:** yes. Tags: wolf. Copies allowed: up to 12.
+- **Night:** acts in the Sage's turn (a shadow twin: one public turn for both), wake 30 (position 15 of the full roster's night order).
+  - *Read a player's card* (MANDATORY): chooses another player's card; sees the role of the chosen card.
+- **A look at this card shows:** a Sage (it passes for its original), except to Werewolf-team looks.
+- **Day / vote / chat powers:** none.
+- **Win:** with the Werewolf team.
+- **Card text:** You act in the Sage's turn and do exactly what the Sage does: Look at one other player's card. You see it as it is at that moment (a glamour, if one is on it). But you are on the Werewolf team and you count as a Werewolf (you do not wake with the pack, and the pack does not know you). Any look at your card shows a Sage. You win when the Werewolf team wins.
+
 ### Stray Herder (`strayherder`)
 
 - **Team:** Werewolf team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** acts in the Herder's turn (a shadow twin: one public turn for both), wake 80 (position 26 of the full roster's night order).
+- **Night:** acts in the Herder's turn (a shadow twin: one public turn for both), wake 80 (position 27 of the full roster's night order).
   - *Count the strays* (automatic): learns how many cards tagged "wolf" lie in the centre right now (the truth: never distorted).
 - **A look at this card shows:** a Herder (it passes for its original), except to Werewolf-team looks.
 - **Day / vote / chat powers:** none.
 - **Win:** with the Werewolf team.
 - **Card text:** You act in the Herder's turn and do exactly what the Herder does: Late in the night, you learn how many Werewolf cards are in the centre at that moment: a number, not which ones. Glamour does not fool the count. But you are on the Werewolf team, and you are not a Werewolf. Any look at your card shows a Herder. You win when the Werewolf team wins.
 
+### Mirage (`mirage`)
+
+- **Team:** Werewolf team. **Counts as a Werewolf:** yes. **Pack:** wakes knowing the other pack seats and gets the census. Tags: wolf, pack. Copies allowed: up to 12.
+- **Night:** has its own turn, wake 18 (position 12 of the full roster's night order).
+  - *Meet the pack* (automatic): learns which other seats were DEALT a card tagged "pack" (journal label "The pack"); then learns the roles DEALT to the centre (not where, not what is there now), per the Den Census rule.
+  - *Cast a mirage* (MANDATORY): chooses another player's card or a centre card; names any role in the deck; distorts the chosen card: until dawn every look at it (except Werewolf-team looks) shows the role they name; it travels with the card.
+- **A look at this card shows:** this card, unless distorted.
+- **Day / vote / chat powers:** none.
+- **Win:** with the Werewolf team.
+- **Card text:** You are a Werewolf. You wake knowing which other players were dealt cards of the pack (the Werewolves and the cards that wake with them) and, under the Den Census rule, which roles lie in the centre (not where). Then choose one card that is not yours (another player's, or a centre card) and any role in the deck: until dawn, every look at that card shows the role you chose and its team, wherever the card moves. You cannot disguise your own card. The Werewolf team's own looks and the Herder's count see the truth.
+
+### Grey Herder (`greyherder`)
+
+- **Team:** Werewolf team. **Counts as a Werewolf:** no. **Pack:** wakes knowing the other pack seats and gets the census. Tags: pack. Copies allowed: up to 12.
+- **Night:** acts in the Herder's turn (a shadow twin: one public turn for both), wake 80 (position 27 of the full roster's night order).
+  - *Meet the pack* (automatic): learns which other seats were DEALT a card tagged "pack" (journal label "The pack"); then learns the roles DEALT to the centre (not where, not what is there now), per the Den Census rule.
+  - *Count the strays* (automatic): learns how many cards tagged "wolf" lie in the centre right now (the truth: never distorted).
+- **A look at this card shows:** a Herder (it passes for its original), except to Werewolf-team looks.
+- **Day / vote / chat powers:** none.
+- **Win:** with the Werewolf team.
+- **Card text:** You act in the Herder's turn and do exactly what the Herder does: Late in the night, you learn how many Werewolf cards are in the centre at that moment: a number, not which ones. Glamour does not fool the count. You also wake with the pack: you learn which players were dealt cards of the pack and, under the Den Census rule, which roles lie in the centre (not where), and the pack learns your seat. You are on the Werewolf team, and you are not a Werewolf. Any look at your card shows a Herder. You win when the Werewolf team wins.
+
 ## Centaur team
 
 ### Sage (`sage`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: seer. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 30 (position 14 of the full roster's night order).
+- **Night:** has its own turn, wake 30 (position 15 of the full roster's night order).
   - *Read a player's card* (MANDATORY): chooses another player's card; sees the role of the chosen card.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -395,7 +433,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Centaur (`centaur`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 35 (position 16 of the full roster's night order).
+- **Night:** has its own turn, wake 35 (position 17 of the full roster's night order).
   - *Look at a centre card* (MANDATORY): chooses a centre card; sees the role of the chosen card.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -405,7 +443,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Herald (`herald`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: seer. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 40 (position 17 of the full roster's night order).
+- **Night:** has its own turn, wake 40 (position 18 of the full roster's night order).
   - *Proclaim two centre cards* (MANDATORY): chooses 2 different cards (each a centre card); publishes to everyone "at least one of these two centre cards is a <role>", the role being what one of the two (chosen at random) shows right now; at dawn, without saying who proclaimed, indistinguishable from a Forger's.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -415,7 +453,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Notary (`notary`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: seer. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 32 (position 15 of the full roster's night order).
+- **Night:** has its own turn, wake 32 (position 16 of the full roster's night order).
   - *Read two players' cards* (MANDATORY): chooses 2 different cards (each another player's card); sees the role of the chosen cards.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** once, the player DEALT it posts a sealed report the game composes from its night look, "at least one of <A>'s and <B>'s cards was a <role>", with no name on it (chat_sendReport).
@@ -425,7 +463,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Rustler (`rustler`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 45 (position 20 of the full roster's night order).
+- **Night:** has its own turn, wake 45 (position 21 of the full roster's night order).
   - *Peek at a player's card* (MANDATORY): chooses another player's card; sees the role of the chosen card.
   - *Trade cards with them?* (OPTIONAL (may be declined, unless the Mandatory-night-steps rule is on)): swaps their own card with it.
 - **A look at this card shows:** this card, unless distorted.
@@ -436,7 +474,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Farrier (`farrier`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 50 (position 24 of the full roster's night order).
+- **Night:** has its own turn, wake 50 (position 25 of the full roster's night order).
   - *Peek at a centre card* (MANDATORY): chooses a centre card; sees the role of the chosen card.
   - *Give that card to…* (OPTIONAL (may be declined, unless the Mandatory-night-steps rule is on)): chooses your own card or the card of the player clockwise of you; swaps the two cards.
 - **A look at this card shows:** this card, unless distorted.
@@ -447,7 +485,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Cutpurse (`cutpurse`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 46 (position 21 of the full roster's night order).
+- **Night:** has its own turn, wake 46 (position 22 of the full roster's night order).
   - *Swap with a player* (MANDATORY): chooses another player's card; swaps their own card with it; then sees the role of their own (new) card.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -457,7 +495,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Pickpocket (`pickpocket`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 47 (position 22 of the full roster's night order).
+- **Night:** has its own turn, wake 47 (position 23 of the full roster's night order).
   - *Swap blind with a player* (MANDATORY): chooses another player's card; swaps their own card with it.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -467,7 +505,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Drifter (`drifter`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 48 (position 23 of the full roster's night order).
+- **Night:** has its own turn, wake 48 (position 24 of the full roster's night order).
   - *Swap with a centre card* (MANDATORY): chooses a centre card; swaps their own card with it; then sees the role of their own (new) card.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -477,7 +515,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Herder (`herder`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: seer. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 80 (position 26 of the full roster's night order).
+- **Night:** has its own turn, wake 80 (position 27 of the full roster's night order).
   - *Count the strays* (automatic): learns how many cards tagged "wolf" lie in the centre right now (the truth: never distorted).
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -487,7 +525,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Latecomer (`latecomer`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 88 (position 28 of the full roster's night order).
+- **Night:** has its own turn, wake 88 (position 29 of the full roster's night order).
   - *Swap blind with a player* (MANDATORY): chooses another player's card; swaps their own card with it.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -497,7 +535,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Sentry (`sentry`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 90 (position 29 of the full roster's night order).
+- **Night:** has its own turn, wake 90 (position 30 of the full roster's night order).
   - *Check the watch* (automatic): learns, for their own seat and each neighbour, whether that card has been moved so far tonight (not by whom, not to where, not what it is).
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -545,7 +583,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Drover (`drover`)
 
 - **Team:** Centaur team. **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** acts in the Spooker's turn (a shadow twin: one public turn for both), wake 55 (position 25 of the full roster's night order).
+- **Night:** acts in the Spooker's turn (a shadow twin: one public turn for both), wake 55 (position 26 of the full roster's night order).
   - *Stampede three cards* (MANDATORY): chooses 3 different cards (each another player's card or a centre card); moves the chosen cards one place along (first to second's place, second to third's, third to first's), seeing none of them.
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
@@ -631,7 +669,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Cuckoo (`cuckoo`)
 
 - **Team:** Loner (wins alone). **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 25 (position 13 of the full roster's night order).
+- **Night:** has its own turn, wake 25 (position 14 of the full roster's night order).
   - *Look at a player's card* (MANDATORY): chooses another player's card; sees the role of the chosen card.
   - *Lay your egg on a player* (MANDATORY): chooses another player's card; lays the egg on the chosen player (bound to THIS card; shown to everyone at dawn, not who laid it).
 - **A look at this card shows:** this card, unless distorted.
@@ -642,7 +680,7 @@ Roles with no night action: Counterfeiter, Hush, Chiron, Signet.
 ### Oxpecker (`oxpecker`)
 
 - **Team:** Loner (wins alone). **Counts as a Werewolf:** no. Tags: none. Copies allowed: up to 12.
-- **Night:** has its own turn, wake 85 (position 27 of the full roster's night order).
+- **Night:** has its own turn, wake 85 (position 28 of the full roster's night order).
   - *Bond to a player* (MANDATORY): chooses another player's card; sees the role of the chosen card; then binds this card to the chosen player's seat (your bond, private).
 - **A look at this card shows:** this card, unless distorted.
 - **Day / vote / chat powers:** none.
