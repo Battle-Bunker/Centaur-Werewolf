@@ -183,3 +183,21 @@ packCovers on. Wolf-team 3 of 9 (parity in about a quarter of deals).
   lost their key Pyre moves to forced random moves). The Glamour can dress itself as a Centaur role (self-clear against
   a read) or dress a Centaur as a Werewolf (frame). Prediction: wolves 1 of 2, path 2.3, deception 2.5; the Centaurs'
   many looks (Sage, Rustler, Cutpurse, Drifter) are the risk to the wolves.
+
+## Fine pass 3 (written 13:00, after fine pass 2, before these games)
+
+Results so far for PY6 (opening statements OFF): S1 Pyre 4 / wolves 1; S2 Pyre 3 / Centaurs 2; S3 Centaurs 3-0
+(control); S4 Centaurs 4 / Pyre 1. Same deals and nights as fine1 (night logs identical; fingerprints differ only
+because the rules are part of the fingerprint).
+
+- **PY6-S1-open, PY6-S2-open** (opening statements ON, 5 replays each). Everyone's first claim is sealed and revealed
+  together, so no one can wait to see others' claims before choosing a lie, and no first-message timing tell exists.
+  Prediction: S1 (the Lure's fake Sage read is not contested by any real Sage, and the lone wolf can no longer hold back
+  its claim to the end, which was how it won S1#3) **Pyre 4-5, wolves 0-1**; S2 **Pyre 3, Centaurs 2** unchanged in
+  distribution, because the Phoenix's reverse bluff happens after the openings. Judges' path unchanged (about 3);
+  first-speaker asymmetry gone by construction. Falsified if S1 or S2 shifts by 3 or more toward the Centaurs.
+- **PY6-S2-nodenial** (opening statements ON, `burningDeniesWolves` OFF, 5 replays): a calibration test of the Pyre
+  requested by the hub. With the denial off, a burning no longer costs the wolves anything (no Werewolf eliminated means
+  the wolves also win), so the wolf stops defending the dressed Phoenix and joins the push to burn it. Prediction: the
+  Pyre gets STRONGER, **Pyre (with wolves co-winning) 4-5 of 5, Centaurs 0-1**, c higher (0.8+). Falsified if the
+  Centaurs win 3 or more (the hub's alternative theory: without denial the wolves stop kingmaking for the Pyre).
