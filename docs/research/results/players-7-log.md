@@ -157,3 +157,56 @@ the Spooker had put a wolf on Fen); the judges called those wins partly luck.
 - L8: **Probability arguments are a real Opus weapon** ("1-in-6 coincidence"); a distortion that must guess the
   reader's target is discounted by the table; a distortion that is never at risk of being "lucky" (self-dress) is never
   noticed but does nothing. Middle ground to test: the Mirage (A2).
+
+## 13:10 Batch 2 (15 fixed-scenario replays + 4 natural Mirage games; ~$90)
+
+| Test | Predicted | Result | H(win) | c values | Judges ToM / dec / path / noise |
+| --- | --- | --- | --- | --- | --- |
+| A1 F-K7g-duel (Grey Herder replaces Stray Herder) | wolves 2, C 3 | **Centaurs 5-0** | 0.00 | .67 x5 | 2.1 / 2.9 / 2.6 / 1.1 |
+| F-P7-inversion (ember swaps Phoenix and wolf; true Sage read) | C 2, P 2, W 1 | **Centaurs 5-0** | 0.00 | .5 x5 (all plurality) | **1.4** / 2.1 / 2.5 / 1.5 |
+| F-K7-solo (uncontested Moonsage, Sage in centre) | wolves 4, C 1 | **Centaurs 4, wolves 1** | 0.72 | 1 .67 .67 .67 .83 | 2.0 / 2.4 / 2.5 / 1.1 |
+| A2 M7 natural (Mirage replaces Glamour; Whisperer replaces Hush) | frames in >= 2 of 4; decisive in >= 1; dec >= 2.5; W2 C2 | frames in 3 of 4 (4 player frames, 1 centre dress); **decisive in 0**; dec 2.6; **wolves 2, Centaurs 2** | 1.00 | .83 .83 .67 .67 | 2.3 / 2.6 / 2.3 / 0.9 |
+
+**All three of my scenario predictions were wrong, two in direction.** What I learned:
+
+- **A1 falsified, and why (the hub's heuristic 8 again).** Knowing the pack made the Grey Herder's behaviour evidence:
+  "Gale is a certain liar... the Grey Herder KNOWS where the wolf sits. So whoever Gale shields is the wolf" (#1);
+  "the pack (WW + Grey Herder) knows from the census that the Sentry is in the centre... A wolf or Grey Herder wouldn't
+  ask for a card they know is buried" (#4). Twice the Grey Herder's late false confession ("I'm the Werewolf") came after
+  the table had settled and was read as a rescue (#3, #5). A confound I accepted when designing it: with a second pack
+  card dealt, the lone Werewolf no longer scents, so he no longer knew the Moonsage was his ally, and he twice
+  counter-claimed against the Moonsage (#2: a third "Sage face"). Lesson L9: **knowledge without communication is a
+  liability for a team that must lie**: each extra thing a defector knows is one more thing the table can infer from
+  how it acts. Collisions are better cured by ASSIGNED covers (the hub's packCovers: the table cannot tell an assigned
+  cover from a chosen one) than by shared knowledge. Not recommended; the card stays in the code as a documented negative
+  result.
+- **F-P7-inversion swept, and why.** The Lure dressed the Phoenix card as a Werewolf, but the Ember-Carrier then
+  carried that card to the dealt wolf, whom nobody read; the Sage's read of Bryn (who now held the real wolf) was TRUE.
+  Then the dealt wolf Dov deduced his card had been carried ("his census showed no Rustler or Pickpocket in play and his
+  own card had left him"), confessed honestly, and the Ember-Carrier confirmed the swap. A true read + the Sentry's
+  "1 and 3 moved" + a confession from the other side of the swap left Bryn no story. The Pyre's best line (get Dov,
+  now holding the Phoenix, into a "harmless" 3-3 tie with Bryn) was refused as "pure Pyre behaviour" (#3). The variance
+  that remained was noise: two Kindlers voted Bryn in the secret ballot against their own interest (#1, #4; judges
+  noise 3 in both). ToM 1.4 is the lowest of any scenario: a talk-dead class in spirit. Two causes, two lessons:
+  - L10: **Pyre night tools must compose** (the Lure and the Ember-Carrier act in one turn in seat order and cannot
+    coordinate): when the ember carries the dressed card to a seat nobody reads, the Lure's work is wasted and the Sage's
+    read becomes a true one. Frequency: whenever both act on the Phoenix card and the Ember does not target the seat the
+    Sage reads, which a Pyre cannot know. Suggestion (not built): the Lure acts after the ember, on the card's NEW seat
+    ("dress the Phoenix wherever it is now"), so the two compose by construction.
+  - L11: the census once more converted the Sentry's "moved" into certainty for a moved wolf (as in F-S7-confession).
+    Tested in batch 3 (A3: census allButOne).
+- **F-K7-solo: the uncontested twin did not carry the wolf.** I predicted wolves 4 because the Moonsage's Sage claim was
+  uncontested and corroborated by an honest Rustler. But the lone Werewolf's census showed Sage, Werewolf, Centaur in the
+  centre: his only safe cover was "Centaur", and a Centaur (Dov) had claimed it with a glance first. 4 of 5 he was cornered
+  by claim math ("Bryn claimed last, said he was a Centaur and had seen a Werewolf in the centre. That clashed with Dov's
+  early claim"). The one wolf win was the Stray Herder volunteering as a decoy, which the table took (#1). Lesson L12:
+  **predict a wolf's fate by his own safe cover, not by his allies' strength**: a deal that leaves a wolf no
+  uncontested cover is talk-dead for him, whatever else his team holds.
+- **A2 Mirage: partly supported.** Forced outward, the Mirage framed a player in 3 of 4 games (4 frames: twice "Werewolf"
+  on a Centaur, once on its own soon-to-be partner, once a centre card dressed as "Mirage" to make a claim look false),
+  where the Glamour framed in 0 of 2 coarse games. But no frame was decisive: an honest looker hit a framed card only
+  once (#2, and the Echo, which had copied the framed Centaur earlier in the night, exposed it). The Mirage's frame works
+  as a prop for the Mirage's own fake-Sage claim, which a plain lie does nearly as well. Wolves 2, Centaurs 2 as
+  predicted. Lesson L13: a distortion matters only when an honest look lands on it; at 7 with one honest player-look
+  role that is about 1 in 6. Recommend the Mirage over the Glamour only together with a second honest player-look role
+  (an Echo or Rustler, as in M7), and expect frames to be a minority weapon.
