@@ -64,7 +64,7 @@ export const rngFor = (game: Game, label: string): Rng => (game.nightSeed === un
 export function fingerprint(game: Game): string {
   const s = game.state;
   const night = game.log.filter(e => e.turn <= game.turns.length).map(e => [e.turn, e.seat, e.role, e.step, e.ev, e.hidden ?? null]);
-  const shown = s.shown.map(x => [x.slot, x.role, x.by, x.forged ?? false]);
+  const shown = s.shown.map(x => [x.slots, x.role, x.by, x.forged ?? false]);
   const text = JSON.stringify({ dealt: s.dealt, centre: s.dealtCenter, nightSeed: game.nightSeed ?? null, rules: s.rules, night, shown });
   return `${fnv(text)}${fnv(text, 0x12345678)}`;
 }

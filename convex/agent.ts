@@ -9,7 +9,7 @@ import { v } from "convex/values";
 import { internalQuery, type QueryCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
 import { actingRole, freshProgress, isAuto, isPhoenix, legalTargets, publicMarks, seededRng, shapeOf, shuffle, turnKey, visibleShown, type Progress, type StepPlan } from "../shared/engine";
-import { condSource, legalRoles, pickCount, ROLE, ROLES, TEAM_NAME, type RoleId, type Slot } from "../shared/roles";
+import { aRole, condSource, legalRoles, pickCount, ROLE, ROLES, TEAM_NAME, type RoleId, type Slot } from "../shared/roles";
 import { describeRules, rulesOf } from "../shared/settings";
 import { cardOf, describe, revealHidden, seatName, voteLine, type Names } from "../shared/text";
 import type { Game } from "./game";
@@ -33,16 +33,18 @@ function chat(scope: Scope, rows: Awaited<ReturnType<typeof chatRows>>, since: n
   const game = scope.room.game as Game | undefined;
   return rows.flatMap((m, n) => {
     if (n < since) return [];
-    const hidden = m.mark === "unsigned" && !(ended && m.round === scope.room.round);
-    const seat = hidden || !game ? null : (i => (i >= 0 ? i : null))(game.seats.indexOf(m.player));
     const seal = m.seal ?? (m.mark === "signed" ? "signet" : null);
+    // Unsigned and sealed messages carry no name or seat until the game ends (a seal names a role, never a player).
+    const hidden = (m.mark === "unsigned" || !!seal) && !(ended && m.round === scope.room.round);
+    const seat = hidden || !game ? null : (i => (i >= 0 ? i : null))(game.seats.indexOf(m.player));
     return [{
       n,
-      from: hidden ? "(unsigned)" : seat === null ? m.name : `${m.name} (seat ${seat})`,
+      from: hidden ? (seal ? `sealed: the ${ROLE[seal]?.name ?? seal}` : "(unsigned)") : seat === null ? m.name : `${m.name} (seat ${seat})`,
       seat,
+      ...(hidden && seal && m.player === scope.me?._id ? { yours: true } : {}),
       phase: m.phase,
       text: m.text,
-      ...(seal ? { verified: sealNote(seal) } : {}),
+      ...(seal ? { sealed: sealNote(seal) } : {}),
       ...(ended && m.forged ? { FORGED: "This seal was forged by a Counterfeiter." } : {}),
       ...(m.mark === "unsigned" ? { unsigned: "Sent anonymously: the sender's name is withheld until the game ends." } : {}),
     }];
@@ -97,7 +99,7 @@ export function caveats(deck: RoleId[]): string[] {
   if (twins.length) out.push(`Shadow twins in this deck: ${twins.map(r => `${ROLE[r].name} (acts in the ${ROLE[ROLE[r].twinOf!].name}'s turn, on the Werewolf team${ROLE[r].looksAs ? `, looks like a ${ROLE[ROLE[r].looksAs!].name}` : ""})`).join("; ")}. A true description of a role's night does not prove its team.`);
   if (has(deck, r => ROLE[r]?.steps?.some(s => s.effects.some(e => e.kind === "distort")) ?? false)) out.push("Distortion is in this deck (Glamour, Will-o'-Wisp, Mistweaver, Fogbank): a look may have shown a wrong role, and its viewer is never told. Werewolf-team looks and the Herder's count see the truth.");
   if (any("forger")) out.push("A Forger is in this deck: one proclamation at dawn may be forged, and it looks exactly like the Herald's.");
-  if (any("counterfeiter")) out.push("A Counterfeiter is in this deck: any sealed message (Signet, Notary) may be forged, identical to a real one until the game ends.");
+  if (any("counterfeiter") || any("falsewitness")) out.push("A seal forger (Counterfeiter, False Witness) is in this deck: any sealed message (Signet, Notary) may be forged, identical to a real one until the game ends. Seals name a role, never a player.");
   if (any("eavesdropper")) out.push("An Eavesdropper is in this deck: a Werewolf may hold an exact copy of one role's true night results, so two players can make the same true claim.");
   if (any("biter")) out.push("A Biter is in this deck: a player may have been bitten onto the Werewolf team. They keep their true night results and may know a wolf's seat.");
   if (any("stalkinghorse")) out.push("A Stalking Horse is in this deck: it wakes with the pack and knows what they know. If whoever holds it is eliminated, the Werewolf team wins, even if a Werewolf falls too.");
@@ -230,10 +232,11 @@ export const view = internalQuery({
     }
 
     out.proclamations = visibleShown(game.state).map(s => ({
-      card: cardOf(s.slot, names, -1), was: ROLE[s.role].name,
+      cards: s.slots.map(x => cardOf(x, names, -1)), atLeastOneIs: ROLE[s.role].name,
+      says: `At least one of ${s.slots.map(x => cardOf(x, names, -1)).join(" and ")} is ${aRole(s.role)}.`,
       madeDuring: s.atDawn ? `${ROLE[s.by]?.name ?? s.by}'s turn` : game.turns[s.turn]?.role ? `${ROLE[game.turns[s.turn].role!].name}'s turn` : "Dusk",
       ...(ended && s.forged ? { FORGED: "This proclamation was the Forger's." } : {}),
-      note: "True at that moment of the night (unless forged or distorted). Later turns may have moved the card.",
+      note: "Not proof: a Forger's proclamation looks exactly the same (this deck has one, possibly in the centre). A real one was true at that moment of the night as its maker saw it (distortion applies); later turns may have moved the cards.",
     }));
     out.marks = game.state.dawn ? publicMarks(game.state).map(m => ({ what: m.label, on: who(m.seat), seat: m.seat, note: m.role === "cuckoo" ? "Whoever holds this Cuckoo card when the votes are counted wins if this seat is eliminated and they are not." : null })) : null;
 
@@ -325,7 +328,9 @@ Cards, looks and what you know
 - Twins: Moonsage, Pale Herald and Stray Herder show as their original to every look; Dun Centaur and Dusk Rustler show as themselves.
 - Copiers: the Gleaner (from a centre card) and the Echo (from a player) wake first and become a copy of the card's TRUE identity (never a distortion): its team, Werewolf or not, win rule, powers and night action, performed in that role's own turn. A copier can queue, for each role it might become, what that role will do (night_planStep with "as"). The pack does not learn about a copier that became a Werewolf. A look at a copier's card shows its own face; if the card moves, its new holder holds the copy.
 - The Pyre: the Phoenix wants to be eliminated; Kindlers (Kindler, Lure, False Witness, Ember-Carrier, Heavy Hand, Heir) share an early turn, "The brood gathers", learning where the Phoenix was DEALT and who the other Kindlers were dealt to, and win when a Phoenix holder is eliminated. The Phoenix does not know the Kindlers unless the table rule says so.
-- Seals: a sealed message (Signet's free text, the Notary's report composed by the game from its night look) is marked "The game confirms this was sent by the player DEALT <role>". With a Counterfeiter in the deck, any seal may be forged, identical until the game ends. With a Forger, one dawn proclamation may be forged.
+- Evidence: the game never publishes a plain confirmation. What it vouches for in public is indirect, ambiguous and fakeable, and the deck always holds a card that could have faked it (possibly in the centre).
+- Proclamations (Herald, Pale Herald) say "at least one of these two centre cards is a <role>" (the role one of the two showed, chosen at random), at dawn, anonymous. A deck with a Herald always holds a Forger, whose forged proclamations look exactly the same.
+- Seals: a sealed message is signed by a role only, "sealed: the Signet" / "sealed: the Notary": no name, no seat, until the game ends (the poster sees "yours"). Signet: free text. Notary: a report composed by the game from its night look at two players, "at least one of <A>'s and <B>'s cards was a <role>". A deck with a Signet or Notary always holds a seal forger (Counterfeiter, False Witness), whose seals look exactly the same.
 - Connections: a player goes offline after a short time without a heartbeat and comes back when they reconnect. With a Hush in the deck, a drop may be a deliberate cut; nothing tells the two apart until the results. Nothing typed while cut off is delivered later; a vote not cast in time is random.
 - What "blind" roles do not learn: the Spooker, Pickpocket and Latecomer see none of the cards they move or take; the Sentry learns only WHETHER nearby cards moved, not what they are; the Herder learns only HOW MANY Werewolf cards lie in the centre, not which; the Whisperer is told one Werewolf's seat, and that Werewolf does not know the Whisperer; the census tells the pack which roles were dealt to the centre, not where; the Elderbark learns which seats were DEALT creatures, not what they hold now; a bitten player is not told what the Biter holds.
 

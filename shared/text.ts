@@ -1,6 +1,6 @@
 /** Words for slots, decisions and log entries, in the second person for your own journal and the third for the log. */
 import type { Decision, LogEntry, LogEvent } from "./engine";
-import { ROLE, roleName, TEAM_NAME, type RoleId, type Slot, type StepDef } from "./roles";
+import { aRole, ROLE, roleName, TEAM_NAME, type RoleId, type Slot, type StepDef } from "./roles";
 
 /** All the wording needs of a table: its players' names by seat. */
 export interface Names { players: { name: string }[] }
@@ -51,15 +51,15 @@ function sentence(ev: LogEvent, role: RoleId, step: string, who: string, self: n
     }
     case "moved": return `${who} checked the watch: ${ev.slots.map((s, i) => `${own(s)} ${ev.moved[i] ? "was moved" : "was not moved"}`).join("; ")}.`;
     case "rotate": return `${who} stampeded three cards: ${ev.slots.map(s => own(s)).join(" → ")} → back to the first.`;
-    case "announce": return `${who} proclaimed ${ev.slots.map((s, i) => `${own(s)}: ${roleName(ev.roles[i])}`).join("; ")}. ${ev.atDawn ? "Everyone is shown this at dawn, with any other proclamation." : "Everyone was shown this."}`;
+    case "announce": return `${who} proclaimed: at least one of ${ev.slots.map(own).join(" and ")} is ${aRole(ev.roles[0])}. ${ev.atDawn ? "Everyone is shown this at dawn, with any other proclamation (a Forger's looks the same)." : "Everyone was shown this."}`;
     case "count": return mine ? `${ev.label}: ${ev.n}.` : `${who} counted ${ev.n} ${ev.label.toLowerCase()}.`;
     case "census": return `${who === "You" ? "The census" : `${who}'s census`}: ${ev.roles.length < ev.of ? `${ev.roles.length} of the ${ev.of} roles dealt to the centre` : `the ${ev.of} roles dealt to the centre`} are ${ev.roles.map(roleName).join(", ")} (not where).`;
     case "distort":
       if (ev.slot) return `${who} distorted ${own(ev.slot)}: until dawn every look at it shows ${ev.role ? roleName(ev.role) : "a random wrong role"}.`;
       return `${who} veiled ${seatWord(ev.viewer!, v, viewer)}'s eyes: tonight every centre card they look at shows ${ev.role ? roleName(ev.role) : "a random wrong role"}.`;
     case "cut": return `${who} cut ${seatWord(ev.seat, v, viewer)} off for ${Math.round((ev.until - ev.from) / 1000)} seconds, as if their connection had dropped.`;
-    case "witness": return ev.roles.length ? `${who} saw the ${roleName(ev.by)}'s proclamation: ${ev.slots.map((s, i) => `${cardOf(s, v, viewer)}: ${roleName(ev.roles[i])}`).join("; ")}.` : `${who} saw that the ${roleName(ev.by)} proclaimed nothing tonight.`;
-    case "forge": return `${who} forged a proclamation: ${ev.slots.map((s, i) => `${cardOf(s, v, viewer)}: ${roleName(ev.roles[i])}`).join("; ")}. At dawn it is published as the ${roleName(ev.as)}'s.`;
+    case "witness": return ev.roles.length ? `${who} saw the ${roleName(ev.by)}'s proclamation: ${ev.roles.map((r, k) => `at least one of ${cardOf(ev.slots[2 * k], v, viewer)} and ${cardOf(ev.slots[2 * k + 1], v, viewer)} is ${aRole(r)}`).join("; ")}.` : `${who} saw that the ${roleName(ev.by)} proclaimed nothing tonight.`;
+    case "forge": return `${who} forged a proclamation: at least one of ${ev.slots.map(s => cardOf(s, v, viewer)).join(" and ")} is ${aRole(ev.roles[0])}. At dawn it is published as the ${roleName(ev.as)}'s.`;
     case "overhear": {
       const name = roleName(ev.role);
       if (!ev.copied.length) return `${who} listened for the ${name} and heard nothing.`;
@@ -96,6 +96,7 @@ export function revealHidden(e: LogEntry, v: Names): string {
   const h = e.hidden;
   if (!h) return "";
   const out: string[] = [];
+  if (h.cards) out.push(`the cards showed ${h.cards.map(roleName).join(" and ")}`);
   if (h.truth) out.push(`truly ${h.truth.map(roleName).join(", ")}`);
   if (h.role) out.push(`it showed ${roleName(h.role)}`);
   if (h.source !== undefined) out.push(h.source === "ghost" ? "nobody held it: a ghost result from their own seat" : h.source === "none" ? "nobody held it" : `copied from ${seatName(h.source, v)}`);

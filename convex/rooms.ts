@@ -15,13 +15,21 @@ import { rulesOf } from "../shared/settings";
 /** A log entry as a player may see it during the game: without what only the post-game log shows. */
 export const redact = ({ hidden: _hidden, ...e }: LogEntry): LogEntry => e;
 /** The proclamations a player may see now, without the forgery flag or (for dawn ones) the turn they were really made in. */
-export const publicShown = (game: Game) => visibleShown(game.state).map(({ forged: _f, turn, ...x }) => ({ ...x, turn: x.atDawn ? null : turn }));
+export const publicShown = (game: Game) => visibleShown(game.state).map(({ forged: _f, turn, ...x }) => ({
+  ...x, turn: x.atDawn ? null : turn,
+  /** "At least one of `slots` is a `role`". `slot` (the first of the two) is kept only so older clients do not break. */
+  slot: x.slots[0], says: "at least one of these two centre cards",
+}));
 import { site } from "./mcp";
 import { contextOf, loadScope } from "./scope";
 import { gateOf, HEARTBEAT_MS, liveness, ONLINE_TIMEOUT_MS, UNREACHABLE } from "./presence";
 
 /** The seal of an authenticated message, as every viewer sees it until its game ends (real and forged alike). */
-export const sealNote = (seal: string) => `The game confirms this was sent by the player DEALT ${seal === "signet" ? "Signet" : seal === "notary" ? "Notary" : seal}.`;
+/**
+ * A seal names a ROLE, never a player (the evidence amendment): "Sealed: the Signet". Who posted it, and whether it was
+ * forged, is shown only once the game has ended.
+ */
+export const sealNote = (seal: string) => `Sealed: the ${seal === "signet" ? "Signet" : seal === "notary" ? "Notary" : seal}. The seal names a role, not a player, and a forger's seal looks exactly the same.`;
 
 export const view = query({
   args: { code: v.string(), token: v.string() },
@@ -34,9 +42,11 @@ export const view = query({
     // The gate: a silenced player is served nothing, exactly as an unreachable server serves nothing. The client must
     // render this error and a lost connection identically (docs/architecture.md, "Presence and the gate").
     if (!gateOf(game, room.phase, rulesOf(room.settings.rules), seat, now).open) throw new ConvexError(UNREACHABLE);
+    // Another seat's last heartbeat is rounded down to the heartbeat interval: online or not is all it may tell, never
+    // the timing of a burst of activity (an assistant planning in its turn).
     const person = (id: string, i: number) => {
       const p = players.find(x => x._id === id);
-      return { id, seat: i, name: p?.name ?? "(left)", bot: p?.bot ?? false, host: room.host === id, me: me?._id === id, lastSeenAt: p?.lastSeenAt ?? null, presence: liveness(p, now) };
+      return { id, seat: i, name: p?.name ?? "(left)", bot: p?.bot ?? false, host: room.host === id, me: me?._id === id, lastSeenAt: p?.lastSeenAt == null ? null : me?._id === id ? p.lastSeenAt : Math.floor(p.lastSeenAt / HEARTBEAT_MS) * HEARTBEAT_MS, presence: liveness(p, now) };
     };
     const ended = room.phase === "ended";
     const rows = await ctx.db.query("messages").withIndex("room", q => q.eq("room", room._id)).order("desc").take(200);
@@ -60,9 +70,11 @@ export const view = query({
       players: game ? game.seats.map(person) : players.map((p, i) => person(p._id, i)),
       /** Table talk, oldest first. An unsigned message's sender is withheld until its game has ended. */
       messages: rows.reverse().map(m => {
-        const hidden = m.mark === "unsigned" && !(ended && m.round === room.round) && m.round === room.round;
         const seal = m.seal ?? (m.mark === "signed" ? "signet" : null), revealed = m.round !== room.round || ended;
-        return { id: m._id, at: m._creationTime, round: m.round, phase: m.phase, text: m.text, mark: m.mark ?? null, seal, sealNote: seal ? sealNote(seal) : null, forged: revealed && m.forged ? true : null, via: m.via, name: hidden ? null : m.name, seat: hidden || !game ? null : game.seats.indexOf(m.player), mine: !hidden && me?._id === m.player };
+        // An unsigned or sealed message carries no name, seat, avatar or assistant marker until its game has ended.
+        const hidden = (m.mark === "unsigned" || !!seal) && !revealed;
+        const own = me?._id === m.player;
+        return { id: m._id, at: m._creationTime, round: m.round, phase: m.phase, text: m.text, mark: m.mark ?? null, seal, sealNote: seal ? sealNote(seal) : null, forged: revealed && m.forged ? true : null, via: hidden ? null : m.via, name: hidden ? null : m.name, seat: hidden || !game ? null : game.seats.indexOf(m.player), mine: hidden ? (seal ? own : false) : own };
       }),
       /** The viewer's own assistant connections, and where an MCP client connects. */
       connections: creds.filter(c => !c.revokedAt && (c.kind === "oauth" ? (c.refreshExpiresAt ?? 0) : c.expiresAt) > Date.now()).map(c => ({ id: c._id, label: c.label, permission: c.permission, kind: c.kind, lastUsedAt: c.lastUsedAt ?? null, createdAt: c._creationTime })),
@@ -109,7 +121,7 @@ export const view = query({
           bitten: game.state.bitten,
           adopted: game.state.adopted,
           phoenixInst: game.state.phoenixInst,
-          shown: game.state.shown,
+          shown: game.state.shown.map(x => ({ ...x, slot: x.slots[0] })),
           daySwap: game.daySwap ?? null,
           seatEffects: game.seatEffects ?? [],
           dealSeed: game.dealSeed ?? null,

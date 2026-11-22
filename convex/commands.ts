@@ -11,7 +11,7 @@ import type { Id } from "./_generated/dataModel";
 import { internal } from "./_generated/api";
 import { availability, COMMAND, type CommandId } from "../shared/commands";
 import { advance, dealFixed, freshProgress, nightTurns, secureRng, seededRng, shapeOf, shuffle, turnKey, validPlan, type StepPlan } from "../shared/engine";
-import { CENTER_DEFAULT, recommendedDeck, ROLE } from "../shared/roles";
+import { aRole, CENTER_DEFAULT, recommendedDeck, ROLE } from "../shared/roles";
 import { rulesOf } from "../shared/settings";
 import { seatName } from "../shared/text";
 import { endVote, nightSeats, rngFor, seatedHumans, startVote, VOTE_SECONDS_DEFAULT, type Game, type Turn } from "./game";
@@ -51,8 +51,11 @@ async function sealedPost(ctx: MutationCtx, s: Scope, text: string, seal: string
   await ctx.db.patch(s.room._id, { game });
   await ctx.db.insert("messages", { room: s.room._id, round: s.room.round, phase: s.room.phase, player: s.me!._id, name: s.me!.name, text, via, seal, ...(forged ? { forged } : {}) });
 }
-/** The wording of a Notary's sealed report, shared by the real report and its forgery. */
-const reportText = (seat: number, card: string, names: { players: { name: string }[] }) => `Sealed report: at night, ${seatName(seat, names)}'s card was ${ROLE[card]?.name ?? card}.`;
+/** The wording of a Notary's sealed report, shared by the real report and its forgery: a pair, never one card. */
+const reportText = (seats: number[], card: string, names: { players: { name: string }[] }) => {
+  const [a, b] = [...seats].sort((x, y) => x - y);
+  return `Sealed report: at night, at least one of ${seatName(a, names)}'s and ${seatName(b, names)}'s cards was ${aRole(card)}.`;
+};
 async function seatNames(ctx: MutationCtx, game: Game) {
   return { players: await Promise.all(game.seats.map(async id => ({ name: (await ctx.db.get(id))?.name ?? "(left)" }))) };
 }
@@ -128,16 +131,19 @@ const HANDLERS: Record<ServerId, Handler> = {
     await ctx.db.insert("messages", { room: room._id, round: room.round, phase: room.phase, player: me!._id, name: me!.name, text: a.text, via });
   },
   "chat.sendSigned": (ctx, s, a, _t, via) => sealedPost(ctx, s!, a.text, "signet", false, via),
-  "chat.sendReport": async (ctx, s, _a, _t, via) => {
+  "chat.sendReport": async (ctx, s, a, _t, via) => {
     const game = s!.room.game as Game;
-    const look = game.log.find(e => e.seat === s!.seat && e.ev.kind === "look" && e.ev.roles && e.ev.slots[0]?.k === "p");
-    if (!look || look.ev.kind !== "look" || !look.ev.roles) return fail("You have no night look to report.");
-    await sealedPost(ctx, s!, reportText(look.ev.slots[0].i, look.ev.roles[0], await seatNames(ctx, game)), "notary", false, via);
+    const look = game.log.find(e => e.seat === s!.seat && e.ev.kind === "look" && e.ev.roles && e.ev.slots.length === 2 && e.ev.slots.every(x => x.k === "p"));
+    if (!look || look.ev.kind !== "look" || !look.ev.roles) return fail("You have no night look at two players to report.");
+    const seen = look.ev.roles;
+    const card = a.card ?? seen[Math.floor(Math.random() * seen.length)];
+    if (!seen.includes(card)) return fail(`You saw ${seen.map(r => ROLE[r]?.name ?? r).join(" and ")}: the report names one of those.`);
+    await sealedPost(ctx, s!, reportText(look.ev.slots.map(x => x.i), card, await seatNames(ctx, game)), "notary", false, via);
   },
   "chat.forgeSeal": async (ctx, s, a, _t, via) => {
     const game = s!.room.game as Game;
-    if (a.as === "notary" && a.seat >= game.seats.length) return fail("There is no such seat.");
-    const text = a.as === "signet" ? a.text : reportText(a.seat, a.card, await seatNames(ctx, game));
+    if (a.as === "notary" && (a.seat >= game.seats.length || a.seat2 >= game.seats.length)) return fail("There is no such seat.");
+    const text = a.as === "signet" ? a.text : reportText([a.seat, a.seat2], a.card, await seatNames(ctx, game));
     await sealedPost(ctx, s!, text, a.as, true, via);
   },
   "connect.createKey": async (ctx, s, a) => {
