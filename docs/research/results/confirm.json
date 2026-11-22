@@ -1,6 +1,6 @@
 {
  "generatedBy": "sim/research/confirm-report.ts",
- "generated": "2026-11-22T13:42:37.024Z",
+ "generated": "2026-11-22T13:43:03.180Z",
  "rosters": {
   "P7": {
    "roster": "P7 Pyre (7 players): werewolf x2, phoenix, lure, embercarrier, sage, rustler, sentry, centaur, pickpocket; 3 centre",
@@ -36,20 +36,20 @@
       "tieDecided": 0,
       "randomVotes": 0,
       "judges": {
-       "verdicts": 2,
-       "tom": 2,
-       "deception": 2.5,
-       "path": 3,
+       "verdicts": 4,
+       "tom": 2.5,
+       "deception": 3,
+       "path": 3.25,
        "noise": 1,
        "agreementMeanAbsDiff": {
         "tom": 0,
         "deception": 1,
-        "path": 0,
+        "path": 0.5,
         "noise": 0
        },
-       "howWonExact": "1/1",
+       "howWonExact": "2/2",
        "howWon": {
-        "lie-believed": 2
+        "lie-believed": 4
        }
       },
       "strategies": [
@@ -311,7 +311,7 @@
       },
       "minority": 4,
       "entropyWinner": 1.45,
-      "path": 3.21,
+      "path": 3.29,
       "cMedian": 0.67,
       "talkLive": true
      },
@@ -478,7 +478,26 @@
        "randomVotes": 0,
        "messages": 53,
        "costUsd": 5.84,
-       "judges": [],
+       "judges": [
+        {
+         "tom": 3,
+         "deception": 4,
+         "path": 3,
+         "noise": 1,
+         "howWon": "lie-believed",
+         "label": "Phoenix's fake wolf confession drew the burn",
+         "pivot": "Fen: \"OK, I'm done. Alder's read was right: I was dealt Werewolf... Dov is my packmate\" — which turned Alder from \"Esme is a proven liar... that's Pyre\" back to \"Fen confessed Werewolf, which matches my unmoved Sage read. I'm voting Fen.\""
+        },
+        {
+         "tom": 3,
+         "deception": 3,
+         "path": 4,
+         "noise": 1,
+         "howWon": "lie-believed",
+         "label": "Phoenix's fake wolf confession swayed the Sage",
+         "pivot": "Fen: \"OK, I'm done. Alder's read was right: I was dealt Werewolf... Dov is my packmate.\" Alder: \"Fen confessed Werewolf, which matches my unmoved Sage read... I'm voting Fen.\""
+        }
+       ],
        "strategies": [
         {
          "strategy": "counter-claim-info-role",
@@ -833,20 +852,21 @@
       "tieDecided": 0,
       "randomVotes": 0,
       "judges": {
-       "verdicts": 2,
+       "verdicts": 4,
        "tom": 2,
-       "deception": 2,
+       "deception": 2.5,
        "path": 3,
-       "noise": 3,
+       "noise": 2.25,
        "agreementMeanAbsDiff": {
         "tom": 0,
         "deception": 0,
         "path": 0,
-        "noise": 0
+        "noise": 0.5
        },
-       "howWonExact": "1/1",
+       "howWonExact": "1/2",
        "howWon": {
-        "lie-believed": 2
+        "lie-believed": 3,
+        "framing-or-decoy": 1
        }
       },
       "strategies": [
@@ -1081,7 +1101,26 @@
        "randomVotes": 0,
        "messages": 29,
        "costUsd": 3.14,
-       "judges": [],
+       "judges": [
+        {
+         "tom": 2,
+         "deception": 3,
+         "path": 3,
+         "noise": 1,
+         "howWon": "framing-or-decoy",
+         "label": "Two fake Sages framed the real Centaur",
+         "pivot": "Dov: \"I looked at Esme (seat 3) and saw Centaur\" combined with Bryn: \"My look was Alder (seat 2): Werewolf\". Esme's late \"I'm the LURE... Dov saw 'Centaur'? That's a lie\" came after the votes had settled."
+        },
+        {
+         "tom": 2,
+         "deception": 3,
+         "path": 3,
+         "noise": 2,
+         "howWon": "lie-believed",
+         "label": "Double fake Sage framed honest Centaur",
+         "pivot": "Dov: \"I looked at Esme (seat 3) and saw Centaur\", which Esme's false Centaur claim matched, and then Bryn: \"My look was Alder (seat 2): Werewolf.\" Cass: \"both lines converge on Alder.\""
+        }
+       ],
        "strategies": [
         {
          "strategy": "safe-centre-claim",
