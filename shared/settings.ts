@@ -17,6 +17,10 @@ export interface Rules {
   biteNamesBiter: boolean;
   /** When nobody holds the role the Eavesdropper names, it gets a real result of its own as if it held it. Off: nothing. */
   eavesdropGhost: boolean;
+  /** The discussion opens with simultaneous opening statements (held, revealed together in seat order). */
+  openingStatements: boolean;
+  /** How long the opening-statement window lasts, in seconds. */
+  openingSeconds: number;
   /** Blood Price counts an eliminated Centaur against the Centaurs only if a non-Werewolf-team player voted for them. */
   bloodPriceCondemned: boolean;
   /** The census also hands each pack member a different Centaur-team role from the centre as a cover to claim. */
@@ -49,6 +53,8 @@ export const DEFAULT_RULES: Rules = {
   dawnProclamations: true,
   biteNamesBiter: true,
   eavesdropGhost: true,
+  openingStatements: false,
+  openingSeconds: 60,
   bloodPriceCondemned: false,
   packCovers: false,
   daySwap: false,
@@ -103,6 +109,15 @@ export const RULE_DEFS: RuleDef[] = [
     id: "eavesdropGhost", kind: "boolean", title: "Eavesdropper's own result", tooltip: "What the Eavesdropper gets when nobody holds the role it names.",
     on: "If nobody was dealt the role the Eavesdropper names, it secretly gets a real result of its own as if it held that role (looks only, never moves), and is not told which case happened.",
     off: "If nobody was dealt the role the Eavesdropper names, it learns nothing.",
+  },
+  {
+    id: "openingStatements", kind: "boolean", title: "Opening statements", tooltip: "Whether the discussion opens with simultaneous opening statements.",
+    on: "The discussion opens with opening statements: each player posts ONE message, which is held unseen; all are revealed together, in seat order, once every player has posted or the opening window ends. Nobody sees who has posted. Free chat (and getting ready, and sealed messages) opens after the reveal.",
+    off: "The discussion opens straight into free chat.",
+  },
+  {
+    id: "openingSeconds", kind: "number", title: "Opening window", tooltip: "How long players have to post their opening statement.", min: 20, max: 180,
+    means: n => `With opening statements, the window for them lasts ${n} seconds (it ends early once every player has posted).`,
   },
   {
     id: "bloodPriceCondemned", kind: "boolean", title: "Blood Price counts the condemned", tooltip: "Whether a Centaur eliminated by Werewolf-team votes alone counts against the Centaurs under the Blood Price.",

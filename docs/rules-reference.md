@@ -31,6 +31,8 @@ It states the game exactly as built. Design history: docs/design/synthesis.md an
 | `dawnProclamations` | Proclamations at dawn | true | on / off | Every proclamation (the Herald's, and a Forger's) is published together at dawn, in random order, each marked "Herald's turn" and true at that moment of the night. |
 | `biteNamesBiter` | The bitten know the Biter | true | on / off | A bitten player is told which seat bit them. |
 | `eavesdropGhost` | Eavesdropper's own result | true | on / off | If nobody was dealt the role the Eavesdropper names, it secretly gets a real result of its own as if it held that role (looks only, never moves), and is not told which case happened. |
+| `openingStatements` | Opening statements | false | on / off | The discussion opens straight into free chat. |
+| `openingSeconds` | Opening window | 60 | 20 to 180 | With opening statements, the window for them lasts 60 seconds (it ends early once every player has posted). |
 | `bloodPriceCondemned` | Blood Price counts the condemned | false | on / off | Every eliminated Centaur-team player counts against the Centaurs under the Blood Price, whoever voted for them. |
 | `packCovers` | Pack covers | false | on / off | The pack gets no cover roles: each pack member chooses its own claim. |
 | `daySwap` | Moon-Thief's day swap | false | on / off | The Moon-Thief has no day swap: it is a Werewolf of the pack and nothing more. (Off by default: a swap after the talking makes the talking irrelevant.) |
