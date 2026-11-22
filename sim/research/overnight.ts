@@ -17,9 +17,23 @@ const OUT = argv.includes("--out") ? argv[argv.indexOf("--out") + 1] : "docs/res
 const DIR = "docs/research/results";
 interface Group { group: string; roster: string; fixedScenario: boolean; games: number; deck: string[]; centre: number; rules: Record<string, unknown>; winners: Record<string, number>; minority: number; concentration: { c: number; band: string }[]; judges: null | { verdicts: number; tom: number | null; deception: number | null; path: number | null; noise: number | null; agreement: Record<string, unknown> }; talkLive: string | null; costUsd: number; perGame?: unknown[] }
 const files = readdirSync(DIR).filter(f => /^(hub|players-\d\w*|confirm)\.json$/.test(f));
-const sources: { file: string; groups: Group[] }[] = files.map(f => ({ file: f, json: JSON.parse(readFileSync(`${DIR}/${f}`, "utf8")) })).filter(x => Array.isArray(x.json.groups)).map(x => ({ file: x.file, groups: x.json.groups }));
+// Every file is optional; a file that does not parse, or has neither shape, is listed as unparsed and skipped.
+const parsed = files.flatMap(f => { try { return [{ file: f, json: JSON.parse(readFileSync(`${DIR}/${f}`, "utf8")) }]; } catch { return []; } });
+const unparsed = files.filter(f => !parsed.some(p => p.file === f && (Array.isArray(p.json.groups) || p.json.rosters)));
+const sources: { file: string; groups: Group[] }[] = parsed.filter(x => Array.isArray(x.json.groups)).map(x => ({ file: x.file, groups: x.json.groups.filter((g: Group) => g && g.deck && g.winners) }));
 /** Roster-level files (players-5/-8 shape): normalised straight into output rows. */
-const rosterFiles = files.map(f => ({ file: f, json: JSON.parse(readFileSync(`${DIR}/${f}`, "utf8")) })).filter(x => !Array.isArray(x.json.groups) && x.json.rosters);
+const rosterFiles = parsed.filter(x => !Array.isArray(x.json.groups) && x.json.rosters);
+/** Games and spend per source, as each file reports them (falling back to sums over its groups). */
+const REPORTED_ELSEWHERE: Record<string, { games: number; usd: number; note: string }> = {
+  "players-8.json": { games: 63, usd: 334, note: "from players-8.md: $317 games + $17 judging" },
+};
+const sessions = parsed.map(({ file, json }) => {
+  const groupGames = Array.isArray(json.groups) ? json.groups.reduce((a: number, g: Group) => a + (g?.games ?? 0), 0) : 0;
+  const groupUsd = Array.isArray(json.groups) ? json.groups.reduce((a: number, g: Group) => a + (g?.costUsd ?? 0), 0) : 0;
+  const games = json.totalGames ?? json.spend?.games ?? REPORTED_ELSEWHERE[file]?.games ?? groupGames;
+  const usd = json.totalCostUsd ?? json.spend?.totalUsd ?? (json.spend?.playersUsd !== undefined ? json.spend.playersUsd + (json.spend.judgesUsdApprox ?? 0) : undefined) ?? REPORTED_ELSEWHERE[file]?.usd ?? Math.round(groupUsd);
+  return { file, games, usd: Math.round(usd), note: REPORTED_ELSEWHERE[file]?.note ?? (file === "hub.json" ? "players only (judges and taggers about $10 more)" : "") };
+});
 
 const key = (g: Group, file: string) => `${file.replace(".json", "")}:${g.roster}`;
 const rosters = new Map<string, { source: string; roster: string; players: number; deck: string[]; centre: number; rulesSeen: Record<string, unknown>[]; groups: Group[] }>();
@@ -78,13 +92,15 @@ const ranked = out.filter(r => r.fixedScenarios > 0).sort((a, b) =>
   b.concentration.inBand / b.games - a.concentration.inBand / a.games || (a.judgesFixed.noise ?? 9) - (b.judgesFixed.noise ?? 9));
 /** The hub's choice for the owner (judgment on the ranking above; see overnight-summary.md for the reasons). */
 const TOP3 = [
-  { rank: 1, key: "players-5.json:Q3 Little Pyre", players: 5, weakness: "Lure-dressed Phoenix read by the Sage: Pyre 4 of 5 (F8); Pyre share inflated by Pyre-centred scenarios" },
-  { rank: 2, key: "players-7.json:P7", players: 7, weakness: "one fixed scenario only (confirmation at n=10 running); noise 1.5; two plurality votes of five" },
-  { rank: 3, key: "hub.json:D6 + players-6 PY6", players: 6, weakness: "Pyre too strong when the Lure dresses the Phoenix; wolves near-spectators in lone-wolf deals; opening statements shift it per scenario" },
+  { rank: 1, key: "players-5.json:Q3 Little Pyre", players: 5, weakness: "Lure-dressed Phoenix read by the Sage: Pyre 4 of 5 (F8)" },
+  { rank: 2, key: "players-6.json:PY6", players: 6, alsoSee: "hub.json:D6", weakness: "wolves near-spectators in lone-wolf scenarios (2 of 38 fixed); Pyre too strong with the Lure dress" },
+  { rank: 3, key: "players-7.json:K7", players: 7, weakness: "Centaur-leaning (8 of 10 fixed); two scenarios only" },
 ];
+const honourable = [{ key: "players-7.json:P7", why: "best single scenario (Pyre 2 / wolves 2 / Centaurs 1, ToM 2.7) but misses the consensus criterion: 5 of 19 votes in band" }];
 const notSolved = { players: 8, why: "of 10 fixed scenarios 1 talk-live, 2 borderline, 7 swept; 63 games Centaurs 52, wolves 6, Pyre 5 (first 8-player session)" };
 const strategies = Object.fromEntries(readdirSync(DIR).filter(f => /^(hub-strategies|players-\d\w*)\.json$/.test(f)).map(f => [f, f.startsWith("hub") ? JSON.parse(readFileSync(`${DIR}/${f}`, "utf8")) : JSON.parse(readFileSync(`${DIR}/${f}`, "utf8")).strategies]).filter(([, v]) => v));
-writeFileSync(OUT, JSON.stringify({ generatedAt: new Date().toISOString(), top3: TOP3, notSolved, strategies, sources: files, rankingRule: "talk-live share of fixed scenarios, then judge ToM, then share of games with 0.6 <= c < 1, then lower noise", ranked: ranked.map(r => `${r.source}:${r.roster}`), rosters: out }, null, 1));
-console.log(`sources: ${files.join(", ")}`);
+writeFileSync(OUT, JSON.stringify({ generatedAt: new Date().toISOString(), top3: TOP3, honourable, notSolved, sessions, totalGames: sessions.reduce((a, x) => a + x.games, 0), unparsed, strategies, sources: files, rankingRule: "talk-live share of fixed scenarios, then judge ToM, then share of games with 0.6 <= c < 1, then lower noise", ranked: ranked.map(r => `${r.source}:${r.roster}`), rosters: out }, null, 1));
+console.log(`sources: ${files.join(", ")}${unparsed.length ? ` (unparsed: ${unparsed.join(", ")})` : ""}`);
+for (const x of sessions) console.log(`  ${x.file.padEnd(18)} ${String(x.games).padStart(4)} games  $${x.usd} ${x.note}`);
 for (const r of ranked) console.log(`${(r.source.replace(".json", "") + ":" + r.roster).padEnd(16)} ${r.players}p  fixed ${r.talkLive}/${r.fixedScenarios} talk-live (${r.fixedReplays} replays)  ToM ${r.judgesFixed.tom} path ${r.judgesFixed.path} dec ${r.judgesFixed.deception} noise ${r.judgesFixed.noise}  c-in-band ${r.concentration.inBand}/${r.games}  wins ${JSON.stringify(r.winsFixed)}`);
 for (const r of out.filter(r => !r.fixedScenarios)) console.log(`  (unranked, coarse only) ${r.source}:${r.roster} ${r.players}p ${r.games} games ${JSON.stringify(r.winsAll)}`);

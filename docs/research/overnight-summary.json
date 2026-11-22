@@ -1,29 +1,70 @@
 {
- "generatedAt": "2026-11-22T13:35:58.543Z",
+ "generatedAt": "2026-11-22T13:37:32.531Z",
  "top3": [
   {
    "rank": 1,
    "key": "players-5.json:Q3 Little Pyre",
    "players": 5,
-   "weakness": "Lure-dressed Phoenix read by the Sage: Pyre 4 of 5 (F8); Pyre share inflated by Pyre-centred scenarios"
+   "weakness": "Lure-dressed Phoenix read by the Sage: Pyre 4 of 5 (F8)"
   },
   {
    "rank": 2,
-   "key": "players-7.json:P7",
-   "players": 7,
-   "weakness": "one fixed scenario only (confirmation at n=10 running); noise 1.5; two plurality votes of five"
+   "key": "players-6.json:PY6",
+   "players": 6,
+   "alsoSee": "hub.json:D6",
+   "weakness": "wolves near-spectators in lone-wolf scenarios (2 of 38 fixed); Pyre too strong with the Lure dress"
   },
   {
    "rank": 3,
-   "key": "hub.json:D6 + players-6 PY6",
-   "players": 6,
-   "weakness": "Pyre too strong when the Lure dresses the Phoenix; wolves near-spectators in lone-wolf deals; opening statements shift it per scenario"
+   "key": "players-7.json:K7",
+   "players": 7,
+   "weakness": "Centaur-leaning (8 of 10 fixed); two scenarios only"
+  }
+ ],
+ "honourable": [
+  {
+   "key": "players-7.json:P7",
+   "why": "best single scenario (Pyre 2 / wolves 2 / Centaurs 1, ToM 2.7) but misses the consensus criterion: 5 of 19 votes in band"
   }
  ],
  "notSolved": {
   "players": 8,
   "why": "of 10 fixed scenarios 1 talk-live, 2 borderline, 7 swept; 63 games Centaurs 52, wolves 6, Pyre 5 (first 8-player session)"
  },
+ "sessions": [
+  {
+   "file": "hub.json",
+   "games": 89,
+   "usd": 313,
+   "note": "players only (judges and taggers about $10 more)"
+  },
+  {
+   "file": "players-5.json",
+   "games": 81,
+   "usd": 236,
+   "note": ""
+  },
+  {
+   "file": "players-6.json",
+   "games": 73,
+   "usd": 277,
+   "note": ""
+  },
+  {
+   "file": "players-7.json",
+   "games": 57,
+   "usd": 296,
+   "note": ""
+  },
+  {
+   "file": "players-8.json",
+   "games": 63,
+   "usd": 334,
+   "note": "from players-8.md: $317 games + $17 judging"
+  }
+ ],
+ "totalGames": 363,
+ "unparsed": [],
  "strategies": {
   "hub-strategies.json": {
    "taxonomy": {
