@@ -114,9 +114,11 @@ export const PAGES: Partial<Record<CommandId, (env: PageEnv) => Page>> = {
     onPick: as => as === "signet"
       ? { kind: "field", title: "Forge the Signet's seal", label: "Message", placeholder: "Up to 600 characters", validate: t => (!t.trim() ? "Write something first." : null),
           onSubmit: t => ({ kind: "pick", title: "Post it?", options: [{ id: "post", label: `Post: “${t.trim().slice(0, 60)}”`, detail: "Identical to a real seal until the game ends.", confirm: "Press ↵ again to post it. You can only do this once." }], onPick: async () => { await env.exec("chat.forgeSeal", { as, text: t.trim() }); } }) }
-      : { kind: "pick", title: "Whose card the report names", options: seatOptions(env.view), onPick: seat => ({
-          kind: "pick", title: "The role it says they had", options: [...new Set(env.view?.settings.deck ?? [])].map(r => ({ id: r, label: roleName(r), confirm: "Press ↵ again to post the forged report. You can only do this once." })),
-          onPick: async card => { await env.exec("chat.forgeSeal", { as, seat: Number(seat), card }); },
+      : { kind: "pick", title: "The first player the report names", options: seatOptions(env.view), onPick: seat => ({
+          kind: "pick", title: "The second player", options: seatOptions(env.view).filter(o => o.id !== seat), onPick: seat2 => ({
+            kind: "pick", title: "The role it says at least one of them had", options: [...new Set(env.view?.settings.deck ?? [])].map(r => ({ id: r, label: roleName(r), confirm: "Press ↵ again to post the forged report. You can only do this once." })),
+            onPick: async card => { await env.exec("chat.forgeSeal", { as, seat: Number(seat), seat2: Number(seat2), card }); },
+          }),
         }) },
   }),
   "setup.setRule": env => {
@@ -150,6 +152,12 @@ export const PAGES: Partial<Record<CommandId, (env: PageEnv) => Page>> = {
           : { kind: "field", title: "Night seed", label: "Night seed", validate: num, onSubmit: async night => { await env.exec("setup.fixDeal", { seed: Number(seed), nightSeed: Number(night) }); } }) };
       },
     };
+  },
+  "chat.sendReport": env => {
+    const mine = env.view?.game?.mine;
+    const look = mine?.journal.find(e => e.ev.kind === "look" && e.ev.roles && e.ev.slots.length === 2);
+    const roles = look?.ev.kind === "look" ? [...new Set(look.ev.roles ?? [])] : [];
+    return { kind: "pick", title: "Which role the report names", empty: "You have no night look at two players to report.", options: roles.map(r => ({ id: r, label: roleName(r), detail: "One of the two roles you saw", confirm: "Press ↵ again to post the sealed report. You can only do this once." })), onPick: async card => { await env.exec("chat.sendReport", { card }); } };
   },
   "day.ready": env => {
     const ready = !!env.view?.context.ready;
