@@ -24,12 +24,20 @@ const plan = {
   // added after the coordinator's 13:35 message (revised plan): K7 duel, F5, F6 with the condemned rule
   "c7k": [["F-K7-duel", "off", 5], ["F-K7-duel", "open", 10]],
   "c5b": [["F5-Q3-pyre-burn", "off", 5], ["F5-Q3-pyre-burn", "open", 10], ["F6-Q3-two-wolves-lure", "cond", 5]],
+  // extra lane (budget allowed): deferred F8 arms and the Lure-variant arms (Lure retargeted: dresses its own card as a Rustler)
+  "cx": [["F8-Q3-dressed-phoenix", "off", 5], ["F8-Q3-dressed-phoenix", "open", 5], ["PY6-S2-twowolfreads", "spares", 5], ["F8-Q3-dressed-phoenix", "spares", 5], ["F-P7-ember", "spares", 5]],
   "c7b": [["F-P7-inversion", "off", 5], ["F-P7-inversion", "open", 10]],
 };
 for (const [file, rows] of Object.entries(plan)) {
   const tables = rows.map(([sc, arm, replays]) => {
     const t = structuredClone(pick(...src[sc]));
     const six = t.players.length === 6 ? { bloodPriceCondemned: true } : {};
+    if (arm === "spares" && file === "cx") { // the Lure may not dress the Phoenix: it dresses its own card as a Rustler instead (as the hub's S5c)
+      for (const [name, steps] of Object.entries(t.scenario.plans)) for (const st of steps) if (st.step === "lure") {
+        const seat = t.players.indexOf(name);
+        st.plan.otherwise = { kind: "pick", targets: [{ k: "p", i: seat }], role: "rustler" };
+      }
+    }
     return { ...t, label: `${sc}~${arm}`, replays, rules: { ...(t.rules ?? {}), ...six, ...arms[arm] } };
   });
   writeFileSync(`sim/tournaments/confirm/${file}.json`, JSON.stringify({ timers, agents, tables }, null, 1));

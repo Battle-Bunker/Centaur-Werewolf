@@ -71,3 +71,11 @@ Rustler; if one is run, I will do the same and state it.
 
 Roster comparison at 7 (predicted): K7 holds up with tighter consensus (median c .67) but is Centaur-leaning; P7 is
 the more variable, with median c about .6 and more plurality votes.
+
+## Addendum, 13:58 UTC (extra lane `cx`, budget allows; written before any of these games)
+The `spares` arms are now run with the Lure RETARGETED (it dresses its own card as a Rustler, as the hub's S5c), since a
+Lure that knows the rule would not waste its dress on the Phoenix. Predictions for spares stand as written above
+(F8 spares: wolves 2-4, C 1-3, Pyre 0-1; PY6-S2 spares: C 2-4, W 1-3, Pyre 0-1; ember spares: W 2-4, C 1-3, Pyre 0-1),
+with one addition: the Lure's self-dress as a Rustler makes any look at the Lure confirm a Rustler claim, so expect the
+Lure to claim Rustler in most replays. F8 openings ON is 5 replays (not 10). Partial results at that time (15 games)
+were seen before this addendum; they concern other scenarios.

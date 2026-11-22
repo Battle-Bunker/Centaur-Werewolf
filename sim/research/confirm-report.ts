@@ -8,7 +8,7 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { loadGames, type Game } from "./game";
 
-const RUNS = ["c7", "c5", "c6", "c7b"].map(b => `sim/runs/confirm/${b}`).filter(existsSync);
+const RUNS = ["c7", "c5", "c6", "c7k", "c5b", "cx", "c7b"].map(b => `sim/runs/confirm/${b}`).filter(existsSync);
 const games = loadGames(RUNS);
 const read = (p: string) => JSON.parse(readFileSync(p, "utf8"));
 const p5 = read("docs/research/results/players-5.json"), p6 = read("docs/research/results/players-6.json"), p7 = read("docs/research/results/players-7.json");
