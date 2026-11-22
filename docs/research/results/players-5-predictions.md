@@ -145,3 +145,11 @@ for free, and the Spooker gains a cover claim; both sides now need a model of wh
 
 Falsifier for the Drover: D1 still 5-0 wolves with the Spooker eliminated in most replays (the decoy still works),
 or 5-0 Centaurs by mechanical collision (Drover claims refuted by counting).
+
+## Addendum 3 (13:08, after fine pass 2, BEFORE the second natural-deal pass of 9 games)
+
+Fine pass 2 vs Addendum 2: D1 Centaurs 4, wolves 1 (I predicted wolves 3: the Drover helped the Centaurs more than I
+expected); D2 wolves 5-0, flagged degenerate (unseen night movement: the Sage's read went stale); F7 Centaurs 5-0,
+degenerate (honest stealers reconstruct the chain); F8 Pyre 4, wolves 1 (talk-live; I predicted C2 P2 W1).
+Natural-deal predictions for 3 games each (all-Opus, default rules): Q1D (Q1 with the Drover in place of the Rustler):
+Centaurs 2 of 3; Q2: Centaurs 2 of 3; Q3: one win each team. Vote concentration: no scattered game.

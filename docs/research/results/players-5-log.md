@@ -40,3 +40,59 @@ everyone ready; 19-35 messages. No forced night moves, no random votes.
 - **Q3 Pyre: as predicted the most three-way** (one win each). Two of three Lures dressed THEMSELVES as a Werewolf
   (to bait a Sage read that then makes the Lure look like the wolf?), which I had not anticipated.
 - **Q4 copiers: talk-dead** as feared in my falsifier: copies of Centaur roles add a second honest look.
+
+## 2026-11-22 12:40 Fine pass 1 (6 fixed scenarios x 5 replays, $87; sim/runs/p5/fine1)
+
+| Scenario | Predicted | Observed | Judges path | Right? |
+| --- | --- | --- | --- | --- |
+| F1 Q1 spooker-decoy | W3 C2, live | W5 | 3.0 | wrong side of the split |
+| F2 Q1 twin-duel | W3 C2, live | C5 | 3.3 | wrong |
+| F3 Q2 cutpurse-wolf | W3 C2, live | W3 C2 | 3.7 | right |
+| F4 Q2 lone-wolf (control) | C5, dead | C5, degenerate | 1.0 | right |
+| F5 Q3 pyre-burn | C3 P2, live | C3 P2 | 2.7 | right |
+| F6 Q3 two-wolves-lure | W3 C2, live | W2 C2 P1 | 3.2 | right (live) |
+
+Why the sweeps happened (the counter-story that was missing):
+- F1: the wolf's census-safe claim ("Rustler, kept my card") fit the Sentry's report and nobody could check it; the
+  Spooker's honest or dishonest rotation story marked it as wolf-side, so the table took the visible liar. Missing: any
+  reason to look past the mover. Amendment: the Drover (a rotation confession no longer proves team).
+- F2: the wolf side had a good story (Moonsage claims Sage, vouched by the Rustler's sincere "I saw Sage on Bryn"), but
+  in every replay the wolf leaked census knowledge or pushed to eliminate the real Sage instead of arguing for
+  "eliminate nobody", and the Centaurs reduced it to two worlds where the vote on the Sage lost in both. Judges'
+  counterfactual: with "eliminate nobody" from the wolf it would be a coin flip. *Lesson 5.3: Opus wolves are
+  greedy; a story that only works with a passive goal (nobody eliminated) is rarely played well.*
+- F4: no claim available to the wolf (every centre role a mandatory mover; the Sentry pinned it). Talk-dead by design.
+
+## 2026-11-22 13:05 Fine pass 2 (4 fixed scenarios x 5 replays, $54; sim/runs/p5/fine2)
+
+| Scenario | Predicted | Observed | Judges path | Right? |
+| --- | --- | --- | --- | --- |
+| D1 = F1 + Drover | W3 C2, live | C4 W1, live | 2.2 | live yes; the Drover helped the Centaurs more than predicted |
+| D2 two rotators | W3 C2, live | W5, degenerate | 1.6 | wrong |
+| F7 Q2 blind carrier | C3 W2, live | C5, degenerate | 1.3 | wrong |
+| F8 Q3 dressed Phoenix | C2 P2 W1, live | P4 W1, live | 3.2 | live yes; Pyre stronger |
+
+- D2: the Spooker carried the wolf card from the Sage-read seat to a quiet Centaur, then claimed the Drover's harmless
+  centre-only rotation as its own. Nobody held a Sentry, so there was no trace of the move: "unseen night movement"
+  in every replay. *Lesson 5.4: a twin that makes claims ambiguous also gives the liar a ready-made true-sounding
+  story; ambiguity needs at least one independent trace (a witness) or the hidden action decides.*
+- F7: I expected the new wolf holder (who learns from the table that he now holds the wolf) to turn liar and create a
+  contest; instead every honest claim had already been posted (the Pickpocket named its target in its first message)
+  and the chain was fixed. *Lesson 5.5: path dependence from blind swaps needs the honest movers to be unsure or to
+  claim late; Opus claims first and fully, so blind swaps resolve mechanically.*
+- F8: the Pyre's reverse psychology (the dressed Phoenix fights the vote, a Kindler fakes a Sentry "unmoved" report to
+  lock in the Sage's sincere read) won 4 of 5.
+
+## 2026-11-22 13:25 Natural-deal pass 2 (9 games, $29; sim/runs/p5/coarse2)
+Predicted Q1D C 2 of 3, Q2 C 2 of 3, Q3 one each. Observed: C2-W1 for each roster (Q3 had no Pyre win). No scattered
+vote (c: 0.75 or 1.00 everywhere).
+
+## Running heuristics (5 players)
+1. Duplicates of an information role are mirror cards (Q5#1).
+2. A wolf-side non-Werewolf is a decoy at 5 players; its elimination wins for the wolves (11 of 12 decoy games).
+3. Opus wolves are greedy: plans needing "eliminate nobody" fail (1 of 8 wolf proposals won).
+4. Ambiguity without any independent trace yields degenerate hidden-action wins (D2).
+5. Opus Centaurs claim first and fully; blind swaps then resolve mechanically (F4, F7). Talk-live stealer scenarios
+   need a KNOWING mover with a reason to lie (F3, coarse Q2#1, natural Q2-n#3).
+6. "Dominant vote" reasoning (vote the seat that is wolf in every world) is the Centaurs' main weapon (20 wins of 28
+   uses), and the best wolf lies are built to make an innocent the dominant vote (F3#4).

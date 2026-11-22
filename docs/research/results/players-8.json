@@ -145,22 +145,28 @@
    ],
    "centre": 4,
    "rules": "defaults",
-   "games": 15,
+   "games": 20,
    "naturalGames": 0,
    "fixedScenarios": [
     "H1-M1H-duel x5",
+    "H1o-M1H-duel-opening x5",
     "H2-M1H-pair x5",
     "H2c-M1H-pair-covers x5"
    ],
    "winners": {
-    "centaur": 14,
-    "werewolf": 1
+    "centaur": 18,
+    "werewolf": 2
    },
    "c": [
     0.71,
     0.71,
     1,
     0.71,
+    0.71,
+    0.86,
+    0.71,
+    0.86,
+    1,
     0.71,
     0.86,
     0.86,
@@ -175,21 +181,21 @@
    ],
    "cMedian": 0.86,
    "bands": {
-    "majority": 14,
-    "unanimous": 1
+    "majority": 18,
+    "unanimous": 2
    },
    "judges": {
-    "verdicts": 30,
+    "verdicts": 40,
     "tom": 1.8,
-    "deception": 2.07,
-    "path": 1.8,
-    "noise": 0.47,
+    "deception": 2.05,
+    "path": 1.82,
+    "noise": 0.57,
     "agreementMeanAbsDiff": {
      "tomRequired": 0,
-     "deceptionCleverness": 0.13,
-     "pathDependence": 0.13,
-     "noise": 0.13,
-     "howWonExact": "15/15"
+     "deceptionCleverness": 0.1,
+     "pathDependence": 0.15,
+     "noise": 0.15,
+     "howWonExact": "19/20"
     }
    },
    "scenarios": [
@@ -222,6 +228,38 @@
        "pathDependence": 0.2,
        "noise": 0.2,
        "howWonExact": "5/5"
+      }
+     }
+    },
+    {
+     "label": "H1o-M1H-duel-opening",
+     "replays": 5,
+     "fingerprintsIdentical": true,
+     "winners": {
+      "centaur": 4,
+      "werewolf": 1
+     },
+     "minority": 1,
+     "talkLive": false,
+     "c": [
+      0.86,
+      0.71,
+      0.86,
+      1,
+      0.71
+     ],
+     "judges": {
+      "verdicts": 10,
+      "tom": 1.8,
+      "deception": 2,
+      "path": 1.9,
+      "noise": 0.9,
+      "agreementMeanAbsDiff": {
+       "tomRequired": 0,
+       "deceptionCleverness": 0,
+       "pathDependence": 0.2,
+       "noise": 0.2,
+       "howWonExact": "4/5"
       }
      }
     },
@@ -712,15 +750,15 @@
   }
  },
  "strategies": {
-  "games": 58,
+  "games": 63,
   "rows": {
    "early-seer-accusation": {
-    "games": 53,
+    "games": 58,
     "byTeam": {
      "centaur": {
-      "games": 52,
-      "won": 42,
-      "decisive": 47
+      "games": 57,
+      "won": 46,
+      "decisive": 51
      },
      "werewolf": {
       "games": 1,
@@ -730,26 +768,26 @@
     }
    },
    "claim-count": {
-    "games": 57,
+    "games": 62,
     "byTeam": {
      "centaur": {
-      "games": 56,
-      "won": 47,
-      "decisive": 42
+      "games": 61,
+      "won": 51,
+      "decisive": 47
      },
      "werewolf": {
-      "games": 9,
-      "won": 1,
-      "decisive": 0
+      "games": 10,
+      "won": 2,
+      "decisive": 1
      }
     }
    },
    "latency-tell": {
-    "games": 53,
+    "games": 56,
     "byTeam": {
      "centaur": {
-      "games": 51,
-      "won": 43,
+      "games": 53,
+      "won": 45,
       "decisive": 31
      },
      "pyre": {
@@ -758,7 +796,7 @@
       "decisive": 1
      },
      "werewolf": {
-      "games": 3,
+      "games": 6,
       "won": 0,
       "decisive": 0
      }
@@ -785,12 +823,12 @@
     }
    },
    "frame-the-true-seer": {
-    "games": 55,
+    "games": 60,
     "byTeam": {
      "werewolf": {
-      "games": 50,
-      "won": 5,
-      "decisive": 4
+      "games": 55,
+      "won": 6,
+      "decisive": 5
      },
      "pyre": {
       "games": 8,
@@ -800,12 +838,12 @@
     }
    },
    "census-safe-claim": {
-    "games": 44,
+    "games": 49,
     "byTeam": {
      "werewolf": {
-      "games": 44,
-      "won": 2,
-      "decisive": 3
+      "games": 49,
+      "won": 3,
+      "decisive": 4
      },
      "pyre": {
       "games": 1,
@@ -815,10 +853,10 @@
     }
    },
    "fake-movement-story": {
-    "games": 31,
+    "games": 32,
     "byTeam": {
      "werewolf": {
-      "games": 31,
+      "games": 32,
       "won": 4,
       "decisive": 5
      },
@@ -830,12 +868,12 @@
     }
    },
    "twin-true-description": {
-    "games": 16,
+    "games": 21,
     "byTeam": {
      "werewolf": {
-      "games": 15,
-      "won": 3,
-      "decisive": 1
+      "games": 20,
+      "won": 4,
+      "decisive": 2
      },
      "centaur": {
       "games": 1,
@@ -865,17 +903,17 @@
     }
    },
    "decision-theoretic-vote": {
-    "games": 50,
+    "games": 54,
     "byTeam": {
      "werewolf": {
-      "games": 16,
+      "games": 18,
       "won": 5,
       "decisive": 4
      },
      "centaur": {
-      "games": 43,
-      "won": 37,
-      "decisive": 31
+      "games": 47,
+      "won": 41,
+      "decisive": 35
      },
      "pyre": {
       "games": 3,
@@ -885,10 +923,10 @@
     }
    },
    "engineered-tie": {
-    "games": 8,
+    "games": 10,
     "byTeam": {
      "werewolf": {
-      "games": 5,
+      "games": 7,
       "won": 3,
       "decisive": 3
      },
@@ -915,12 +953,17 @@
     }
    },
    "census-slip": {
-    "games": 10,
+    "games": 11,
     "byTeam": {
      "werewolf": {
       "games": 10,
       "won": 1,
       "decisive": 8
+     },
+     "centaur": {
+      "games": 1,
+      "won": 1,
+      "decisive": 0
      }
     }
    },
@@ -980,10 +1023,10 @@
     }
    },
    "decoy-sacrifice": {
-    "games": 5,
+    "games": 6,
     "byTeam": {
      "werewolf": {
-      "games": 5,
+      "games": 6,
       "won": 0,
       "decisive": 1
      },

@@ -17,17 +17,43 @@ in what the pack learns (census "allButOne"), covers assigned rather than chosen
 (burningDeniesWolves) makes the wolf's private knowledge visible when it acts on it ("If Bryn were a real wolf, why
 would a non-wolf Dov need to lie?").
 
-## Heuristics for predicting balance (running; the in-context learning is itself a deliverable)
+## Heuristics for predicting balance (running list; each with the evidence that produced it)
 
 1. **Classify scenarios by whether an unrefutable claim is in play.** If every defector claim can be refuted by a
-   mechanical cross-check (a read, a glance, a count, a movement flag), Opus Centaurs win by first-order logic and the
-   scenario is talk-dead. Talk-live scenarios need at least one claim the table can only judge by modelling incentives.
-2. **After-talk power is degenerate by construction.** Any effect chosen after the discussion has shown where the votes
-   will go makes consensus self-defeating. Check every day power for "is it applied after the votes are predictable?".
-3. **Two independent honest looks at the same seat end the game** unless a mover or distortion can explain both away.
-   (Pilot: Sage + Rustler both saw the wolf; the wolf's counter-claim and a late fake Farrier swap could not survive.)
-4. **Opus tables guard against tie tricks under Blood Price**: they refuse "split the vote" plans from unverified
-   players, so vote-splitting lies rarely work; deception must change BELIEFS about who holds what, not vote arithmetic.
+   mechanical cross-check, Opus Centaurs win by first-order logic (pilot; C6, E7 coarse; 5/6/7p "honest movers").
+2. **After-talk power is suspect by construction**: an effect chosen after the discussion has shown where the votes
+   go makes consensus self-defeating (pre-registered theory; refined by 10).
+3. **Two independent honest looks at one seat end the game** unless a mover or distortion can explain both away.
+4. **Deception must change beliefs about who holds what, not vote arithmetic**: Opus tables refuse unverified
+   split/tie plans under Blood Price ("eliminate nobody" is read as the wolf's tell: 5p session).
+5. **A team that cannot communicate privately needs distinct information per member or a convention**, otherwise its
+   members' best individual lies collide (wolf-wolf claim collisions in 27 hub games; 4 of 9 coarse Centaur wins).
+6. **A single true, uncontestable global number collapses the world space** (the Herder decided ~2/3 of coarse
+   Centaur wins); pair it with its twin or leave it out.
+7. **A mirror is unanswerable only if no third party can vouch for the original** (C6 coarse; B5 duel).
+8. **Information handed to liars becomes a tell**: the table runs the defector's decision backwards (DESIGN PRINCIPLE
+   above; S3).
+9. **A sweep with high judged path dependence means a reliable winning argument, not talk-dead**: ask whether the
+   argument rests on a rule (fixable) or a slip (skill).
+10. **An after-talk power is degenerate only if its holder cannot be profitably targeted instead** (X1': the table
+    eliminated the Moon-Thief, 3-0; the old Ember-Carrier was not a Werewolf, so targeting it would not have won).
+11. **Reducing a tell from certain to probable does not remove it**: Opus reasons in likelihoods ("2 of 3 worlds")
+    (S3b).
+12. **When a team cannot win it becomes a kingmaker** (S9#4: doomed wolves burned the Phoenix).
+13. **Under Blood Price, any side that can force a tie with its own votes wins by arithmetic** (parity bloc; P6).
+14. **Simultaneous commitment hurts whichever side's plan needed to see the others' claims first** (S5b vs PY6).
+15. **A true read of the only Werewolf plus an independent count is decisive whatever the wolves know** (S3: 20 of
+    20 over four variants); a duel creates doubt only if voting either duellist can win (Hollow Sage, 8p) or the
+    count is contestable.
+16. **Any seat whose elimination is a non-event is a free decoy** for the team that wins when nothing happens
+    (wolf-team non-wolves; Kindlers while the Phoenix is held: S5c).
+17. **Ambiguity must exist in the holder's own knowledge, not only in the public artefact** (6p sealed pair reports).
+18. **A hidden swap stays hidden only if the deck offers another plausible mover and no single honest witness sees
+    both ends** (ember at 6 v. 7).
+19. **Count voters, not cards**: with two honest voters among seven the Centaurs cannot form a majority even when right
+    (S7).
+20. **Constructed scenarios, not natural deals, test a roster's thesis**: natural deals rarely produce the class a
+    roster was built for (coarse pass 1), and lone-wolf scenarios starve the wolves (6p: 1 wolf win in 18).
 
 ## 2026-11-22 Checkpoint 1 (environment, instruments, theory)
 
@@ -345,3 +371,52 @@ collided or claimed a read it could not have had). In my S5 it was the wolf defe
 reading that defence, while the Pyre's story (the Lure "corroborating" the dressed read) needed no one else's claim.
 Its first-message ranks without openings (honest 2.2-2.3, Phoenix 4.7, Lure 4.8, Werewolf 5.3) match my 0.29 vs 0.72.
 So the effect is scenario-specific: predict it by asking, per team, "does my plan need to see claims first?"
+
+## 2026-11-22 Lure fix `lureSparesPhoenix` on S5 (8 games, ~$33) and the packCovers defect fix
+
+| Scenario | Before (S5, no rule) | Predicted | Result | Judges ToM / dec / path / noise |
+| --- | --- | --- | --- | --- |
+| S5c rule on, openings off (5) | C 4 (1 + side burn), Pyre 1 | C 4, Pyre 1 | **wolves 4, Centaurs 1, Pyre 0** | 2.1 / 2.5 / 2.9 / 1.0 (talk-live) |
+| S5d rule on, openings on (3) | (S5b: Pyre 4, C 1) | C 2-3 of 3 | **Centaurs 3-0** | 2.8 / 2.7 / **4.0** / 1.0 (swept by argument) |
+
+The fix did what it was for (the Pyre's burning through an honest seer's testimony is gone: Pyre 0 of 8, the Sage now
+truly reads "Phoenix"), but I mispredicted who gains. Without openings the exposed Lure became the WOLVES' decoy: the
+Pyre's fake claims made the Lure the most suspicious seat; eliminating a non-Phoenix Pyre card with the Phoenix held is
+neither a burning nor a wolf death, so the wolves won 4 of 5 ("Lure decoy drew votes; wolf posed as Centaur"). With
+openings the lone wolf had to commit blind and the Centaurs reasoned it out 3-0 ("Fen's opening-timing reasoning
+unmasked the Lure and Werewolf"). *Heuristic 16 (generalising 4): any seat whose elimination is a non-event for the main
+result is a free decoy for whichever team gains from "nothing happened"; at a table with a Pyre, that includes every
+Kindler while the Phoenix is held.* Consequence for design: the Lure fix should come with a reason for the wolves not to
+want the Kindlers eliminated, or the Centaurs need a way to see that eliminating a Kindler wins nothing. One cheap
+option for the owner to consider: `pyreFallback`-like "a Kindler's elimination counts as a Centaur loss in the Blood
+Price comparison" is too strong; better leave it and present the Lure fix as "moves Pyre power into talk" only with
+openings on.
+
+**packCovers defect fixed (from the 8-player session):** covers were drawn from Centaur-team roles in the centre, so with
+a duplicated role (one Centaur in the centre, one held) the pack was handed a claim an honest player would contest
+(5-0 in their test). Now a cover must be a role with no copy in any hand; test added (105 green). Any 8-player
+packCovers result before this is affected.
+
+## Cross-session lessons integrated (afternoon)
+
+- **Evidence principle, refined (6-player session, sealed pair reports 5-0, path 1.0):** making the public ARTEFACT
+  ambiguous is not enough if its holder privately has the unambiguous fact and can simply say it. The Notary saw both
+  cards, sealed the ambiguous pair statement, and then said in its opening exactly which card was which. *Heuristic 17:
+  ambiguity must exist in the holder's own knowledge, not only in the artefact.* Requested variant: a Notary that learns
+  only the pair statement it seals (the engine picks; it never sees the individual cards). Same test for the Herald:
+  under the amendment the Herald proclaims "at least one of two cards is X" and learns no more than the table: passes.
+  The Herder's private count fails the same test (an uncontestable private fact): CR-6.
+- **Ember at 6 v. 7.** 6 players: the ember-carried Phoenix scenario swept 5-0 for the Centaurs (path 1.6) because the
+  player DEALT the Phoenix, left holding a Centaur card, honestly said "I was dealt Phoenix", and with the Sage and the
+  Sentry that decoded the swap. 7 players (the most balanced scenario of the night: Pyre 2, wolves 2, Centaurs 1): the
+  deck also had a Pickpocket (a Centaur mover), so a moved card had a second, innocent explanation, and the Sentry did
+  not watch both swapped seats. *Heuristic 18: a hidden swap stays hidden only if the deck offers another plausible
+  mover and no single honest witness sees both ends.* Requested variant (triage: build if cheap): an Ember-Carrier
+  swap after which the dealt Phoenix holder stays on the Pyre (it wins if the carried card burns), so it has no reason to
+  out the swap.
+- **8 players (first session, 58 games): no roster meets the target**: of 9 fixed scenarios, 1 talk-live, 1 borderline,
+  7 swept; Centaurs 48, wolves 5, Pyre 5; claim counting decided 57 of 58 and the latency tell 53 of 58 (opening
+  statements untested there). With 7 honest claims the claim space fills in 30 s. Its Hollow Sage (a twin that counts as
+  a Werewolf) turned a 5-0 duel into 4-1, which matches heuristic 15.
+- **Lone-wolf scenarios starve the wolves** (6-player session: 1 wolf win in 18 replays, all four of its scenarios had
+  a lone wolf). Scenario choice matters as much as the roster: report per scenario class, not per roster.

@@ -134,7 +134,7 @@ export const RULE_DEFS: RuleDef[] = [
   },
   {
     id: "packCovers", kind: "boolean", title: "Pack covers", tooltip: "Whether the census also gives each pack member a different cover role to claim.",
-    on: "With the census, every pack card is also told a cover for each pack seat: a different Centaur-team role among those dealt to the centre (the same assignment for the whole pack), so the pack's claims need not collide.",
+    on: "With the census, every pack card is also told a cover for each pack seat: a different Centaur-team role among those dealt to the centre with no copy in any player's hand (the same assignment for the whole pack), so the pack's claims need not collide.",
     off: "The pack gets no cover roles: each pack member chooses its own claim.",
   },
   {
