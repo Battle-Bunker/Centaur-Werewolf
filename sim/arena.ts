@@ -38,8 +38,8 @@ import { startShim } from "./mcp-shim";
 // ── configuration ──
 interface AgentSpec { model?: string; effort?: string }
 interface AgentsConfig extends AgentSpec { seats?: Record<string, AgentSpec>; byTeam?: Record<string, AgentSpec> }
-interface TableSpec { label: string; deck: string[]; center: number; players: string[]; timers?: TableConfig["timers"]; agents?: AgentsConfig }
-interface Tournament { timers: TableConfig["timers"]; agents?: AgentsConfig; tables: TableSpec[] }
+interface TableSpec { label: string; deck: string[]; center: number; players: string[]; timers?: TableConfig["timers"]; agents?: AgentsConfig; rules?: TableConfig["rules"]; seed?: number; playtest?: boolean }
+interface Tournament { timers: TableConfig["timers"]; agents?: AgentsConfig; rules?: TableConfig["rules"]; tables: TableSpec[] }
 
 const argv = process.argv.slice(2);
 const flag = (name: string, dflt?: string) => { const i = argv.indexOf(`--${name}`); return i >= 0 ? argv[i + 1] : dflt; };
@@ -145,7 +145,7 @@ async function playTable(t: TableSpec) {
   if (existsSync(`${dir}/result.json`)) { log(label, "already played: skipping"); return; }
   mkdirSync(dir, { recursive: true });
   const timers = TIMERS ?? t.timers ?? spec.timers, cfg = t.agents ?? spec.agents;
-  const table: Table = await setupTable({ label, deck: t.deck, center: t.center, players: t.players, timers });
+  const table: Table = await setupTable({ label, deck: t.deck, center: t.center, players: t.players, timers, rules: { ...spec.rules, ...t.rules }, seed: t.seed, playtest: t.playtest });
   writeFileSync(`${dir}/table.json`, JSON.stringify(table, null, 1));
   registerTable(table);
   const host = table.seats[0];
@@ -180,7 +180,7 @@ async function playTable(t: TableSpec) {
   const agents: Promise<void>[] = [];
   if (cfg?.byTeam) {
     await run("game.start", host.token, table.code);
-    for (const s of table.seats) { const v = await tool<View>(s.key, "room_view"); agents.push(startAgent(s, agentSpec(cfg, s.name, v.you.dealt!.team.startsWith("Werewolf") ? "werewolf" : v.you.dealt!.team.startsWith("Centaur") ? "centaur" : "lone"), true)); }
+    for (const s of table.seats) { const v = await tool<View>(s.key, "room_view"); agents.push(startAgent(s, agentSpec(cfg, s.name, v.you.dealt!.team.startsWith("Werewolf") ? "werewolf" : v.you.dealt!.team.startsWith("Centaur") ? "centaur" : "wild"), true)); }
   } else for (const s of table.seats) agents.push(startAgent(s, agentSpec(cfg, s.name), false));
 
   // Watch the table through the host's view (and, at night, each seat's own view of its plan) to measure timing.

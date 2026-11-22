@@ -400,6 +400,17 @@ export function grantAllows(cmd: CommandDef, grant: Grant): boolean {
 export const toolName = (id: string) => id.replace(".", "_");
 
 /**
+ * room_wait's modes. A room version is a list of named parts (round, phase, own night turn, chat count, votes, own
+ * journal, settings, proclamations, own swap); each mode watches some of them. Shared so a proxy (sim/mcp-shim.ts) can
+ * answer room_wait exactly as the server does.
+ */
+export const WAIT_PARTS: Record<string, string[]> = { any: ["r", "ph", "t", "c", "v", "j", "s", "d", "w"], phase: ["r", "ph"], chat: ["r", "ph", "c"], turn: ["r", "ph", "t"] };
+export function versionKey(version: string, until: string): string {
+  const parts = Object.fromEntries(version.split(".").map(x => { const m = /^([a-z]+)(.*)$/.exec(x); return m ? [m[1], m[2]] : [x, ""]; }));
+  return (WAIT_PARTS[until] ?? WAIT_PARTS.any).map(k => `${k}${parts[k] ?? ""}`).join(".");
+}
+
+/**
  * The registry as MCP tool definitions for a grant. The list does not change with the phase, because MCP clients read
  * it once: a tool that cannot run now answers with the reason, as the palette's dimmed row does.
  */

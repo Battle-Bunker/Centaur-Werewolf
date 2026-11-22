@@ -32,14 +32,20 @@ export async function tool<T = Record<string, unknown>>(key: string, name: strin
 }
 export class Refusal extends Error {}
 
-export interface TableConfig { label: string; players: string[]; deck: string[]; center: number; timers: { dusk: number; turn: number; day: number } }
-export interface Table { code: string; config: TableConfig; seats: { name: string; token: string; key: string; host: boolean }[] }
+/**
+ * One table. `rules`: rule variants (shared/settings.ts) to set in the lobby, e.g. { "bloodPrice": false }.
+ * `seed`: makes it a play-test table and fixes the deal's seed, so tables with the same seed (and the same players
+ * and deck) get the same seating and cards whatever their rules. `playtest`: a play-test table without a seed.
+ */
+export interface TableConfig { label: string; players: string[]; deck: string[]; center: number; timers: { dusk: number; turn: number; day: number }; rules?: Record<string, boolean | number | string>; seed?: number; playtest?: boolean }
+export interface Table { code: string; config: TableConfig; seats: { name: string; token: string; key: string; host: boolean; id?: string }[] }
 
 /** Opens a room, seats the players, sets the table up, and makes each player an MCP key. Does not start the game. */
 export async function setupTable(config: TableConfig): Promise<Table> {
   const [hostName, ...others] = config.players;
   const hostToken = token();
-  const { code } = (await run("room.create", hostToken, undefined, { name: hostName })) as { code: string };
+  const playtest = config.playtest || config.seed !== undefined;
+  const { code } = (await run("room.create", hostToken, undefined, { name: hostName, ...(playtest ? { playtest: true } : {}) })) as { code: string };
   const seats = [{ name: hostName, token: hostToken, key: "", host: true }];
   for (const name of others) { const t = token(); await run("room.join", t, undefined, { code, name }); seats.push({ name, token: t, key: "", host: false }); }
   await run("setup.setCenter", hostToken, code, { count: config.center });
@@ -47,6 +53,10 @@ export async function setupTable(config: TableConfig): Promise<Table> {
   for (const role of current) await run("setup.removeRole", hostToken, code, { role });
   for (const role of config.deck) await run("setup.addRole", hostToken, code, { role });
   for (const [timer, seconds] of Object.entries(config.timers)) await run("setup.setTimer", hostToken, code, { timer, seconds });
+  for (const [rule, value] of Object.entries(config.rules ?? {})) await run("setup.setRule", hostToken, code, { rule, value });
+  if (config.seed !== undefined) await run("setup.fixDeal", hostToken, code, { seed: config.seed });
+  const ids = (await view(code, hostToken))!.players as { id: string; name: string }[];
+  for (const s of seats) s.id = ids.find(p => p.name === s.name)?.id;
   for (const s of seats) s.key = ((await run("connect.createKey", s.token, code, { permission: s.host ? "host" : "act", label: `play-test ${config.label}` })) as { key: string }).key;
   return { code, config, seats };
 }

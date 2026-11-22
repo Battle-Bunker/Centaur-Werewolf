@@ -21,7 +21,7 @@ const teamOf = (name: string) => ROLE[roleId(name)]?.team ?? "?";
 interface Seat { seat: number; name: string; dealt: string; endedHolding: string; endedOnTeam: string; votedFor: string; voteWasRandom: boolean; votesReceived: number; eliminated: boolean; won: boolean }
 interface Debrief { dealt: string; believedFinalCard: string; finalCard: string; won: boolean; nightPlan: string; planRanAsIntended: boolean; claims: { claim: string; wasTrue: boolean }[]; vote: { seat: number | null; name: string; reasoning: string }; changedVote: boolean; decidedBy: string; tension: number; tensionWhy: string; fun: number; funWhy: string; confusions: string[] }
 interface Game {
-  label: string; deck: string; code: string; players: number; center: number; cards: string[];
+  label: string; deck: string; code: string; players: number; center: number; cards: string[]; rules?: Record<string, unknown>;
   headline: string; notes: string[]; winningTeam: string; eliminated: string[]; seats: Seat[]; centre: string[]; nightLog: string[];
   chat: { from: string; text: string; phase: string }[]; timeline: any; agents: any[]; debriefs: Record<string, Debrief>;
 }
@@ -34,7 +34,7 @@ for (const d of readdirSync(out, { withFileTypes: true }).filter(d => d.isDirect
   const debriefs: Record<string, Debrief> = {};
   for (const s of table.seats) if (existsSync(`${dir}/${s.name}.debrief.json`)) debriefs[s.name] = read(`${dir}/${s.name}.debrief.json`);
   games.push({
-    label: table.config.label, deck: table.config.label.replace(/#\d+$/, ""), code: table.code, players: table.seats.length, center: table.config.center, cards: table.config.deck,
+    label: table.config.label, deck: table.config.label.replace(/#\d+$/, ""), code: table.code, players: table.seats.length, center: table.config.center, cards: table.config.deck, rules: table.config.rules,
     ...v.result, chat: v.chat, timeline: existsSync(`${dir}/timeline.json`) ? read(`${dir}/timeline.json`) : {}, agents: existsSync(`${dir}/agents.json`) ? read(`${dir}/agents.json`) : [], debriefs,
   });
 }
@@ -65,11 +65,11 @@ const decks = [...new Set(games.map(g => g.deck))];
 const perDeck: Record<string, unknown> = {};
 for (const deck of decks) {
   const gs = games.filter(g => g.deck === deck), m = measures(gs);
-  const b = randomPlay(gs[0].cards, gs[0].players, BG); baselines.set(deck, b);
+  const b = randomPlay(gs[0].cards, gs[0].players, BG, gs[0].rules ?? {}); baselines.set(deck, b);
   perDeck[deck] = { ...m, baseline: b };
   say(`\n### ${deck} (${m.games} games, ${gs[0].players} players, ${gs[0].center} centre)`);
   say(`  winners    played: Centaur ${m.win.centaur} · Werewolf ${m.win.werewolf} · nobody ${m.win.nobody} · extra wins ${m.extraWins}`);
-  say(`             random: Centaur ${fp(b.win.centaur)} · Werewolf ${fp(b.win.werewolf)} · nobody ${fp(b.win.nobody)} · prophecy ${fp(b.prophecyWins)}`);
+  say(`             random: Centaur ${fp(b.win.centaur)} · Werewolf ${fp(b.win.werewolf)} · nobody ${fp(b.win.nobody)} · a creature won ${fp(b.creatureWins)}`);
   say(`  wolf eliminated when one held at the end: played ${m.wolfEliminated}/${m.wolfAtTable} · random ${fp(b.wolfDeadWhenPresent)}`);
   say(`  eliminated seat held a moved card: played ${m.eliminatedHeldMoved}/${m.games} · random ${fp(b.eliminatedHeldMoved)} · cards moved/game ${m.movedPerGame.toFixed(1)} (random ${b.movedPerGame.toFixed(1)})`);
   say(`  forced night moves ${m.forcedMoves} · random votes ${m.randomVotes} · day messages/game ${m.messagesPerGame.toFixed(0)}`);

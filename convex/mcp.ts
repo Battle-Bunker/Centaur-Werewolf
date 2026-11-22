@@ -9,9 +9,8 @@ import { ConvexError } from "convex/values";
 import { httpAction, type ActionCtx } from "./_generated/server";
 import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
-import { COMMANDS, grantAllows, toolDefinitions, toolName, type CommandDef, type Grant } from "../shared/commands";
+import { COMMANDS, grantAllows, toolDefinitions, toolName, versionKey, type CommandDef, type Grant } from "../shared/commands";
 import { sha256 } from "./auth";
-import { versionKey } from "./agent";
 
 declare const process: { env: Record<string, string | undefined> };
 

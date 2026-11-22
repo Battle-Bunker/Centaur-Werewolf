@@ -14,6 +14,7 @@ import { cardOf, describe, revealHidden, seatName, type Names } from "../shared/
 import type { Game } from "./game";
 import { redact } from "./rooms";
 import { loadScope, type Scope } from "./scope";
+export { versionKey } from "../shared/commands";
 
 const secs = (ms: number) => Math.max(0, Math.round(ms / 1000));
 const roleCard = (id: RoleId) => ({ id, name: ROLE[id].name, team: TEAM_NAME[ROLE[id].team], rule: ROLE[id].rules });
@@ -66,13 +67,6 @@ function versionParts(scope: Scope, chatCount: number): Record<string, string | 
   };
 }
 const encode = (p: Record<string, string | number>) => Object.entries(p).map(([k, x]) => `${k}${x}`).join(".");
-/** The parts of a version that a wait mode watches. */
-export const WAIT_PARTS: Record<string, string[]> = { any: ["r", "ph", "t", "c", "v", "j", "s", "d", "w"], phase: ["r", "ph"], chat: ["r", "ph", "c"], turn: ["r", "ph", "t"] };
-export function versionKey(version: string, until: string): string {
-  const parts = Object.fromEntries(version.split(".").map(x => { const m = /^([a-z]+)(.*)$/.exec(x); return m ? [m[1], m[2]] : [x, ""]; }));
-  return (WAIT_PARTS[until] ?? WAIT_PARTS.any).map(k => `${k}${parts[k] ?? ""}`).join(".");
-}
-
 export const tick = internalQuery({
   args: { player: v.id("players"), code: v.string() },
   handler: async (ctx, a) => {

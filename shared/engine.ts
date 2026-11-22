@@ -531,7 +531,6 @@ export interface ResolveInput {
   rules?: Partial<Rules>;
 }
 
-const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
 /**
  * Counts the vote and decides the winners, by the cards players HOLD at the count (docs/design/synthesis.md 3.4):
@@ -596,7 +595,7 @@ export function resolveVote(cards: RoleId[], votes: (number | null)[], input: Re
     }
   } else if (rules.bloodPrice ? W > C : W > 0) {
     winningTeam = "centaur";
-    reason = C ? `more Werewolves than Centaurs were eliminated (${W} to ${C})` : `${plural(W, "Werewolf", "Werewolves")} ${W === 1 ? "was" : "were"} eliminated`;
+    reason = C ? `more Werewolves than Centaurs were eliminated (${W} to ${C})` : W === 1 ? "a Werewolf was eliminated" : `${W} Werewolves were eliminated`;
     headline = C ? `More Werewolves than Centaurs were eliminated (${W} to ${C}). The Centaurs win.` : `${W === 1 ? "A Werewolf was" : `${W} Werewolves were`} eliminated. The Centaurs win.`;
     seatsOf("centaur").forEach(i => winners.add(i));
   } else {
